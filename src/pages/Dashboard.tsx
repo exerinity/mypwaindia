@@ -58,7 +58,9 @@ export default function DashboardPage() {
     return (
       <>
         <h1 className="mt-0">Welcome, stranger!</h1>
-        <p>You've reached the MyPayIndia PWA. This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />You can navigate the app logged out, but to actually do things, please <Link to="/i/flow/login">log in</Link>. If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the official site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
+        <p>You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
+        You can navigate most of the app logged out, but to actually do everything, please <Link to="/i/flow/login">log in</Link>. 
+        If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the official site</a> and then log in here.<br /><br />If, however, you entered "app" into the URL and are looking for the actual mobile apps, they can be found <a href="https://mypayindia.com/app/" target="_blank">here</a>.<br></br><br></br>Thanks, and have fun! (<Link to="/i/flow/mci">try out MyCLiIndia while you're here</Link>)</p>
       </>
     );
   }
@@ -155,11 +157,11 @@ export default function DashboardPage() {
           </div>
         ) : (
           txQ.loading && !txQ.data ? <LoadingRow /> :
-          txQ.error ? <ErrorBox error={txQ.error} /> :
-          <TransactionTable
-            transactions={transactions.slice(0, 10)}
-            currentUserId={active?.id}
-          />
+            txQ.error ? <ErrorBox error={txQ.error} /> :
+              <TransactionTable
+                transactions={transactions.slice(0, 10)}
+                currentUserId={active?.id}
+              />
         )}
       </div>
     </>
