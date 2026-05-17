@@ -3,6 +3,9 @@ The React MyPayIndia responsive web app is an alternative client for using [MyPa
 
 MyPayIndia is a project of about a dozen people or more; MyPWAIndia is entirely maintained by [me](https://exerinity.com).
 
+> [!WARNING]
+This **is not** the source code for MyPayIndia. This is the source code for an app that uses its API wearing the same name.
+
 ## Genesis: why?
 At the start of May, this remake was born. The original PWA was becoming quite difficult to maintain as the monolithic-ness of it was becoming quite large, and I feared that, by splitting the files up I would've certainly broke something. So, I created this. The second incarnation of MyPWAIndia, in React, began at the very end of April, but was spearheaded around May 5th to 7th.
 
