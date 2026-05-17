@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Header } from './Header.tsx';
 import { Sidebar } from './Sidebar.tsx';
@@ -17,6 +18,19 @@ export function AppLayout() {
   const toast = useToast();
   const navigate = useNavigate();
   useGlobalAutoRefresh();
+
+  const updateToastShown = useRef(false);
+  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW();
+
+  useEffect(() => {
+    if (needRefresh && !updateToastShown.current) {
+      updateToastShown.current = true;
+      toast.push('A new version is available, refresh to update', 'info', 0, {
+        label: 'Refresh',
+        onClick: () => updateServiceWorker(true),
+      });
+    }
+  }, [needRefresh, updateServiceWorker, toast]);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
