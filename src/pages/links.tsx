@@ -12,17 +12,17 @@ import { describeError } from '../utils/errors.js';
 import { LoadingRow, ErrorBox, Empty } from '../components/status.tsx';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 const PRESETS_PAISA = [
-  100,    // ₹1
-  500,    // ₹5
-  1000,   // ₹10
-  5000,   // ₹50
-  10000,  // ₹100
-  50000,  // ₹500
-  100000, // ₹1,000
+  100,    // 1 INR
+  500,    // 5 INR
+  1000,   // 10 INR
+  5000,   // 50 INR
+  10000,  // 100 INR
+  50000,  // 500 INR
+  100000, // 1,000 INR
 ];
 
 export default function LinksPage() {
-  usePageTitle('Payment links');
+  usePageTitle('Your payment links');
   const { active, updateBalance } = useAuth();
   const { settings } = useSettings();
   const toast = useToast();
