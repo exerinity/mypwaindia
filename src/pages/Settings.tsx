@@ -228,9 +228,9 @@ export default function SettingsPage() {
 
       {!settings.scambait && (
         <p className="muted" style={{ fontSize: '0.8rem', marginTop: 24 }}>
-          <Link to="/i/release_notes">{RELEASES[0].version.toLocaleLowerCase()}</Link>
+          <Link to="/i/release_notes">v{RELEASES[0].version.toLocaleLowerCase()}</Link>
           {' - '}
-          app by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a> on top of MyPayIndia API v2
+          app by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a> using MyPayIndia API v2
           {' - '}
           env: {window.location.hostname === 'app.mypayindia.com' ? 'production' : 'staging'}
           {' - '}
@@ -264,7 +264,7 @@ export default function SettingsPage() {
           navigate('/i/flow/login');
         }}
         title="Remove all accounts"
-        message={`Remove all ${accounts.length} saved accounts? You'll need to log in again.`}
+        message={`Do you really, really want to remove all ${accounts.length} saved account${accounts.length === 1 ? '' : 's'}?`}
         confirmLabel="Remove all"
         holdConfirm
       />
@@ -272,11 +272,11 @@ export default function SettingsPage() {
       <Modal
         open={scambaitAlreadyOpen}
         onClose={() => setScambaitAlreadyOpen(false)}
-        title="No"
+        title="This mode is already enabled"
         fullscreen
       >
         <div className="center">
-          You already enabled this
+          You already enabled this. Press <kbd>Ctrl+Alt+B</kbd> to disable it
         </div>
       </Modal>
 
