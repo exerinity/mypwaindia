@@ -1,1 +1,17 @@
-{"name":"MyPayIndia PWA","short_name":"MyPayIndia","description":"The official progressive web app for MyPayIndia","start_url":"/dash","display":"standalone","background_color":"#000000","theme_color":"#d03505","lang":"en","scope":"/","id":"com.exerinity.mypayindia","icons":[{"src":"/i/logo.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+{
+  "name": "MyPayIndia",
+  "description": "MyPayIndia - the future of online banking",
+  "start_url": "/dash",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#121212",
+  "theme_color": "#d03505",
+  "icons": [
+    {
+      "src": "https://app.mypayindia.com/app/media/logofull.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
