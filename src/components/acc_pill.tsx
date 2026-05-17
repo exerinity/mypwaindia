@@ -6,10 +6,11 @@ import { useSettings } from '../context/settings_ctx.tsx';
 import { getDisplayName } from '../utils/display.js';
 import { ChevronDown, CloseIcon, PlusIcon, ExternalIcon } from './icons.tsx';
 import { ConfirmModal } from './confirm_modal.tsx';
+import { formatINR } from '../utils/money.js';
 
 function formatBalance(n: number | undefined) {
   if (n === undefined || n === null) return null;
-  return '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return formatINR(n);
 }
 
 export function AccountPill() {
@@ -34,15 +35,15 @@ export function AccountPill() {
     return (
       <>
         <Link to="/i/flow/login" className="pill clickable" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <span className="pill-label">Not logged in</span>
+          <span className="pill-label">Not logged in - log in here</span>
         </Link>
         <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer"
           className="pill clickable" style={{ textDecoration: 'none', color: 'inherit', gap: '6px' }}>
-          <span className="pill-label">Sign up</span><ExternalIcon />
+          <span className="pill-label">Sign up on MyPayIndia.com</span><ExternalIcon />
         </a>
         <a href="https://mypayindia.com/" target="_blank" rel="noopener noreferrer"
           className="pill clickable" style={{ textDecoration: 'none', color: 'inherit', gap: '6px' }}>
-          <span className="pill-label">MyPayIndia.com</span><ExternalIcon />
+          <span className="pill-label">Go to MyPayIndia.com</span><ExternalIcon />
         </a>
       </>
     );
