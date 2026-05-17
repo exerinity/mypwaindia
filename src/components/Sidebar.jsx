@@ -1,0 +1,139 @@
+import { NavLink, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
+import { useSettings } from '../context/SettingsContext.jsx';
+import { Logo } from './Logo.jsx';
+import {
+  CloseIcon,
+  CreditCardIcon,
+  DashboardIcon,
+  UserIcon,
+  TransferIcon,
+  HistoryIcon,
+  LinkIcon,
+  ClaimIcon,
+  TrophyIcon,
+  TeamIcon,
+  NotesIcon,
+  SettingsIcon,
+  ExternalIcon,
+  TerminalIcon,
+} from './Icons.jsx';
+
+const NAV_GROUPS = [
+  {
+    title: 'Your account',
+    items: [
+      { to: '/dash', label: 'Dashboard', end: true, icon: DashboardIcon },
+      { to: '/dash/account', label: 'Account', icon: UserIcon },
+      { to: '/dash/account/transfer', label: 'Transfer funds', icon: TransferIcon },
+      { to: '/dash/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true },
+      { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true },
+      { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true },
+      { href: 'https://mypayindia.com/accountservices/iotm/', label: 'Investment Opportunities™', icon: TrophyIcon, external: true, hideInScambait: true },
+    ],
+  },
+  {
+    title: 'Payment links',
+    hideInScambait: true,
+    items: [
+      { to: '/dash/links', label: 'My links', icon: LinkIcon },
+      { to: '/dash/links/claim', label: 'Claim a link', icon: ClaimIcon },
+    ],
+  },
+  {
+    title: 'Meta',
+    hideInScambait: true,
+    items: [
+      { to: '/i/leaderboard', label: 'Leaderboard', icon: TrophyIcon },
+      { to: '/i/team', label: 'Meet the team', icon: TeamIcon },
+      { to: '/i/release_notes', label: 'App release notes', icon: NotesIcon },
+      { href: 'https://mypayindia.com/', label: 'MyPayIndia.com', icon: LinkIcon, external: true },
+    ],
+  },
+  {
+    title: 'App management',
+    items: [
+      { to: '/settings', label: 'Settings', icon: SettingsIcon },
+      { to: '/i/flow/mci', label: 'MyCLiIndia', icon: TerminalIcon, hideInScambait: true },
+    ],
+    scambaitTitle: 'Control',
+    defaultTitle: 'MyPWAIndia',
+  },
+];
+
+export function Sidebar({ open, onClose }) {
+  const location = useLocation();
+  const { settings } = useSettings();
+  const scambait = settings.scambait;
+
+  return (
+    <>
+      <div
+        className={`sidebar-overlay ${open ? 'open' : ''}`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <aside className={`sidebar ${open ? 'open' : ''}`} aria-label="Main navigation">
+        <div className="sidebar-mobile-header">
+          <Logo height={32} className="sidebar-logo" />
+          <button className="sidebar-close-btn" onClick={onClose} aria-label="Close menu">
+            <CloseIcon />
+          </button>
+        </div>
+        {NAV_GROUPS.map((group) => {
+          if (scambait && group.hideInScambait) return null;
+
+          const visibleItems = group.items.filter((item) => {
+            if (scambait && item.hideInScambait) return false;
+            if (!scambait && item.scambaitOnly) return false;
+            return true;
+          });
+
+          if (!visibleItems.length) return null;
+
+          return (
+            <div key={group.title}>
+              <h4>{scambait && group.scambaitTitle ? group.scambaitTitle : (group.defaultTitle ?? group.title)}</h4>
+              <div className="links">
+                {visibleItems.map((item) => {
+                  const Icon = item.icon;
+                  if (item.external) {
+                    return (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={onClose}
+                      >
+                        {Icon && <Icon />}
+                        <span>{item.label}</span>
+                        <ExternalIcon />
+                      </a>
+                    );
+                  }
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      end={item.end}
+                      onClick={onClose}
+                      className={({ isActive }) => {
+                        if (!isActive) return '';
+                        return location.pathname === item.to ? 'active' : 'active active-parent';
+                      }}
+                    >
+                      {Icon && <Icon />}
+                      <span>{item.label}</span>
+                    </NavLink>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+
+      </aside>
+    </>
+  );
+}

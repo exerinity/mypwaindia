@@ -1,0 +1,50 @@
+/* =====================================================================
+   EMPTY / LOADING
+   ===================================================================== */
+.empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--muted);
+}
+
+.spinner {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--brand);
+  border-right-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+
+.spinner.lg {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px 24px;
+  color: var(--muted);
+}
+
+.loading-row span:last-child {
+  animation: blink-fade 1.4s ease-in-out infinite;
+}
+
+@keyframes blink-fade {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}

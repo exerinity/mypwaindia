@@ -1,0 +1,89 @@
+/* =====================================================================
+   BUTTONS
+   ===================================================================== */
+button,
+.btn {
+  background: var(--brand);
+  color: var(--brand-text);
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background 0.2s ease, transform 0.05s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+button:hover,
+.btn:hover {
+  background: var(--brand-dark);
+  text-decoration: none;
+}
+
+button:active,
+.btn:active {
+  transform: translateY(1px);
+}
+
+button:disabled,
+.btn:disabled {
+  background: var(--muted) !important;
+  color: var(--bg) !important;
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+button.secondary,
+.btn.secondary {
+  background: var(--pill-bg);
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+
+button.secondary:hover,
+.btn.secondary:hover {
+  background: var(--bg-elev);
+}
+
+button.danger,
+.btn.danger {
+  background: var(--alert-error);
+  color: white;
+}
+
+button.danger:hover,
+.btn.danger:hover {
+  background: color-mix(in srgb, var(--alert-error) 80%, black);
+}
+
+button.compact,
+.btn.compact {
+  font-size: 0.8rem;
+  padding: 6px 10px;
+}
+
+button.ghost,
+.btn.ghost {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+
+button.ghost:hover,
+.btn.ghost:hover {
+  background: var(--bg-elev);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}

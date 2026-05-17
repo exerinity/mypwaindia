@@ -1,0 +1,94 @@
+/* =====================================================================
+   LEADERBOARD / TEAM
+   ===================================================================== */
+.lb-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.lb-row:last-child {
+  border-bottom: none;
+}
+
+.lb-rank {
+  font-weight: 700;
+  font-size: 1.1rem;
+  width: 32px;
+  color: var(--muted);
+}
+
+.lb-rank.top-1 {
+  color: gold;
+}
+
+.lb-rank.top-2 {
+  color: silver;
+}
+
+.lb-rank.top-3 {
+  color: #cd7f32;
+}
+
+.lb-username {
+  flex: 1;
+  padding: 0 12px;
+  font-weight: 500;
+}
+
+.lb-balance {
+  color: var(--brand);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.team-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 3px solid var(--brand);
+  object-fit: cover;
+  background: var(--bg-elev);
+}
+
+.team-name {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.team-role {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.team-socials {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.team-socials a {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--fg);
+}
+
+.team-socials a:hover {
+  background: var(--bg-elev);
+  text-decoration: none;
+}

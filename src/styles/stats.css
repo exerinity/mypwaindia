@@ -1,0 +1,35 @@
+/* =====================================================================
+   STATS / DASHBOARD
+   ===================================================================== */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.balance-display {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;
+  margin: 4px 0;
+}

@@ -1,0 +1,70 @@
+/* =====================================================================
+   PAYMENT LINKS
+   ===================================================================== */
+.preset-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.preset-stack-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preset-stack-display {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;
+}
+
+.link-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.link-card .link-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.link-card .link-token {
+  font-family: ui-monospace, 'JetBrains Mono', Menlo, monospace;
+  font-size: 0.78rem;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.link-status {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.link-status.active {
+  background: rgba(59, 212, 63, 0.15);
+  color: var(--success);
+}
+
+.link-status.claimed {
+  background: rgba(47, 143, 252, 0.15);
+  color: var(--alert-info);
+}
+
+.link-status.cancelled {
+  background: rgba(230, 50, 50, 0.15);
+  color: var(--alert-error);
+}
+
+.link-status.expired {
+  background: rgba(170, 170, 170, 0.15);
+  color: var(--muted);
+}

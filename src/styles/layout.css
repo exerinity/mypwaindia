@@ -1,0 +1,136 @@
+/* =====================================================================
+   LAYOUT
+   ===================================================================== */
+.app-body {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+.sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 92px;
+  align-self: start;
+  height: calc(100vh - 92px);
+  overflow-y: auto;
+  user-select: none;
+}
+
+.sidebar h4 {
+  margin: 0 0 8px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.sidebar .links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar .links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--fg);
+  font-size: 0.9rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.sidebar .links a svg {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.sidebar .links a:hover {
+  background: var(--bg-elev);
+  text-decoration: none;
+}
+
+.sidebar .links a:hover svg {
+  opacity: 1;
+}
+
+.sidebar .links a.active {
+  background: var(--brand);
+  color: var(--brand-text);
+  font-weight: 500;
+}
+
+.sidebar .links a.active svg {
+  opacity: 1;
+}
+
+.sidebar .links a.active:hover {
+  background: var(--brand-dark);
+}
+
+.sidebar .links a.active.active-parent {
+  background: var(--brand-dark);
+  opacity: 0.75;
+}
+
+.sidebar .links a.active.active-parent:hover {
+  opacity: 1;
+}
+
+.sidebar-mobile-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-logo {
+  display: block;
+}
+
+.sidebar-close-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  font-size: 1.5rem;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 90;
+}
+
+.sidebar-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebar-logout {
+  margin-top: auto;
+}
+
+.app-main {
+  padding: 28px 32px 28px 16px;
+  min-width: 0;
+}
+
+.content-wrap {
+  max-width: 1200px;
+  margin: 0 auto 0 0;
+}

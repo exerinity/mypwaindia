@@ -1,0 +1,39 @@
+/* =====================================================================
+   TOASTS
+   ===================================================================== */
+.toast-container {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+  box-shadow: var(--shadow);
+  background: var(--card);
+}
+
+.toast-x {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 1.2rem;
+  padding: 0 4px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.toast-x:hover {
+  background: transparent;
+  color: var(--fg);
+}

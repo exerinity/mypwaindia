@@ -1,0 +1,168 @@
+/* =====================================================================
+   APP SHELL
+   ===================================================================== */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.app-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+}
+
+.app-header-logo {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.app-header-spacer {
+  flex: 1;
+}
+
+.hamburger-btn {
+  display: none;
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger-btn:hover {
+  background: var(--bg-elev);
+}
+
+.hamburger-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pill-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 10px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.pill.clickable {
+  cursor: pointer;
+}
+
+.pill.clickable:hover {
+  background: var(--bg-elev);
+}
+
+.pill-label {
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pill-balance .pill-value {
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.acct-dropdown {
+  position: relative;
+}
+
+.acct-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 240px;
+  max-width: calc(100vw - 32px);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 80;
+  overflow: hidden;
+}
+
+.acct-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  width: 100%;
+  background: transparent;
+  color: var(--fg);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.acct-item:last-child {
+  border-bottom: none;
+}
+
+.acct-item:hover {
+  background: var(--bg-elev);
+}
+
+.acct-item.active {
+  background: var(--bg-elev);
+}
+
+.acct-item.active::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--brand);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.acct-item .acct-username {
+  flex: 1;
+}
+
+.acct-item .acct-remove {
+  font-size: 1.1rem;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  padding: 0 4px;
+  cursor: pointer;
+}
+
+.acct-item .acct-remove:hover {
+  color: var(--alert-error);
+  background: transparent;
+}

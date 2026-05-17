@@ -1,0 +1,39 @@
+/* =====================================================================
+   LOGIN / AUTH
+   ===================================================================== */
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.auth-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow);
+}
+
+.auth-card .auth-logo {
+  display: block;
+  margin: 0 auto 16px;
+  height: 50px;
+}
+
+.auth-card h2 {
+  text-align: center;
+  margin: 0 0 4px;
+}
+
+.auth-card .auth-sub {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}

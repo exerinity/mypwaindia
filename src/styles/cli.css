@@ -1,0 +1,165 @@
+/* =====================================================================
+   mycliindia
+   ===================================================================== */
+
+.cli-wrap {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 178px);
+  min-height: 320px;
+  background: #0e0e0e;
+  border: 1px solid #242424;
+  border-radius: var(--radius);
+  font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+  font-size: 0.855rem;
+  line-height: 1.6;
+  cursor: text;
+  overflow: hidden;
+}
+
+.cli-output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 8px;
+}
+
+.cli-output::-webkit-scrollbar {
+  width: 5px;
+}
+
+.cli-output::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cli-output::-webkit-scrollbar-thumb {
+  background: #2c2c2c;
+  border-radius: 3px;
+}
+
+.cli-line {
+  white-space: pre-wrap;
+  word-break: break-all;
+  min-height: 1.2em;
+}
+
+.cli-line-cmd {
+  color: #6a6a6a;
+  padding-top: 10px;
+  margin-bottom: 1px;
+}
+
+.cli-line-out {
+  color: #c8c8c8;
+}
+
+.cli-line-ok {
+  color: #4db877;
+}
+
+.cli-line-err {
+  color: #e07272;
+}
+
+.cli-line-warn {
+  color: #e8b84b;
+}
+
+.cli-line-info {
+  color: #5aace8;
+}
+
+.cli-line-sep {
+  display: block;
+  height: 6px;
+}
+
+.cli-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px 12px;
+  border-top: 1px solid #1e1e1e;
+  background: #080808;
+  flex-shrink: 0;
+}
+
+.cli-prompt {
+  color: #ffffff;
+  font-weight: 600;
+  white-space: nowrap;
+  font-family: inherit;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.cli-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: inherit;
+  caret-color: #ffffff;
+  padding: 0;
+  min-width: 0;
+}
+
+.cli-input::placeholder {
+  color: #3a3a3a;
+}
+
+.cli-input:disabled {
+  opacity: 0.5;
+}
+
+.cli-send-btn {
+  background: #0f2017;
+  border: 1px solid #2e6640;
+  border-radius: 4px;
+  color: #4db877;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  padding: 0 12px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s, color 0.12s;
+}
+
+.cli-send-btn:hover:not(:disabled) {
+  background: #183525;
+  border-color: #4db877;
+  color: #6dcc90;
+  box-shadow: 0 0 8px #4db87740;
+}
+
+.cli-send-btn:active:not(:disabled) {
+  background: #1f4530;
+  box-shadow: 0 0 4px #4db87760;
+}
+
+.cli-send-btn:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.cli-busy-dot {
+  width: 7px;
+  height: 7px;
+  background: #4db877;
+  border-radius: 50%;
+  animation: cli-pulse 0.9s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes cli-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}

@@ -1,0 +1,52 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
+import { LogoutIcon } from '../components/Icons.jsx';
+import { usePageTitle } from '../hooks/usePageTitle.js';
+
+export default function LogoutPage() {
+  usePageTitle('Log out');
+  const { logout, active } = useAuth();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleLogout() {
+    setIsSubmitting(true);
+    try {
+      await logout();
+      toast.info('Logged out.');
+      navigate('/i/flow/login', { replace: true });
+    } catch (error) {
+      toast.error(error?.message || 'Could not log out. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+      <div className="card" style={{ maxWidth: 400, width: '100%' }}>
+        <h2 className="mt-0">Log out</h2>
+        <p className="muted">
+          Log out of <strong>{active?.username || 'this account'}</strong> on this device?
+        </p>
+        <div className="btn-row">
+          <button
+            className="danger"
+            onClick={handleLogout}
+            disabled={isSubmitting}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+          >
+            <LogoutIcon />
+            {isSubmitting ? 'Logging out...' : 'Log out'}
+          </button>
+          <button className="secondary" onClick={() => navigate(-1)} disabled={isSubmitting}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

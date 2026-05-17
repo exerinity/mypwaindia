@@ -1,0 +1,108 @@
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
+import { getLink, claimLink } from '../api/links.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
+import { getUserInfo } from '../api/user.js';
+import { formatINR } from '../utils/money.js';
+import { formatDate } from '../utils/dates.js';
+import { describeError } from '../utils/errors.js';
+
+export default function ClaimLinkPage() {
+  usePageTitle('Claim a link');
+  const { active, updateBalance } = useAuth();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [searchParams] = useSearchParams();
+  const [token, setToken] = useState(searchParams.get('token') || '');
+  const [preview, setPreview] = useState(null);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [previewError, setPreviewError] = useState(null);
+  const [claiming, setClaiming] = useState(false);
+
+  async function inspect(t) {
+    const trimmed = (t || token).trim();
+    if (!trimmed) return;
+    setLoadingPreview(true);
+    setPreview(null);
+    setPreviewError(null);
+    try {
+      const info = await getLink(trimmed);
+      setPreview(info);
+    } catch (e) {
+      setPreviewError(e);
+    } finally {
+      setLoadingPreview(false);
+    }
+  }
+
+  useEffect(() => {
+    if (token) inspect(token);
+  }, []);
+
+  function handleTokenChange(value) {
+    let t = value.trim();
+    try {
+      const url = new URL(t);
+      const fromUrl = url.searchParams.get('token');
+      if (fromUrl) t = fromUrl;
+    } catch { /* n */ }
+    setToken(t);
+  }
+
+  async function handleClaim() {
+    if (!token.trim()) return;
+    setClaiming(true);
+    try {
+      const res = await claimLink(active, token.trim());
+      toast.success('Link claimed!');
+      try {
+        const info = await getUserInfo(active);
+        updateBalance(active.id, info.balance);
+      } catch { /* n */ }
+      navigate(`/i/transaction/${res.transaction_id}`);
+    } catch (e) {
+      toast.error(describeError(e));
+    } finally {
+      setClaiming(false);
+    }
+  }
+
+  return (
+    <>
+      <h1 className="mt-0">Claim a payment link</h1>
+      <div className="card" style={{ maxWidth: 560 }}>
+        <label>Payment link or token</label>
+        <input
+          type="text"
+          value={token}
+          onChange={(e) => handleTokenChange(e.target.value)}
+          disabled={claiming}
+        />
+        <div className="row">
+          <button className="secondary" onClick={() => inspect()} disabled={!token.trim() || loadingPreview}>
+            {loadingPreview ? 'Looking...' : 'Inspect'}
+          </button>
+        </div>
+
+        {previewError && (
+          <div className="alert alert-error">{describeError(previewError)}</div>
+        )}
+
+        {preview && (
+          <div className="card mt-2" style={{ background: 'var(--bg-elev)' }}>
+            <p className="muted mt-0" style={{ fontSize: '0.8rem' }}>From</p>
+            <h3 className="mt-0">@{preview.creator?.username}</h3>
+            <div className="balance-display">{formatINR(preview.amount)}</div>
+            {preview.note && <p className="muted">"{preview.note}"</p>}
+            <p className="muted" style={{ fontSize: '0.8rem' }}>Created {formatDate(preview.created)}</p>
+            <button onClick={handleClaim} disabled={claiming}>
+              {claiming ? <><span className="spinner" /> Claiming...</> : 'Claim funds'}
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
