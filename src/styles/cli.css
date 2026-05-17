@@ -192,3 +192,12 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.2; }
 }
+
+.cli-wrap--fullscreen {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  border-radius: 0;
+  border: none;
+  z-index: 9999;
+}

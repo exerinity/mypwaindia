@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.tsx';
 import type { Account } from '../context/AuthContext.tsx';
 import { usePageTitle } from '../hooks/usePageTitle.js';
@@ -73,6 +73,7 @@ const COMMANDS = [
   'help',
   'sudo',
   'accounts', 'account', 'acc',
+  'fs', 'fullscreen',
 ];
 
 const PAGE_MAP = {
@@ -107,14 +108,16 @@ const HELP = [
   '  invalidate <session_id>          terminate a session',
   '  restrictions                     show account restrictions',
   '  verify-email                     send email verification',
-  '  go <page>                        navigate to a page',
+  '  go <page> [--nocheck]            navigate to a page',
   `    pages: ${Object.keys(PAGE_MAP).join(', ')}`,
+  '    --nocheck: bypass route map and navigate directly to any raw path',
   '  accounts / acc list              list saved accounts and their bay IDs',
   '  accounts / acc switch <bay>      switch to account in that bay',
   '  accounts / acc remove <bay>      remove account from that bay  [sudo]',
   '  accounts / acc add <username>    add an account (prompts for password)  [sudo]',
   '  accounts / acc move <from> <to>  move account from one bay to another',
   '  sudo <command>                   run a command with elevated privileges',
+  '  fs / fullscreen                  toggle fullscreen mode',
   '  clear / cls                      clear the terminal',
   '  logout                           sign out',
   '  help                             show this help',
@@ -133,6 +136,8 @@ export default function CLIPage() {
   usePageTitle('MyCLiIndia');
   const { active, accounts, activeId, login, removeAccount, switchAccount } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const fullscreen = location.pathname === '/i/flow/mci/focus';
 
   const username = active?.username ?? 'guest';
 
@@ -280,6 +285,17 @@ export default function CLIPage() {
     const c = cmd.toLowerCase();
 
     switch (c) {
+
+      case 'fs':
+      case 'fullscreen':
+        if (fullscreen) {
+          push(L.info('not fullscreen'));
+          navigate('/i/flow/mci');
+        } else {
+          push(L.info('now fullscreen'));
+          navigate('/i/flow/mci/focus');
+        }
+        return;
 
       case 'clear':
       case 'cls':
@@ -573,9 +589,16 @@ export default function CLIPage() {
       case 'nav':
       case 'goto':
       case 'cd': {
-        const [page] = args;
+        const nocheck = args.includes('--nocheck');
+        const pageArgs = args.filter(a => a !== '--nocheck');
+        const [page] = pageArgs;
         if (!page) {
           push(L.out(`pages: ${Object.keys(PAGE_MAP).join(', ')}`)); return;
+        }
+        if (nocheck) {
+          push(L.info(`> ${page}`));
+          navigate(page);
+          return;
         }
         const path = PAGE_MAP[page.toLowerCase() as keyof typeof PAGE_MAP];
         if (!path) {
@@ -800,13 +823,18 @@ export default function CLIPage() {
       e.preventDefault();
       setLines([]);
       storageRemove(CLI_LINES_KEY);
+    } else if (e.key === 'Escape' && fullscreen) {
+      navigate('/i/flow/mci');
     }
   }
 
   return (
-    <div className="cli-wrap" onClick={handleWrapClick}>
+    <div className={`cli-wrap${fullscreen ? ' cli-wrap--fullscreen' : ''}`} onClick={handleWrapClick}>
       <div className="cli-topbar">
         <button className="cli-clear-btn" onClick={handleClearAll} title="Clear terminal history">CLEAR</button>
+        <button className="cli-clear-btn" onClick={() => navigate(fullscreen ? '/i/flow/mci' : '/i/flow/mci/focus')} title={fullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}>
+          {fullscreen ? 'EXIT FS' : 'FS'}
+        </button>
       </div>
       <div className="cli-output" ref={outputRef}>
         {lines.map(l =>

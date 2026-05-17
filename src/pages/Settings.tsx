@@ -40,7 +40,7 @@ export default function SettingsPage() {
       return;
     }
     if (!active) {
-      toast.warning('You must be logged in to enable scambait mode.');
+      toast.warning('Log in to enable scambait mode');
       return;
     }
     const next = scambaitKnocks + 1;

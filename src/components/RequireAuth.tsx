@@ -13,7 +13,7 @@ export function RequireAuth() {
   useEffect(() => {
     if (!active && !warned.current) {
       warned.current = true;
-      toast.warning('You are not logged in and are not permitted to perform this action.');
+      toast.warning('You need to be logged in to access this page');
       navigate('/i/flow/login', { replace: true, state: { from: location } });
     }
   }, [active]);

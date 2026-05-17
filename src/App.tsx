@@ -41,6 +41,7 @@ export default function App() {
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
 
         <Route path="/i/flow/mci" element={<CLIPage />} />
+        <Route path="/i/flow/mci/focus" element={<CLIPage />} />
 
         {/* login */}
         <Route element={<RequireAuth />}>

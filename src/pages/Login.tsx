@@ -144,13 +144,11 @@ export default function LoginPage() {
           </a>
         </form>
 
-        {accounts.length > 0 && (
-          <div className="mt-2 center">
-            <Link to="/dash" className="muted" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <ArrowLeftIcon /> Nope, I'm fine with what I have for now
-            </Link>
-          </div>
-        )}
+        <div className="mt-2 center">
+          <Link to="/dash" className="muted" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <ArrowLeftIcon /> Nevermind, go back
+          </Link>
+        </div>
       </div>
     </div>
   );

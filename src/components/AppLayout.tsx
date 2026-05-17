@@ -26,7 +26,7 @@ export function AppLayout() {
           update({ scambait: false });
           toast.info('Scambait mode off');
         } else if (!active) {
-          toast.warning('You must be logged in to enable scambait mode.');
+          toast.warning('Log in to enable scambait mode');
         } else {
           setScambaitConfirmOpen(true);
         }
