@@ -16,6 +16,8 @@ export const RELEASES: Release[] = [
     date: '12 May 2026',
     notes: [
       <>Introducing <Link to="/i/flow/mci">MyCLiIndia</Link>!</>,
+      'Added a splash screen',
+      <>Added <Link to="/i/flow/onboarding">an onboarding flow</Link> and an <Link to="/i/acknowledgements">acknowledgements page</Link></>
     ]
   },
   {
