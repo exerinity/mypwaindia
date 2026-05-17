@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useApiCall } from '../hooks/useApiCall.js';
-import { usePageTitle } from '../hooks/usePageTitle.js';
+import { useApiCall } from '../hooks/api_call.js';
+import { usePageTitle } from '../hooks/page_title.js';
 import { getTeam } from '../api/info.js';
 import { formatDateShort, calcAge } from '../utils/dates.js';
-import { LoadingRow, ErrorBox, Empty } from '../components/Status.tsx';
-import { ExternalIcon } from '../components/Icons.tsx';
+import { LoadingRow, ErrorBox, Empty } from '../components/status.tsx';
+import { ExternalIcon } from '../components/icons.tsx';
 
 interface Age { years: number; months: number; weeks: number; days: number }
 interface TeamMember { name: string; role: string; avatar: string; joined: string; socials?: Record<string, string> }

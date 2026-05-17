@@ -1,14 +1,14 @@
 import React, { useState, useRef } from 'react';
 import type { Env } from '../api/client.js';
 import { useLocation, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.tsx';
-import { useSettings } from '../context/SettingsContext.tsx';
-import { useToast } from '../context/ToastContext.tsx';
+import { useAuth } from '../context/auth_ctx.tsx';
+import { useSettings } from '../context/settings_ctx.tsx';
+import { useToast } from '../context/toast_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 import { storageGet, KEYS } from '../utils/storage.ts';
-import { Logo } from '../components/Logo.tsx';
-import { ArrowLeftIcon, ExternalIcon } from '../components/Icons.tsx';
-import { usePageTitle } from '../hooks/usePageTitle.js';
+import { Logo } from '../components/logo.tsx';
+import { ArrowLeftIcon, ExternalIcon } from '../components/icons.tsx';
+import { usePageTitle } from '../hooks/page_title.js';
 
 export default function LoginPage() {
   usePageTitle('Log in to MyPayIndia');

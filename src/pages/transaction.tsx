@@ -1,12 +1,12 @@
 import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.tsx';
-import { useApiCall } from '../hooks/useApiCall.js';
-import { usePageTitle } from '../hooks/usePageTitle.js';
+import { useAuth } from '../context/auth_ctx.tsx';
+import { useApiCall } from '../hooks/api_call.js';
+import { usePageTitle } from '../hooks/page_title.js';
 import { getTransaction } from '../api/transactions.js';
-import { useCurrency } from '../context/SettingsContext.tsx';
+import { useCurrency } from '../context/settings_ctx.tsx';
 import { formatDate } from '../utils/dates.js';
-import { LoadingRow, ErrorBox } from '../components/Status.tsx';
-import { ArrowLeftIcon } from '../components/Icons.tsx';
+import { LoadingRow, ErrorBox } from '../components/status.tsx';
+import { ArrowLeftIcon } from '../components/icons.tsx';
 
 
 export default function TransactionPage() {

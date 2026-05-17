@@ -1,10 +1,10 @@
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.tsx';
+import { useAuth } from '../context/auth_ctx.tsx';
 import { storageSet, KEYS } from '../utils/storage.ts';
-import { usePageTitle } from '../hooks/usePageTitle.js';
-import { RELEASES } from './ReleaseNotes.tsx';
-import { useToast } from '../context/ToastContext.tsx';
-import { ExternalIcon } from '../components/Icons.tsx';
+import { usePageTitle } from '../hooks/page_title.js';
+import { RELEASES } from './release_notes.tsx';
+import { useToast } from '../context/toast_ctx.tsx';
+import { ExternalIcon } from '../components/icons.tsx';
 
 export default function OnboardingPage() {
   usePageTitle('Welcome to the MyPayIndia PWA');

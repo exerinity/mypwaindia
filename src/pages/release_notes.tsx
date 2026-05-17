@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { usePageTitle } from '../hooks/usePageTitle.js';
+import { usePageTitle } from '../hooks/page_title.js';
 
 type Release = {
   version: string;

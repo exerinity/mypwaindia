@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.tsx';
-import type { Account } from '../context/AuthContext.tsx';
-import { usePageTitle } from '../hooks/usePageTitle.js';
+import { useAuth } from '../context/auth_ctx.tsx';
+import type { Account } from '../context/auth_ctx.tsx';
+import { usePageTitle } from '../hooks/page_title.js';
 import { transfer, listTransactions, getTransaction } from '../api/transactions.js';
 import { createLink, listLinks, cancelLink, claimLink, getLink } from '../api/links.js';
 import { getUserInfo, getRestrictions, listSessions, invalidateSession, verifyEmail } from '../api/user.js';
@@ -11,7 +11,7 @@ import { rupeesToPaisa, formatINR } from '../utils/money.js';
 import { formatDate, formatRelative } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
 import { storageGet, storageSet, storageRemove, KEYS } from '../utils/storage.ts';
-import { useSettings } from '../context/SettingsContext.tsx';
+import { useSettings } from '../context/settings_ctx.tsx';
 import '../styles/cli.css';
 
 type LineType = 'cmd' | 'out' | 'ok' | 'err' | 'warn' | 'info' | 'sep';

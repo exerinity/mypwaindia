@@ -1,9 +1,9 @@
-import { useApiCall } from '../hooks/useApiCall.js';
-import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useSettings } from '../context/SettingsContext.tsx';
+import { useApiCall } from '../hooks/api_call.js';
+import { usePageTitle } from '../hooks/page_title.js';
+import { useSettings } from '../context/settings_ctx.tsx';
 import { getLeaderboard } from '../api/info.js';
 import { formatINR } from '../utils/money.js';
-import { LoadingRow, ErrorBox, Empty } from '../components/Status.tsx';
+import { LoadingRow, ErrorBox, Empty } from '../components/status.tsx';
 
 export default function LeaderboardPage() {
   usePageTitle('Leaderboard');

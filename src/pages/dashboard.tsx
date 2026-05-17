@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.tsx';
-import { useApiCall } from '../hooks/useApiCall.js';
-import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useSettings, useCurrency } from '../context/SettingsContext.tsx';
+import { useAuth } from '../context/auth_ctx.tsx';
+import { useApiCall } from '../hooks/api_call.js';
+import { usePageTitle } from '../hooks/page_title.js';
+import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
 import { getUserInfo, getRestrictions } from '../api/user.js';
 import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
 import { getDisplayName } from '../utils/display.js';
-import { LoadingRow, ErrorBox } from '../components/Status.tsx';
-import { TransactionTable } from '../components/TransactionTable.tsx';
+import { LoadingRow, ErrorBox } from '../components/status.tsx';
+import { TransactionTable } from '../components/tx_table.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
-import { generateStatements } from '../utils/fakeStatements.js';
+import { generateStatements } from '../utils/fake_statements.js';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
@@ -24,7 +24,7 @@ export default function DashboardPage() {
   const refresh = settings.autoRefresh;
 
   type UserInfo = { balance: number; first_name: string; last_name: string };
-  type TxList = { transactions: import('../components/TransactionTable.tsx').Transaction[] };
+  type TxList = { transactions: import('../components/tx_table.tsx').Transaction[] };
   type LinkList = { links: { id: number; status: string }[] };
   type Restrictions = { restrictions: Record<string, { active: boolean }> };
 

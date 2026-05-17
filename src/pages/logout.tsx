@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.tsx';
-import { useToast } from '../context/ToastContext.tsx';
-import { LogoutIcon } from '../components/Icons.tsx';
-import { usePageTitle } from '../hooks/usePageTitle.js';
+import { useAuth } from '../context/auth_ctx.tsx';
+import { useToast } from '../context/toast_ctx.tsx';
+import { LogoutIcon } from '../components/icons.tsx';
+import { usePageTitle } from '../hooks/page_title.js';
 
 export default function LogoutPage() {
   usePageTitle('Log out');

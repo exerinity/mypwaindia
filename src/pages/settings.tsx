@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import type { Account } from '../context/AuthContext.tsx';
-import type { Settings } from '../context/SettingsContext.tsx';
+import type { Account } from '../context/auth_ctx.tsx';
+import type { Settings } from '../context/settings_ctx.tsx';
 import { useNavigate, Link } from 'react-router-dom';
-import { RELEASES } from './ReleaseNotes.tsx';
-import { useSettings } from '../context/SettingsContext.tsx';
-import { useAuth } from '../context/AuthContext.tsx';
-import { useToast } from '../context/ToastContext.tsx';
+import { RELEASES } from './release_notes.tsx';
+import { useSettings } from '../context/settings_ctx.tsx';
+import { useAuth } from '../context/auth_ctx.tsx';
+import { useToast } from '../context/toast_ctx.tsx';
 import { normalizeHex } from '../utils/colors.js';
-import { ConfirmModal } from '../components/ConfirmModal.tsx';
-import { Modal } from '../components/Modal.tsx';
-import { ExternalIcon, LogoutIcon } from '../components/Icons.tsx';
-import { usePageTitle } from '../hooks/usePageTitle.js';
+import { ConfirmModal } from '../components/confirm_modal.tsx';
+import { Modal } from '../components/modal.tsx';
+import { ExternalIcon, LogoutIcon } from '../components/icons.tsx';
+import { usePageTitle } from '../hooks/page_title.js';
 
 const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
   { value: 'light', label: 'Light' },

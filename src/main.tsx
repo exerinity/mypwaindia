@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App.tsx';
-import { AuthProvider } from './context/AuthContext.tsx';
-import { SettingsProvider } from './context/SettingsContext.tsx';
-import { ToastProvider } from './context/ToastContext.tsx';
+import App from './app.tsx';
+import { AuthProvider } from './context/auth_ctx.tsx';
+import { SettingsProvider } from './context/settings_ctx.tsx';
+import { ToastProvider } from './context/toast_ctx.tsx';
 import './styles/index.css';
 
 function Root() {

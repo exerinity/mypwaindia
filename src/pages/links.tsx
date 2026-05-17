@@ -1,16 +1,16 @@
 import { useState, useMemo } from 'react';
-import { useAuth } from '../context/AuthContext.tsx';
-import { useToast } from '../context/ToastContext.tsx';
-import { useApiCall } from '../hooks/useApiCall.js';
-import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useSettings } from '../context/SettingsContext.tsx';
+import { useAuth } from '../context/auth_ctx.tsx';
+import { useToast } from '../context/toast_ctx.tsx';
+import { useApiCall } from '../hooks/api_call.js';
+import { usePageTitle } from '../hooks/page_title.js';
+import { useSettings } from '../context/settings_ctx.tsx';
 import { listLinks, createLink, cancelLink } from '../api/links.js';
 import { getUserInfo } from '../api/user.js';
 import { formatINR, rupeesToPaisa } from '../utils/money.js';
 import { formatDate } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
-import { LoadingRow, ErrorBox, Empty } from '../components/Status.tsx';
-import { ConfirmModal } from '../components/ConfirmModal.tsx';
+import { LoadingRow, ErrorBox, Empty } from '../components/status.tsx';
+import { ConfirmModal } from '../components/confirm_modal.tsx';
 const PRESETS_PAISA = [
   100,    // ₹1
   500,    // ₹5

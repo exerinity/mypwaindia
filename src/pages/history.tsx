@@ -1,16 +1,16 @@
-import { useAuth } from '../context/AuthContext.tsx';
-import { useApiCall } from '../hooks/useApiCall.js';
-import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useSettings } from '../context/SettingsContext.tsx';
+import { useAuth } from '../context/auth_ctx.tsx';
+import { useApiCall } from '../hooks/api_call.js';
+import { usePageTitle } from '../hooks/page_title.js';
+import { useSettings } from '../context/settings_ctx.tsx';
 import { listTransactions } from '../api/transactions.js';
-import { TransactionTable } from '../components/TransactionTable.tsx';
-import { LoadingRow, ErrorBox } from '../components/Status.tsx';
+import { TransactionTable } from '../components/tx_table.tsx';
+import { LoadingRow, ErrorBox } from '../components/status.tsx';
 
 export default function HistoryPage() {
   usePageTitle('Transaction history');
   const { active } = useAuth();
   const { settings } = useSettings();
-  type TxList = { transactions: import('../components/TransactionTable.tsx').Transaction[] };
+  type TxList = { transactions: import('../components/tx_table.tsx').Transaction[] };
   const { data, loading, error } = useApiCall<TxList>(
     () => listTransactions(active!) as Promise<TxList>,
     [active?.token],

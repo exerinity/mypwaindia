@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useCurrency, useSettings } from '../context/SettingsContext.tsx';
-import { useAuth } from '../context/AuthContext.tsx';
-import { Modal } from '../components/Modal.tsx';
-import { generateStatements } from '../utils/fakeStatements.js';
+import { usePageTitle } from '../hooks/page_title.js';
+import { useCurrency, useSettings } from '../context/settings_ctx.tsx';
+import { useAuth } from '../context/auth_ctx.tsx';
+import { Modal } from '../components/modal.tsx';
+import { generateStatements } from '../utils/fake_statements.js';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 

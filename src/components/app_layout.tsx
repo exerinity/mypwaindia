@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Header } from './Header.tsx';
-import { Sidebar } from './Sidebar.tsx';
-import { VerificationBanner } from './VerificationBanner.tsx';
-import { ConfirmModal } from './ConfirmModal.tsx';
-import { useGlobalAutoRefresh } from '../hooks/useGlobalAutoRefresh.js';
-import { useSettings } from '../context/SettingsContext.tsx';
-import { useToast } from '../context/ToastContext.tsx';
-import { useAuth } from '../context/AuthContext.tsx';
+import { Header } from './header.tsx';
+import { Sidebar } from './sidebar.tsx';
+import { VerificationBanner } from './verify_banner.tsx';
+import { ConfirmModal } from './confirm_modal.tsx';
+import { useGlobalAutoRefresh } from '../hooks/autorefresh.js';
+import { useSettings } from '../context/settings_ctx.tsx';
+import { useToast } from '../context/toast_ctx.tsx';
+import { useAuth } from '../context/auth_ctx.tsx';
 
 export function AppLayout() {
   const [open, setOpen] = useState(false);
@@ -20,17 +20,17 @@ export function AppLayout() {
   useGlobalAutoRefresh();
 
   const updateToastShown = useRef(false);
-  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW();
+  const { needRefresh: [needRefresh] } = useRegisterSW();
 
   useEffect(() => {
     if (needRefresh && !updateToastShown.current) {
       updateToastShown.current = true;
       toast.push('A new version is available, refresh to update', 'info', 0, {
         label: 'Refresh',
-        onClick: () => updateServiceWorker(true),
+        onClick: () => window.location.reload(),
       });
     }
-  }, [needRefresh, updateServiceWorker, toast]);
+  }, [needRefresh, toast]);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
