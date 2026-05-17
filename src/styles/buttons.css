@@ -23,6 +23,7 @@ button,
 button:hover,
 .btn:hover {
   background: var(--brand-dark);
+  color: var(--brand-text);
   text-decoration: none;
 }
 
