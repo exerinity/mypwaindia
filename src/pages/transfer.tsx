@@ -9,6 +9,7 @@ import { getUserInfo } from '../api/user.js';
 import { rupeesToPaisa } from '../utils/money.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { describeError } from '../utils/errors.js';
+import { HoldButton } from '../components/hold_btn.tsx';
 
 export default function TransferPage() {
   usePageTitle('Transfer funds');
@@ -34,9 +35,9 @@ export default function TransferPage() {
   const validAmount = Number.isInteger(paisa) && paisa > 0;
   const balance = userQ.data?.balance ?? null;
   const overBalance = balance !== null && paisa > balance;
+  const isHighValue = validAmount && paisa > 200000;
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function doTransfer() {
     if (!validAmount) {
       toast.error('Real numbers only!');
       return;
@@ -63,6 +64,11 @@ export default function TransferPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    doTransfer();
   }
 
   return (
@@ -106,9 +112,19 @@ export default function TransferPage() {
             maxLength={200}
           />
 
-          <button type="submit" disabled={busy || !validAmount || !recipient.trim()}>
-            {busy ? <><span className="spinner" /> Sending...</> : `Send ${validAmount ? format(paisa) : ''}`}
-          </button>
+          {isHighValue ? (
+            <HoldButton
+              onConfirm={doTransfer}
+              disabled={busy}
+              type="button"
+            >
+              {busy ? <><span className="spinner" /> Sending...</> : `Send ${format(paisa)} (hold)`}
+            </HoldButton>
+          ) : (
+            <button type="submit" disabled={busy || !validAmount || !recipient.trim()}>
+              {busy ? <><span className="spinner" /> Sending...</> : `Send ${validAmount ? format(paisa) : ''}`}
+            </button>
+          )}
         </form>
       </div>
     </>
