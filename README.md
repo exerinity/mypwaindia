@@ -1,0 +1,53 @@
+# MyPWAIndia
+The React MyPayIndia responsive web app is an alternative client for using [MyPayIndia](https://mypayindia.com). The previous, vanilla JS PWA can be found here: [source](https://github.com/MyPayIndiaDevs/pwa) - [run](https://legacy.app.mypayindia.com/)
+
+MyPayIndia is a project of about a dozen people or more; MyPWAIndia is entirely maintained by [me](https://exerinity.com).
+
+## Genesis: why?
+At the start of May, this remake was born. The original PWA was becoming quite difficult to maintain as the monolithic-ness of it was becoming quite large, and I feared that, by splitting the files up I would've certainly broke something. So, I created this. The second incarnation of MyPWAIndia, in React, began at the very end of April, but was spearheaded around May 5th to 7th.
+
+## About this repo
+This repo is not intended for self-hosting or contributing; it is meant to just show how the app works. Please do not create pull requests, they will not be merged.
+
+## The builder: why is it so aggressive?
+Corporations. This is meant to parody corporations. And corporations put as many walls up as possible with their web apps. 
+
+## "Scambait" mode
+This app features a "Scambait" mode, which transforms it back to a realistic looking app. You can find a proper explanation of it by pressing CTRL+Alt+B.
+
+## Route map
+The routes throughout this app are heavily inspired by the Twitter PWA, if not directly lifted from it:
+
+### Public
+- **/dash** - home
+- **/account** - account information and masthead
+- **/account/transfer** - transfer funds screen
+- **/account/history** - transaction history
+
+### Payment links
+- **/links** - links home, list & create & revoke
+- **/links/claim** - claim/inspect a link
+
+### Internal
+- **/i/leaderboard** - top 10 richest accounts
+- **/i/team** - list of team members
+- **/i/release_notes** - app release notes
+- **/i/acknowledgements** - thanks and acknowledgements
+- **/i/\*** - also where every script and file is
+
+### Internal flow
+- **/i/flow/login** - log in
+- **/i/flow/logout** - log out
+- **/i/flow/onboarding** - onboarding disclaimer screen
+- **/i/flow/transaction/TXN-XXXXXX** - transaction deeplink information viewer
+- **/i/flow/mci** - MyCLiIndia entry point
+
+### Scambait
+- **/dash/cards** - 3 fake randomly generated credit cards: everyday, savings & business, complete with CVV and numbers
+- **/dash/statements** - 1000 randomly generated fake statements with various American businesses and random people (in place of /account/history)
+
+### Control
+- **/settings** - app settings
+
+# License
+[MIT](LICENSE)
