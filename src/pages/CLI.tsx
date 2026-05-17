@@ -11,6 +11,7 @@ import { rupeesToPaisa, formatINR } from '../utils/money.js';
 import { formatDate, formatRelative } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
 import { storageGet, storageSet, storageRemove, KEYS } from '../utils/storage.ts';
+import { useSettings } from '../context/SettingsContext.tsx';
 import '../styles/cli.css';
 
 type LineType = 'cmd' | 'out' | 'ok' | 'err' | 'warn' | 'info' | 'sep';
@@ -92,10 +93,12 @@ const PAGE_MAP = {
 };
 
 const HELP = [
+  '  Commands without a description should be pretty self-explanatory from their name.',
+  ' ',
   '  balance / bal                    show your current balance',
   '  info / whoami                    show account info',
   '  transfer <amt> <user> [note]     send INR to a user',
-  '  link <amt> [note]                create a payment link',
+  '  link <amt> [note] [--nocopy]      create a payment link',
   '  links [active|past|all]          list your payment links',
   '  inspect <token>                  preview a payment link',
   '  claim <token>                    claim a payment link',
@@ -118,23 +121,24 @@ const HELP = [
   '  accounts / acc move <from> <to>  move account from one bay to another',
   '  sudo <command>                   run a command with elevated privileges',
   '  fs / fullscreen                  toggle fullscreen mode',
-  '  clear / cls                      clear the terminal',
-  '  logout                           sign out',
+  '  clear / cls                      self-explanatory',
+  '  logout                           self-explanatory',
   '  help                             show this help',
 ];
 
 const HELP_TIPS = [
-  '  [sudo] commands (acc add, acc remove, send >₹2000) require your password',
-  '  sudo access is cached for 15 minutes - prefix any command with sudo',
+  '  Some commands require sudo. sudo commands (acc add, acc remove, send over 2000 INR) require your password',
+  '  sudo access is cached for 15 minutes. You can run sudo with any command - but you probably don\'t actually need to.',
   '',
-  '  commands can be chained using &&',
-  '  wrap multi-word args in "quotes"',
-  '  arrow up/down: command history - tab: autocomplete',
+  '  Commands can be chained using &&',
+  '  Wrap multi-word args in "quotes"',
+  '  Arrow up/down: command history - tab: run autocomplete',
 ];
 
 export default function CLIPage() {
   usePageTitle('MyCLiIndia');
   const { active, accounts, activeId, login, removeAccount, switchAccount } = useAuth();
+  const { settings, update: updateSettings } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const fullscreen = location.pathname === '/i/flow/mci/focus';
@@ -150,7 +154,7 @@ export default function CLIPage() {
     return [
       L.ok('Welcome to MyCLiIndia!'),
       L.warn('MyCLiIndia is an experimental Unix-style command line interface... inside an already-experimental web app. This is entirely a conceptual demo and you probably won\'t find it very useful - but feel free to try it out, and please report any issues you encounter in the Discord, in #dev, mentioning @exerinity!'),
-      L.out(`logged in as ${username}@mypayindia - type 'help' to see a list of commands`),
+      L.out(`>> Logged in as ${username}@mypayindia - type 'help' to see a list of commands`),
       L.sep(),
     ];
   });
@@ -167,6 +171,7 @@ export default function CLIPage() {
   const busyRef = useRef<boolean>(false);
   const pendingPromptRef = useRef<((val: string) => void) | null>(null);
   const sudoGrantedAt = useRef<number | null>(null);
+  const scambaitPending = useRef<boolean>(false);
 
   useEffect(() => {
     storageSet(CLI_LINES_KEY, lines.slice(-200));
@@ -196,6 +201,19 @@ export default function CLIPage() {
   const push = useCallback((...newLines: CliLine[]) => {
     setLines(prev => [...prev, ...newLines]);
   }, []);
+
+  useEffect(() => {
+    function onCtrlAltB(e: KeyboardEvent) {
+      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'b') {
+        if (settings.scambait) {
+          updateSettings({ scambait: false });
+          push(L.info('scambait mode disabled'));
+        }
+      }
+    }
+    window.addEventListener('keydown', onCtrlAltB);
+    return () => window.removeEventListener('keydown', onCtrlAltB);
+  }, [settings.scambait, updateSettings, push]);
 
   function requireLogin(): boolean {
     if (!active) {
@@ -242,7 +260,7 @@ export default function CLIPage() {
     }
 
     if (!active?.password) {
-      push(L.err('sudo: credentials for this account are not stored'));
+      push(L.err('Sorry, try again.'));
       return false;
     }
 
@@ -250,12 +268,12 @@ export default function CLIPage() {
     const pw = await promptPassword();
 
     if (!pw) {
-      push(L.err('sudo: no password entered'));
+      push(L.err('Sorry, try again.'));
       return false;
     }
 
     if (pw !== active.password) {
-      push(L.err('sudo: incorrect password'));
+      push(L.err('Sorry, try again.'));
       return false;
     }
 
@@ -268,7 +286,7 @@ export default function CLIPage() {
       sudoGrantedAt.current = Date.now();
       return true;
     }
-    push(L.err(`Permission denied. Try: sudo ${hint}`));
+    push(L.err(`This action requires elevated privileges. Run it with sudo.`));
     return false;
   }
 
@@ -290,10 +308,10 @@ export default function CLIPage() {
       case 'fs':
       case 'fullscreen':
         if (fullscreen) {
-          push(L.info('not fullscreen'));
+          push(L.info('Not fullscreen'));
           navigate('/i/flow/mci');
         } else {
-          push(L.info('now fullscreen'));
+          push(L.info('Now fullscreen'));
           navigate('/i/flow/mci/focus');
         }
         return;
@@ -305,7 +323,7 @@ export default function CLIPage() {
         return;
 
       case 'help':
-        push(L.info('list of commands:'), ...HELP.map(L.out), L.out(''), ...HELP_TIPS.map(L.info));
+        push(L.info('List of commands:'), ...HELP.map(L.out), L.out(''), ...HELP_TIPS.map(L.info));
         return;
 
       case 'sudo': {
@@ -332,6 +350,33 @@ export default function CLIPage() {
         return;
       }
 
+      case 'scambait': {
+        if (settings.scambait) {
+          push(L.warn('scambait mode is already enabled. disable it with Ctrl+Alt+B.'));
+          return;
+        }
+        if (!scambaitPending.current) {
+          scambaitPending.current = true;
+          push(
+            L.warn('You are about to enable scambait mode. Please read this properly so you know what you\'re walking into.'),
+            L.out(''),
+            L.out('Enabling scambait mode will transform the app into a more legitimate-looking app for... scambaiting. It hides certain unrealistic things a scammer may raise an eyebrow to and changes other things completely.'),
+            L.out(''),
+            L.out('If you do not intend on convincing phone scammers that you are attempting to use MyPayIndia for payments and having them connect to your computer nor are doing any scambaiting, you should leave this setting alone. And obviously, do not use this to actually scam people. The scammers this is intended for are asshole vultures that prey on vulnerable elderly people, don\'t be one of them.'),
+            L.out(''),
+            L.out('Once enabled, you will immediately be navigated back to the adjusted dashboard. You can disable scambait mode by pressing Ctrl+Alt+B.'),
+            L.out(''),
+            L.info('Resend this command to confirm enabling.'),
+          );
+          return;
+        }
+        scambaitPending.current = false;
+        updateSettings({ scambait: true });
+        push(L.ok('Scambait mode enabled, navigating home...'));
+        navigate('/dash');
+        return;
+      }
+
       case 'balance':
       case 'bal': {
         if (!requireLogin()) return;
@@ -345,13 +390,13 @@ export default function CLIPage() {
         if (!requireLogin()) return;
         const info = await getUserInfo(active!) as ApiAny;
         push(
-          L.out(`username:  ${info.username}`),
-          L.out(`name:      ${info.first_name} ${info.last_name}`),
-          L.out(`email:     ${info.email}`),
-          L.out(`balance:   ${formatINR(info.balance)}`),
+          L.out(`Username:  ${info.username}`),
+          L.out(`Name:      ${info.first_name} ${info.last_name}`),
+          L.out(`Email:     ${info.email}`),
+          L.out(`Balance:   ${formatINR(info.balance)}`),
           L.out(`2FA:       ${info.mfa_enabled ? 'enabled' : 'disabled'}`),
-          L.out(`role:      ${info.role}`),
-          L.out(`joined:    ${formatDate(info.created)}`),
+          L.out(`Role:      ${info.role}`),
+          L.out(`Registered:    ${formatDate(info.created)}`),
         );
         return;
       }
@@ -365,7 +410,7 @@ export default function CLIPage() {
         }
         const paisa = rupeesToPaisa(amtStr);
         if (!Number.isInteger(paisa) || paisa <= 0) {
-          push(L.err(`invalid amount: "${amtStr}" - use e.g. 55 or 55.50`)); return;
+          push(L.err(`Invalid amount: "${amtStr}" - use e.g. 55 or 55.50`)); return;
         }
         if (paisa > 200000) {
           if (!needsSudo(`send ${amtStr} ${recipient}${note ? ` "${note}"` : ''}`)) return;
@@ -377,32 +422,36 @@ export default function CLIPage() {
         }) as ApiAny;
         push(L.ok(`sent ${formatINR(paisa)} to ${recipient}`));
         if (note) push(L.out(`note: "${note}"`));
-        push(L.out(`tx id: ${res.transaction_id}`));
+        push(L.out(`TX ID: ${res.transaction_id}`));
         return;
       }
 
       case 'link': {
         if (!requireLogin()) return;
-        const [amtStr, note] = args;
+        const nocopy = args.includes('--nocopy');
+        const linkArgs = args.filter(a => a !== '--nocopy');
+        const [amtStr, note] = linkArgs;
         if (!amtStr) {
-          push(L.err(`usage: link <amount> [note]`)); return;
+          push(L.err(`usage: link <amount> [note] [--nocopy]`)); return;
         }
         const paisa = rupeesToPaisa(amtStr);
         if (!Number.isInteger(paisa) || paisa <= 0) {
-          push(L.err(`invalid amount: "${amtStr}"`)); return;
+          push(L.err(`Invalid amount: "${amtStr}"`)); return;
         }
         const lnk = await createLink(active!, {
           amount: paisa,
           ...(note ? { note } : {}),
         }) as ApiAny;
-        push(L.ok(`link created - ${formatINR(paisa)}`));
+        push(L.ok(`Link created - ${formatINR(paisa)}`));
         if (note) push(L.out(`note: "${note}"`));
-        push(L.out(`token: ${lnk.token}`));
-        push(L.out(`link:   ${lnk.url}`));
-        try {
-          await navigator.clipboard.writeText(lnk.url);
-          push(L.info('copied link'));
-        } catch {}
+        push(L.out(`Token: ${lnk.token}`));
+        push(L.out(`Link:   ${lnk.url}`));
+        if (!nocopy) {
+          try {
+            await navigator.clipboard.writeText(lnk.url);
+            push(L.info('The link has been copied to your clipboard. (--nocopy to disable)'));
+          } catch {}
+        }
         return;
       }
 
@@ -415,7 +464,7 @@ export default function CLIPage() {
         else if (filter === 'past') arr = arr.filter((l: ApiAny) => l.status !== 'active');
 
         if (!arr.length) {
-          push(L.out(`no ${filter === 'all' ? '' : filter + ' '}links found`));
+          push(L.out(`there is nothing to show`));
           return;
         }
         push(L.out(`${arr.length} link(s):`));
@@ -435,11 +484,11 @@ export default function CLIPage() {
         if (!token) { push(L.err('usage: inspect <token>')); return; }
         const lnk = await getLink(token) as ApiAny;
         push(
-          L.out(`from:    @${lnk.creator?.username}`),
-          L.out(`amount:  ${formatINR(lnk.amount)}`),
-          L.out(`status:  ${lnk.status}`),
-          L.out(`created: ${formatDate(lnk.created)}`),
-          ...(lnk.note ? [L.out(`note:    "${lnk.note}"`)] : []),
+          L.out(`From:    @${lnk.creator?.username}`),
+          L.out(`Amount:  ${formatINR(lnk.amount)}`),
+          L.out(`Status:  ${lnk.status}`),
+          L.out(`Created: ${formatDate(lnk.created)}`),
+          ...(lnk.note ? [L.out(`Note:    "${lnk.note}"`)] : []),
         );
         return;
       }
@@ -447,10 +496,10 @@ export default function CLIPage() {
       case 'claim': {
         if (!requireLogin()) return;
         const [token] = args;
-        if (!token) { push(L.err('Usage: claim <token>')); return; }
+        if (!token) { push(L.err('usage: claim <token>')); return; }
         const res = await claimLink(active!, token) as ApiAny;
-        push(L.ok(`claimed ${formatINR(res.amount ?? 0)}!`));
-        push(L.out(`tx id: ${res.transaction_id}`));
+        push(L.ok(`Claimed ${formatINR(res.amount ?? 0)}!`));
+        push(L.out(`TX ID: ${res.transaction_id}`));
         return;
       }
 
@@ -459,7 +508,7 @@ export default function CLIPage() {
         const [token] = args;
         if (!token) { push(L.err('usage: cancel <token>')); return; }
         await cancelLink(active!, token);
-        push(L.ok(`link ${token} cancelled and refunded`));
+        push(L.ok('OK, that link was cancelled.'));
         return;
       }
 
@@ -496,13 +545,13 @@ export default function CLIPage() {
         if (!id) { push(L.err('usage: tx <transaction_id>')); return; }
         const t = await getTransaction(active!, id) as ApiAny;
         push(
-          L.out(`tx id:   ${t.transaction_id}`),
-          L.out(`amount:  ${formatINR(t.amount)}`),
-          L.out(`from:    @${t.sender?.username}`),
-          L.out(`to:      @${t.recipient?.username}`),
-          L.out(`status:  ${t.status}`),
-          L.out(`date:    ${formatDate(t.created)}`),
-          ...(t.note ? [L.out(`note:    "${t.note}"`)] : []),
+          L.out(`TX ID:   ${t.transaction_id}`),
+          L.out(`Amount:  ${formatINR(t.amount)}`),
+          L.out(`From:    @${t.sender?.username}`),
+          L.out(`To:      @${t.recipient?.username}`),
+          L.out(`Status:  ${t.status}`),
+          L.out(`Date:    ${formatDate(t.created)}`),
+          ...(t.note ? [L.out(`Note:    "${t.note}"`)] : []),
         );
         return;
       }
@@ -512,8 +561,8 @@ export default function CLIPage() {
         const data = await getLeaderboard() as ApiAny;
         const board = data.leaderboard ?? [];
         if (!board.length) { push(L.out('there is nothing to show')); return; }
-        push(L.info('leaderboard:'));
-        board.slice(0, 25).forEach((u: ApiAny, i: number) => {
+        push(L.info('Top 10 richest MyPayIndians:'));
+        board.slice(0, 11).forEach((u: ApiAny, i: number) => {
           const isSelf = u.username === username;
           const line = `  ${String(i + 1).padStart(2)}.  ${('@' + u.username).padEnd(22)}  ${formatINR(u.balance)}`;
           push(isSelf ? L.ok(line + '  (you)') : L.out(line));
@@ -527,7 +576,7 @@ export default function CLIPage() {
         if (!Array.isArray(members) || !members.length) {
           push(L.out('there is nothing to show')); return;
         }
-        push(L.info('listing team members...'));
+        push(L.info('Listing team members...'));
         for (const m of members) {
           push(L.out(`  ${(m.name ?? m.username ?? '?').padEnd(24)}  ${m.role ?? ''}`));
         }
@@ -539,14 +588,14 @@ export default function CLIPage() {
         const data = await listSessions(active!) as ApiAny;
         const sessions = data.sessions ?? [];
         if (!sessions.length) { push(L.out('there is nothing to show')); return; }
-        push(L.out(`${sessions.length} session(s):`));
+        push(L.out(`You have ${sessions.length} session(s):`));
         for (const s of sessions) {
           const sid = s.session_id ?? s.id;
           const isCurrent = s.current;
           push(
             isCurrent ? L.ok(`  ${sid}  (current)`) : L.out(`  ${sid}`),
-            L.out(`    device: ${s.device_info || 'unknown'}  IP: ${s.ip ?? 'unknown'}`),
-            L.out(`    created: ${formatDate(s.created_at)}  Last active: ${formatRelative(s.last_active)}`),
+            L.out(`    Device: ${s.device_info || 'unknown'}  IP: ${s.ip ?? 'unknown'}`),
+            L.out(`    Created: ${formatDate(s.created_at)}  Last active: ${formatRelative(s.last_active)}`),
           );
         }
         return;
@@ -557,7 +606,7 @@ export default function CLIPage() {
         const [sid] = args;
         if (!sid) { push(L.err('usage: invalidate <session_id>')); return; }
         await invalidateSession(active!, sid);
-        push(L.ok(`ok`));
+        push(L.ok('OK, that session has been terminated.'));
         return;
       }
 
@@ -582,7 +631,7 @@ export default function CLIPage() {
       case 'verify-email': {
         if (!requireLogin()) return;
         await verifyEmail(active!);
-        push(L.ok('ok'));
+        push(L.ok('OK, sent email.'));
         return;
       }
 
@@ -603,16 +652,18 @@ export default function CLIPage() {
         }
         const path = PAGE_MAP[page.toLowerCase() as keyof typeof PAGE_MAP];
         if (!path) {
-          push(L.err(`unknown page: "${page}". available: ${Object.keys(PAGE_MAP).join(', ')}`)); return;
+          push(L.err(`Unknown page: "${page}". Available: ${Object.keys(PAGE_MAP).join(', ')}`)); 
+          push(L.out(`Use --nocheck to skip resolving page names. Only do this if you know exactly where you want to go.`));
+          return;
         }
-        push(L.info(`> ${path}`));
+        push(L.info(`OK, navigating to ${path}`));
         navigate(path);
         return;
       }
 
       case 'logout':
         if (!requireLogin()) return;
-        push(L.info('ok'));
+        push(L.info('OK, opening logout flow...'));
         setTimeout(() => navigate('/i/flow/logout'), 350);
         return;
 
@@ -623,7 +674,7 @@ export default function CLIPage() {
         switch (sub?.toLowerCase()) {
           case 'list':
           case 'ls': {
-            if (!accounts.length) { push(L.out('no accounts saved')); return; }
+            if (!accounts.length) { push(L.out('there is nothing to show')); return; }
             for (let i = 0; i < accounts.length; i++) {
               const a = accounts[i];
               const isActive = a.id === activeId;
@@ -631,17 +682,17 @@ export default function CLIPage() {
               const line = `  bay ${i + 1}  @${a.username.padEnd(20)} ${tag}${isActive ? '  (active)' : ''}`;
               push(isActive ? L.ok(line) : L.out(line));
             }
-            push(L.info('switch to any of these using acc switch <bay>'));
+            push(L.info('Switch to any of these using acc switch <bay>'));
             return;
           }
           case 'switch':
           case 'sw': {
             const bay = parseInt(subArgs[0], 10);
             if (!subArgs[0] || isNaN(bay) || bay < 1 || bay > accounts.length) {
-              push(L.err(`usage: acc switch <bay>  (1–${accounts.length})`)); return;
+              push(L.err(`usage: acc switch <bay>  (1-${accounts.length})`)); return;
             }
             const target = accounts[bay - 1];
-            if (target.id === activeId) { push(L.warn('already the active account')); return; }
+            if (target.id === activeId) { push(L.warn('Already using that bay.')); return; }
             push(L.info(`switching to @${target.username}...`));
             await switchAccount(target.id);
             return;
@@ -651,22 +702,22 @@ export default function CLIPage() {
             if (!requireLogin()) return;
             const bay = parseInt(subArgs[0], 10);
             if (!subArgs[0] || isNaN(bay) || bay < 1 || bay > accounts.length) {
-              push(L.err(`usage: acc remove <bay>  (1–${accounts.length})`)); return;
+              push(L.err(`usage: acc remove <bay>  (1-${accounts.length})`)); return;
             }
             const target = accounts[bay - 1];
             if (!needsSudo(`acc remove ${bay}`)) return;
             removeAccount(target.id);
-            push(L.ok(`removed @${target.username} from bay ${bay}`));
+            push(L.ok(`OK, removed @${target.username} from bay ${bay}`));
             return;
           }
           case 'add': {
             const uname = subArgs[0];
             if (!uname) { push(L.err('usage: acc add <username>')); return; }
             if (active && !needsSudo(`acc add ${uname}`)) return;
-            push(L.out(`password for ${uname}: `));
+            push(L.out(`Enter the password for that account...`));
             const pw = await promptPassword();
             if (!pw) { push(L.warn('cancelled')); return; }
-            push(L.info(`signing in as ${uname}... (page will reload)`));
+            push(L.info(`Signing in as ${uname} and reloading...`));
             await login({ username: uname, password: pw }, '/i/flow/mci');
             return;
           }
@@ -681,13 +732,13 @@ export default function CLIPage() {
             const fromIdx = fromBay - 1;
             const toIdx = toBay - 1;
             if (fromIdx < 0 || fromIdx >= allAccts.length) {
-              push(L.err(`bay ${fromBay} has no account`)); return;
+              push(L.err(`Bay ${fromBay} has no account`)); return;
             }
             if (toBay < 1 || toBay > 10) {
-              push(L.err('bay must be between 1 and 10')); return;
+              push(L.err('Bay must be between 1 and 10')); return;
             }
             if (fromBay === toBay) {
-              push(L.warn('source and destination bays are the same')); return;
+              push(L.warn('Source and destination bays are the same')); return;
             }
             const fromAcc = allAccts[fromIdx];
             const toAcc = toIdx < allAccts.length ? allAccts[toIdx] : null;
@@ -698,8 +749,8 @@ export default function CLIPage() {
               const insertAt = Math.min(toIdx, next.length);
               next.splice(insertAt, 0, fromAcc);
               storageSet(KEYS.ACCOUNTS, next);
-              push(L.ok(`moved @${fromAcc.username} to bay ${toBay}`));
-              push(L.info('reloading...'));
+              push(L.ok(`OK, moved @${fromAcc.username} to bay ${toBay}`));
+              push(L.info('Reloading...'));
               setTimeout(() => window.location.reload(), 500);
               return;
             }
@@ -714,8 +765,8 @@ export default function CLIPage() {
               next[fromIdx] = toAcc;
               next[toIdx] = fromAcc;
               storageSet(KEYS.ACCOUNTS, next);
-              push(L.ok(`swapped @${fromAcc.username} (bay ${fromBay}) and @${toAcc.username} (bay ${toBay})`));
-              push(L.info('reloading...'));
+              push(L.ok(`Swapped @${fromAcc.username} (bay ${fromBay}) and @${toAcc.username} (bay ${toBay})`));
+              push(L.info('Reloading...'));
               setTimeout(() => window.location.reload(), 500);
             } else if (answer === 'o') {
               const next = [...allAccts];
@@ -723,8 +774,8 @@ export default function CLIPage() {
               const adjustedToIdx = toIdx > fromIdx ? toIdx - 1 : toIdx;
               next[adjustedToIdx] = fromAcc;
               storageSet(KEYS.ACCOUNTS, next);
-              push(L.ok(`moved @${fromAcc.username} to bay ${toBay}, removed @${toAcc.username}`));
-              push(L.info('reloading...'));
+              push(L.ok(`OK, moved @${fromAcc.username} to bay ${toBay}, removed @${toAcc.username}`));
+              push(L.info('Reloading...'));
               setTimeout(() => window.location.reload(), 500);
             } else {
               push(L.warn(`unknown option "${answer}", cancelled`));
