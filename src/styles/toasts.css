@@ -37,3 +37,19 @@
   background: transparent;
   color: var(--fg);
 }
+
+.toast-action {
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.toast-action:hover {
+  background: rgba(255,255,255,0.08);
+}

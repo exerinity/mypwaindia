@@ -4,15 +4,21 @@ import { CloseIcon } from '../components/Icons.tsx';
 
 type ToastKind = 'info' | 'success' | 'error' | 'warning';
 
+interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
 interface Toast {
   id: number;
   message: string;
   kind: ToastKind;
+  action?: ToastAction;
 }
 
 interface ToastContextValue {
   toasts: Toast[];
-  push: (message: string, kind?: ToastKind, timeout?: number) => number;
+  push: (message: string, kind?: ToastKind, timeout?: number, action?: ToastAction) => number;
   remove: (id: number) => void;
   success: (message: string, timeout?: number) => number;
   error: (message: string, timeout?: number) => number;
@@ -31,9 +37,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((t) => t.filter((x) => x.id !== id));
   }, []);
 
-  const push = useCallback((message: string, kind: ToastKind = 'info', timeout = 4000): number => {
+  const push = useCallback((message: string, kind: ToastKind = 'info', timeout = 4000, action?: ToastAction): number => {
     const id = nextId++;
-    setToasts((t) => [...t, { id, message, kind }]);
+    setToasts((t) => [...t, { id, message, kind, action }]);
     if (timeout > 0) setTimeout(() => remove(id), timeout);
     return id;
   }, [remove]);
@@ -63,6 +69,9 @@ function ToastContainer({ toasts, onClose }: { toasts: Toast[]; onClose: (id: nu
       {toasts.map((t) => (
         <div key={t.id} className={`alert alert-${t.kind} toast`}>
           <span>{t.message}</span>
+          {t.action && (
+            <button className="toast-action" onClick={t.action.onClick}>{t.action.label}</button>
+          )}
           <button className="toast-x" onClick={() => onClose(t.id)} aria-label="Close"><CloseIcon size={14} /></button>
         </div>
       ))}
