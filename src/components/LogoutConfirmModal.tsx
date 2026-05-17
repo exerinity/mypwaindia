@@ -1,7 +1,8 @@
-import { Modal } from './Modal.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
+import { Modal } from './Modal.tsx';
+import { useAuth } from '../context/AuthContext.tsx';
 
-export function LogoutConfirmModal({ open, onClose, onConfirm }) {
+interface LogoutConfirmModalProps { open: boolean; onClose: () => void; onConfirm: () => void }
+export function LogoutConfirmModal({ open, onClose, onConfirm }: LogoutConfirmModalProps) {
   const { active } = useAuth();
   const username = active?.username || 'this account';
 

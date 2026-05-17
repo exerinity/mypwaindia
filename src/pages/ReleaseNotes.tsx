@@ -1,7 +1,16 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 
-const RELEASES = [
+type Release = {
+  version: string;
+  date: string;
+  notes: (string | React.ReactElement)[];
+  subnotes?: (string | React.ReactElement)[];
+  disclaimer?: string | React.ReactElement;
+};
+
+export const RELEASES: Release[] = [
   {
     version: 'Version 10',
     date: '12 May 2026',
@@ -177,6 +186,9 @@ export default function ReleaseNotesPage() {
               <strong>{r.version}</strong>
               <span className="muted" style={{ fontSize: '0.85rem' }}>{r.date}</span>
             </summary>
+            {r.disclaimer && (
+              <p className="muted" style={{ fontSize: '0.8rem', margin: '6px 0 4px' }}>{r.disclaimer}</p>
+            )}
             <ul style={{ marginTop: 6, marginBottom: 10 }}>
               {r.notes.map((note, j) => <li key={j}>{note}</li>)}
             </ul>

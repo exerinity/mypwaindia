@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
 import { useApiCall } from '../hooks/useApiCall.js';
 import { getUserInfo, verifyEmail } from '../api/user.js';
-import { useToast } from '../context/ToastContext.jsx';
+import { useToast } from '../context/ToastContext.tsx';
 import { describeError } from '../utils/errors.js';
 
 export function VerificationBanner() {
@@ -10,8 +10,8 @@ export function VerificationBanner() {
   const toast = useToast();
   const [sending, setSending] = useState(false);
 
-  const { data } = useApiCall(
-    () => getUserInfo(active.token),
+  const { data } = useApiCall<{ email_verified: boolean }>(
+    () => getUserInfo(active!) as Promise<{ email_verified: boolean }>,
     [active?.token],
     { skip: !active }
   );
@@ -20,7 +20,7 @@ export function VerificationBanner() {
   async function send() {
     setSending(true);
     try {
-      await verifyEmail(active.token);
+      await verifyEmail(active!);
       toast.success('Verification email sent');
     } catch (e) {
       toast.error(describeError(e));

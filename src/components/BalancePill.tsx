@@ -1,5 +1,5 @@
-import { useAuth } from '../context/AuthContext.jsx';
-import { useCurrency } from '../context/SettingsContext.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useCurrency } from '../context/SettingsContext.tsx';
 
 export function BalancePill() {
   const { active } = useAuth();

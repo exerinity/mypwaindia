@@ -1,16 +1,16 @@
 import { useState, useMemo } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useToast } from '../context/ToastContext.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useToast } from '../context/ToastContext.tsx';
 import { useApiCall } from '../hooks/useApiCall.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useSettings } from '../context/SettingsContext.jsx';
+import { useSettings } from '../context/SettingsContext.tsx';
 import { listLinks, createLink, cancelLink } from '../api/links.js';
 import { getUserInfo } from '../api/user.js';
 import { formatINR, rupeesToPaisa } from '../utils/money.js';
 import { formatDate } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
-import { LoadingRow, ErrorBox, Empty } from '../components/Status.jsx';
-import { ConfirmModal } from '../components/ConfirmModal.jsx';
+import { LoadingRow, ErrorBox, Empty } from '../components/Status.tsx';
+import { ConfirmModal } from '../components/ConfirmModal.tsx';
 const PRESETS_PAISA = [
   100,    // ₹1
   500,    // ₹5
@@ -29,18 +29,19 @@ export default function LinksPage() {
   const [stackPaisa, setStackPaisa] = useState(0);
   const [note, setNote] = useState('');
   const [creating, setCreating] = useState(false);
-  const [cancelTarget, setCancelTarget] = useState(null);
+  interface Link { id: number; token: string; amount: number; status: string; url: string; note?: string; created: string }
+  const [cancelTarget, setCancelTarget] = useState<Link | null>(null);
 
-  const linksQ = useApiCall(
-    () => listLinks(active),
+  const linksQ = useApiCall<{ links: Link[] }>(
+    () => listLinks(active!) as Promise<{ links: Link[] }>,
     [active?.token],
     { refresh: settings.autoRefresh }
   );
 
-  const userQ = useApiCall(
+  const userQ = useApiCall<{ balance: number }>(
     async () => {
-      const info = await getUserInfo(active);
-      updateBalance(active.id, info.balance);
+      const info = await getUserInfo(active!) as { balance: number };
+      updateBalance(active!.id, info.balance);
       return info;
     },
     [active?.token],
@@ -57,7 +58,7 @@ export default function LinksPage() {
     };
   }, [linksQ.data]);
 
-  function bump(amt) { setStackPaisa((s) => s + amt); }
+  function bump(amt: number) { setStackPaisa((s) => s + amt); }
   function reset() { setStackPaisa(0); setNote(''); }
 
   async function create() {
@@ -71,10 +72,10 @@ export default function LinksPage() {
     }
     setCreating(true);
     try {
-      const link = await createLink(active, {
+      const link = await createLink(active!, {
         amount: stackPaisa,
         note: note.trim() || undefined,
-      });
+      }) as Link;
       toast.success(`Link created for ${formatINR(stackPaisa)}; copied to clipboard`);
       try {
         await navigator.clipboard.writeText(link.url);
@@ -82,8 +83,8 @@ export default function LinksPage() {
       reset();
       linksQ.refetch();
       try {
-        const info = await getUserInfo(active);
-        updateBalance(active.id, info.balance);
+        const info = await getUserInfo(active!) as { balance: number };
+        updateBalance(active!.id, info.balance);
       } catch {}
     } catch (e) {
       toast.error(describeError(e));
@@ -92,20 +93,20 @@ export default function LinksPage() {
     }
   }
 
-  async function doCancelLink(token) {
+  async function doCancelLink(token: string) {
     try {
-      await cancelLink(active, token);
+      await cancelLink(active!, token);
       toast.success('OK, that link was cancelled.');
       linksQ.refetch();
       try {
-        const info = await getUserInfo(active);
-        updateBalance(active.id, info.balance);
+        const info = await getUserInfo(active!) as { balance: number };
+        updateBalance(active!.id, info.balance);
       } catch {}
     } catch (e) {
       toast.error(describeError(e));
     }
   }
-  async function copyUrl(url) {
+  async function copyUrl(url: string) {
     try {
       await navigator.clipboard.writeText(url);
       toast.success('OK');

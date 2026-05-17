@@ -1,7 +1,8 @@
+import type { ComponentType } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useSettings } from '../context/SettingsContext.jsx';
-import { Logo } from './Logo.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useSettings } from '../context/SettingsContext.tsx';
+import { Logo } from './Logo.tsx';
 import {
   CloseIcon,
   CreditCardIcon,
@@ -17,9 +18,12 @@ import {
   SettingsIcon,
   ExternalIcon,
   TerminalIcon,
-} from './Icons.jsx';
+} from './Icons.tsx';
 
-const NAV_GROUPS = [
+interface NavItem { to?: string; href?: string; label: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; hideInScambait?: boolean; scambaitOnly?: boolean }
+interface NavGroup { title: string; items: NavItem[]; hideInScambait?: boolean; scambaitTitle?: string; defaultTitle?: string }
+
+const NAV_GROUPS: NavGroup[] = [
   {
     title: 'Your account',
     items: [
@@ -61,7 +65,7 @@ const NAV_GROUPS = [
   },
 ];
 
-export function Sidebar({ open, onClose }) {
+export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const location = useLocation();
   const { settings } = useSettings();
   const scambait = settings.scambait;
@@ -115,7 +119,7 @@ export function Sidebar({ open, onClose }) {
                   return (
                     <NavLink
                       key={item.to}
-                      to={item.to}
+                      to={item.to!}
                       end={item.end}
                       onClick={onClose}
                       className={({ isActive }) => {

@@ -1,4 +1,4 @@
-export function DashboardIcon({ size = 18 }) {
+export function DashboardIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="3" y="3" width="7" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
@@ -9,7 +9,7 @@ export function DashboardIcon({ size = 18 }) {
   );
 }
 
-export function UserIcon({ size = 18 }) {
+export function UserIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8" />
@@ -18,7 +18,7 @@ export function UserIcon({ size = 18 }) {
   );
 }
 
-export function TransferIcon({ size = 18 }) {
+export function TransferIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M4 8h14m0 0l-4-4m4 4l-4 4M20 16H6m0 0l4 4m-4-4l4-4"
@@ -27,7 +27,7 @@ export function TransferIcon({ size = 18 }) {
   );
 }
 
-export function HistoryIcon({ size = 18 }) {
+export function HistoryIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M3 12a9 9 0 1 0 3-6.7L3 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -37,7 +37,7 @@ export function HistoryIcon({ size = 18 }) {
   );
 }
 
-export function LinkIcon({ size = 18 }) {
+export function LinkIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 1 0-5.66-5.66l-1.5 1.5"
@@ -48,7 +48,7 @@ export function LinkIcon({ size = 18 }) {
   );
 }
 
-export function ClaimIcon({ size = 18 }) {
+export function ClaimIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M12 3v13m0 0l-5-5m5 5l5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -57,7 +57,7 @@ export function ClaimIcon({ size = 18 }) {
   );
 }
 
-export function TrophyIcon({ size = 18 }) {
+export function TrophyIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M7 4h10v5a5 5 0 0 1-10 0V4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
@@ -67,7 +67,7 @@ export function TrophyIcon({ size = 18 }) {
   );
 }
 
-export function TeamIcon({ size = 18 }) {
+export function TeamIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle cx="9" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.8" />
@@ -78,7 +78,7 @@ export function TeamIcon({ size = 18 }) {
   );
 }
 
-export function NotesIcon({ size = 18 }) {
+export function NotesIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="5" y="3" width="14" height="18" rx="2" stroke="currentColor" strokeWidth="1.8" />
@@ -87,7 +87,7 @@ export function NotesIcon({ size = 18 }) {
   );
 }
 
-export function SettingsIcon({ size = 18 }) {
+export function SettingsIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
@@ -96,7 +96,7 @@ export function SettingsIcon({ size = 18 }) {
     </svg>
   );
 }
-export function PlusIcon({ size = 16 }) {
+export function PlusIcon({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -104,7 +104,7 @@ export function PlusIcon({ size = 16 }) {
   );
 }
 
-export function HamburgerIcon({ size = 20 }) {
+export function HamburgerIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M3 6h18M3 12h18M3 18h18"
@@ -113,7 +113,7 @@ export function HamburgerIcon({ size = 20 }) {
   );
 }
 
-export function CloseIcon({ size = 20 }) {
+export function CloseIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M5 5l14 14M19 5L5 19"
@@ -122,7 +122,7 @@ export function CloseIcon({ size = 20 }) {
   );
 }
 
-export function ChevronDown({ size = 14 }) {
+export function ChevronDown({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -130,7 +130,7 @@ export function ChevronDown({ size = 14 }) {
   );
 }
 
-export function LoginIcon({ size = 18 }) {
+export function LoginIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -140,7 +140,7 @@ export function LoginIcon({ size = 18 }) {
   );
 }
 
-export function LogoutIcon({ size = 18 }) {
+export function LogoutIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -150,7 +150,7 @@ export function LogoutIcon({ size = 18 }) {
   );
 }
 
-export function CreditCardIcon({ size = 18 }) {
+export function CreditCardIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.8" />
@@ -160,7 +160,7 @@ export function CreditCardIcon({ size = 18 }) {
   );
 }
 
-export function TerminalIcon({ size = 18 }) {
+export function TerminalIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
@@ -170,7 +170,7 @@ export function TerminalIcon({ size = 18 }) {
   );
 }
 
-export function ArrowLeftIcon({ size = 16 }) {
+export function ArrowLeftIcon({ size = 16 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M19 12H5M5 12l7 7M5 12l7-7"
@@ -179,7 +179,7 @@ export function ArrowLeftIcon({ size = 16 }) {
   );
 }
 
-export function ExternalIcon({ size = 14 }) {
+export function ExternalIcon({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M5 19L19 5M19 5H9M19 5V15"

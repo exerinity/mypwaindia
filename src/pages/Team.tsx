@@ -3,10 +3,13 @@ import { useApiCall } from '../hooks/useApiCall.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 import { getTeam } from '../api/info.js';
 import { formatDateShort, calcAge } from '../utils/dates.js';
-import { LoadingRow, ErrorBox, Empty } from '../components/Status.jsx';
-import { ExternalIcon } from '../components/Icons.jsx';
+import { LoadingRow, ErrorBox, Empty } from '../components/Status.tsx';
+import { ExternalIcon } from '../components/Icons.tsx';
 
-function AgeTag({ age }) {
+interface Age { years: number; months: number; weeks: number; days: number }
+interface TeamMember { name: string; role: string; avatar: string; joined: string; socials?: Record<string, string> }
+
+function AgeTag({ age }: { age: Age }) {
   const [hovered, setHovered] = useState(false);
   return (
     <span
@@ -43,7 +46,7 @@ function AgeTag({ age }) {
 
 export default function TeamPage() {
   usePageTitle('Meet the team');
-  const { data, loading, error } = useApiCall(() => getTeam(), []);
+  const { data, loading, error } = useApiCall<{ team: TeamMember[] }>(() => getTeam() as Promise<{ team: TeamMember[] }>, []);
   const team = data?.team || [];
 
   return (
@@ -62,7 +65,7 @@ export default function TeamPage() {
               className="team-avatar"
               src={m.avatar}
               alt={m.name}
-              onError={(e) => { e.currentTarget.style.opacity = 0.4; }}
+              onError={(e) => { e.currentTarget.style.opacity = '0.4'; }}
             />
             <div className="team-name">{m.name}</div>
             <div className="team-role">{m.role}</div>

@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useToast } from '../context/ToastContext.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useToast } from '../context/ToastContext.tsx';
 import { useApiCall } from '../hooks/useApiCall.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 import { transfer } from '../api/transactions.js';
 import { getUserInfo } from '../api/user.js';
 import { rupeesToPaisa } from '../utils/money.js';
-import { useCurrency } from '../context/SettingsContext.jsx';
+import { useCurrency } from '../context/SettingsContext.tsx';
 import { describeError } from '../utils/errors.js';
 
 export default function TransferPage() {
@@ -21,10 +21,10 @@ export default function TransferPage() {
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const userQ = useApiCall(
+  const userQ = useApiCall<{ balance: number }>(
     async () => {
-      const info = await getUserInfo(active);
-      updateBalance(active.id, info.balance);
+      const info = await getUserInfo(active!) as { balance: number };
+      updateBalance(active!.id, info.balance);
       return info;
     },
     [active?.token]
@@ -35,7 +35,7 @@ export default function TransferPage() {
   const balance = userQ.data?.balance ?? null;
   const overBalance = balance !== null && paisa > balance;
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validAmount) {
       toast.error('Real numbers only!');
@@ -47,15 +47,15 @@ export default function TransferPage() {
     }
     setBusy(true);
     try {
-      const res = await transfer(active, {
+      const res = await transfer(active!, {
         recipient: recipient.trim(),
         amount: paisa,
         note: note.trim() || undefined,
-      });
+      }) as { transaction_id: string };
       toast.success(`${recipient} now has an extra ${format(paisa)}, thanks to you!`);
       try {
-        const info = await getUserInfo(active);
-        updateBalance(active.id, info.balance);
+        const info = await getUserInfo(active!) as any;
+        updateBalance(active!.id, info.balance);
       } catch {}
       navigate(`/i/transaction/${res.transaction_id}`);
     } catch (err) {

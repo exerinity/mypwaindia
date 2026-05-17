@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useSettings } from '../context/SettingsContext.jsx';
-import { Modal } from '../components/Modal.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useSettings } from '../context/SettingsContext.tsx';
+import { Modal } from '../components/Modal.tsx';
 
-function pad(n, len) {
+interface Card { number: string; name: string; exp: string; cvv: string; type: string; bg: string }
+
+function pad(n: number, len: number) {
   return String(Math.abs(Math.round(n)) % Math.pow(10, len)).padStart(len, '0');
 }
 
-function buildCards(userId, holderName) {
+function buildCards(userId: number | string | undefined, holderName: string): Card[] {
   const n = Number(userId) || 0;
   const name = holderName.toUpperCase();
   return [
@@ -40,7 +42,7 @@ function buildCards(userId, holderName) {
   ];
 }
 
-function CreditCard({ card }) {
+function CreditCard({ card }: { card: Card }) {
   const [revealed, setRevealed] = useState(false);
 
   return (

@@ -1,28 +1,32 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Header } from './Header.jsx';
-import { Sidebar } from './Sidebar.jsx';
-import { VerificationBanner } from './VerificationBanner.jsx';
-import { ConfirmModal } from './ConfirmModal.jsx';
+import { Header } from './Header.tsx';
+import { Sidebar } from './Sidebar.tsx';
+import { VerificationBanner } from './VerificationBanner.tsx';
+import { ConfirmModal } from './ConfirmModal.tsx';
 import { useGlobalAutoRefresh } from '../hooks/useGlobalAutoRefresh.js';
-import { useSettings } from '../context/SettingsContext.jsx';
-import { useToast } from '../context/ToastContext.jsx';
+import { useSettings } from '../context/SettingsContext.tsx';
+import { useToast } from '../context/ToastContext.tsx';
+import { useAuth } from '../context/AuthContext.tsx';
 
 export function AppLayout() {
   const [open, setOpen] = useState(false);
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
   const { settings, update } = useSettings();
+  const { active } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   useGlobalAutoRefresh();
 
   useEffect(() => {
-    function handleKey(e) {
+    function handleKey(e: KeyboardEvent) {
       if (e.ctrlKey && e.altKey && e.key === 'b') {
         e.preventDefault();
         if (settings.scambait) {
           update({ scambait: false });
           toast.info('Scambait mode off');
+        } else if (!active) {
+          toast.warning('You must be logged in to enable scambait mode.');
         } else {
           setScambaitConfirmOpen(true);
         }
@@ -30,7 +34,7 @@ export function AppLayout() {
     }
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [settings.scambait, settings.displayName, update, toast]);
+  }, [settings.scambait, settings.displayName, update, toast, active]);
 
   function enableScambait() {
     update({

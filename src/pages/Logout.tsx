@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useToast } from '../context/ToastContext.jsx';
-import { LogoutIcon } from '../components/Icons.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useToast } from '../context/ToastContext.tsx';
+import { LogoutIcon } from '../components/Icons.tsx';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function LogoutPage() {
@@ -19,7 +19,7 @@ export default function LogoutPage() {
       toast.info('Logged out.');
       navigate('/i/flow/login', { replace: true });
     } catch (error) {
-      toast.error(error?.message || 'Could not log out. Please try again.');
+      toast.error((error as {message?:string})?.message || 'Could not log out. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

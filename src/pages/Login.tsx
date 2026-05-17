@@ -1,11 +1,13 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
+import type { Env } from '../api/client.js';
 import { useLocation, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useSettings } from '../context/SettingsContext.jsx';
-import { useToast } from '../context/ToastContext.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useSettings } from '../context/SettingsContext.tsx';
+import { useToast } from '../context/ToastContext.tsx';
 import { describeError } from '../utils/errors.js';
-import { Logo } from '../components/Logo.jsx';
-import { ArrowLeftIcon, ExternalIcon } from '../components/Icons.jsx';
+import { storageGet, KEYS } from '../utils/storage.ts';
+import { Logo } from '../components/Logo.tsx';
+import { ArrowLeftIcon, ExternalIcon } from '../components/Icons.tsx';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function LoginPage() {
@@ -19,12 +21,12 @@ export default function LoginPage() {
   const [totp, setTotp] = useState('');
   const [needs2fa, setNeeds2fa] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(null);
-  const envRef = useRef('production');
+  const [error, setError] = useState<{ message: string } | null>(null);
+  const envRef = useRef<Env>('production');
 
   const atCapacity = accounts.length >= maxAccounts;
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (atCapacity) {
       toast.error(`You have too many accounts logged in! (${maxAccounts} max)`);
@@ -35,13 +37,15 @@ export default function LoginPage() {
     setBusy(true);
     setError(null);
     try {
-      const dest = location.state?.from?.pathname || '/dash';
-      await login({ username, password, totp_code: totp || undefined, env }, dest);
+      const dest = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/dash';
+      const onboarded = storageGet<number>(KEYS.ONBOARD, 0) === 1;
+      await login({ username, password, totp_code: totp || undefined, env }, onboarded ? dest : '/i/flow/onboarding');
     } catch (e) {
-      if (e.code === 1002) {
+      const err = e as { code?: number };
+      if (err.code === 1002) {
         setNeeds2fa(true);
         setError({ message: 'Enter your 2FA code...' });
-      } else if (e.code === 1010) {
+      } else if (err.code === 1010) {
         setError({ message: 'That 2FA code did not work. Be quick now...' });
       } else {
         setError({ message: describeError(e) });
@@ -115,7 +119,7 @@ export default function LoginPage() {
               e.preventDefault();
               if (busy || atCapacity) return;
               envRef.current = 'staging';
-              e.currentTarget.form.requestSubmit();
+              e.currentTarget.form?.requestSubmit();
             }}
           >
             {busy ? <><span className="spinner" /> Logging in...</> : <>Log in</>}

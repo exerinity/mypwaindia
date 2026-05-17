@@ -1,12 +1,12 @@
 import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
 import { useApiCall } from '../hooks/useApiCall.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 import { getTransaction } from '../api/transactions.js';
-import { useCurrency } from '../context/SettingsContext.jsx';
+import { useCurrency } from '../context/SettingsContext.tsx';
 import { formatDate } from '../utils/dates.js';
-import { LoadingRow, ErrorBox } from '../components/Status.jsx';
-import { ArrowLeftIcon } from '../components/Icons.jsx';
+import { LoadingRow, ErrorBox } from '../components/Status.tsx';
+import { ArrowLeftIcon } from '../components/Icons.tsx';
 
 
 export default function TransactionPage() {
@@ -15,8 +15,9 @@ export default function TransactionPage() {
   const { active } = useAuth();
   const format = useCurrency();
 
-  const { data, loading, error } = useApiCall(
-    () => getTransaction(active, id),
+  type TxDetail = { transaction_id: string; id: number; status: string; amount: number; created: string; note?: string; sender?: { username: string; id: number }; recipient?: { username: string; id: number } };
+  const { data, loading, error } = useApiCall<TxDetail>(
+    () => getTransaction(active!, id!) as Promise<TxDetail>,
     [active?.token, id]
   );
 

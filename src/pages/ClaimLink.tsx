@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useToast } from '../context/ToastContext.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useToast } from '../context/ToastContext.tsx';
 import { getLink, claimLink } from '../api/links.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 import { getUserInfo } from '../api/user.js';
@@ -16,19 +16,19 @@ export default function ClaimLinkPage() {
   const toast = useToast();
   const [searchParams] = useSearchParams();
   const [token, setToken] = useState(searchParams.get('token') || '');
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState<{creator?:{username:string};amount:number;note?:string;created:string;status:string}|null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
-  const [previewError, setPreviewError] = useState(null);
+  const [previewError, setPreviewError] = useState<unknown>(null);
   const [claiming, setClaiming] = useState(false);
 
-  async function inspect(t) {
+  async function inspect(t?: string) {
     const trimmed = (t || token).trim();
     if (!trimmed) return;
     setLoadingPreview(true);
     setPreview(null);
     setPreviewError(null);
     try {
-      const info = await getLink(trimmed);
+      const info = await getLink(trimmed) as {creator?:{username:string};amount:number;note?:string;created:string;status:string};
       setPreview(info);
     } catch (e) {
       setPreviewError(e);
@@ -41,7 +41,7 @@ export default function ClaimLinkPage() {
     if (token) inspect(token);
   }, []);
 
-  function handleTokenChange(value) {
+  function handleTokenChange(value: string) {
     let t = value.trim();
     try {
       const url = new URL(t);
@@ -55,11 +55,11 @@ export default function ClaimLinkPage() {
     if (!token.trim()) return;
     setClaiming(true);
     try {
-      const res = await claimLink(active, token.trim());
+      const res = await claimLink(active!, token.trim()) as {transaction_id:string};
       toast.success('Link claimed!');
       try {
-        const info = await getUserInfo(active);
-        updateBalance(active.id, info.balance);
+        const info = await getUserInfo(active!) as any;
+        updateBalance(active!.id, info.balance);
       } catch { /* n */ }
       navigate(`/i/transaction/${res.transaction_id}`);
     } catch (e) {
@@ -86,7 +86,7 @@ export default function ClaimLinkPage() {
           </button>
         </div>
 
-        {previewError && (
+        {previewError != null && (
           <div className="alert alert-error">{describeError(previewError)}</div>
         )}
 

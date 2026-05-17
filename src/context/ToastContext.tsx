@@ -1,25 +1,44 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
-import { CloseIcon } from '../components/Icons.jsx';
+import type { ReactNode } from 'react';
+import { CloseIcon } from '../components/Icons.tsx';
 
-const ToastContext = createContext(null);
+type ToastKind = 'info' | 'success' | 'error' | 'warning';
+
+interface Toast {
+  id: number;
+  message: string;
+  kind: ToastKind;
+}
+
+interface ToastContextValue {
+  toasts: Toast[];
+  push: (message: string, kind?: ToastKind, timeout?: number) => number;
+  remove: (id: number) => void;
+  success: (message: string, timeout?: number) => number;
+  error: (message: string, timeout?: number) => number;
+  warning: (message: string, timeout?: number) => number;
+  info: (message: string, timeout?: number) => number;
+}
+
+const ToastContext = createContext<ToastContextValue | null>(null);
 
 let nextId = 1;
 
-export function ToastProvider({ children }) {
-  const [toasts, setToasts] = useState([]);
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const remove = useCallback((id) => {
+  const remove = useCallback((id: number) => {
     setToasts((t) => t.filter((x) => x.id !== id));
   }, []);
 
-  const push = useCallback((message, kind = 'info', timeout = 4000) => {
+  const push = useCallback((message: string, kind: ToastKind = 'info', timeout = 4000): number => {
     const id = nextId++;
     setToasts((t) => [...t, { id, message, kind }]);
     if (timeout > 0) setTimeout(() => remove(id), timeout);
     return id;
   }, [remove]);
 
-  const value = useMemo(() => ({
+  const value = useMemo<ToastContextValue>(() => ({
     toasts,
     push,
     remove,
@@ -37,7 +56,7 @@ export function ToastProvider({ children }) {
   );
 }
 
-function ToastContainer({ toasts, onClose }) {
+function ToastContainer({ toasts, onClose }: { toasts: Toast[]; onClose: (id: number) => void }) {
   if (!toasts.length) return null;
   return (
     <div className="toast-container" role="status" aria-live="polite">
@@ -51,7 +70,7 @@ function ToastContainer({ toasts, onClose }) {
   );
 }
 
-export function useToast() {
+export function useToast(): ToastContextValue {
   const ctx = useContext(ToastContext);
   if (!ctx) throw new Error('useToast outside provider');
   return ctx;

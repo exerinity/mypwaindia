@@ -1,15 +1,18 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSettings } from '../context/SettingsContext.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useToast } from '../context/ToastContext.jsx';
+import React, { useState } from 'react';
+import type { Account } from '../context/AuthContext.tsx';
+import type { Settings } from '../context/SettingsContext.tsx';
+import { useNavigate, Link } from 'react-router-dom';
+import { RELEASES } from './ReleaseNotes.tsx';
+import { useSettings } from '../context/SettingsContext.tsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useToast } from '../context/ToastContext.tsx';
 import { normalizeHex } from '../utils/colors.js';
-import { ConfirmModal } from '../components/ConfirmModal.jsx';
-import { Modal } from '../components/Modal.jsx';
-import { ExternalIcon, LogoutIcon } from '../components/Icons.jsx';
+import { ConfirmModal } from '../components/ConfirmModal.tsx';
+import { Modal } from '../components/Modal.tsx';
+import { ExternalIcon, LogoutIcon } from '../components/Icons.tsx';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 
-const THEME_OPTIONS = [
+const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
   { value: 'light', label: 'Light' },
   { value: 'dim', label: 'Dim' },
   { value: 'dark', label: 'Dark' },
@@ -23,17 +26,21 @@ export default function SettingsPage() {
   const toast = useToast();
 
   const [accentInput, setAccentInput] = useState(settings.accent);
-  const [removeOneTarget, setRemoveOneTarget] = useState(null);
+  const [removeOneTarget, setRemoveOneTarget] = useState<Account | null>(null);
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
   const [scambaitKnocks, setScambaitKnocks] = useState(0);
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
   const [scambaitAlreadyOpen, setScambaitAlreadyOpen] = useState(false);
 
-  function handleResetMiddleClick(e) {
+  function handleResetMiddleClick(e: React.MouseEvent) {
     if (e.button !== 1) return;
     e.preventDefault();
     if (settings.scambait) {
       setScambaitAlreadyOpen(true);
+      return;
+    }
+    if (!active) {
+      toast.warning('You must be logged in to enable scambait mode.');
       return;
     }
     const next = scambaitKnocks + 1;
@@ -47,7 +54,7 @@ export default function SettingsPage() {
     }
   }
 
-  function applyAccent(hex) {
+  function applyAccent(hex: string) {
     const norm = normalizeHex(hex);
     if (!norm) {
       toast.error('That\'s not a valid hex color');
@@ -106,6 +113,7 @@ export default function SettingsPage() {
             id="auto-refresh"
             checked={settings.autoRefresh}
             onChange={(e) => update({ autoRefresh: e.target.checked })}
+            disabled={!active}
           />
           <label htmlFor="auto-refresh" style={{ margin: 0 }}>
             Auto-refresh data (every 30 seconds)
@@ -117,15 +125,16 @@ export default function SettingsPage() {
         <h3 className="mt-0">Use for display</h3>
         <p className="muted" style={{ fontSize: '0.85rem' }}>What name to show in the pill, dashboard, and everywhere else</p>
         <div className="btn-row">
-          {[
+          {([
             { value: 'username', label: 'Username' },
             { value: 'first_name', label: 'First name' },
             { value: 'full_name', label: 'Full name' },
-          ].map((opt) => (
+          ] as { value: Settings['displayName']; label: string }[]).map((opt) => (
             <button
               key={opt.value}
               className={settings.displayName === opt.value ? '' : 'secondary'}
               onClick={() => update({ displayName: opt.value })}
+              disabled={!active}
             >
               {opt.label}
             </button>
@@ -219,13 +228,17 @@ export default function SettingsPage() {
 
       {!settings.scambait && (
         <p className="muted" style={{ fontSize: '0.8rem', marginTop: 24 }}>
-          App by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a>
+          <Link to="/i/release_notes">{RELEASES[0].version.toLocaleLowerCase()}</Link>
           {' - '}
-          {window.location.hostname === 'app.mypayindia.com' ? 'production' : 'staging'}
+          app by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a> on top of MyPayIndia API v2
           {' - '}
-          <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">Old app</a>
+          env: {window.location.hostname === 'app.mypayindia.com' ? 'production' : 'staging'}
           {' - '}
-          <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer">MyPayIndia.com</a>
+          <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">legacy app</a>
+          {' - '}
+          <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer">go to MyPayIndia.com</a>
+          {' - '}
+          <Link to="/i/acknowledgements">acknowledgements</Link>
         </p>
       )}
 

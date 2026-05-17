@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useCurrency, useSettings } from '../context/SettingsContext.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
-import { Modal } from '../components/Modal.jsx';
+import { useCurrency, useSettings } from '../context/SettingsContext.tsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { Modal } from '../components/Modal.tsx';
 import { generateStatements } from '../utils/fakeStatements.js';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -24,16 +24,16 @@ export default function StatementsPage() {
   const { active } = useAuth();
   const navigate = useNavigate();
   const [sort, setSort] = useState('date_desc');
-  const [limit, setLimit] = useState(25);
+  const [limit, setLimit] = useState<number | 'all'>(25);
 
-  const statements = useMemo(() => generateStatements(1000, active?.id), [active?.id]);
+  const statements = useMemo(() => generateStatements(1000, active?.id ?? null), [active?.id]);
 
   const sorted = useMemo(() => {
     const arr = [...statements];
     arr.sort((a, b) => {
       switch (sort) {
-        case 'date_asc':    return a.date - b.date;
-        case 'date_desc':   return b.date - a.date;
+        case 'date_asc':    return a.date.getTime() - b.date.getTime();
+        case 'date_desc':   return b.date.getTime() - a.date.getTime();
         case 'amount_asc':  return a.amount - b.amount;
         case 'amount_desc': return b.amount - a.amount;
         default: return 0;

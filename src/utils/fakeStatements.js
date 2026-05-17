@@ -50,6 +50,7 @@ function createRng(seed) {
   };
 }
 
+/** @param {number} count @param {number | null} [seed] @returns {{ id: number; description: string; amount: number; date: Date }[]} */
 export function generateStatements(count = 30, seed = null) {
   const rng = seed != null ? createRng(seed) : Math.random.bind(Math);
 

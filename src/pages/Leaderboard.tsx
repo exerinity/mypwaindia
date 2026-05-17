@@ -1,15 +1,16 @@
 import { useApiCall } from '../hooks/useApiCall.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useSettings } from '../context/SettingsContext.jsx';
+import { useSettings } from '../context/SettingsContext.tsx';
 import { getLeaderboard } from '../api/info.js';
 import { formatINR } from '../utils/money.js';
-import { LoadingRow, ErrorBox, Empty } from '../components/Status.jsx';
+import { LoadingRow, ErrorBox, Empty } from '../components/Status.tsx';
 
 export default function LeaderboardPage() {
   usePageTitle('Leaderboard');
   const { settings } = useSettings();
-  const { data, loading, error } = useApiCall(
-    () => getLeaderboard(),
+  interface LeaderEntry { username: string; balance: number }
+  const { data, loading, error } = useApiCall<{ leaderboard: LeaderEntry[] }>(
+    () => getLeaderboard() as Promise<{ leaderboard: LeaderEntry[] }>,
     [],
     { refresh: settings.autoRefresh }
   );

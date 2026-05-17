@@ -1,15 +1,15 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
 import { useApiCall } from '../hooks/useApiCall.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useSettings, useCurrency } from '../context/SettingsContext.jsx';
+import { useSettings, useCurrency } from '../context/SettingsContext.tsx';
 import { getUserInfo, getRestrictions } from '../api/user.js';
 import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
 import { getDisplayName } from '../utils/display.js';
-import { LoadingRow, ErrorBox } from '../components/Status.jsx';
-import { TransactionTable } from '../components/TransactionTable.jsx';
+import { LoadingRow, ErrorBox } from '../components/Status.tsx';
+import { TransactionTable } from '../components/TransactionTable.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
 import { generateStatements } from '../utils/fakeStatements.js';
 
@@ -23,31 +23,45 @@ export default function DashboardPage() {
   const scambait = settings.scambait;
   const refresh = settings.autoRefresh;
 
-  const userQ = useApiCall(async () => {
-    const info = await getUserInfo(active);
-    updateAccountInfo(active.id, { lastBalance: info.balance, firstName: info.first_name, lastName: info.last_name });
+  type UserInfo = { balance: number; first_name: string; last_name: string };
+  type TxList = { transactions: import('../components/TransactionTable.tsx').Transaction[] };
+  type LinkList = { links: { id: number; status: string }[] };
+  type Restrictions = { restrictions: Record<string, { active: boolean }> };
+
+  const userQ = useApiCall<UserInfo>(async () => {
+    const info = await getUserInfo(active!) as UserInfo;
+    updateAccountInfo(active!.id, { lastBalance: info.balance, firstName: info.first_name, lastName: info.last_name });
     return info;
-  }, [active?.token], { refresh });
+  }, [active?.token], { refresh, skip: !active });
 
-  const restrictionsQ = useApiCall(
-    () => getRestrictions(active),
+  const restrictionsQ = useApiCall<Restrictions>(
+    () => getRestrictions(active!) as Promise<Restrictions>,
     [active?.token],
-    { refresh }
+    { refresh, skip: !active }
   );
 
-  const txQ = useApiCall(
-    () => listTransactions(active),
+  const txQ = useApiCall<TxList>(
+    () => listTransactions(active!) as Promise<TxList>,
     [active?.token],
-    { refresh }
+    { refresh, skip: !active }
   );
 
-  const linksQ = useApiCall(
-    () => listLinks(active),
+  const linksQ = useApiCall<LinkList>(
+    () => listLinks(active!) as Promise<LinkList>,
     [active?.token],
-    { refresh }
+    { refresh, skip: !active }
   );
 
-  const fakeStatements = useMemo(() => scambait ? generateStatements(1000, active?.id).slice(0, 10) : [], [scambait, active?.id]);
+  const fakeStatements = useMemo(() => scambait ? generateStatements(1000, active?.id ?? null).slice(0, 10) : [], [scambait, active?.id]);
+
+  if (!active) {
+    return (
+      <>
+        <h1 className="mt-0">Welcome, stranger!</h1>
+        <p>You've reached the MyPayIndia PWA. This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />You can navigate the app logged out, but to actually do things, please <Link to="/i/flow/login">log in</Link>. If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the official site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
+      </>
+    );
+  }
 
   const transactions = txQ.data?.transactions || [];
   const links = linksQ.data?.links || [];

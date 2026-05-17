@@ -1,13 +1,22 @@
-import { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
+import type { ReactNode, CSSProperties } from 'react';
 
 const HOLD_MS = 2000;
 const DRAIN_MS = 400;
 
-export function HoldButton({ onConfirm, children, className, style, ...props }) {
+interface HoldButtonProps {
+  onConfirm: () => void;
+  children: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+  [key: string]: unknown;
+}
+
+export function HoldButton({ onConfirm, children, className, style, ...props }: HoldButtonProps) {
   const [progress, setProgress] = useState(0);
   const [holding, setHolding] = useState(false);
-  const rafRef = useRef(null);
-  const startRef = useRef(null);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
 
   const stop = useCallback(() => {
     if (rafRef.current) {
@@ -18,14 +27,14 @@ export function HoldButton({ onConfirm, children, className, style, ...props }) 
     setProgress(0);
   }, []);
 
-  const startHold = useCallback((e) => {
+  const startHold = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     if (rafRef.current) return;
     setHolding(true);
     startRef.current = performance.now();
 
-    const tick = (now) => {
-      const p = Math.min((now - startRef.current) / HOLD_MS, 1);
+    const tick = (now: number) => {
+      const p = Math.min((now - (startRef.current ?? now)) / HOLD_MS, 1);
       setProgress(p);
       if (p < 1) {
         rafRef.current = requestAnimationFrame(tick);

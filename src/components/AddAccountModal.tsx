@@ -1,11 +1,14 @@
-import { useState, useRef } from 'react';
-import { Modal } from './Modal.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useToast } from '../context/ToastContext.jsx';
+import React, { useState, useRef } from 'react';
+import { Modal } from './Modal.tsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useToast } from '../context/ToastContext.tsx';
 import { describeError } from '../utils/errors.js';
-import { Logo } from './Logo.jsx';
+import { Logo } from './Logo.tsx';
+import type { Env } from '../api/client.js';
 
-export function AddAccountModal({ open, onClose }) {
+interface AddAccountModalProps { open: boolean; onClose: () => void }
+
+export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
   const { login, accounts, maxAccounts } = useAuth();
   const toast = useToast();
   const [username, setUsername] = useState('');
@@ -13,8 +16,8 @@ export function AddAccountModal({ open, onClose }) {
   const [totp, setTotp] = useState('');
   const [needs2fa, setNeeds2fa] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(null);
-  const envRef = useRef('production');
+  const [error, setError] = useState<{ message: string } | null>(null);
+  const envRef = useRef<Env>('production');
 
   const atCapacity = accounts.length >= maxAccounts;
 
@@ -30,7 +33,7 @@ export function AddAccountModal({ open, onClose }) {
     onClose();
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (atCapacity) {
       toast.error(`You're at ${maxAccounts} accounts. Drop one first!`);
@@ -46,10 +49,10 @@ export function AddAccountModal({ open, onClose }) {
       reset();
       onClose();
     } catch (err) {
-      if (err.code === 1002) {
+      if ((err as { code?: number }).code === 1002) {
         setNeeds2fa(true);
         setError({ message: 'Enter your 2FA code' });
-      } else if (err.code === 1010) {
+      } else if ((err as { code?: number }).code === 1010) {
         setError({ message: 'Incorrect 2FA code' });
       } else {
         setError({ message: describeError(err) });
@@ -70,36 +73,13 @@ export function AddAccountModal({ open, onClose }) {
 
         <form onSubmit={handleSubmit}>
           <label>Username or email</label>
-          <input
-            type="text"
-            autoComplete="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            disabled={busy}
-          />
+          <input type="text" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} required disabled={busy} />
           <label>Password</label>
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={busy}
-          />
+          <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={busy} />
           {needs2fa && (
             <>
               <label>Two-factor code</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                autoComplete="one-time-code"
-                value={totp}
-                onChange={(e) => setTotp(e.target.value)}
-                disabled={busy}
-                placeholder="123456"
-              />
+              <input type="text" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" value={totp} onChange={(e) => setTotp(e.target.value)} disabled={busy} placeholder="123456" />
             </>
           )}
           {error && <div className="alert alert-error">{error.message}</div>}
@@ -111,7 +91,7 @@ export function AddAccountModal({ open, onClose }) {
               e.preventDefault();
               if (busy || atCapacity) return;
               envRef.current = 'staging';
-              e.currentTarget.form.requestSubmit();
+              e.currentTarget.form?.requestSubmit();
             }}
           >
             {busy ? <><span className="spinner" /> Signing in...</> : 'Add account'}

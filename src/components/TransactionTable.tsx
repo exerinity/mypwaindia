@@ -1,6 +1,17 @@
 import { useMemo, useState } from 'react';
+
+export interface Transaction {
+  id: number;
+  transaction_id: string;
+  amount: number;
+  status: string;
+  created: string;
+  sender?: { id: number; username: string };
+  recipient?: { id: number; username: string };
+  note?: string;
+}
 import { Link } from 'react-router-dom';
-import { useCurrency } from '../context/SettingsContext.jsx';
+import { useCurrency } from '../context/SettingsContext.tsx';
 import { formatDate } from '../utils/dates.js';
 
 const RESULT_OPTIONS = [10, 25, 50, 100, 'all'];
@@ -16,17 +27,18 @@ const SORT_OPTIONS = [
   { value: 'recipient_za','label': 'Recipient (Z-A)' },
 ];
 
-export function TransactionTable({ transactions, currentUserId }) {
+interface TransactionTableProps { transactions: Transaction[]; currentUserId?: number }
+export function TransactionTable({ transactions, currentUserId }: TransactionTableProps) {
   const format = useCurrency();
   const [sort, setSort] = useState('date_desc');
-  const [limit, setLimit] = useState(25);
+  const [limit, setLimit] = useState<number | 'all'>(25);
 
   const sorted = useMemo(() => {
     const arr = [...(transactions || [])];
     arr.sort((a, b) => {
       switch (sort) {
-        case 'date_asc':      return new Date(a.created) - new Date(b.created);
-        case 'date_desc':     return new Date(b.created) - new Date(a.created);
+        case 'date_asc':      return new Date(a.created).getTime() - new Date(b.created).getTime();
+        case 'date_desc':     return new Date(b.created).getTime() - new Date(a.created).getTime();
         case 'amount_asc':    return a.amount - b.amount;
         case 'amount_desc':   return b.amount - a.amount;
         case 'sender_az':     return (a.sender?.username || '').localeCompare(b.sender?.username || '');

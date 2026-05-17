@@ -7,14 +7,43 @@
   flex-direction: column;
   height: calc(100vh - 178px);
   min-height: 320px;
-  background: #0e0e0e;
-  border: 1px solid #242424;
+  background: #000000;
+  border: 2px solid #ffffff;
   border-radius: var(--radius);
   font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
   font-size: 0.855rem;
   line-height: 1.6;
   cursor: text;
   overflow: hidden;
+}
+
+.cli-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 4px 10px;
+  border-bottom: 1px solid #1a1a1a;
+  flex-shrink: 0;
+}
+
+.cli-clear-btn {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  border-radius: 3px;
+  color: #444;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 2px 9px;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+  line-height: 1.6;
+}
+
+.cli-clear-btn:hover {
+  color: #fff;
+  border-color: #555;
 }
 
 .cli-output {
@@ -32,7 +61,7 @@
 }
 
 .cli-output::-webkit-scrollbar-thumb {
-  background: #2c2c2c;
+  background: #ffffff;
   border-radius: 3px;
 }
 
@@ -43,29 +72,29 @@
 }
 
 .cli-line-cmd {
-  color: #6a6a6a;
+  color: #ffffff;
   padding-top: 10px;
   margin-bottom: 1px;
 }
 
 .cli-line-out {
-  color: #c8c8c8;
+  color: #ffffff;
 }
 
 .cli-line-ok {
-  color: #4db877;
+  color: #00ff66;
 }
 
 .cli-line-err {
-  color: #e07272;
+  color: #ff4444;
 }
 
 .cli-line-warn {
-  color: #e8b84b;
+  color: #ffcc00;
 }
 
 .cli-line-info {
-  color: #5aace8;
+  color: #00ccff;
 }
 
 .cli-line-sep {
@@ -78,8 +107,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px 12px;
-  border-top: 1px solid #1e1e1e;
-  background: #080808;
+  border-top: 2px solid #ffffff;
+  background: #000000;
   flex-shrink: 0;
 }
 
@@ -106,7 +135,7 @@
 }
 
 .cli-input::placeholder {
-  color: #3a3a3a;
+  color: #666666;
 }
 
 .cli-input:disabled {
@@ -114,10 +143,10 @@
 }
 
 .cli-send-btn {
-  background: #0f2017;
-  border: 1px solid #2e6640;
+  background: #000000;
+  border: 2px solid #00ff66;
   border-radius: 4px;
-  color: #4db877;
+  color: #00ff66;
   font-family: inherit;
   font-size: 0.78rem;
   font-weight: 700;
@@ -134,26 +163,26 @@
 }
 
 .cli-send-btn:hover:not(:disabled) {
-  background: #183525;
-  border-color: #4db877;
-  color: #6dcc90;
-  box-shadow: 0 0 8px #4db87740;
+  background: #00ff66;
+  border-color: #00ff66;
+  color: #000000;
+  box-shadow: 0 0 12px #00ff66;
 }
 
 .cli-send-btn:active:not(:disabled) {
-  background: #1f4530;
-  box-shadow: 0 0 4px #4db87760;
+  background: #00cc55;
+  box-shadow: 0 0 6px #00ff66;
 }
 
 .cli-send-btn:disabled {
-  opacity: 0.2;
+  opacity: 0.3;
   cursor: default;
 }
 
 .cli-busy-dot {
   width: 7px;
   height: 7px;
-  background: #4db877;
+  background: #00ff66;
   border-radius: 50%;
   animation: cli-pulse 0.9s ease-in-out infinite;
   flex-shrink: 0;

@@ -1,10 +1,12 @@
 import { useEffect, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { CloseIcon } from './Icons.jsx';
+import { CloseIcon } from './Icons.tsx';
 
 
-export function Modal({ open, onClose, title, fullscreen = false, children }) {
-  const handleKey = useCallback((e) => {
+interface ModalProps { open: boolean; onClose?: () => void; title: string; fullscreen?: boolean; children: ReactNode }
+export function Modal({ open, onClose, title, fullscreen = false, children }: ModalProps) {
+  const handleKey = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') onClose?.();
   }, [onClose]);
 

@@ -1,18 +1,25 @@
-import { Modal } from './Modal.jsx';
-import { HoldButton } from './HoldButton.jsx';
+import type { ReactNode } from 'react';
+import { Modal } from './Modal.tsx';
+import { HoldButton } from './HoldButton.tsx';
+
+interface ConfirmModalProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message?: ReactNode;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  danger?: boolean;
+  fullscreen?: boolean;
+  holdConfirm?: boolean;
+}
 
 export function ConfirmModal({
-  open,
-  onClose,
-  onConfirm,
-  title,
-  message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
-  danger = true,
-  fullscreen = false,
-  holdConfirm = false,
-}) {
+  open, onClose, onConfirm, title, message,
+  confirmLabel = 'Confirm', cancelLabel = 'Cancel',
+  danger = true, fullscreen = false, holdConfirm = false,
+}: ConfirmModalProps) {
   return (
     <Modal open={open} onClose={onClose} title={title} fullscreen={fullscreen}>
       <div>

@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
-import { useSettings, useCurrency } from '../context/SettingsContext.jsx';
+import { useAuth } from '../context/AuthContext.tsx';
+import { useSettings, useCurrency } from '../context/SettingsContext.tsx';
 import { useApiCall } from '../hooks/useApiCall.js';
 import { usePageTitle } from '../hooks/usePageTitle.js';
-import { useToast } from '../context/ToastContext.jsx';
+import { useToast } from '../context/ToastContext.tsx';
 import { getUserInfo, getRestrictions, listSessions, invalidateSession, verifyEmail } from '../api/user.js';
 import { formatDate, calcAge } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
-import { LoadingRow, ErrorBox } from '../components/Status.jsx';
+import { LoadingRow, ErrorBox } from '../components/Status.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
-import { ConfirmModal } from '../components/ConfirmModal.jsx';
-import { Modal } from '../components/Modal.jsx';
+import { ConfirmModal } from '../components/ConfirmModal.tsx';
+import { Modal } from '../components/Modal.tsx';
 
 export default function AccountPage() {
   usePageTitle('Account');
@@ -20,31 +20,36 @@ export default function AccountPage() {
   const formatBalance = useCurrency();
   const toast = useToast();
   const [sendingVerify, setSendingVerify] = useState(false);
-  const [killTarget, setKillTarget] = useState(null);
+  interface Age { years: number; months: number; weeks: number; days: number }
+  interface Session { id: string; device_info?: string; ip?: string; created_at: string; last_active: string; current?: boolean; invalidated?: boolean }
+  type UserInfo = { balance: number; first_name: string; last_name: string; email: string; date_of_birth?: string; created: string; mfa_enabled: boolean; username: string; role: string };
+  type Restrictions = { restrictions: Record<string, { active: boolean; expires_at?: string; value?: unknown }> };
+
+  const [killTarget, setKillTarget] = useState<Session | null>(null);
   const [personalDetailsOpen, setPersonalDetailsOpen] = useState(false);
   const [securityCode, setSecurityCode] = useState(['', '', '', '', '']);
 
-  const userQ = useApiCall(async () => {
-    const info = await getUserInfo(active);
-    updateAccountInfo(active.id, { lastBalance: info.balance, firstName: info.first_name, lastName: info.last_name });
+  const userQ = useApiCall<UserInfo>(async () => {
+    const info = await getUserInfo(active!) as UserInfo;
+    updateAccountInfo(active!.id, { lastBalance: info.balance, firstName: info.first_name, lastName: info.last_name });
     return info;
   }, [active?.token], { refresh: settings.autoRefresh });
 
-  const restrictionsQ = useApiCall(
-    () => getRestrictions(active),
+  const restrictionsQ = useApiCall<Restrictions>(
+    () => getRestrictions(active!) as Promise<Restrictions>,
     [active?.token],
     { refresh: settings.autoRefresh }
   );
 
-  const sessionsQ = useApiCall(
-    () => listSessions(active),
+  const sessionsQ = useApiCall<{ sessions: Session[] }>(
+    () => listSessions(active!) as Promise<{ sessions: Session[] }>,
     [active?.token]
   );
 
   async function handleVerify() {
     setSendingVerify(true);
     try {
-      await verifyEmail(active);
+      await verifyEmail(active!);
       toast.success('Verification email dispatched!');
     } catch (e) {
       toast.error(describeError(e));
@@ -53,9 +58,9 @@ export default function AccountPage() {
     }
   }
 
-  async function doKillSession(id) {
+  async function doKillSession(id: string) {
     try {
-      await invalidateSession(active, id);
+      await invalidateSession(active!, id);
       toast.success('Session terminated');
       sessionsQ.refetch();
     } catch (e) {
@@ -63,7 +68,7 @@ export default function AccountPage() {
     }
   }
 
-  function AgeTag({ age }) {
+  function AgeTag({ age }: { age: Age }) {
     const [hovered, setHovered] = useState(false);
     return (
       <span
@@ -98,7 +103,7 @@ export default function AccountPage() {
     );
   }
 
-  function SessionRow({ s }) {
+  function SessionRow({ s }: { s: Session }) {
     const [revealed, setRevealed] = useState(false);
     return (
       <tr key={s.id}>
@@ -208,7 +213,7 @@ export default function AccountPage() {
                             Expires {formatDate(val.expires_at)}
                           </p>
                         )}
-                        {val.value && (
+                        {val.value != null && (
                           <p className="muted mono" style={{ margin: '4px 0 0', fontSize: '0.8rem' }}>
                             {JSON.stringify(val.value)}
                           </p>

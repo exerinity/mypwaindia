@@ -1,12 +1,10 @@
 import { Link } from 'react-router-dom';
-import { Logo } from './Logo.jsx';
-import { HamburgerIcon } from './Icons.jsx';
-import { AccountPill } from './AccountPill.jsx';
-import { BalancePill } from './BalancePill.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
+import { Logo } from './Logo.tsx';
+import { HamburgerIcon } from './Icons.tsx';
+import { AccountPill } from './AccountPill.tsx';
+import { BalancePill } from './BalancePill.tsx';
 
-export function Header({ onToggleSidebar }) {
-  const { active } = useAuth();
+export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   return (
     <header className="app-header">
       <div className="app-header-row">
@@ -20,12 +18,10 @@ export function Header({ onToggleSidebar }) {
         <Link to="/dash" aria-label="Go to dashboard"><Logo /></Link>
         <div className="app-header-spacer" />
       </div>
-      {active && (
-        <div className="pill-row" role="status" aria-live="polite">
-          <AccountPill />
-          <BalancePill />
-        </div>
-      )}
+      <div className="pill-row" role="status" aria-live="polite">
+        <AccountPill />
+        <BalancePill />
+      </div>
     </header>
   );
 }

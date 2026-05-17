@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useSettings } from '../context/SettingsContext.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useSettings } from '../context/SettingsContext.tsx';
+import { useAuth } from '../context/AuthContext.tsx';
 
 export function useGlobalAutoRefresh(): void {
   const { settings } = useSettings() as { settings: { autoRefresh: boolean } };

@@ -1,4 +1,6 @@
-export function LoadingRow({ children = 'Retrieving data...' }) {
+import type { ReactNode } from 'react';
+
+export function LoadingRow({ children = 'Retrieving data...' }: { children?: ReactNode }) {
   return (
     <div className="loading-row">
       <span className="spinner lg" />
@@ -7,15 +9,15 @@ export function LoadingRow({ children = 'Retrieving data...' }) {
   );
 }
 
-export function Empty({ children = 'Nothing here.' }) {
+export function Empty({ children = 'Nothing here.' }: { children?: ReactNode }) {
   return <div className="empty">{children}</div>;
 }
 
-export function ErrorBox({ error }) {
+export function ErrorBox({ error }: { error: unknown }) {
   if (!error) return null;
   return (
     <div className="alert alert-error">
-      {error.message || String(error)}
+      {(error as { message?: string }).message || String(error)}
     </div>
   );
 }

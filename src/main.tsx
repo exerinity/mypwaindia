@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App.jsx';
-import { AuthProvider } from './context/AuthContext.jsx';
-import { SettingsProvider } from './context/SettingsContext.jsx';
-import { ToastProvider } from './context/ToastContext.jsx';
+import App from './App.tsx';
+import { AuthProvider } from './context/AuthContext.tsx';
+import { SettingsProvider } from './context/SettingsContext.tsx';
+import { ToastProvider } from './context/ToastContext.tsx';
 import './styles/index.css';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+function Root() {
+  useEffect(() => {
+    const el = document.getElementById('splash');
+    if (!el) return;
+    el.classList.add('out');
+    const t = setTimeout(() => el.remove(), 500);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
     <BrowserRouter>
       <SettingsProvider>
         <AuthProvider>
@@ -18,5 +26,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </AuthProvider>
       </SettingsProvider>
     </BrowserRouter>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Root />
   </React.StrictMode>
 );
