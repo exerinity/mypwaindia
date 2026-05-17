@@ -22,6 +22,12 @@ const THX = [
 
 const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
   {
+    title: 'API',
+    packages: [
+      { name: 'MyPayIndia API v2', url: 'https://mypayindia.com/docs/api' },
+    ],
+  },
+  {
     title: 'Runtime',
     packages: [
       { name: 'React', version: 18, license: 'MIT', url: 'https://react.dev' },

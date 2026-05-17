@@ -149,6 +149,7 @@ export default function CLIPage() {
     }
     return [
       L.ok('Welcome to MyCLiIndia!'),
+      L.warn('MyCLiIndia is an experimental Unix-style command line interface... inside an already-experimental web app. This is entirely a conceptual demo and you probably won\'t find it very useful - but feel free to try it out, and please report any issues you encounter in the Discord, in #dev, mentioning @exerinity!'),
       L.out(`logged in as ${username}@mypayindia - type 'help' to see a list of commands`),
       L.sep(),
     ];

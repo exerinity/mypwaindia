@@ -1,16 +1,18 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.tsx';
 import { storageSet, KEYS } from '../utils/storage.ts';
 import { usePageTitle } from '../hooks/usePageTitle.js';
+import { RELEASES } from './ReleaseNotes.tsx';
+import { useToast } from '../context/ToastContext.tsx';
+import { ExternalIcon } from '../components/Icons.tsx';
 
 export default function OnboardingPage() {
-  usePageTitle('Welcome');
+  usePageTitle('Welcome to the MyPayIndia PWA');
   const { active } = useAuth();
   const navigate = useNavigate();
 
   if (!active) {
-    navigate('/i/flow/login', { replace: true });
-    return null;
+    return <Navigate to="/i/flow/login" replace />;
   }
 
   function accept() {
@@ -23,7 +25,7 @@ export default function OnboardingPage() {
       <div className="card" style={{ maxWidth: 520, width: '100%' }}>
         <h1 style={{ marginTop: 0 }}>Welcome to the MyPayIndia PWA</h1>
         <p>
-          This is a new, experimental progressive web app/alternative client for MyPayIndia.
+          This is an experimental progressive web app/alternative client for MyPayIndia.
           This app is still in an early state, so please keep in mind:
         </p>
         <ul>
@@ -43,23 +45,48 @@ export default function OnboardingPage() {
             website
           </li>
           <li>
-            The source code is available at{' '}
-            <a href="https://github.com/MyPayIndiaDevs/pwa" target="_blank" rel="noreferrer">
-              https://github.com/MyPayIndiaDevs/pwa
-            </a>
-          </li>
-          <li>
-            By using this service, you agree to the{' '}
+            By using this app, you agree to the{' '}
             <a href="https://mypayindia.com/terms" target="_blank" rel="noreferrer">terms and conditions</a>,
             constituted by your initial registration
           </li>
           <li>
             <strong>This app is not complete and still an early work in progress</strong>
           </li>
+          <li>
+            This app was recently fully remade in React. You might be looking for the legacy web app. <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">You can find it here <ExternalIcon size={14} /></a>
+          </li>
         </ul>
         <button onClick={accept} style={{ width: '100%', marginTop: '8px' }}>
           Got it, let's go
         </button>
+        <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'block', textDecoration: 'none', marginTop: '8px' }}>
+          <button className="secondary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} type="button">
+            Legacy web app <ExternalIcon size={14} />
+          </button>
+        </a>
+        <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'block', textDecoration: 'none', marginTop: '8px' }}>
+          <button className="secondary" style={{ width: '100%' }} type="button">
+            Go back to MyPayIndia.com <ExternalIcon size={14} />
+          </button>
+        </a>
+        <p className="muted" style={{ fontSize: '0.8rem', marginTop: 24 }}>
+          <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noopener noreferrer">
+            Please submit feedback in the Discord server, mentioning @exerinity
+          </a><br></br>
+          You will not see this again, even after you log out, unless you clear the storage for this app (or visit /i/flow/onboarding lolz)
+          <br></br><br></br>
+          <Link to="/i/release_notes">v{RELEASES[0].version.toLocaleLowerCase()}</Link>
+          {' | '}
+          by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a>
+          {' | '}
+          {window.location.hostname === 'app.mypayindia.com' ? 'production' : 'staging'}
+          {' | '}
+          <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">legacy</a>
+          {' | '}
+          <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer">MyPayIndia.com</a>
+          {' | '}
+          <Link to="/i/acknowledgements">acknowledgements</Link>
+        </p>
       </div>
     </div>
   );

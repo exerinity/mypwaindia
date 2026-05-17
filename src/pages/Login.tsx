@@ -11,7 +11,7 @@ import { ArrowLeftIcon, ExternalIcon } from '../components/Icons.tsx';
 import { usePageTitle } from '../hooks/usePageTitle.js';
 
 export default function LoginPage() {
-  usePageTitle('Log in');
+  usePageTitle('Log in to MyPayIndia');
   const { login, accounts, maxAccounts } = useAuth();
   const { update: updateSettings } = useSettings();
   const location = useLocation();

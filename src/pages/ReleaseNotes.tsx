@@ -12,14 +12,14 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
-    version: 'Version 10',
+    version: '10',
     date: '12 May 2026',
     notes: [
       <>Introducing <Link to="/i/flow/mci">MyCLiIndia</Link>!</>,
     ]
   },
   {
-    version: 'Version 9',
+    version: '9',
     date: '11 May 2026',
     notes: [
       'Staging environment support: right-click the Log in button to authenticate against staging instead of production',
@@ -28,7 +28,7 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 8b',
+    version: '8b',
     date: '9 May 2026',
     notes: [
       'The "Dark" theme has been changed to "Dim" and "Dark" is now a lights out theme',
@@ -38,7 +38,7 @@ export const RELEASES: Release[] = [
     ]
   },
   {
-    version: 'Version 8a',
+    version: '8a',
     date: '8 May 2026',
     notes: [
       'Fixed a typo on the transfer page',
@@ -48,7 +48,7 @@ export const RELEASES: Release[] = [
     ]
   },
   {
-    version: 'Version 8',
+    version: '8',
     date: '7 May 2026',
     notes: [
       'Completely remade in React',
@@ -57,17 +57,17 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 7a',
+    version: '7a',
     date: '16 Apr 2026',
     notes: ['Added an Install view with instructions for installing the PWA on various platforms'],
   },
   {
-    version: 'Version 7',
+    version: '7',
     date: '14 Apr 2026',
     notes: ['Redesign most of the UI!', 'Added account switcher'],
   },
   {
-    version: 'Version 6',
+    version: '6',
     date: '8 Apr 2026',
     notes: [
       'Renamed Create payment link to Payment links',
@@ -77,7 +77,7 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 5b',
+    version: '5b',
     date: '4 Apr 2026',
     notes: [
       'The team view now loads data from a live endpoint (nothing different, really)',
@@ -85,7 +85,7 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 5a',
+    version: '5a',
     date: '2 Apr 2026',
     notes: [
       'Added recent contacts to the transfer view',
@@ -93,12 +93,12 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 5',
+    version: '5',
     date: '30 Mar 2026',
     notes: ['Added an accent color modifier to settings'],
   },
   {
-    version: 'Version 4b',
+    version: '4b',
     date: '19 Mar 2026',
     notes: [
       'Updated money generator > investment opportunities links',
@@ -106,7 +106,7 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 4a',
+    version: '4a',
     date: '12 Mar 2026',
     notes: [
       'Added a Remember option to the login form',
@@ -114,7 +114,7 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 4',
+    version: '4',
     date: '12 Mar 2026',
     notes: [
       'Added an option (on by default) to automatically refresh data every 30 seconds to Settings',
@@ -125,7 +125,7 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 3a',
+    version: '3a',
     date: '9 Mar 2026',
     notes: ['Added a new Meet the team view'],
     subnotes: [
@@ -135,7 +135,7 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 3',
+    version: '3',
     date: '1 Mar 2026',
     notes: [
       'Added a new Settings view accessible in the menu that, as of now, allows you to change your display name in the app from real name or username',
@@ -144,7 +144,7 @@ export const RELEASES: Release[] = [
     subnotes: ['Updated some styling to look better, and also, the onboarding message'],
   },
   {
-    version: 'Version 2a',
+    version: '2a',
     date: '21 Feb 2026',
     notes: [
       'Moved App release notes from Your account to Meta in the menu',
@@ -152,7 +152,7 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 2',
+    version: '2',
     date: '21 Feb 2026',
     notes: [
       'Added a new transaction details view, click on a transaction on the dashboard or bespoke list! (/history)',
@@ -160,12 +160,12 @@ export const RELEASES: Release[] = [
     ],
   },
   {
-    version: 'Version 1',
+    version: '1',
     date: '14 Feb 2026',
     notes: ['App launches to app.mypayindia.com'],
   },
   {
-    version: 'Version 0 (pre-release)',
+    version: '0 (pre-release)',
     date: '7 Feb 2026',
     notes: [
       'App inception',
@@ -183,7 +183,7 @@ export default function ReleaseNotesPage() {
         {RELEASES.map((r, i) => (
           <details key={r.version} style={{ borderBottom: i < RELEASES.length - 1 ? '1px solid var(--border)' : 'none', padding: '4px 0' }}>
             <summary style={{ cursor: 'pointer', padding: '10px 0', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <strong>{r.version}</strong>
+              <strong>Version {r.version}</strong>
               <span className="muted" style={{ fontSize: '0.85rem' }}>{r.date}</span>
             </summary>
             {r.disclaimer && (
