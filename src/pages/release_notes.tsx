@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AppFooter } from '../components/app_footer.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 
 type Release = {
@@ -11,6 +12,14 @@ type Release = {
 };
 
 export const RELEASES: Release[] = [
+  {
+    version: '10a',
+    date: '18 May 2026',
+    notes: [
+      <>Added some really wacky animations and shit that I'll probably remove later; to some buttons, modals, <Link to="/i/team">the team page</Link>, and the account switcher dropdown</>,
+      <>Added a <Link to="/i/flow/scambaitmode">a discrete scambait mode page</Link></>
+    ]
+  },
   {
     version: '10',
     date: '12 May 2026',
@@ -176,34 +185,51 @@ export const RELEASES: Release[] = [
   },
 ];
 
+function ReleaseItem({ r, borderBottom }: { r: Release; borderBottom: boolean }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ borderBottom: borderBottom ? '1px solid var(--border)' : 'none', padding: '4px 0' }}>
+      <button
+        className="release-summary"
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+      >
+        <strong>Version {r.version}</strong>
+        <span className="muted" style={{ fontSize: '0.85rem' }}>{r.date}</span>
+      </button>
+      <div className={`release-body${open ? ' open' : ''}`}>
+        <div className="release-body-inner">
+          {r.disclaimer && (
+            <p className="muted" style={{ fontSize: '0.8rem', margin: '6px 0 4px' }}>{r.disclaimer}</p>
+          )}
+          <ul style={{ marginTop: 6, marginBottom: 10 }}>
+            {r.notes.map((note, j) => <li key={j}>{note}</li>)}
+          </ul>
+          {r.subnotes && (
+            <small>
+              <ul style={{ marginBottom: 10 }}>
+                {r.subnotes.map((n, j) => <li key={j}>{n}</li>)}
+              </ul>
+            </small>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ReleaseNotesPage() {
   usePageTitle('Release notes');
   return (
     <>
       <h1 className="mt-0">Release notes</h1>
       <div className="card">
+        <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
         {RELEASES.map((r, i) => (
-          <details key={r.version} style={{ borderBottom: i < RELEASES.length - 1 ? '1px solid var(--border)' : 'none', padding: '4px 0' }}>
-            <summary style={{ cursor: 'pointer', padding: '10px 0', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <strong>Version {r.version}</strong>
-              <span className="muted" style={{ fontSize: '0.85rem' }}>{r.date}</span>
-            </summary>
-            {r.disclaimer && (
-              <p className="muted" style={{ fontSize: '0.8rem', margin: '6px 0 4px' }}>{r.disclaimer}</p>
-            )}
-            <ul style={{ marginTop: 6, marginBottom: 10 }}>
-              {r.notes.map((note, j) => <li key={j}>{note}</li>)}
-            </ul>
-            {r.subnotes && (
-              <small>
-                <ul style={{ marginBottom: 10 }}>
-                  {r.subnotes.map((n, j) => <li key={j}>{n}</li>)}
-                </ul>
-              </small>
-            )}
-          </details>
+          <ReleaseItem key={r.version} r={r} borderBottom={i < RELEASES.length - 1} />
         ))}
       </div>
+      <AppFooter version={RELEASES[0].version} />
     </>
   );
 }
