@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
@@ -10,6 +10,7 @@ import { formatINR, rupeesToPaisa } from '../utils/money.js';
 import { formatDate } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
 import { LoadingRow, ErrorBox, Empty } from '../components/status.tsx';
+import { WarningIcon } from '../components/icons.tsx';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 const PRESETS_PAISA = [
   100,    // 1 INR
@@ -29,6 +30,8 @@ export default function LinksPage() {
   const [stackPaisa, setStackPaisa] = useState(0);
   const [note, setNote] = useState('');
   const [creating, setCreating] = useState(false);
+  const [rawInput, setRawInput] = useState('');
+  const [editingAmount, setEditingAmount] = useState(false);
   interface Link { id: number; token: string; amount: number; status: string; url: string; note?: string; created: string }
   const [cancelTarget, setCancelTarget] = useState<Link | null>(null);
 
@@ -61,13 +64,26 @@ export default function LinksPage() {
   function bump(amt: number) { setStackPaisa((s) => s + amt); }
   function reset() { setStackPaisa(0); setNote(''); }
 
+  function handleAmountFocus(e: React.FocusEvent<HTMLInputElement>) {
+    const rupees = stackPaisa / 100;
+    setRawInput(rupees === 0 ? '' : String(rupees));
+    setEditingAmount(true);
+    setTimeout(() => e.target.select(), 0);
+  }
+  function handleAmountBlur() {
+    setEditingAmount(false);
+    const rupees = parseFloat(rawInput);
+    if (!isNaN(rupees) && rupees > 0) setStackPaisa(Math.round(rupees * 100));
+    setRawInput('');
+  }
+
   async function create() {
     if (stackPaisa <= 0) {
       toast.error('The amount should amount to something!');
       return;
     }
     if (balance !== null && stackPaisa > balance) {
-      toast.error('You don\'t have that much, but nice try.');
+      toast.error('I told you that you don\'t have that much!!!');
       return;
     }
     setCreating(true);
@@ -122,9 +138,17 @@ export default function LinksPage() {
       <div className="card mb-2">
         <h3 className="mt-0">Compose a payment link</h3>
         <div className="preset-stack">
-          <div className="preset-stack-display">
-            {formatINR(stackPaisa)}
-          </div>
+          <input
+            className="preset-stack-display"
+            type="text"
+            inputMode="decimal"
+            value={editingAmount ? rawInput : formatINR(stackPaisa)}
+            onChange={(e) => setRawInput(e.target.value)}
+            onFocus={handleAmountFocus}
+            onBlur={handleAmountBlur}
+            disabled={creating}
+            aria-label="Payment amount"
+          />
           <div className="preset-stack-row">
             {PRESETS_PAISA.map((p) => (
               <button key={p} type="button" className="secondary compact" onClick={() => bump(p)} disabled={creating}>
@@ -151,8 +175,8 @@ export default function LinksPage() {
             </button>
           </div>
           {balance !== null && stackPaisa > balance && (
-            <div className="alert alert-warning">
-              You don't have that much lmao ({formatINR(balance)} available)
+            <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <WarningIcon /><span>You don't have that much ({formatINR(balance)} available). The server will reject it. I'm warning you in advance...</span>
             </div>
           )}
         </div>
