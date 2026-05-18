@@ -28,9 +28,9 @@ const NAV_GROUPS: NavGroup[] = [
     title: 'Your account',
     items: [
       { to: '/dash', label: 'Dashboard', end: true, icon: DashboardIcon },
-      { to: '/dash/account', label: 'Account', icon: UserIcon },
-      { to: '/dash/account/transfer', label: 'Transfer funds', icon: TransferIcon },
-      { to: '/dash/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true },
+      { to: '/account', label: 'Account', icon: UserIcon },
+      { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon },
+      { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true },
       { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true },
       { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true },
       { href: 'https://mypayindia.com/accountservices/iotm/', label: 'Investment Opportunities™', icon: TrophyIcon, external: true, hideInScambait: true },
