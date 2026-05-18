@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: 'MyPayIndia PWA',
         short_name: 'MyPayIndia',
-        description: 'The official progressive web app for MyPayIndia',
+        description: 'MyPayIndia responsive web app',
         theme_color: '#d03505',
         background_color: '#000000',
         display: 'standalone',
