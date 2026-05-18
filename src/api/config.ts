@@ -1,6 +1,6 @@
 const PREVIEW_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0'];
 
-export const REMOTE_BASE = 'https://pr.app.mypayindia.com';
+export const REMOTE_BASE = 'https://mpi.exerinity.dev';
 
 export function getApiBase(): string {
   const host = typeof window !== 'undefined' ? window.location.hostname : '';
