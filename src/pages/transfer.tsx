@@ -96,7 +96,7 @@ export default function TransferPage() {
             required
           />
           {amount && !Number.isInteger(paisa) && (
-            <div className="alert alert-error">Too many decimals, space cadet!</div>
+            <div className="alert alert-error">Enter a <i>number</i>, space cadet!</div>
           )}
           {overBalance && (
             <div className="alert alert-warning">

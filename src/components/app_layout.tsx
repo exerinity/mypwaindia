@@ -27,7 +27,7 @@ export function AppLayout() {
       updateToastShown.current = true;
       toast.push('A new version is available, refresh to update', 'info', 0, {
         label: 'Refresh',
-        onClick: () => window.location.reload(),
+        onClick: () => { window.location.href = window.location.href.split('?')[0] + '?cachebust=' + Date.now(); },
       });
     }
   }, [needRefresh, toast]);

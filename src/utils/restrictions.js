@@ -1,7 +1,3 @@
-// The official list of ways the platform can ruin your day.
-// Add new restrictions here and they'll automatically render correctly
-// wherever restrictions are displayed.
-
 export const RESTRICTION_INFO = {
   frozen: {
     title: 'Account Frozen',
@@ -13,10 +9,9 @@ export const RESTRICTION_INFO = {
   },
 };
 
-// Fallback for any restriction the backend invents that we haven't catalogued yet.
 export function getRestrictionInfo(key) {
   return RESTRICTION_INFO[key] || {
     title: key,
-    description: 'Your account has a restriction',
+    description: 'Your account has a restriction, please contact support for more information.',
   };
 }
