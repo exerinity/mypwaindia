@@ -8,6 +8,7 @@ import { getUserInfo, getRestrictions } from '../api/user.js';
 import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
 import { getDisplayName } from '../utils/display.js';
+import { InfoIcon, WarningIcon } from '../components/icons.tsx';
 import { LoadingRow, ErrorBox } from '../components/status.tsx';
 import { TransactionTable } from '../components/tx_table.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
@@ -60,7 +61,10 @@ export default function DashboardPage() {
         <h1 className="mt-0">Welcome, stranger!</h1>
         <p>You've reached the MyPayIndia PWA, "MyPWAIndia". This is an alternative, responsive web app for MyPayIndia.<br /><br />
         You can navigate most of the app logged out, but to actually do everything, please <Link to="/i/flow/login">log in</Link>. 
-        If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here.<br /><br />If, however, you entered "app" into the URL and are looking for the actual mobile apps, they can be found <a href="https://mypayindia.com/app/" target="_blank">here</a>.<br></br><br></br>Thanks, and have fun! (<Link to="/i/flow/mci">try out MyCLiIndia while you're here</Link>)</p>
+        If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
+        <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <InfoIcon /><span>If you are looking for the legacy app, you can find it here: <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">https://legacy.app.mypayindia.com</a></span>
+        </div>
       </>
     );
   }
@@ -76,10 +80,10 @@ export default function DashboardPage() {
       <h1 className="mt-0">{scambait ? 'Hello' : 'Welcome back'}, {getDisplayName(active, settings.displayName)}{scambait ? '' : '!'}</h1>
 
       {restrictionList.length > 0 && (
-        <div className="alert alert-warning">
-          <strong>Your account has some active restrictions:</strong>{' '}
+        <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <WarningIcon /><span><strong>Your account has some active restrictions:</strong>{' '}
           {restrictionList.map(([k]) => getRestrictionInfo(k).title).join(', ')}.
-          {' '}<Link to="/dash/account" className="muted">More...</Link>
+          {' '}<Link to="/dash/account" className="muted">More...</Link></span>
         </div>
       )}
 
