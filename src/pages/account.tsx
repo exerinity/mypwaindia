@@ -8,7 +8,7 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { getUserInfo, getRestrictions, listSessions, invalidateSession, verifyEmail } from '../api/user.js';
 import { formatDate, calcAge } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
-import { LoadingRow, ErrorBox } from '../components/status.tsx';
+import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { WarningIcon } from '../components/icons.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
@@ -148,7 +148,44 @@ export default function AccountPage() {
     <>
       <h1 className="mt-0">Account</h1>
 
-      {userQ.loading && !u ? <LoadingRow /> :
+      {userQ.loading && !u ? (
+        <>
+          <div className="card mb-2">
+            <div className="row spread">
+              <div>
+                <Skeleton width={180} height={20} style={{ marginBottom: 8 }} />
+                <Skeleton width={130} height={14} />
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <Skeleton width={52} height={12} style={{ marginBottom: 8 }} />
+                <Skeleton width={110} height={28} />
+              </div>
+            </div>
+            <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '16px 0' }} />
+            <div className="grid cols-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i}>
+                  <Skeleton width={50} height={11} style={{ marginBottom: 6 }} />
+                  <Skeleton width={`${90 + (i % 3) * 28}px`} height={15} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="card mb-2"><Skeleton width={160} height={32} radius={6} /></div>
+          <div className="card">
+            <Skeleton width={120} height={18} style={{ marginBottom: 16 }} />
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : undefined }}>
+                <Skeleton width={`${30 + (i % 3) * 10}%`} height={13} />
+                <Skeleton width={80} height={13} />
+                <Skeleton width={70} height={13} />
+                <Skeleton width={70} height={13} />
+                <Skeleton width={50} height={13} />
+              </div>
+            ))}
+          </div>
+        </>
+      ) :
         userQ.error ? <ErrorBox error={userQ.error} /> :
           u && (
             <>
@@ -234,7 +271,19 @@ export default function AccountPage() {
 
               <div className="card">
                 <h3 className="mt-0">Active sessions</h3>
-                {sessionsQ.loading && !sessionsQ.data ? <LoadingRow /> :
+                {sessionsQ.loading && !sessionsQ.data ? (
+                  <>
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : undefined }}>
+                        <Skeleton width={`${25 + (i % 3) * 8}%`} height={13} />
+                        <Skeleton width={90} height={13} />
+                        <Skeleton width={80} height={13} />
+                        <Skeleton width={80} height={13} />
+                        <Skeleton width={55} height={13} />
+                      </div>
+                    ))}
+                  </>
+                ) :
                   sessionsQ.error ? <ErrorBox error={sessionsQ.error} /> : (
                     <div className="table-wrap">
                       <table className="table">
