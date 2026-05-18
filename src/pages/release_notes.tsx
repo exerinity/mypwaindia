@@ -22,7 +22,8 @@ export const RELEASES: Release[] = [
       <>Added a <Link to="/i/flow/scambaitmode">discrete scambait mode page</Link></>,
       'Added many redirects to mirror the main website, so for example, visiting /accountservices/dashboard (from the main website) will take you to the dashboard (backward compatibility or whateverrr)',
       'Made icons for alert boxes',
-      <>Overhauled <Link to="/dash/account/transfer">the transfer page</Link> and the <Link to="/links">payment links page</Link></>
+      <>Overhauled <Link to="/dash/account/transfer">the transfer page</Link> and the <Link to="/links">payment links page</Link></>,
+      'Replaced most loading messages w/ spinners with skeleton shimmer'
     ]
   },
   {
