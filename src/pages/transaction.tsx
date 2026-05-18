@@ -25,7 +25,7 @@ export default function TransactionPage() {
     <>
       <h1 className="mt-0">Transaction</h1>
       <p className="muted">
-        <Link to="/dash/account/history" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><ArrowLeftIcon /> Back to history</Link>
+        <Link to="/account/history" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><ArrowLeftIcon /> Back to history</Link>
       </p>
 
       {loading && !data ? (
