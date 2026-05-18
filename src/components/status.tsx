@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, CSSProperties } from 'react';
 import { ErrorIcon } from './icons.tsx';
 
 export function LoadingRow({ children = 'Retrieving data...' }: { children?: ReactNode }) {
@@ -12,6 +12,15 @@ export function LoadingRow({ children = 'Retrieving data...' }: { children?: Rea
 
 export function Empty({ children = 'Nothing here.' }: { children?: ReactNode }) {
   return <div className="empty">{children}</div>;
+}
+
+export function Skeleton({ width, height = 14, radius = 4, style }: {
+  width?: string | number;
+  height?: string | number;
+  radius?: number;
+  style?: CSSProperties;
+}) {
+  return <span className="skeleton" style={{ width, height, borderRadius: radius, ...style }} />;
 }
 
 export function ErrorBox({ error }: { error: unknown }) {
