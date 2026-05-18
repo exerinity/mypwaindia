@@ -36,7 +36,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (atCapacity) {
-      toast.error(`You're at ${maxAccounts} accounts. Drop one first!`);
+      toast.error(`You're at ${maxAccounts} accounts. That's too many - drop one first!`);
       return;
     }
     const env = envRef.current;
@@ -63,7 +63,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title="Add account" fullscreen>
+    <Modal open={open} onClose={handleClose} title="Add account" fullscreen className="slide">
       <div>
         {atCapacity && (
           <div className="alert alert-warning">
