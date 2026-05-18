@@ -73,7 +73,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <h1 className="mt-0">Welcome back, {getDisplayName(active, settings.displayName)}!</h1>
+      <h1 className="mt-0">{scambait ? 'Hello' : 'Welcome back'}, {getDisplayName(active, settings.displayName)}{scambait ? '' : '!'}</h1>
 
       {restrictionList.length > 0 && (
         <div className="alert alert-warning">
