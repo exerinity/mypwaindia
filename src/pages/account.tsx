@@ -9,6 +9,7 @@ import { getUserInfo, getRestrictions, listSessions, invalidateSession, verifyEm
 import { formatDate, calcAge } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
 import { LoadingRow, ErrorBox } from '../components/status.tsx';
+import { WarningIcon } from '../components/icons.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
@@ -206,7 +207,7 @@ export default function AccountPage() {
                     const info = getRestrictionInfo(key);
                     return (
                       <div key={key} className="alert alert-warning">
-                        <strong>{info.title}</strong>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><WarningIcon /><strong>{info.title}</strong></div>
                         <p style={{ margin: '4px 0 0' }}>{info.description}</p>
                         {val.expires_at && (
                           <p className="muted" style={{ margin: '4px 0 0', fontSize: '0.85rem' }}>
