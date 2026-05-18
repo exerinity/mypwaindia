@@ -83,7 +83,7 @@ export default function DashboardPage() {
         <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <WarningIcon /><span><strong>Your account has some active restrictions:</strong>{' '}
           {restrictionList.map(([k]) => getRestrictionInfo(k).title).join(', ')}.
-          {' '}<Link to="/dash/account" className="muted">More...</Link></span>
+          {' '}<Link to="/account/restrictions" className="muted">More...</Link></span>
         </div>
       )}
 
@@ -114,12 +114,12 @@ export default function DashboardPage() {
       </div>
 
       <div className="btn-row mb-2">
-        <Link to="/dash/account/transfer" className="btn secondary">Transfer funds</Link>
+        <Link to="/account/transfer" className="btn secondary">Transfer funds</Link>
         {!scambait && <Link to="/links" className="btn secondary">Create a payment link</Link>}
         {!scambait && <Link to="/links:claim" className="btn secondary">Claim a payment link</Link>}
         {scambait
           ? <Link to="/dash/statements" className="btn ghost">Full statements</Link>
-          : <Link to="/dash/account/history" className="btn ghost">Full transaction history</Link>
+          : <Link to="/account/history" className="btn ghost">Full transaction history</Link>
         }
       </div>
 
@@ -128,7 +128,7 @@ export default function DashboardPage() {
           <h3 style={{ margin: 0 }}>Recent activity</h3>
           {scambait
             ? <Link to="/dash/statements" className="muted">View all</Link>
-            : <Link to="/dash/account/history" className="muted">View all</Link>
+            : <Link to="/account/history" className="muted">View all</Link>
           }
         </div>
         {scambait ? (
