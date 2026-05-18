@@ -79,9 +79,9 @@ const COMMANDS = [
 
 const PAGE_MAP = {
   dash: '/dash', home: '/dash', dashboard: '/dash',
-  account: '/dash/account',
-  transfer: '/dash/account/transfer', send: '/dash/account/transfer',
-  history: '/dash/account/history',
+  account: '/account',
+  transfer: '/account/transfer', send: '/account/transfer',
+  history: '/account/history',
   links: '/links',
   claim: '/links:claim',
   settings: '/settings',
