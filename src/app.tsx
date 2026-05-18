@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { AppLayout } from './components/app_layout.tsx';
 import { RequireAuth } from './components/require_auth.tsx';
 
@@ -28,10 +28,32 @@ function PayLinkRedirect() {
   return <Navigate to={`/dash/links/claim${search}`} replace />;
 }
 
+function ExternalRedirect({ to }: { to: string }) {
+  window.location.replace(to);
+  return null;
+}
+
+function MerchantRedirect() {
+  const { '*': splat } = useParams();
+  window.location.replace(`https://mypayindia.com/merchant/${splat ?? ''}`);
+  return null;
+}
+
 export default function App() {
   return (
     <Routes>
       <Route path="/pay/link" element={<PayLinkRedirect />} />
+
+      <Route path="/leaderboard" element={<Navigate to="/i/leaderboard" replace />} />
+      <Route path="/team" element={<Navigate to="/i/team" replace />} />
+      <Route path="/docs" element={<ExternalRedirect to="https://mypayindia.com/docs" />} />
+      <Route path="/app" element={<ExternalRedirect to="https://mypayindia.com/app" />} />
+      <Route path="/accountservices/dashboard" element={<Navigate to="/dash" replace />} />
+      <Route path="/accountservices/transhist" element={<Navigate to="/dash/account/history" replace />} />
+      <Route path="/accountservices/transfer" element={<Navigate to="/dash/account/transfer" replace />} />
+      <Route path="/accountservices/iotm" element={<ExternalRedirect to="https://mypayindia.com/accountservices/iotm" />} />
+      <Route path="/merchant/*" element={<MerchantRedirect />} />
+
       <Route path="/i/flow/login" element={<LoginPage />} />
       <Route path="/i/flow/logout" element={<LogoutPage />} />
       <Route path="/i/flow/onboarding" element={<OnboardingPage />} />
