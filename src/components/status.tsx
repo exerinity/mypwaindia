@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ErrorIcon } from './icons.tsx';
 
 export function LoadingRow({ children = 'Retrieving data...' }: { children?: ReactNode }) {
   return (
@@ -16,8 +17,9 @@ export function Empty({ children = 'Nothing here.' }: { children?: ReactNode }) 
 export function ErrorBox({ error }: { error: unknown }) {
   if (!error) return null;
   return (
-    <div className="alert alert-error">
-      {(error as { message?: string }).message || String(error)}
+    <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <ErrorIcon />
+      <span>{(error as { message?: string }).message || String(error)}</span>
     </div>
   );
 }
