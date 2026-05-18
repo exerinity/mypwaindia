@@ -1,17 +1,23 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { CloseIcon } from './icons.tsx';
 
 
-interface ModalProps { open: boolean; onClose?: () => void; title: string; fullscreen?: boolean; children: ReactNode }
-export function Modal({ open, onClose, title, fullscreen = false, children }: ModalProps) {
+interface ModalProps { open: boolean; onClose?: () => void; title: string; fullscreen?: boolean; className?: string; children: ReactNode }
+export function Modal({ open, onClose, title, fullscreen = false, className, children }: ModalProps) {
+  const [closing, setClosing] = useState(false);
+
+  const handleClose = useCallback(() => {
+    setClosing(true);
+  }, []);
+
   const handleKey = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose?.();
-  }, [onClose]);
+    if (e.key === 'Escape') handleClose();
+  }, [handleClose]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) { setClosing(false); return; }
     document.addEventListener('keydown', handleKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -21,23 +27,26 @@ export function Modal({ open, onClose, title, fullscreen = false, children }: Mo
     };
   }, [open, handleKey]);
 
-  if (!open) return null;
+  if (!open && !closing) return null;
 
   const node = (
     <div
-      className={`modal-root ${fullscreen ? 'fullscreen' : ''}`}
+      className={`modal-root ${fullscreen ? 'fullscreen' : ''}${closing ? ' closing' : ''}${className ? ` ${className}` : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label={title}
     >
       {!fullscreen && (
-        <div className="modal-backdrop" onClick={onClose} aria-hidden="true" />
+        <div className="modal-backdrop" onClick={handleClose} aria-hidden="true" />
       )}
-      <div className="modal-panel">
+      <div
+        className="modal-panel"
+        onAnimationEnd={() => { if (closing) { setClosing(false); onClose?.(); } }}
+      >
         <header className="modal-header">
           <button
             className="modal-close"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Close"
             type="button"
           >
