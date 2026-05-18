@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import type { Account } from '../context/auth_ctx.tsx';
 import type { Settings } from '../context/settings_ctx.tsx';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { AppFooter } from '../components/app_footer.tsx';
 import { RELEASES } from './release_notes.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
@@ -226,21 +227,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {!settings.scambait && (
-        <p className="muted" style={{ fontSize: '0.8rem', marginTop: 24 }}>
-          <Link to="/i/release_notes">v{RELEASES[0].version.toLocaleLowerCase()}</Link>
-          {' - '}
-          app by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a> using MyPayIndia API v2
-          {' - '}
-          env: {window.location.hostname === 'app.mypayindia.com' ? 'production' : 'staging'}
-          {' - '}
-          <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">legacy app</a>
-          {' - '}
-          <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer">go to MyPayIndia.com</a>
-          {' - '}
-          <Link to="/i/acknowledgements">acknowledgements</Link>
-        </p>
-      )}
+      {!settings.scambait && <AppFooter version={RELEASES[0].version} />}
 
       <ConfirmModal
         open={!!removeOneTarget}
@@ -265,7 +252,7 @@ export default function SettingsPage() {
         }}
         title="Remove all accounts"
         message={`Do you really, really want to remove all ${accounts.length} saved account${accounts.length === 1 ? '' : 's'}?`}
-        confirmLabel="Remove all"
+        confirmLabel="Remove all (hold)"
         holdConfirm
       />
 
