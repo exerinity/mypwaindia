@@ -4,8 +4,9 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { Modal } from '../components/modal.tsx';
+import { VisaIcon, MastercardIcon } from '../components/icons.tsx';
 
-interface Card { number: string; name: string; exp: string; cvv: string; type: string; bg: string }
+interface Card { number: string; name: string; exp: string; cvv: string; type: string; bg: string; network: 'visa' | 'mastercard' }
 
 function pad(n: number, len: number) {
   return String(Math.abs(Math.round(n)) % Math.pow(10, len)).padStart(len, '0');
@@ -22,6 +23,7 @@ function buildCards(userId: number | string | undefined, holderName: string): Ca
       cvv: pad((n * 31 + 284) % 900 + 100, 3),
       type: 'EVERYDAY',
       bg: 'linear-gradient(135deg, #1a237e 0%, #283593 100%)',
+      network: 'visa',
     },
     {
       number: `5425 ${pad(n * 5 + 2334, 4)} ${pad(n * 9 + 3010, 4)} ${pad(n * 13 + 9903, 4)}`,
@@ -30,17 +32,20 @@ function buildCards(userId: number | string | undefined, holderName: string): Ca
       cvv: pad((n * 47 + 731) % 900 + 100, 3),
       type: 'SAVINGS',
       bg: 'linear-gradient(135deg, #b71c1c 0%, #7f0000 100%)',
+      network: 'mastercard',
     },
     {
-      number: `3782 ${pad(n * 17 + 822463, 6)} ${pad(n * 23 + 10005, 5)}`,
+      number: `4${pad(n * 17 + 522, 3)} ${pad(n * 23 + 7005, 4)} ${pad(n * 29 + 4321, 4)} ${pad(n * 37 + 8765, 4)}`,
       name,
       exp: `${pad((n + 4) % 12 + 1, 2)}/${26 + (n % 4)}`,
-      cvv: pad((n * 61 + 1234) % 9000 + 1000, 4),
+      cvv: pad((n * 53 + 891) % 900 + 100, 3),
       type: 'BUSINESS',
       bg: 'linear-gradient(135deg, #1b5e20 0%, #003300 100%)',
+      network: 'visa',
     }
   ];
 }
+
 
 function CreditCard({ card }: { card: Card }) {
   const [revealed, setRevealed] = useState(false);
@@ -67,9 +72,12 @@ function CreditCard({ card }: { card: Card }) {
         <span style={{ fontSize: '0.65rem', opacity: 0.65, letterSpacing: 2, fontFamily: 'sans-serif' }}>
           MYPAYINDIA
         </span>
-        <span style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: 2, fontFamily: 'sans-serif', opacity: 0.9 }}>
-          {card.type}
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+          <span style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: 2, fontFamily: 'sans-serif', opacity: 0.9 }}>
+            {card.type}
+          </span>
+          {card.network === 'visa' ? <VisaIcon /> : <MastercardIcon />}
+        </div>
       </div>
 
       <div style={{
