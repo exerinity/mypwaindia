@@ -9,7 +9,7 @@ import { getUserInfo } from '../api/user.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 import { HoldButton } from '../components/hold_btn.tsx';
-import { WarningIcon } from '../components/icons.tsx';
+import { InfoIcon, WarningIcon } from '../components/icons.tsx';
 import type { Transaction } from '../components/tx_table.tsx';
 
 const PRESETS_PAISA = [
@@ -97,7 +97,7 @@ export default function TransferPage() {
       try {
         const info = await getUserInfo(active!) as { balance: number };
         updateBalance(active!.id, info.balance);
-      } catch {}
+      } catch { }
       navigate(`/i/transaction/${res.transaction_id}`);
     } catch (err) {
       toast.error(describeError(err));
@@ -109,6 +109,9 @@ export default function TransferPage() {
   return (
     <>
       <h1 className="mt-0">Transfer funds</h1>
+      <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <InfoIcon /><span>Please note that transfers above a certain amount are subject to manual review by our team.</span>
+      </div>
 
       <div className="card mb-2">
         <h3 className="mt-0">Amount</h3>
