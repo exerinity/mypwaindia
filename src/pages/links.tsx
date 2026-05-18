@@ -22,7 +22,7 @@ const PRESETS_PAISA = [
 ];
 
 export default function LinksPage() {
-  usePageTitle('Your payment links');
+  usePageTitle('Payment links');
   const { active, updateBalance } = useAuth();
   const { settings } = useSettings();
   const toast = useToast();
@@ -120,7 +120,7 @@ export default function LinksPage() {
       <h1 className="mt-0">Payment links</h1>
 
       <div className="card mb-2">
-        <h3 className="mt-0">Create a new payment link</h3>
+        <h3 className="mt-0">Compose a payment link</h3>
         <div className="preset-stack">
           <div className="preset-stack-display">
             {formatINR(stackPaisa)}
@@ -158,7 +158,7 @@ export default function LinksPage() {
         </div>
       </div>
 
-      <h3>Active links ({activeLinks.length})</h3>
+      <h3>Live payment links ({activeLinks.length})</h3>
       {linksQ.loading && !linksQ.data ? <LoadingRow /> :
         linksQ.error ? <ErrorBox error={linksQ.error} /> :
           activeLinks.length === 0 ? <Empty>No active links. Create one above?</Empty> :
@@ -183,7 +183,7 @@ export default function LinksPage() {
             </div>
       }
 
-      <h3 className="mt-3">Past links ({otherLinks.length})</h3>
+      <h3 className="mt-3">Void payment links ({otherLinks.length})</h3>
       {otherLinks.length === 0 ? <Empty>Nothing here yet...</Empty> :
         <div className="grid" style={{ gap: 10 }}>
           {otherLinks.map((l) => (
