@@ -5,6 +5,7 @@ export const ERROR_MESSAGES = {
   1004: 'Either your or the recipient account is frozen and you are not permitted to perform this action',
   1005: 'One of those are wrong',
   1010: 'Invalid 2FA code',
+  1012: 'Your email is not yet verified - verify it to perform this action',
   1013: 'Email is already verified, drama queen.',
   1014: 'You\'re not part of this transaction!',
   1015: 'Refunding this would exceed your account fund limits.',
