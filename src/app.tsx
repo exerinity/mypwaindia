@@ -22,6 +22,7 @@ import NotFoundPage from './pages/not_found.tsx';
 import CLIPage from './pages/cli.tsx';
 import AcknowledgementsPage from './pages/acknowledgements.tsx';
 import ScambaitPage from './pages/scambait.tsx';
+import RestrictionsPage from './pages/restrictions.tsx';
 
 function PayLinkRedirect() {
   const { search } = useLocation();
@@ -49,8 +50,8 @@ export default function App() {
       <Route path="/docs" element={<ExternalRedirect to="https://mypayindia.com/docs" />} />
       <Route path="/app" element={<ExternalRedirect to="https://mypayindia.com/app" />} />
       <Route path="/accountservices/dashboard" element={<Navigate to="/dash" replace />} />
-      <Route path="/accountservices/transhist" element={<Navigate to="/dash/account/history" replace />} />
-      <Route path="/accountservices/transfer" element={<Navigate to="/dash/account/transfer" replace />} />
+      <Route path="/accountservices/transhist" element={<Navigate to="/account/history" replace />} />
+      <Route path="/accountservices/transfer" element={<Navigate to="/account/transfer" replace />} />
       <Route path="/accountservices/iotm" element={<ExternalRedirect to="https://mypayindia.com/accountservices/iotm" />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
 
@@ -75,9 +76,10 @@ export default function App() {
 
         {/* login */}
         <Route element={<RequireAuth />}>
-          <Route path="/dash/account" element={<AccountPage />} />
-          <Route path="/dash/account/transfer" element={<TransferPage />} />
-          <Route path="/dash/account/history" element={<HistoryPage />} />
+          <Route path="/account" element={<AccountPage />} />
+          <Route path="/account/restrictions" element={<RestrictionsPage />} />
+          <Route path="/account/transfer" element={<TransferPage />} />
+          <Route path="/account/history" element={<HistoryPage />} />
           <Route path="/links" element={<LinksPage />} />
           <Route path="/links:claim" element={<ClaimLinkPage />} />
           <Route path="/dash/statements" element={<StatementsPage />} />
