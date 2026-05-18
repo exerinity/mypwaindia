@@ -1,4 +1,5 @@
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { AppFooter } from '../components/app_footer.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { storageSet, KEYS } from '../utils/storage.ts';
 import { usePageTitle } from '../hooks/page_title.js';
@@ -74,19 +75,8 @@ export default function OnboardingPage() {
             Please submit feedback in the Discord server, mentioning @exerinity
           </a><br></br>
           You will not see this again, even after you log out, unless you clear the storage for this app (or visit /i/flow/onboarding lolz)
-          <br></br><br></br>
-          <Link to="/i/release_notes">v{RELEASES[0].version.toLocaleLowerCase()}</Link>
-          {' | '}
-          by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a>
-          {' | '}
-          {window.location.hostname === 'app.mypayindia.com' ? 'production' : 'staging'}
-          {' | '}
-          <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">legacy</a>
-          {' | '}
-          <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer">MyPayIndia.com</a>
-          {' | '}
-          <Link to="/i/acknowledgements">acknowledgements</Link>
         </p>
+        <AppFooter version={RELEASES[0].version} />
       </div>
     </div>
   );
