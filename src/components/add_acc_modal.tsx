@@ -4,6 +4,7 @@ import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 import { Logo } from './logo.tsx';
+import { WarningIcon, ErrorIcon } from './icons.tsx';
 import type { Env } from '../api/client.js';
 
 interface AddAccountModalProps { open: boolean; onClose: () => void }
@@ -66,8 +67,8 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
     <Modal open={open} onClose={handleClose} title="Add account" fullscreen className="slide">
       <div>
         {atCapacity && (
-          <div className="alert alert-warning">
-            You have {maxAccounts} accounts saved. Remove one before adding another.
+          <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <WarningIcon /><span>You have {maxAccounts} accounts saved. Remove one before adding another.</span>
           </div>
         )}
 
@@ -82,7 +83,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
               <input type="text" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" value={totp} onChange={(e) => setTotp(e.target.value)} disabled={busy} placeholder="123456" />
             </>
           )}
-          {error && <div className="alert alert-error">{error.message}</div>}
+          {error && <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><ErrorIcon /><span>{error.message}</span></div>}
           <button
             type="submit"
             disabled={busy || atCapacity}
