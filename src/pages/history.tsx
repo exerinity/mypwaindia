@@ -4,7 +4,7 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { listTransactions } from '../api/transactions.js';
 import { TransactionTable } from '../components/tx_table.tsx';
-import { LoadingRow, ErrorBox } from '../components/status.tsx';
+import { Skeleton, ErrorBox } from '../components/status.tsx';
 
 export default function HistoryPage() {
   usePageTitle('Transaction history');
@@ -21,7 +21,17 @@ export default function HistoryPage() {
     <>
       <h1 className="mt-0">Transaction history</h1>
       <div className="card">
-        {loading && !data ? <LoadingRow /> :
+        {loading && !data ? (
+          <div>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)', alignItems: 'center' }}>
+                <Skeleton width={80} height={12} />
+                <Skeleton style={{ flex: 1, height: 12, width: `${40 + (i % 3) * 15}%` }} />
+                <Skeleton width={90} height={12} />
+              </div>
+            ))}
+          </div>
+        ) :
          error ? <ErrorBox error={error} /> :
          <TransactionTable
            transactions={data?.transactions || []}
