@@ -8,6 +8,7 @@ import { getUserInfo } from '../api/user.js';
 import { formatINR } from '../utils/money.js';
 import { formatDate } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
+import { ErrorIcon } from '../components/icons.tsx';
 
 export default function ClaimLinkPage() {
   usePageTitle('Claim a link');
@@ -87,7 +88,7 @@ export default function ClaimLinkPage() {
         </div>
 
         {previewError != null && (
-          <div className="alert alert-error">{describeError(previewError)}</div>
+          <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><ErrorIcon /><span>{describeError(previewError)}</span></div>
         )}
 
         {preview && (
