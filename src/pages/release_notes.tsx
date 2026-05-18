@@ -16,11 +16,13 @@ export const RELEASES: Release[] = [
   {
     version: '10a',
     date: '18 May 2026',
+    disclaimer: 'This was mostly a behind the scenes update. In spite of that, here are the major changes:',
     notes: [
       <>Added some really wacky animations and shit that I'll probably remove later; to some buttons, modals, <Link to="/i/team">the team page</Link>, and the account switcher dropdown</>,
-      <>Added a <Link to="/i/flow/scambaitmode">a discrete scambait mode page</Link></>,
+      <>Added a <Link to="/i/flow/scambaitmode">discrete scambait mode page</Link></>,
       'Added many redirects to mirror the main website, so for example, visiting /accountservices/dashboard (from the main website) will take you to the dashboard (backward compatibility or whateverrr)',
-      'Made icons for alert boxes'
+      'Made icons for alert boxes',
+      <>Overhauled <Link to="/dash/account/transfer">the transfer page</Link> and the <Link to="/links">payment links page</Link></>
     ]
   },
   {
