@@ -9,7 +9,7 @@ import { getUserInfo } from '../api/user.js';
 import { formatINR, rupeesToPaisa } from '../utils/money.js';
 import { formatDate } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
-import { LoadingRow, ErrorBox, Empty } from '../components/status.tsx';
+import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
 import { WarningIcon } from '../components/icons.tsx';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 const PRESETS_PAISA = [
@@ -183,7 +183,26 @@ export default function LinksPage() {
       </div>
 
       <h3>Live payment links ({activeLinks.length})</h3>
-      {linksQ.loading && !linksQ.data ? <LoadingRow /> :
+      {linksQ.loading && !linksQ.data ? (
+        <div className="grid" style={{ gap: 10 }}>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="card link-card compact">
+              <div className="link-info">
+                <div className="row gap-sm" style={{ marginBottom: 6 }}>
+                  <Skeleton width={88} height={16} />
+                  <Skeleton width={52} height={16} radius={999} />
+                </div>
+                <Skeleton width={`${140 + (i % 2) * 40}px`} height={11} style={{ marginBottom: 4 }} />
+                <Skeleton width={200} height={10} />
+              </div>
+              <div className="row gap-sm">
+                <Skeleton width={82} height={30} radius={6} />
+                <Skeleton width={62} height={30} radius={6} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) :
         linksQ.error ? <ErrorBox error={linksQ.error} /> :
           activeLinks.length === 0 ? <Empty>No active links. Create one above?</Empty> :
             <div className="grid" style={{ gap: 10 }}>
