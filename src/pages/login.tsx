@@ -7,7 +7,7 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 import { storageGet, KEYS } from '../utils/storage.ts';
 import { Logo } from '../components/logo.tsx';
-import { ArrowLeftIcon, ExternalIcon } from '../components/icons.tsx';
+import { ArrowLeftIcon, ExternalIcon, WarningIcon, ErrorIcon } from '../components/icons.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 
 export default function LoginPage() {
@@ -64,8 +64,8 @@ export default function LoginPage() {
         <h2 className="mt-0">Log in to MyPayIndia</h2>
 
         {atCapacity && (
-          <div className="alert alert-warning">
-            You have {maxAccounts} accounts saved on this device. Remove one before adding another.
+          <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <WarningIcon /><span>You have {maxAccounts} accounts saved on this device. Remove one before adding another.</span>
           </div>
         )}
 
@@ -113,7 +113,7 @@ export default function LoginPage() {
               />
             </>
           )}
-          {error && <div className="alert alert-error">{error.message}</div>}
+          {error && <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><ErrorIcon /><span>{error.message}</span></div>}
           <button
             type="submit"
             title="TIP: right-click to log into the staging instance, Ctrl+Enter to immediately enable scambait mode when logging in"
