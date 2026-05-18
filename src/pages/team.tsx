@@ -3,7 +3,7 @@ import { useApiCall } from '../hooks/api_call.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { getTeam } from '../api/info.js';
 import { formatDateShort, calcAge } from '../utils/dates.js';
-import { LoadingRow, ErrorBox, Empty } from '../components/status.tsx';
+import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
 import { ExternalIcon } from '../components/icons.tsx';
 
 interface Age { years: number; months: number; weeks: number; days: number }
@@ -71,7 +71,18 @@ export default function TeamPage() {
       <p>Currently our team consists of {team.length} people</p>
       <button className="ghost" style={{ fontSize: '0.85rem', padding: '2px 6px', marginBottom: '20px', display: 'inline-block' }} onClick={shuffle}>reshuffle animations?</button>
 
-      {loading && !data ? <LoadingRow /> :
+      {loading && !data ? (
+        <div className="grid cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="card team-card">
+              <Skeleton width={96} height={96} radius={50} />
+              <Skeleton width={130} height={16} style={{ marginTop: 4 }} />
+              <Skeleton width={80} height={13} />
+              <Skeleton width={100} height={11} />
+            </div>
+          ))}
+        </div>
+      ) :
        error ? <ErrorBox error={error} /> :
        team.length === 0 ? <Empty>N</Empty> :
        <div className="grid cols-3">
