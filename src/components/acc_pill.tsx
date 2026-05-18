@@ -18,14 +18,19 @@ export function AccountPill() {
   const { settings } = useSettings();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [closing, setClosing] = useState(false);
   const [switching, setSwitching] = useState(false);
   const [removeTarget, setRemoveTarget] = useState<Account | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
+  function closeDropdown() {
+    setClosing(true);
+  }
+
   useEffect(() => {
     if (!open) return;
     function onClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) closeDropdown();
     }
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
@@ -54,14 +59,18 @@ export function AccountPill() {
   return (
     <>
       <div className="acct-dropdown" ref={ref}>
-        <button className="pill clickable" onClick={() => setOpen((o) => !o)} aria-haspopup="menu" aria-expanded={open}>
+        <button className="pill clickable" onClick={() => open ? closeDropdown() : setOpen(true)} aria-haspopup="menu" aria-expanded={open}>
           <span className="pill-label">Logged in as</span>
           <strong>{getDisplayName(active, settings.displayName)}</strong>
           <ChevronDown />
         </button>
 
-        {open && (
-          <div className="acct-dropdown-menu" role="menu">
+        {(open || closing) && (
+          <div
+            className={`acct-dropdown-menu${closing ? ' acct-dropdown-closing' : ''}`}
+            role="menu"
+            onAnimationEnd={() => { if (closing) { setClosing(false); setOpen(false); } }}
+          >
             <div className="acct-list">
               {accounts.map((acc) => {
                 const isActive = acc.id === active.id;
@@ -71,7 +80,7 @@ export function AccountPill() {
                     <button
                       className="acct-switch-btn"
                       disabled={switching}
-                      onClick={async () => { setOpen(false); setSwitching(true); await switchAccount(acc.id); }}
+                      onClick={async () => { closeDropdown(); setSwitching(true); await switchAccount(acc.id); }}
                     >
                       <span className="acct-info">
                         <span className="acct-name">
@@ -85,15 +94,15 @@ export function AccountPill() {
                           {balance && <span className="acct-balance">{balance}</span>}
                         </span>
                       </span>
-                      {isActive && <span className="acct-check">✓</span>}
                     </button>
                     <button
-                      className="acct-remove"
-                      onClick={() => { setOpen(false); setRemoveTarget(acc); }}
+                      className={`acct-remove${isActive ? ' acct-remove-active' : ''}`}
+                      onClick={() => { closeDropdown(); setRemoveTarget(acc); }}
                       aria-label={`Remove ${acc.username}`}
                       title="Remove this account"
                     >
-                      <CloseIcon size={13} />
+                      <span className="acct-icon-check">✓</span>
+                      <span className="acct-icon-x"><CloseIcon size={13} /></span>
                     </button>
                   </div>
                 );
@@ -101,7 +110,7 @@ export function AccountPill() {
             </div>
             <div className="acct-footer">
               {canAdd ? (
-                <button className="acct-add-btn" onClick={() => { setOpen(false); navigate('/i/flow/login'); }}>
+                <button className="acct-add-btn" onClick={() => { closeDropdown(); navigate('/i/flow/login'); }}>
                   <PlusIcon size={13} /> Add another account
                 </button>
               ) : (
