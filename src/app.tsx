@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppLayout } from './components/app_layout.tsx';
 import { RequireAuth } from './components/require_auth.tsx';
 
@@ -21,10 +21,17 @@ import OnboardingPage from './pages/onboarding.tsx';
 import NotFoundPage from './pages/not_found.tsx';
 import CLIPage from './pages/cli.tsx';
 import AcknowledgementsPage from './pages/acknowledgements.tsx';
+import ScambaitPage from './pages/scambait.tsx';
+
+function PayLinkRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/dash/links/claim${search}`} replace />;
+}
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/pay/link" element={<PayLinkRedirect />} />
       <Route path="/i/flow/login" element={<LoginPage />} />
       <Route path="/i/flow/logout" element={<LogoutPage />} />
       <Route path="/i/flow/onboarding" element={<OnboardingPage />} />
@@ -39,6 +46,7 @@ export default function App() {
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
+        <Route path="/i/flow/scambaitmode" element={<ScambaitPage />} />
 
         <Route path="/i/flow/mci" element={<CLIPage />} />
         <Route path="/i/flow/mci/focus" element={<CLIPage />} />
