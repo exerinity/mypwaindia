@@ -5,7 +5,7 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { getTransaction } from '../api/transactions.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { formatDate } from '../utils/dates.js';
-import { LoadingRow, ErrorBox } from '../components/status.tsx';
+import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { ArrowLeftIcon } from '../components/icons.tsx';
 
 
@@ -28,7 +28,24 @@ export default function TransactionPage() {
         <Link to="/dash/account/history" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><ArrowLeftIcon /> Back to history</Link>
       </p>
 
-      {loading && !data ? <LoadingRow /> :
+      {loading && !data ? (
+        <div className="card">
+          <div className="row spread" style={{ marginBottom: 12 }}>
+            <Skeleton width={220} height={18} />
+            <Skeleton width={64} height={18} radius={999} />
+          </div>
+          <Skeleton width={160} height={38} style={{ marginBottom: 16 }} />
+          <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '16px 0' }} />
+          <div className="grid cols-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i}>
+                <Skeleton width={40} height={11} style={{ marginBottom: 6 }} />
+                <Skeleton width={`${80 + (i % 3) * 24}px`} height={15} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) :
        error ? <ErrorBox error={error} /> :
        data && (
         <div className="card">
