@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
 import { usePageTitle } from '../hooks/page_title.js';
-import { transfer } from '../api/transactions.js';
+import { transfer, listTransactions } from '../api/transactions.js';
 import { getUserInfo } from '../api/user.js';
-import { rupeesToPaisa } from '../utils/money.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 import { HoldButton } from '../components/hold_btn.tsx';
+import { WarningIcon } from '../components/icons.tsx';
+import type { Transaction } from '../components/tx_table.tsx';
+
+const PRESETS_PAISA = [
+  100,    // ₹1
+  500,    // ₹5
+  1000,   // ₹10
+  5000,   // ₹50
+  10000,  // ₹100
+  50000,  // ₹500
+  100000, // ₹1,000
+];
 
 export default function TransferPage() {
   usePageTitle('Transfer funds');
@@ -18,9 +29,11 @@ export default function TransferPage() {
   const toast = useToast();
   const format = useCurrency();
   const [recipient, setRecipient] = useState('');
-  const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
+  const [stackPaisa, setStackPaisa] = useState(0);
+  const [rawInput, setRawInput] = useState('');
+  const [editingAmount, setEditingAmount] = useState(false);
 
   const userQ = useApiCall<{ balance: number }>(
     async () => {
@@ -31,31 +44,58 @@ export default function TransferPage() {
     [active?.token]
   );
 
-  const paisa = amount === '' ? 0 : rupeesToPaisa(amount);
-  const validAmount = Number.isInteger(paisa) && paisa > 0;
+  const txQ = useApiCall<{ transactions: Transaction[] }>(
+    () => listTransactions(active!) as Promise<{ transactions: Transaction[] }>,
+    [active?.token]
+  );
+
   const balance = userQ.data?.balance ?? null;
-  const overBalance = balance !== null && paisa > balance;
-  const isHighValue = validAmount && paisa > 200000;
+  const overBalance = balance !== null && stackPaisa > balance;
+  const isHighValue = stackPaisa > 200000;
+
+  const recentRecipients = useMemo(() => {
+    const txs = txQ.data?.transactions ?? [];
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const tx of txs) {
+      if (tx.sender?.id === active?.id && tx.recipient?.username) {
+        const u = tx.recipient.username;
+        if (!seen.has(u)) { seen.add(u); result.push(u); }
+        if (result.length >= 5) break;
+      }
+    }
+    return result;
+  }, [txQ.data, active?.id]);
+
+  function bump(amt: number) { setStackPaisa((s) => s + amt); }
+  function reset() { setStackPaisa(0); }
+
+  function handleAmountFocus(e: React.FocusEvent<HTMLInputElement>) {
+    const rupees = stackPaisa / 100;
+    setRawInput(rupees === 0 ? '' : String(rupees));
+    setEditingAmount(true);
+    setTimeout(() => e.target.select(), 0);
+  }
+  function handleAmountBlur() {
+    setEditingAmount(false);
+    const rupees = parseFloat(rawInput);
+    if (!isNaN(rupees) && rupees > 0) setStackPaisa(Math.round(rupees * 100));
+    setRawInput('');
+  }
 
   async function doTransfer() {
-    if (!validAmount) {
-      toast.error('Real numbers only!');
-      return;
-    }
-    if (!recipient.trim()) {
-      toast.error('Specify someone to send to');
-      return;
-    }
+    if (stackPaisa <= 0) { toast.error('Real numbers only!'); return; }
+    if (!recipient.trim()) { toast.error('Specify someone to send to'); return; }
     setBusy(true);
     try {
       const res = await transfer(active!, {
         recipient: recipient.trim(),
-        amount: paisa,
+        amount: stackPaisa,
         note: note.trim() || undefined,
       }) as { transaction_id: string };
-      toast.success(`${recipient} now has an extra ${format(paisa)}, thanks to you!`);
+      toast.success(`${recipient} now has an extra ${format(stackPaisa)}, thanks to you!`);
       try {
-        const info = await getUserInfo(active!) as any;
+        const info = await getUserInfo(active!) as { balance: number };
         updateBalance(active!.id, info.balance);
       } catch {}
       navigate(`/i/transaction/${res.transaction_id}`);
@@ -66,66 +106,89 @@ export default function TransferPage() {
     }
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    doTransfer();
-  }
-
   return (
     <>
       <h1 className="mt-0">Transfer funds</h1>
-      <div className="card" style={{ maxWidth: 520 }}>
-        <form onSubmit={handleSubmit}>
-          <label>Recipient</label>
-          <input
-            type="text"
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            disabled={busy}
-            required
-          />
 
-          <label>Amount</label>
+      <div className="card mb-2">
+        <h3 className="mt-0">Amount</h3>
+        <div className="preset-stack">
           <input
+            className="preset-stack-display"
             type="text"
             inputMode="decimal"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            value={editingAmount ? rawInput : format(stackPaisa)}
+            onChange={(e) => setRawInput(e.target.value)}
+            onFocus={handleAmountFocus}
+            onBlur={handleAmountBlur}
             disabled={busy}
-            placeholder="0.00"
-            required
+            aria-label="Transfer amount"
           />
-          {amount && !Number.isInteger(paisa) && (
-            <div className="alert alert-error">Enter a <i>number</i>, space cadet!</div>
-          )}
+          <div className="preset-stack-row">
+            {PRESETS_PAISA.map((p) => (
+              <button key={p} type="button" className="secondary compact" onClick={() => bump(p)} disabled={busy}>
+                +{format(p)}
+              </button>
+            ))}
+            <button type="button" className="ghost compact" onClick={reset} disabled={busy || stackPaisa === 0}>
+              Reset
+            </button>
+          </div>
           {overBalance && (
-            <div className="alert alert-warning">
-              That's more than you have ({format(balance)}). The server will reject it. I'm warning you in advance...
+            <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <WarningIcon /><span>That's more than you have ({format(balance)}). The server will reject it. I'm warning you in advance...</span>
             </div>
           )}
+        </div>
+      </div>
 
-          <label>Note (optional)</label>
-          <textarea
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            disabled={busy}
-            maxLength={200}
-          />
+      <div className="card mb-2">
+        <h3 className="mt-0">Compose</h3>
+        <input
+          type="text"
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+          disabled={busy}
+          placeholder="Username or email"
+        />
+        {recentRecipients.length > 0 && (
+          <>
+            <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent</div>
+            <div className="preset-stack-row">
+              {recentRecipients.map((u) => (
+                <button
+                  key={u}
+                  type="button"
+                  className={recipient === u ? 'compact' : 'secondary compact'}
+                  onClick={() => setRecipient(recipient === u ? '' : u)}
+                  disabled={busy}
+                >
+                  {u}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
 
+        <label style={{ marginTop: 14, display: 'block' }}>Note (optional)</label>
+        <textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          disabled={busy}
+          maxLength={200}
+        />
+
+        <div style={{ marginTop: 8 }}>
           {isHighValue ? (
-            <HoldButton
-              onConfirm={doTransfer}
-              disabled={busy}
-              type="button"
-            >
-              {busy ? <><span className="spinner" /> Sending...</> : `Send ${format(paisa)} (hold)`}
+            <HoldButton onConfirm={doTransfer} disabled={busy} type="button">
+              {busy ? <><span className="spinner" /> Sending...</> : `Send ${format(stackPaisa)} (hold)`}
             </HoldButton>
           ) : (
-            <button type="submit" disabled={busy || !validAmount || !recipient.trim()}>
-              {busy ? <><span className="spinner" /> Sending...</> : `Send ${validAmount ? format(paisa) : ''}`}
+            <button type="button" onClick={doTransfer} disabled={busy || stackPaisa <= 0 || !recipient.trim()}>
+              {busy ? <><span className="spinner" /> Sending...</> : `Send ${stackPaisa > 0 ? format(stackPaisa) : ''}`}
             </button>
           )}
-        </form>
+        </div>
       </div>
     </>
   );
