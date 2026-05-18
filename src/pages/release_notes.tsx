@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AppFooter } from '../components/app_footer.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
+import { InfoIcon, StopIcon } from '../components/icons.tsx';
 
 type Release = {
   version: string;
@@ -17,7 +18,9 @@ export const RELEASES: Release[] = [
     date: '18 May 2026',
     notes: [
       <>Added some really wacky animations and shit that I'll probably remove later; to some buttons, modals, <Link to="/i/team">the team page</Link>, and the account switcher dropdown</>,
-      <>Added a <Link to="/i/flow/scambaitmode">a discrete scambait mode page</Link></>
+      <>Added a <Link to="/i/flow/scambaitmode">a discrete scambait mode page</Link></>,
+      'Added many redirects to mirror the main website, so for example, visiting /accountservices/dashboard (from the main website) will take you to the dashboard (backward compatibility or whateverrr)',
+      'Made icons for alert boxes'
     ]
   },
   {
@@ -223,6 +226,9 @@ export default function ReleaseNotesPage() {
   return (
     <>
       <h1 className="mt-0">Release notes</h1>
+      <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
+      </p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info"><InfoIcon /><span>Not every change is documented here. The app may receive minor changes without documentation.</span></div>
       <div className="card">
         <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
         {RELEASES.map((r, i) => (
