@@ -239,7 +239,10 @@ export default function AccountPage() {
 
               {restrictionList.length > 0 && (
                 <div className="card mb-2">
-                  <h3 className="mt-0">Restrictions</h3>
+                  <div className="row spread" style={{ marginBottom: 12 }}>
+                    <h3 className="mt-0" style={{ margin: 0 }}>Restrictions</h3>
+                    <Link to="/account/restrictions" className="muted" style={{ fontSize: '0.85rem' }}>View details</Link>
+                  </div>
                   {restrictionList.map(([key, val]) => {
                     const info = getRestrictionInfo(key);
                     return (
@@ -308,8 +311,8 @@ export default function AccountPage() {
               </div>
 
               <div className="btn-row mt-2">
-                <Link to="/dash/account/transfer" className="btn">Transfer funds</Link>
-                <Link to="/dash/account/history" className="btn secondary">Transaction history</Link>
+                <Link to="/account/transfer" className="btn">Transfer funds</Link>
+                <Link to="/account/history" className="btn secondary">Transaction history</Link>
                 {settings.scambait && (
                   <button className="btn secondary" onClick={() => setPersonalDetailsOpen(true)}>
                     View personal details
