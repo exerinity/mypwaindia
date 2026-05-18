@@ -2,6 +2,24 @@
    KEYFRAME ANIMATIONS
    ===================================================================== */
 
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton {
+  display: block;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--fg) 8%, transparent) 25%,
+    color-mix(in srgb, var(--fg) 18%, transparent) 50%,
+    color-mix(in srgb, var(--fg) 8%, transparent) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
