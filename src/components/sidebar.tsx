@@ -40,8 +40,8 @@ const NAV_GROUPS: NavGroup[] = [
     title: 'Payment links',
     hideInScambait: true,
     items: [
-      { to: '/dash/links', label: 'My links', icon: LinkIcon },
-      { to: '/dash/links/claim', label: 'Claim a link', icon: ClaimIcon },
+      { to: '/links', label: 'My links', icon: LinkIcon },
+      { to: '/links:claim', label: 'Claim a link', icon: ClaimIcon },
     ],
   },
   {

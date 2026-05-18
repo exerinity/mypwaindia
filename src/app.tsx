@@ -25,7 +25,7 @@ import ScambaitPage from './pages/scambait.tsx';
 
 function PayLinkRedirect() {
   const { search } = useLocation();
-  return <Navigate to={`/dash/links/claim${search}`} replace />;
+  return <Navigate to={`/links:claim${search}`} replace />;
 }
 
 function ExternalRedirect({ to }: { to: string }) {
@@ -78,8 +78,8 @@ export default function App() {
           <Route path="/dash/account" element={<AccountPage />} />
           <Route path="/dash/account/transfer" element={<TransferPage />} />
           <Route path="/dash/account/history" element={<HistoryPage />} />
-          <Route path="/dash/links" element={<LinksPage />} />
-          <Route path="/dash/links/claim" element={<ClaimLinkPage />} />
+          <Route path="/links" element={<LinksPage />} />
+          <Route path="/links:claim" element={<ClaimLinkPage />} />
           <Route path="/dash/statements" element={<StatementsPage />} />
           <Route path="/dash/cards" element={<CardsPage />} />
           <Route path="/i/transaction/:id" element={<TransactionPage />} />
