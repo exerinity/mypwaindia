@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import type { Env } from '../api/client.js';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
@@ -15,7 +15,9 @@ export default function LoginPage() {
   const { login, accounts, maxAccounts } = useAuth();
   const { update: updateSettings } = useSettings();
   const location = useLocation();
+  const navigate = useNavigate();
   const toast = useToast();
+  const [leaving, setLeaving] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [totp, setTotp] = useState('');
@@ -37,7 +39,8 @@ export default function LoginPage() {
     setBusy(true);
     setError(null);
     try {
-      const dest = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/dash';
+      const from = (location.state as { from?: { pathname?: string; search?: string; hash?: string } })?.from;
+      const dest = from ? (from.pathname ?? '/dash') + (from.search ?? '') + (from.hash ?? '') : '/dash';
       const onboarded = storageGet<number>(KEYS.ONBOARD, 0) === 1;
       await login({ username, password, totp_code: totp || undefined, env }, onboarded ? dest : '/i/flow/onboarding');
     } catch (e) {
@@ -56,7 +59,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div className={leaving ? 'page-slide-out' : 'page-slide-in'} onAnimationEnd={() => { if (leaving) navigate('/dash'); }} style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div className="card" style={{ maxWidth: 400, width: '100%' }}>
         <h2 className="mt-0">Log in to MyPayIndia</h2>
 
@@ -113,6 +116,7 @@ export default function LoginPage() {
           {error && <div className="alert alert-error">{error.message}</div>}
           <button
             type="submit"
+            title="TIP: right-click to log into the staging instance, Ctrl+Enter to immediately enable scambait mode when logging in"
             disabled={busy || atCapacity}
             style={{ width: '100%', marginTop: '12px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
             onContextMenu={(e) => {
@@ -145,9 +149,9 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-2 center">
-          <Link to="/dash" className="muted" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <button className="muted" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'inherit', font: 'inherit', padding: 0 }} onClick={() => setLeaving(true)}>
             <ArrowLeftIcon /> Nevermind, go back
-          </Link>
+          </button>
         </div>
       </div>
     </div>
