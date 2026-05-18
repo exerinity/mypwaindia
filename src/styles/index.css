@@ -3,6 +3,7 @@
    Vaguely styled after the website... I did do it after all
    ===================================================================== */
 
+@import "animations.css";
 @import "base.css";
 @import "themes.css";
 @import "layout.css";

@@ -1,0 +1,138 @@
+/* =====================================================================
+   KEYFRAME ANIMATIONS
+   ===================================================================== */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes blink-fade {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+@keyframes cli-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+@keyframes modal-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modal-pop-out {
+  from { opacity: 1; transform: translateY(0)   scale(1); }
+  to   { opacity: 0; transform: translateY(6px) scale(0.98); }
+}
+
+@keyframes modal-fade-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(6px); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-out-left {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-40px); }
+}
+
+.release-summary {
+  width: 100%;
+  background: none !important;
+  border: none;
+  cursor: pointer;
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: inherit !important;
+  font: inherit;
+  text-align: left;
+  box-shadow: none !important;
+}
+
+.release-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 180ms ease;
+}
+
+.release-body.open {
+  grid-template-rows: 1fr;
+}
+
+.release-body-inner {
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 150ms ease 30ms, transform 150ms ease 30ms;
+}
+
+.release-body.open .release-body-inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-slide-in {
+  animation: slide-in-right 0.12s ease-out;
+}
+
+.page-slide-out {
+  animation: slide-out-left 0.1s ease-in forwards;
+}
+
+/* card crash: slams down from above with a bounce */
+@keyframes card-crash {
+  0%   { opacity: 0; transform: translateY(-340px) scale(1.1); }
+  65%  { opacity: 1; transform: translateY(14px) scale(0.96); }
+  80%  { transform: translateY(-6px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* card spin: whips around 3 full rotations and lands */
+@keyframes card-spin-land {
+  0%   { opacity: 0; transform: rotate(0deg) scale(0.4); }
+  30%  { opacity: 1; }
+  100% { transform: rotate(1080deg) scale(1); }
+}
+
+/* card static: just appears with a quick fade */
+@keyframes card-static {
+  0%   { opacity: 0; transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* card flip: starts upside down and rights itself */
+@keyframes card-flip {
+  0%   { opacity: 0.6; transform: rotate(180deg) scale(0.9); }
+  70%  { transform: rotate(-6deg); }
+  85%  { transform: rotate(3deg); }
+  100% { opacity: 1; transform: rotate(0deg); }
+}
+
+/* card slide: rockets in from far right */
+@keyframes card-slide-far-right {
+  0%   { opacity: 0; transform: translateX(110vw); }
+  75%  { opacity: 1; transform: translateX(-12px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes dropdown-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+@keyframes dropdown-out {
+  from { opacity: 1; transform: translateY(0)    scale(1); }
+  to   { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}

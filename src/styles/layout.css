@@ -47,11 +47,13 @@
   font-size: 0.9rem;
   text-decoration: none;
   border: 1px solid transparent;
+  transition: background 320ms ease, color 320ms ease, opacity 320ms ease;
 }
 
 .sidebar .links a svg {
   flex-shrink: 0;
   opacity: 0.75;
+  transition: opacity 320ms ease;
 }
 
 .sidebar .links a:hover {

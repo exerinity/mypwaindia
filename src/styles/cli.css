@@ -188,10 +188,6 @@
   flex-shrink: 0;
 }
 
-@keyframes cli-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.2; }
-}
 
 .cli-wrap--fullscreen {
   position: fixed;
