@@ -20,9 +20,10 @@ export const RELEASES: Release[] = [
     notes: [
       <>Added some really wacky animations and shit that I'll probably remove later; to some buttons, modals, <Link to="/i/team">the team page</Link>, and the account switcher dropdown</>,
       <>Added a <Link to="/i/flow/scambaitmode">discrete scambait mode page</Link></>,
+      <>Added a <Link to="/account/restrictions">discrete restrictions page</Link></>,
       'Added many redirects to mirror the main website, so for example, visiting /accountservices/dashboard (from the main website) will take you to the dashboard (backward compatibility or whateverrr)',
       'Made icons for alert boxes',
-      <>Overhauled <Link to="/dash/account/transfer">the transfer page</Link> and the <Link to="/links">payment links page</Link></>,
+      <>Overhauled <Link to="/account/transfer">the transfer page</Link> and the <Link to="/links">payment links page</Link></>,
       'Replaced most loading messages w/ spinners with skeleton shimmer'
     ]
   },
