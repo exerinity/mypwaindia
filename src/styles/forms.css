@@ -110,3 +110,11 @@ input[type='color'] {
 .toggle-switch input:checked + .toggle-track::before {
   transform: translateX(22px);
 }
+
+.toggle-switch input:disabled + .toggle-track {
+  opacity: 0.4;
+}
+
+.toggle-switch:has(input:disabled) {
+  cursor: not-allowed;
+}
