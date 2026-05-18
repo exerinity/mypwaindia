@@ -25,7 +25,7 @@ export default function TransactionPage() {
     <>
       <h1 className="mt-0">Transaction</h1>
       <p className="muted">
-        <Link to="/dash/account/history"><ArrowLeftIcon></ArrowLeftIcon> Back to history</Link>
+        <Link to="/dash/account/history" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><ArrowLeftIcon /> Back to history</Link>
       </p>
 
       {loading && !data ? <LoadingRow /> :
@@ -36,8 +36,8 @@ export default function TransactionPage() {
             <h3 className="mt-0 mono">{data.transaction_id}</h3>
             <span className={`link-status ${data.status}`}>{data.status}</span>
           </div>
-          <div className="balance-display">
-            {format(data.amount)}
+          <div className="balance-display" style={{ color: data.sender?.id === active?.id ? 'var(--alert-error)' : 'var(--success)' }}>
+            {data.sender?.id === active?.id ? '−' : '+'}{format(data.amount)}
           </div>
           <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '16px 0' }} />
           <div className="grid cols-2">
