@@ -44,46 +44,68 @@ function AgeTag({ age }: { age: Age }) {
   );
 }
 
+const ANIMS = [
+  { name: 'card-crash',           duration: '0.55s', easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+  { name: 'card-spin-land',       duration: '0.7s',  easing: 'cubic-bezier(0.15, 0.85, 0.4, 1)' },
+  { name: 'card-static',          duration: '0.2s',  easing: 'ease-out' },
+  { name: 'card-flip',            duration: '0.5s',  easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+  { name: 'card-slide-far-right', duration: '0.45s', easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+];
+
 export default function TeamPage() {
   usePageTitle('Meet the team');
   const { data, loading, error } = useApiCall<{ team: TeamMember[] }>(() => getTeam() as Promise<{ team: TeamMember[] }>, []);
   const team = data?.team || [];
+  const [animOrder, setAnimOrder] = useState<number[]>([]);
+  const [shuffleKey, setShuffleKey] = useState(0);
+
+  function shuffle() {
+    setAnimOrder(team.map(() => Math.floor(Math.random() * ANIMS.length)));
+    setShuffleKey(k => k + 1);
+  }
 
   return (
     <>
       <h1 className="mt-0">Meet the team</h1>
       <p className="muted mb-2">Get to know the people behind MyPayIndia, the future of online banking!</p>
       <p>Currently our team consists of {team.length} people</p>
+      <button className="ghost" style={{ fontSize: '0.85rem', padding: '2px 6px', marginBottom: '20px', display: 'inline-block' }} onClick={shuffle}>reshuffle animations?</button>
 
       {loading && !data ? <LoadingRow /> :
        error ? <ErrorBox error={error} /> :
        team.length === 0 ? <Empty>N</Empty> :
        <div className="grid cols-3">
-        {team.map((m) => (
-          <div key={m.name} className="card team-card">
-            <img
-              className="team-avatar"
-              src={m.avatar}
-              alt={m.name}
-              onError={(e) => { e.currentTarget.style.opacity = '0.4'; }}
-            />
-            <div className="team-name">{m.name}</div>
-            <div className="team-role">{m.role}</div>
-            <div className="muted" style={{ fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 6 }}>
-              joined {formatDateShort(m.joined)}
-              {m.joined && (() => { const a = calcAge(m.joined); return a ? <AgeTag age={a} /> : null; })()}
-            </div>
-            {m.socials && Object.keys(m.socials).length > 0 && (
-              <div className="team-socials">
-                {Object.entries(m.socials).map(([key, url]) => (
-                  <a key={key} href={url} target="_blank" rel="noopener noreferrer">
-                    {key} <ExternalIcon size={11} />
-                  </a>
-                ))}
+        {team.map((m, i) => {
+          const a = ANIMS[animOrder[i] ?? i % ANIMS.length];
+          return (
+            <div key={`${m.name}-${shuffleKey}`} className="card team-card" style={{
+              animation: `${a.name} ${a.duration} ${a.easing} both`,
+              animationDelay: `${i * 80}ms`,
+            } as React.CSSProperties}>
+              <img
+                className="team-avatar"
+                src={m.avatar}
+                alt={m.name}
+                onError={(e) => { e.currentTarget.style.opacity = '0.4'; }}
+              />
+              <div className="team-name">{m.name}</div>
+              <div className="team-role">{m.role}</div>
+              <div className="muted" style={{ fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: 6 }}>
+                joined {formatDateShort(m.joined)}
+                {m.joined && (() => { const a = calcAge(m.joined); return a ? <AgeTag age={a} /> : null; })()}
               </div>
-            )}
-          </div>
-        ))}
+              {m.socials && Object.keys(m.socials).length > 0 && (
+                <div className="team-socials">
+                  {Object.entries(m.socials).map(([key, url]) => (
+                    <a key={key} href={url} target="_blank" rel="noopener noreferrer">
+                      {key} <ExternalIcon size={11} />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
        </div>
       }
     </>
