@@ -32,6 +32,11 @@
   color: var(--fg);
 }
 
+.alert-info a    { color: var(--alert-info); }
+.alert-success a { color: var(--success); }
+.alert-warning a { color: var(--alert-warning); }
+.alert-error a   { color: var(--alert-error); }
+
 .verification-banner {
   background: var(--alert-warning);
   color: black;
