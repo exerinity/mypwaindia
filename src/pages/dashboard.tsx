@@ -9,7 +9,7 @@ import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
 import { getDisplayName } from '../utils/display.js';
 import { InfoIcon, WarningIcon } from '../components/icons.tsx';
-import { LoadingRow, ErrorBox } from '../components/status.tsx';
+import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { TransactionTable } from '../components/tx_table.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
 import { generateStatements } from '../utils/fake_statements.js';
@@ -115,8 +115,8 @@ export default function DashboardPage() {
 
       <div className="btn-row mb-2">
         <Link to="/dash/account/transfer" className="btn secondary">Transfer funds</Link>
-        {!scambait && <Link to="/dash/links" className="btn secondary">Create a payment link</Link>}
-        {!scambait && <Link to="/dash/links/claim" className="btn secondary">Claim a payment link</Link>}
+        {!scambait && <Link to="/links" className="btn secondary">Create a payment link</Link>}
+        {!scambait && <Link to="/links:claim" className="btn secondary">Claim a payment link</Link>}
         {scambait
           ? <Link to="/dash/statements" className="btn ghost">Full statements</Link>
           : <Link to="/dash/account/history" className="btn ghost">Full transaction history</Link>
@@ -160,7 +160,17 @@ export default function DashboardPage() {
             </table>
           </div>
         ) : (
-          txQ.loading && !txQ.data ? <LoadingRow /> :
+          txQ.loading && !txQ.data ? (
+            <div>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)', alignItems: 'center' }}>
+                  <Skeleton width={80} height={12} />
+                  <Skeleton style={{ flex: 1, height: 12, width: `${40 + (i % 3) * 15}%` }} />
+                  <Skeleton width={90} height={12} />
+                </div>
+              ))}
+            </div>
+          ) :
             txQ.error ? <ErrorBox error={txQ.error} /> :
               <TransactionTable
                 transactions={transactions.slice(0, 10)}
