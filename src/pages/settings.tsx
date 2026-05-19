@@ -10,7 +10,7 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { normalizeHex } from '../utils/colors.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon, LogoutIcon } from '../components/icons.tsx';
+import { ExternalIcon, LogoutIcon, InfoIcon, ErrorIcon, SuccessIcon, StopIcon, WarningIcon } from '../components/icons.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 
 const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
@@ -107,7 +107,7 @@ export default function SettingsPage() {
       </div>
 
       <div className="card mb-2">
-        <h3 className="mt-0">Data</h3>
+        <h3 className="mt-0">API</h3>
         <div className="checkbox-row">
           <input
             type="checkbox"
@@ -118,6 +118,18 @@ export default function SettingsPage() {
           />
           <label htmlFor="auto-refresh" style={{ margin: 0 }}>
             Auto-refresh data (every 30 seconds)
+          </label>
+        </div>
+        <div className="checkbox-row" style={{ marginTop: '0.5rem', marginLeft: '1.5rem' }}>
+          <input
+            type="checkbox"
+            id="auto-refresh-focused"
+            checked={settings.autoRefreshOnlyWhenFocused}
+            onChange={(e) => update({ autoRefreshOnlyWhenFocused: e.target.checked })}
+            disabled={!active || !settings.autoRefresh}
+          />
+          <label htmlFor="auto-refresh-focused" style={{ margin: 0 }}>
+            Only when focused
           </label>
         </div>
       </div>
@@ -196,15 +208,15 @@ export default function SettingsPage() {
       </div>
 
       <div className="card mb-2">
-        <h3 className="mt-0">Reset</h3>
-        <p className="muted">Restore default theme, accent, and refresh settings. Won't touch your accounts.</p>
+        <h3 className="mt-0">Reset app</h3>
+        <p className="muted">Restores everything to default settings. This will not log you out.</p>
         <button className="secondary" onClick={() => { reset(); setAccentInput('#d03505'); toast.info('Settings reset'); }} onAuxClick={handleResetMiddleClick}>
           Reset settings
         </button>
       </div>
 
       <div className="card mb-2">
-        <h3 className="mt-0">More settings</h3>
+        <h3 className="mt-0">Manage your account</h3>
         <p className="muted">You can only do so much here - log in to MyPayIndia to change your info, email, and even delete your account:</p>
         <a
           href="https://mypayindia.com/accountservices/accsettings"
