@@ -8,6 +8,7 @@ export interface Settings {
   theme: 'light' | 'dim' | 'dark';
   accent: string;
   autoRefresh: boolean;
+  autoRefreshOnlyWhenFocused: boolean;
   displayName: 'username' | 'first_name' | 'full_name';
   scambait: boolean;
 }
@@ -24,6 +25,7 @@ const DEFAULT_SETTINGS: Settings = {
   theme: 'dark',
   accent: '#d03505',
   autoRefresh: true,
+  autoRefreshOnlyWhenFocused: true,
   displayName: 'username',
   scambait: false,
 };
