@@ -25,10 +25,18 @@ export function Skeleton({ width, height = 14, radius = 4, style }: {
 
 export function ErrorBox({ error }: { error: unknown }) {
   if (!error) return null;
+  const e = error as { message?: string; name?: string; code?: unknown; status?: unknown };
+  const parts: string[] = [];
+  if (e.name && e.name !== 'Error') parts.push(e.name);
+  if (e.code != null) parts.push(`code ${e.code}`);
+  if (e.status != null && e.status !== 0) parts.push(`HTTP ${e.status}`);
   return (
     <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <ErrorIcon />
-      <span>{(error as { message?: string }).message || String(error)}</span>
+      <span>
+        {e.message || String(error)}
+        {parts.length > 0 && <span className="muted" style={{ marginLeft: 8, fontSize: '0.85em' }}>({parts.join(' · ')})</span>}
+      </span>
     </div>
   );
 }
