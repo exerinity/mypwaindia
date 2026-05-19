@@ -61,15 +61,15 @@ export async function apiFetch<T = unknown>(
       credentials: 'include',
     });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'net error';
-    throw new ApiError(-1, msg, 0);
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new ApiError(-1, `${msg}: ${method} ${url}`, 0);
   }
 
   let payload: ApiResponse<T>;
   try {
     payload = await res.json();
   } catch {
-    throw new ApiError(-2, `Server returned non-JSON garbage (HTTP ${res.status})`, res.status);
+    throw new ApiError(-2, `Server returned non-JSON (HTTP ${res.status}): ${method} ${url}`, res.status);
   }
 
   if (!payload || payload.success !== true) {
