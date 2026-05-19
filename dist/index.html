@@ -10,22 +10,18 @@
   <meta name="author" content="exerinity.com" />
   <meta name="robots" content="noindex, nofollow" />
   <link rel="canonical" href="https://mypayindia.sbs" />
-
   <meta property="og:title" content="MyPayIndia" />
   <meta property="og:description" content="MyPayIndia responsive web app" />
   <meta property="og:url" content="https://mypayindia.sbs" />
   <meta property="og:type" content="website" />
-
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="MyPayIndia" />
   <meta name="twitter:description" content="MyPayIndia responsive web app" />
-
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MyPayIndia" />
-
   <style>
-    #splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#121212}
+    #splash{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:#121212}
     #splash img{height:52px;animation:sli .5s ease .1s both}
     #splash.out{animation:slo .5s ease forwards;pointer-events:none}
     @keyframes sli{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
@@ -33,33 +29,35 @@
     #splash-hint{position:absolute;bottom:24px;left:0;right:0;text-align:center;font-family:system-ui,-apple-system,sans-serif;font-size:0.8rem;color:#666;opacity:0;animation:SH 2s linear forwards}
     @keyframes SH{0%{opacity:0}75%{opacity:.03;animation-timing-function:cubic-bezier(.85,0,1,1)}100%{opacity:1}}
   </style>
-  <script type="module" crossorigin src="/i/97zvau3Y.js"></script>
-  <link rel="modulepreload" crossorigin href="/i/CmALqNB7.js">
+  <script>document.getElementById('splash').style.display='flex'</script>
+  <script type="module" crossorigin src="/i/DleJeDi-.js"></script>
+  <link rel="modulepreload" crossorigin href="/i/BIXONF0r.js">
   <link rel="modulepreload" crossorigin href="/i/Xw8ZeGta.js">
-  <link rel="modulepreload" crossorigin href="/i/ChtNLbMu.js">
-  <link rel="modulepreload" crossorigin href="/i/C32Inm6x.js">
-  <link rel="stylesheet" crossorigin href="/i/DAPBGkcU.css">
+  <link rel="modulepreload" crossorigin href="/i/BBJL8Zx2.js">
+  <link rel="modulepreload" crossorigin href="/i/CGfOSBJ1.js">
+  <link rel="stylesheet" crossorigin href="/i/BI9DiH-e.css">
 <link rel="manifest" href="/manifest.json"></head>
-<body id="r">
+<body>
   <noscript>
     <div
       style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:#121212;font-family:system-ui,-apple-system,sans-serif;">
       <div
-        style="background:#1d1d1d;border:1px solid #333;border-radius:10px;padding:32px;width:100%;max-width:420px;box-shadow:0 2px 8px rgba(0,0,0,0.6);text-align:center;color:#eaeaea;">
+        style="background:#171717;border:1px solid #333;border-radius:10px;padding:32px;width:100%;max-width:420px;box-shadow:0 2px 8px rgba(0,0,0,0.6);text-align:center;color:#eaeaea;">
         <img src="/i/DRq81Upt.png" alt="MyPayIndia" style="height:50px;margin-bottom:20px;" />
         <h2 style="margin:0 0 8px;font-size:1.2rem;">JavaScript is not available</h2>
         <p style="color:#aaa;font-size:0.9rem;margin:0 0 20px;">This is a very JavaScript heavy app, thus JavaScript is required.<br>Please enable it or switch to a supported browser to continue.</p>
-        <a href="https://support.google.com/adsense/answer/12654?hl=en" target="_blank"
+        <a href="https://www.enablejavascript.io/" target="_blank"
           style="display:inline-block;padding:10px 20px;background:#d03505;color:#fff;border-radius:8px;text-decoration:none;font-size:0.9rem;font-weight:500;">How
           to enable JavaScript</a>
         <a href="https://mypayindia.com" target="_blank"
-          style="display:inline-block;padding:10px 20px;background:#d03505;color:#fff;border-radius:8px;text-decoration:none;font-size:0.9rem;font-weight:500;">Go home</a>
+          style="display:inline-block;padding:10px 20px;background:#d03505;color:#fff;border-radius:8px;text-decoration:none;font-size:0.9rem;font-weight:500;">Go to MyPayIndia.com</a>
         <div style="margin-top:16px;">
           <a href="" style="display:inline-block;padding:6px 14px;background:transparent;color:#aaa;border:1px solid #444;border-radius:8px;text-decoration:none;font-size:0.8rem;">Enabled JavaScript? Refresh!</a>
         </div>
       </div>
     </div>
   </noscript>
+  <div id="r"></div>
   <div id="splash">
     <img src="/i/logo-full.png" alt="MyPayIndia" draggable="false" />
     <p id="splash-hint"><a href="" style="color:#666">(If you are stuck on this screen, please refresh the page)</a></p>
