@@ -6,6 +6,13 @@
   grid-template-columns: 240px 1fr;
   flex: 1;
   min-height: 0;
+  background: linear-gradient(
+    to right,
+    var(--bg) 239px,
+    var(--border) 239px,
+    var(--border) 240px,
+    transparent 240px
+  );
 }
 
 .sidebar {
@@ -18,7 +25,7 @@
   position: sticky;
   top: 92px;
   align-self: start;
-  height: calc(100vh - 92px);
+  max-height: calc(100vh - 92px);
   overflow-y: auto;
   user-select: none;
 }
