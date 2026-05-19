@@ -7,7 +7,7 @@ export function AppFooter({ version }: { version: string }) {
       {' | '}
       by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a>
       {' | '}
-      {window.location.hostname === 'app.mypayindia.com' ? 'production' : 'staging'}
+      {window.location.hostname === 'mypayindia.sbs' ? 'production' : 'staging'}
       {' | '}
       <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">legacy</a>
       {' | '}
