@@ -7,14 +7,14 @@ export const RESTRICTION_INFO = {
   eightysixed: {
     title: 'Banned from Investment Opportunities™',
     description: 'You are not allowed to enter the Investment Opportunities™',
-    longDescription: 'Your account has been barred from accessing the Investment Opportunities™. This is most likely because you have been caught attempting to cheat or exploit the games. You can still access and use all other features of MyPayIndia, but you will not be able to participate in any Investment Opportunities™.',
+    longDescription: 'Your account has been barred from accessing the Investment Opportunities™. This is most likely because you have been caught attempting to cheat or exploit the Investment Opportunities™. You can still access MyPayIndia, but you will not be able to participate in any Investment Opportunities™.',
   },
 };
 
 export function getRestrictionInfo(key) {
   return RESTRICTION_INFO[key] || {
     title: key,
-    description: 'Your account has a restriction, please contact support for more information.',
-    longDescription: 'An unrecognised restriction has been applied to your account. Full details are not available in this app - please contact MyPayIndia support.',
+    description: 'Your account has a restriction',
+    longDescription: 'Please contact MyPayIndia support for more information.',
   };
 }
