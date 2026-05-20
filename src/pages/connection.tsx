@@ -28,9 +28,8 @@ export default function ConnectionPage() {
   const [mpiState, setMpiState] = useState<CheckState>('loading');
 
   useEffect(() => {
-    fetch('https://bastion.mypayindia.sbs/int')
-      .then(res => res.text())
-      .then(text => setBastionState(text.toLowerCase().includes('not found') ? 'success' : 'fail'))
+    fetch('https://bastion.mypayindia.sbs/int', { mode: 'no-cors' })
+      .then(res => setBastionState(res.type === 'opaque' ? 'success' : 'fail'))
       .catch(() => setBastionState('fail'));
 
     fetch('https://mypayindia.com', { mode: 'no-cors' })
