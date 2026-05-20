@@ -10,6 +10,7 @@ import { useCurrency } from '../context/settings_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 import { HoldButton } from '../components/hold_btn.tsx';
 import { InfoIcon, WarningIcon } from '../components/icons.tsx';
+import { Modal } from '../components/modal.tsx';
 import type { Transaction } from '../components/tx_table.tsx';
 
 const PRESETS_PAISA = [
@@ -34,6 +35,7 @@ export default function TransferPage() {
   const [stackPaisa, setStackPaisa] = useState(0);
   const [rawInput, setRawInput] = useState('');
   const [editingAmount, setEditingAmount] = useState(false);
+  const [showSonModal, setShowSonModal] = useState(false);
 
   const userQ = useApiCall<{ balance: number }>(
     async () => {
@@ -84,8 +86,8 @@ export default function TransferPage() {
   }
 
   async function doTransfer() {
-    if (stackPaisa <= 0) { toast.error('Real numbers only!'); return; }
-    if (!recipient.trim()) { toast.error('Specify someone to send to'); return; }
+    if (stackPaisa <= 0) { setShowSonModal(true); toast.success('im crine son 😭😭😭😭😭'); return; }
+    if (!recipient.trim()) { setShowSonModal(true); toast.success('im crine son 😭😭😭😭😭'); return; }
     setBusy(true);
     try {
       const res = await transfer(active!, {
@@ -93,7 +95,7 @@ export default function TransferPage() {
         amount: stackPaisa,
         note: note.trim() || undefined,
       }) as { transaction_id: string };
-      toast.success(`${recipient} now has an extra ${format(stackPaisa)}, thanks to you!`);
+      toast.success(`Sent ${format(stackPaisa)} to ${recipient}`);
       try {
         const info = await getUserInfo(active!) as { balance: number };
         updateBalance(active!.id, info.balance);
@@ -108,6 +110,9 @@ export default function TransferPage() {
 
   return (
     <>
+      <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭">
+        <img src="https://cdn.exerinity.com/images/mypwaindia/son.png" alt="" style={{ display: 'block', maxWidth: '100%' }} />
+      </Modal>
       <h1 className="mt-0">Transfer funds</h1>
       <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <InfoIcon /><span>Please note that transfers above a certain amount are subject to manual review by our team.</span>
@@ -187,7 +192,7 @@ export default function TransferPage() {
               {busy ? <><span className="spinner" /> Sending...</> : `Send ${format(stackPaisa)} (hold)`}
             </HoldButton>
           ) : (
-            <button type="button" onClick={doTransfer} disabled={busy || stackPaisa <= 0 || !recipient.trim()}>
+            <button type="button" onClick={doTransfer} disabled={busy}>
               {busy ? <><span className="spinner" /> Sending...</> : `Send ${stackPaisa > 0 ? format(stackPaisa) : ''}`}
             </button>
           )}
