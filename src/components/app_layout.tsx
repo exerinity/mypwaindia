@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Header } from './header.tsx';
 import { Sidebar } from './sidebar.tsx';
 import { VerificationBanner } from './verify_banner.tsx';
@@ -9,10 +9,20 @@ import { useGlobalAutoRefresh } from '../hooks/autorefresh.js';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
+import { WarningIcon } from './icons.tsx';
 
 export function AppLayout() {
   const [open, setOpen] = useState(false);
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const on = () => setIsOnline(true);
+    const off = () => setIsOnline(false);
+    window.addEventListener('online', on);
+    window.addEventListener('offline', off);
+    return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
+  }, []);
   const { settings, update } = useSettings();
   const { active } = useAuth();
   const toast = useToast();
@@ -71,6 +81,11 @@ export function AppLayout() {
     <div className="mpi-shell">
       <Header onToggleSidebar={() => setOpen((o) => !o)} />
       <VerificationBanner />
+      {!isOnline && (
+        <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/flow/connection" className="link">Diagnose...</Link>
+        </div>
+      )}
       <div className="mpi-body">
         <Sidebar open={open} onClose={() => setOpen(false)} />
         <main className="mpi-main">
