@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
@@ -26,6 +26,26 @@ export default function AccountPage() {
   type UserInfo = { balance: number; first_name: string; last_name: string; email: string; date_of_birth?: string; created: string; mfa_enabled: boolean; username: string; role: string };
   type Restrictions = { restrictions: Record<string, { active: boolean; expires_at?: string; value?: unknown }> };
 
+  type SessionSortCol = 'device' | 'created' | 'last_active' | 'status';
+  const SESSION_COL_SORTS: Record<SessionSortCol, [string, string]> = {
+    device:      ['device_az',          'device_za'],
+    created:     ['created_desc',       'created_asc'],
+    last_active: ['last_active_desc',   'last_active_asc'],
+    status:      ['status_active',      'status_invalidated'],
+  };
+  const [sessionSort, setSessionSort] = useState('last_active_desc');
+
+  function toggleSessionCol(col: SessionSortCol) {
+    const [first, second] = SESSION_COL_SORTS[col];
+    setSessionSort(prev => prev === first ? second : first);
+  }
+  function sessionColIndicator(col: SessionSortCol) {
+    const [first, second] = SESSION_COL_SORTS[col];
+    if (sessionSort === first) return ' ↓';
+    if (sessionSort === second) return ' ↑';
+    return ' ↕';
+  }
+
   const [killTarget, setKillTarget] = useState<Session | null>(null);
   const [personalDetailsOpen, setPersonalDetailsOpen] = useState(false);
   const [securityCode, setSecurityCode] = useState(['', '', '', '', '']);
@@ -46,6 +66,24 @@ export default function AccountPage() {
     () => listSessions(active!) as Promise<{ sessions: Session[] }>,
     [active?.token]
   );
+
+  const sortedSessions = useMemo(() => {
+    const arr = [...(sessionsQ.data?.sessions || [])];
+    arr.sort((a, b) => {
+      switch (sessionSort) {
+        case 'device_az':          return (a.device_info || '').localeCompare(b.device_info || '');
+        case 'device_za':          return (b.device_info || '').localeCompare(a.device_info || '');
+        case 'created_asc':        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case 'created_desc':       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'last_active_asc':    return new Date(a.last_active).getTime() - new Date(b.last_active).getTime();
+        case 'last_active_desc':   return new Date(b.last_active).getTime() - new Date(a.last_active).getTime();
+        case 'status_active':      return (a.invalidated ? 1 : 0) - (b.invalidated ? 1 : 0);
+        case 'status_invalidated': return (b.invalidated ? 1 : 0) - (a.invalidated ? 1 : 0);
+        default: return 0;
+      }
+    });
+    return arr;
+  }, [sessionsQ.data, sessionSort]);
 
   async function handleVerify() {
     setSendingVerify(true);
@@ -126,13 +164,13 @@ export default function AccountPage() {
         <td>{formatDate(s.last_active)}</td>
         <td>
           <span className={`link-status ${s.invalidated ? 'cancelled' : 'active'}`}>
-            {s.invalidated ? 'invalidated' : 'active'}
+            {s.invalidated ? 'terminated' : 'active'}
           </span>
         </td>
         <td>
           {!s.invalidated && !s.current && (
             <button className="compact danger" onClick={() => setKillTarget(s)}>
-              End
+              Terminate
             </button>
           )}
         </td>
@@ -292,16 +330,16 @@ export default function AccountPage() {
                       <table className="table">
                         <thead>
                           <tr>
-                            <th>Device</th>
+                            <th onClick={() => toggleSessionCol('device')} style={{ cursor: 'pointer' }}>Device{sessionColIndicator('device')}</th>
                             <th>IP</th>
-                            <th>Created</th>
-                            <th>Last active</th>
-                            <th>Status</th>
+                            <th onClick={() => toggleSessionCol('created')} style={{ cursor: 'pointer' }}>Created{sessionColIndicator('created')}</th>
+                            <th onClick={() => toggleSessionCol('last_active')} style={{ cursor: 'pointer' }}>Last active{sessionColIndicator('last_active')}</th>
+                            <th onClick={() => toggleSessionCol('status')} style={{ cursor: 'pointer' }}>Status{sessionColIndicator('status')}</th>
                             <th></th>
                           </tr>
                         </thead>
                         <tbody>
-                          {(sessionsQ.data?.sessions || []).map((s) => (
+                          {sortedSessions.map((s) => (
                             <SessionRow key={s.id} s={s} />
                           ))}
                         </tbody>
@@ -391,7 +429,7 @@ export default function AccountPage() {
                   if (killTarget) doKillSession(killTarget.id);
                   setKillTarget(null);
                 }}
-                title="End session"
+                title="Terminate session"
                 message={killTarget && (
                   <div>
                     <p className="mt-0" style={{ color: 'var(--muted)' }}>
@@ -426,7 +464,7 @@ export default function AccountPage() {
                     </div>
                   </div>
                 )}
-                confirmLabel="End session"
+                confirmLabel="Continue"
               />
             </>
           )}
