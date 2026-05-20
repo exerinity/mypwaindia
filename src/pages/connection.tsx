@@ -17,7 +17,7 @@ function StatusBadge({ state, label }: { state: CheckState; label: string }) {
   };
   return (
     <span style={{ color: colors[state], fontWeight: 600 }}>
-      {label}: {text[state]}
+      {text[state]}
     </span>
   );
 }
