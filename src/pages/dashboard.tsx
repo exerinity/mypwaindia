@@ -116,7 +116,7 @@ export default function DashboardPage() {
       <div className="btn-row mb-2">
         <Link to="/account/transfer" className="btn secondary">Transfer funds</Link>
         {!scambait && <Link to="/links" className="btn secondary">Create a payment link</Link>}
-        {!scambait && <Link to="/links:claim" className="btn secondary">Claim a payment link</Link>}
+        {!scambait && <Link to="/links/claim" className="btn secondary">Claim a payment link</Link>}
         {scambait
           ? <Link to="/dash/statements" className="btn ghost">Full statements</Link>
           : <Link to="/account/history" className="btn ghost">Full transaction history</Link>
