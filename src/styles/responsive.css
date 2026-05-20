@@ -6,7 +6,7 @@
     display: inline-flex;
   }
 
-  .app-body {
+  .mpi-body {
     grid-template-columns: 1fr;
   }
 
@@ -34,7 +34,7 @@
     display: block;
   }
 
-  .app-main {
+  .mpi-main {
     padding: 18px 14px;
   }
 
@@ -42,7 +42,7 @@
     padding: 0 12px 10px;
   }
 
-  .app-header-logo {
+  .mpi-header-logo {
     height: 32px;
   }
 
