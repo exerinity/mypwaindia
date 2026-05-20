@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
@@ -142,9 +142,9 @@ export default function CardsPage() {
 
   return (
     <>
-      <Modal open={!settings.scambait} onClose={() => navigate(-1)} title="No" fullscreen>
+      <Modal open={!settings.scambait} onClose={() => navigate(-1)} title="Enable scambait mode first" fullscreen>
         <div className="center">
-          You are not using scambait mode and are not permitted to perform this action
+          This page is a scambait mode-only page. <Link to="/i/flow/scambaitmode">Would you like to enable it?</Link>
         </div>
       </Modal>
       <h1 className="mt-0">Cards</h1>
