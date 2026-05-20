@@ -23,6 +23,7 @@ import CLIPage from './pages/cli.tsx';
 import AcknowledgementsPage from './pages/acknowledgements.tsx';
 import ScambaitPage from './pages/scambait.tsx';
 import RestrictionsPage from './pages/restrictions.tsx';
+import ConnectionPage from './pages/connection.tsx';
 
 function PayLinkRedirect() {
   const { search } = useLocation();
@@ -70,6 +71,7 @@ export default function App() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
         <Route path="/i/flow/scambaitmode" element={<ScambaitPage />} />
+        <Route path="/i/flow/connection" element={<ConnectionPage />} />
 
         <Route path="/i/flow/mci" element={<CLIPage />} />
         <Route path="/i/flow/mci/focus" element={<CLIPage />} />
