@@ -12,7 +12,7 @@ button,
   font-size: 0.95rem;
   font-family: inherit;
   font-weight: 500;
-  transition: background 0.2s ease, transform 0.05s ease;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.05s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -22,8 +22,8 @@ button,
 
 button:hover,
 .btn:hover {
-  background: var(--brand-dark);
-  color: var(--brand-text);
+  background: var(--brand-text);
+  color: var(--brand);
   text-decoration: none;
 }
 
