@@ -117,16 +117,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const removeAccount = useCallback((id: number) => {
-    setAccounts((prev) => {
-      const next = prev.filter((a) => a.id !== id);
-      setAccs(next);
-      return next;
-    });
-    setActiveId((cur) => {
-      const next = cur === id ? null : cur;
-      storageSet(KEYS.ACTIVE_ACCOUNT, next);
-      return next;
-    });
+    const all: Account[] = storageGet(KEYS.ACCOUNTS, []);
+    const remaining = all.filter((a) => a.id !== id);
+    const nextId = remaining.length > 0 ? remaining[remaining.length - 1].id : null;
+    storageSet(KEYS.ACCOUNTS, remaining);
+    storageSet(KEYS.ACTIVE_ACCOUNT, nextId);
+    window.location.reload();
   }, []);
 
   const logout = useCallback(async () => {
