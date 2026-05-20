@@ -29,7 +29,7 @@ export default function ScambaitPage() {
       <h1 className="mt-0">Scambait mode</h1>
 
       {!active && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info"><StopIcon /><span>To use scambait mode, <Link to="/i/flow/login">log in</Link>.</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info"><InfoIcon /><span>To use scambait mode, <Link to="/i/flow/login">please log in</Link>.</span></div>
       )}
 
       <div className="card mb-2">
@@ -70,14 +70,13 @@ export default function ScambaitPage() {
           </label>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-success"><SuccessIcon /><span>You should create a bespoke account for actually scambaiting with a full convincing name, and not use your main account.</span></div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info"><InfoIcon /><span>You can also enable scambait mode by:</span>
+        <span>You can also enable scambait mode by:</span>
         <ul>
           <li>Pressing <strong>CTRL+Alt+B</strong></li>
           <li>Running "scambait" in <Link to="/i/flow/mci">MyCLiIndia</Link></li>
           <li>Middle-clicking the Reset settings button 5 times in <Link to="/settings">Settings</Link></li>
           <li>Upon logging in, log in with CTRL+Enter</li>
           </ul></div>
-      </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
         <WarningIcon /><span>This page is unlisted - if you need to come back, remember the path: <strong>/i/flow/scambaitmode</strong></span>
       </div>
