@@ -17,7 +17,7 @@ export default function LogoutPage() {
     try {
       await logout();
       toast.info('Logged out.');
-      navigate('/i/flow/login', { replace: true });
+      window.location.replace('/i/flow/login');
     } catch (error) {
       toast.error((error as {message?:string})?.message || 'Could not log out. Please try again.');
     } finally {
