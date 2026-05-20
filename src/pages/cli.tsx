@@ -83,7 +83,7 @@ const PAGE_MAP = {
   transfer: '/account/transfer', send: '/account/transfer',
   history: '/account/history',
   links: '/links',
-  claim: '/links:claim',
+  claim: '/links/claim',
   settings: '/settings',
   leaderboard: '/i/leaderboard', lb: '/i/leaderboard',
   team: '/i/team',
