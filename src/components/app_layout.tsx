@@ -27,7 +27,14 @@ export function AppLayout() {
       updateToastShown.current = true;
       toast.push('A new version is available, refresh to update', 'info', 0, {
         label: 'Refresh',
-        onClick: () => { window.location.href = window.location.href.split('?')[0] + '?cachebust=' + Date.now(); },
+        onClick: async () => {
+          try {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map(r => r.unregister()));
+          } finally {
+            window.location.reload();
+          }
+        },
       });
     }
   }, [needRefresh, toast]);
@@ -61,12 +68,12 @@ export function AppLayout() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="mpi-shell">
       <Header onToggleSidebar={() => setOpen((o) => !o)} />
       <VerificationBanner />
-      <div className="app-body">
+      <div className="mpi-body">
         <Sidebar open={open} onClose={() => setOpen(false)} />
-        <main className="app-main">
+        <main className="mpi-main">
           <div className="content-wrap">
             <Outlet />
           </div>
