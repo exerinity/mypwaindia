@@ -29,7 +29,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 
 ### Payment links
 - **/links** - links home, list & create & revoke
-- **/links:claim** - claim/inspect a link
+- **/links/claim** - claim/inspect a link
 
 ### Internal
 - **/i/leaderboard** - top 10 richest accounts
