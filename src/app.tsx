@@ -27,7 +27,8 @@ import ConnectionPage from './pages/connection.tsx';
 
 function PayLinkRedirect() {
   const { search } = useLocation();
-  return <Navigate to={`/links:claim${search}`} replace />;
+  const token = new URLSearchParams(search).get('token');
+  return <Navigate to={token ? `/links/claim/${token}` : '/links/claim'} replace />;
 }
 
 function ExternalRedirect({ to }: { to: string }) {
@@ -83,7 +84,8 @@ export default function App() {
           <Route path="/account/transfer" element={<TransferPage />} />
           <Route path="/account/history" element={<HistoryPage />} />
           <Route path="/links" element={<LinksPage />} />
-          <Route path="/links:claim" element={<ClaimLinkPage />} />
+          <Route path="/links/claim" element={<ClaimLinkPage />} />
+          <Route path="/links/claim/:token" element={<ClaimLinkPage />} />
           <Route path="/dash/statements" element={<StatementsPage />} />
           <Route path="/dash/cards" element={<CardsPage />} />
           <Route path="/i/transaction/:id" element={<TransactionPage />} />
