@@ -3,6 +3,7 @@ import { Logo } from './logo.tsx';
 import { HamburgerIcon } from './icons.tsx';
 import { AccountPill } from './acc_pill.tsx';
 import { BalancePill } from './bal_pill.tsx';
+import { InstallPill } from './install_pill.tsx';
 
 export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   return (
@@ -21,6 +22,7 @@ export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
       <div className="pill-row" role="status" aria-live="polite">
         <AccountPill />
         <BalancePill />
+        <InstallPill />
       </div>
     </header>
   );
