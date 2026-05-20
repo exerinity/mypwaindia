@@ -1,6 +1,13 @@
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
-import { CloseIcon } from '../components/icons.tsx';
+import { CloseIcon, InfoIcon, SuccessIcon, ErrorIcon, WarningIcon } from '../components/icons.tsx';
+
+const KIND_ICON = {
+  info: InfoIcon,
+  success: SuccessIcon,
+  error: ErrorIcon,
+  warning: WarningIcon,
+} as const;
 
 type ToastKind = 'info' | 'success' | 'error' | 'warning';
 
@@ -68,6 +75,7 @@ function ToastContainer({ toasts, onClose }: { toasts: Toast[]; onClose: (id: nu
     <div className="toast-container" role="status" aria-live="polite">
       {toasts.map((t) => (
         <div key={t.id} className={`alert alert-${t.kind} toast`}>
+          {(() => { const Icon = KIND_ICON[t.kind]; return <Icon size={16} />; })()}
           <span>{t.message}</span>
           {t.action && (
             <button className="toast-action" onClick={t.action.onClick}>{t.action.label}</button>
