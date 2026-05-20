@@ -28,10 +28,30 @@ const SORT_OPTIONS = [
 ];
 
 interface TransactionTableProps { transactions: Transaction[]; currentUserId?: number }
+type SortCol = 'date' | 'amount' | 'sender' | 'recipient';
+const COL_SORTS: Record<SortCol, [string, string]> = {
+  date:      ['date_desc', 'date_asc'],
+  amount:    ['amount_desc', 'amount_asc'],
+  sender:    ['sender_az',  'sender_za'],
+  recipient: ['recipient_az', 'recipient_za'],
+};
+
 export function TransactionTable({ transactions, currentUserId }: TransactionTableProps) {
   const format = useCurrency();
   const [sort, setSort] = useState('date_desc');
   const [limit, setLimit] = useState<number | 'all'>(25);
+
+  function toggleCol(col: SortCol) {
+    const [asc, desc] = COL_SORTS[col];
+    setSort(prev => prev === asc ? desc : asc);
+  }
+
+  function colIndicator(col: SortCol) {
+    const [first, second] = COL_SORTS[col];
+    if (sort === first) return ' ↓';
+    if (sort === second) return ' ↑';
+    return ' ↕';
+  }
 
   const sorted = useMemo(() => {
     const arr = [...(transactions || [])];
@@ -85,10 +105,10 @@ export function TransactionTable({ transactions, currentUserId }: TransactionTab
           <thead>
             <tr>
               <th>Transaction</th>
-              <th>From</th>
-              <th>To</th>
-              <th style={{ textAlign: 'right' }}>Amount</th>
-              <th>When</th>
+              <th onClick={() => toggleCol('sender')} style={{ cursor: 'pointer' }}>From{colIndicator('sender')}</th>
+              <th onClick={() => toggleCol('recipient')} style={{ cursor: 'pointer' }}>To{colIndicator('recipient')}</th>
+              <th onClick={() => toggleCol('amount')} style={{ cursor: 'pointer', textAlign: 'right' }}>Amount{colIndicator('amount')}</th>
+              <th onClick={() => toggleCol('date')} style={{ cursor: 'pointer' }}>When{colIndicator('date')}</th>
               <th>Status</th>
             </tr>
           </thead>
