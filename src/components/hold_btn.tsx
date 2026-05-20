@@ -65,9 +65,22 @@ export function HoldButton({ onConfirm, children, className, style, ...props }: 
         style={{
           position: 'absolute',
           inset: 0,
+          borderRadius: 'inherit',
+          boxShadow: 'inset 0 0 0 2px currentColor',
+          opacity: progress > 0 ? 0.5 : 0,
+          transition: `opacity ${DRAIN_MS}ms ease`,
+          pointerEvents: 'none',
+        }}
+      />
+      <span
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
           width: `${progress * 100}%`,
-          background: 'rgba(255, 255, 255, 0.22)',
-          transition: holding ? 'none' : `width ${DRAIN_MS}ms ease`,
+          background: 'currentColor',
+          opacity: 0.2,
+          transition: holding ? 'none' : `width ${DRAIN_MS}ms ease, opacity ${DRAIN_MS}ms ease`,
           pointerEvents: 'none',
         }}
       />
