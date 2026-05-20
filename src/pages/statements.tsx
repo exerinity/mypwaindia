@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useCurrency, useSettings } from '../context/settings_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
@@ -10,9 +10,9 @@ const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeri
 
 const SORT_OPTIONS = [
   { value: 'date_desc', label: 'Date (newest first)' },
-  { value: 'date_asc',  label: 'Date (oldest first)' },
+  { value: 'date_asc', label: 'Date (oldest first)' },
   { value: 'amount_desc', label: 'Amount (high to low)' },
-  { value: 'amount_asc',  label: 'Amount (low to high)' },
+  { value: 'amount_asc', label: 'Amount (low to high)' },
 ];
 
 const RESULT_OPTIONS = [10, 25, 50, 'all'];
@@ -32,9 +32,9 @@ export default function StatementsPage() {
     const arr = [...statements];
     arr.sort((a, b) => {
       switch (sort) {
-        case 'date_asc':    return a.date.getTime() - b.date.getTime();
-        case 'date_desc':   return b.date.getTime() - a.date.getTime();
-        case 'amount_asc':  return a.amount - b.amount;
+        case 'date_asc': return a.date.getTime() - b.date.getTime();
+        case 'date_desc': return b.date.getTime() - a.date.getTime();
+        case 'amount_asc': return a.amount - b.amount;
         case 'amount_desc': return b.amount - a.amount;
         default: return 0;
       }
@@ -49,9 +49,9 @@ export default function StatementsPage() {
 
   return (
     <>
-      <Modal open={!settings.scambait} onClose={() => navigate(-1)} title="No" fullscreen>
+      <Modal open={!settings.scambait} onClose={() => navigate(-1)} title="Enable scambait mode first" fullscreen>
         <div className="center">
-          You are not using scambait mode and are not permitted to perform this action
+          This page is a scambait mode-only page. <Link to="/i/flow/scambaitmode">Would you like to enable it?</Link>
         </div>
       </Modal>
       <h1 className="mt-0">Bank statements</h1>
