@@ -41,7 +41,7 @@ const NAV_GROUPS: NavGroup[] = [
     hideInScambait: true,
     items: [
       { to: '/links', label: 'My links', icon: LinkIcon },
-      { to: '/links:claim', label: 'Claim a link', icon: ClaimIcon },
+      { to: '/links/claim', label: 'Claim a link', icon: ClaimIcon },
     ],
   },
   {
