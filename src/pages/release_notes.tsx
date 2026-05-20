@@ -14,6 +14,15 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '10b',
+    date: '20 May 2026',
+    notes: [
+      <>Added a rudimental <Link to="/i/flow/connection">connection helper</Link> and offline banner</>,
+      <>Refreshed the <Link to="/links/claim">claim payment link</Link> page</>,
+      'Tables in the transaction history and account session list are now sortable by clicking on the column headers',
+    ]
+  },
+  {
     version: '10a',
     date: '18 May 2026',
     disclaimer: 'This was mostly a behind the scenes update. In spite of that, here are the major changes:',
