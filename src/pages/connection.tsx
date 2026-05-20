@@ -47,7 +47,7 @@ export default function ConnectionPage() {
   let conclusion: React.ReactNode = 'Waiting for the results...';
   if (allDone) {
     if (onLine && bastion && mpi) {
-      conclusion = <>You are connected to the internet. The app may have a stale cache - press <kbd>Ctrl+Shift+R</kbd> to update it</>;
+      conclusion = <>You are connected to the internet, the gateway responded and so did MyPayIndia. If the app is misbehaving, there may be a stale cache - press <kbd>Ctrl+Shift+R</kbd> to update it</>;
     } else if (onLine && !bastion && mpi) {
       conclusion = <>The gateway is unresponsive. Please notify <a href="https://exerinity.com/hello">exerinity</a>.</>;
     } else if (onLine && bastion && !mpi) {
