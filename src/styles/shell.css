@@ -1,13 +1,13 @@
 /* =====================================================================
    APP SHELL
    ===================================================================== */
-.app-shell {
+.mpi-shell {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-.app-header {
+.mpi-header {
   position: sticky;
   top: 0;
   z-index: 50;
@@ -15,20 +15,20 @@
   border-bottom: 1px solid var(--border);
 }
 
-.app-header-row {
+.mpi-header-row {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 10px 16px;
 }
 
-.app-header-logo {
+.mpi-header-logo {
   height: 38px;
   width: auto;
   display: block;
 }
 
-.app-header-spacer {
+.mpi-header-spacer {
   flex: 1;
 }
 
