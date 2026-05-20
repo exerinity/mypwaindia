@@ -6,8 +6,8 @@ import { BalancePill } from './bal_pill.tsx';
 
 export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   return (
-    <header className="app-header">
-      <div className="app-header-row">
+    <header className="mpi-header">
+      <div className="mpi-header-row">
         <button
           className="hamburger-btn"
           onClick={onToggleSidebar}
@@ -16,7 +16,7 @@ export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
           <HamburgerIcon />
         </button>
         <Link to="/dash" aria-label="Go to dashboard"><Logo /></Link>
-        <div className="app-header-spacer" />
+        <div className="mpi-header-spacer" />
       </div>
       <div className="pill-row" role="status" aria-live="polite">
         <AccountPill />
