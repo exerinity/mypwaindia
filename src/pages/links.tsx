@@ -34,6 +34,8 @@ export default function LinksPage() {
   const [editingAmount, setEditingAmount] = useState(false);
   interface Link { id: number; token: string; amount: number; status: string; url: string; note?: string; created: string }
   const [cancelTarget, setCancelTarget] = useState<Link | null>(null);
+  const [showCancelAll, setShowCancelAll] = useState(false);
+  const [cancelAllProgress, setCancelAllProgress] = useState<{ done: number; total: number } | null>(null);
 
   const linksQ = useApiCall<{ links: Link[] }>(
     () => listLinks(active!) as Promise<{ links: Link[] }>,
@@ -109,6 +111,29 @@ export default function LinksPage() {
     }
   }
 
+  async function doDeleteAllLinks() {
+    const links = [...activeLinks];
+    setCancelAllProgress({ done: 0, total: links.length });
+    let cancelled = 0;
+    for (let i = 0; i < links.length; i++) {
+      try {
+        await cancelLink(active!, links[i].token);
+        cancelled++;
+      } catch (e) {
+        toast.error(`failed to cancel ${links[i].token}: ${describeError(e)}`);
+      }
+      setCancelAllProgress({ done: i + 1, total: links.length });
+      if (i < links.length - 1) await new Promise((r) => setTimeout(r, 500));
+    }
+    setCancelAllProgress(null);
+    toast.success(`OK, all of your payment links were cancelled. (${cancelled} link${cancelled !== 1 ? 's' : ''} cancelled)`);
+    linksQ.refetch();
+    try {
+      const info = await getUserInfo(active!) as { balance: number };
+      updateBalance(active!.id, info.balance);
+    } catch {}
+  }
+
   async function doCancelLink(token: string) {
     try {
       await cancelLink(active!, token);
@@ -182,7 +207,20 @@ export default function LinksPage() {
         </div>
       </div>
 
-      <h3>Live payment links ({activeLinks.length})</h3>
+      <div className="row" style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem' }}>
+        <h3 style={{ margin: 0 }}>Live payment links ({activeLinks.length})</h3>
+        {activeLinks.length > 0 && (
+          <button
+            className="compact danger"
+            onClick={() => setShowCancelAll(true)}
+            disabled={!!cancelAllProgress}
+          >
+            {cancelAllProgress
+              ? `Cancelling ${cancelAllProgress.done}/${cancelAllProgress.total}...`
+              : 'Cancel all'}
+          </button>
+        )}
+      </div>
       {linksQ.loading && !linksQ.data ? (
         <div className="grid" style={{ gap: 10 }}>
           {Array.from({ length: 3 }).map((_, i) => (
@@ -244,6 +282,14 @@ export default function LinksPage() {
           ))}
         </div>
       }
+      <ConfirmModal
+        open={showCancelAll}
+        onClose={() => setShowCancelAll(false)}
+        onConfirm={() => { setShowCancelAll(false); doDeleteAllLinks(); }}
+        title="Cancel all active links"
+        message={`Cancel all ${activeLinks.length} active link${activeLinks.length !== 1 ? 's' : ''} (${formatINR(activeLinks.reduce((s, l) => s + l.amount, 0))} total)? All amounts will be refunded to your balance.`}
+        confirmLabel="Cancel all"
+      />
       <ConfirmModal
         open={!!cancelTarget}
         onClose={() => setCancelTarget(null)}

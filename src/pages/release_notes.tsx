@@ -20,6 +20,7 @@ export const RELEASES: Release[] = [
       <>Added a rudimental <Link to="/i/flow/connection">connection helper</Link> and offline banner</>,
       <>Refreshed the <Link to="/links/claim">claim payment link</Link> page</>,
       'Tables in the transaction history and account session list are now sortable by clicking on the column headers',
+      'Added a Remove all button to the payment links page to nullify all active links'
     ]
   },
   {
