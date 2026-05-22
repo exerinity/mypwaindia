@@ -24,6 +24,8 @@ import AcknowledgementsPage from './pages/acknowledgements.tsx';
 import ScambaitPage from './pages/scambait.tsx';
 import RestrictionsPage from './pages/restrictions.tsx';
 import ConnectionPage from './pages/connection.tsx';
+import IotmPage from './pages/iotm.tsx';
+import IotmGamePage from './pages/iotm_game.tsx';
 
 function PayLinkRedirect() {
   const { search } = useLocation();
@@ -54,7 +56,7 @@ export default function App() {
       <Route path="/accountservices/dashboard" element={<Navigate to="/dash" replace />} />
       <Route path="/accountservices/transhist" element={<Navigate to="/account/history" replace />} />
       <Route path="/accountservices/transfer" element={<Navigate to="/account/transfer" replace />} />
-      <Route path="/accountservices/iotm" element={<ExternalRedirect to="https://mypayindia.com/accountservices/iotm" />} />
+      <Route path="/accountservices/iotm" element={<Navigate to="/i/invest" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
 
       <Route path="/i/flow/login" element={<LoginPage />} />
@@ -76,6 +78,9 @@ export default function App() {
 
         <Route path="/i/flow/mci" element={<CLIPage />} />
         <Route path="/i/flow/mci/focus" element={<CLIPage />} />
+
+        <Route path="/i/invest" element={<IotmPage />} />
+        <Route path="/i/invest/:game" element={<IotmGamePage />} />
 
         {/* login */}
         <Route element={<RequireAuth />}>
