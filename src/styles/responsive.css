@@ -8,6 +8,7 @@
 
   .mpi-body {
     grid-template-columns: 1fr;
+    background: none;
   }
 
   .sidebar {
