@@ -20,16 +20,20 @@ export const GAMES = [
 const GAME_MAP = new Map(GAMES.map((g) => [g.id, g]));
 
 const MYPAY_ORIGIN = 'https://mypayindia.com';
+
 function buildInterceptor(): string {
   return `<script>(function(){
     var O='${MYPAY_ORIGIN}',P='${API_BASE}';
+
     function rw(u){return typeof u==='string'&&u.startsWith(O)?P+u.slice(O.length):u;}
+
     var _f=window.fetch;
     window.fetch=function(u,o){
       var ru=rw(u);
       if(ru!==u)o=Object.assign({credentials:'include'},o||{});
       return _f.call(this,ru,o);
     };
+
     var _o=XMLHttpRequest.prototype.open;
     var _s=XMLHttpRequest.prototype.send;
     XMLHttpRequest.prototype.open=function(){
@@ -42,20 +46,43 @@ function buildInterceptor(): string {
       if(this._mpiRw)this.withCredentials=true;
       return _s.apply(this,arguments);
     };
+
     var _id=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');
     if(_id&&_id.set)Object.defineProperty(HTMLImageElement.prototype,'src',{get:_id.get,set:function(v){_id.set.call(this,rw(v));}});
+
+    window.turnstile={
+      render:function(){return 'mypwaindia-says-no';},
+      execute:function(){},
+      reset:function(){}
+    };
+
+    window.getTurnstileToken=function(){return Promise.resolve('bypassed-by-pwa');};
+
+    Object.defineProperty(window,'isVerified',{
+      get:function(){return true;},
+      configurable:true
+    });
+
+    Object.defineProperty(window,'turnstileValidated',{
+      get:function(){return true;},
+      set:function(){},
+      configurable:true
+    });
+
+    document.addEventListener('DOMContentLoaded',function(){
+      if(typeof startTurnstileValidation==='function') startTurnstileValidation();
+    });
   })();<\/script>`;
 }
 
 export default function IotmGamePage() {
   const { game: gameId } = useParams<{ game: string }>();
   const config = gameId ? GAME_MAP.get(gameId as typeof GAMES[number]['id']) : null;
-
   usePageTitle(`${config ? config.name + ' / ' : ''}Investment Opportunities™`);
-  const { active } = useAuth();
 
+  const { active } = useAuth();
   const [srcDoc, setSrcDoc] = useState<string | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError]   = useState<Error | null>(null);
 
   useEffect(() => {
     if (!config || !active?.token) return;
@@ -64,9 +91,9 @@ export default function IotmGamePage() {
     setSrcDoc(null);
     setError(null);
 
-    const token = active.token;
+    const token    = active.token;
     const proxyUrl = `${API_BASE}/accountservices/iotm/${config.id}/?minimal`;
-    const base = `${MYPAY_ORIGIN}/accountservices/iotm/${config.id}/`;
+    const base     = `${MYPAY_ORIGIN}/accountservices/iotm/${config.id}/`;
 
     fetch(proxyUrl, { headers: { Authorization: `Bearer ${token}` }, credentials: 'include' })
       .then((r) => {
@@ -75,13 +102,16 @@ export default function IotmGamePage() {
       })
       .then((html) => {
         if (cancelled) return;
+
         const stripped = html
           .replace(/<script[^>]+challenges\.cloudflare\.com\/turnstile[^>]*><\/script>/gi, '')
           .replace(/<div[^>]+cf-turnstile[^>]*>[^<]*<\/div>/gi, '')
           .replace(/<div[^>]+cf-turnstile[^>]*>/gi, '');
+
         const baseTag     = `<base href="${base}">`;
         const interceptor = buildInterceptor();
         const injected    = stripped.replace(/(<head[^>]*>)/i, `$1${baseTag}${interceptor}`);
+
         setSrcDoc(injected.includes(baseTag) ? injected : baseTag + interceptor + stripped);
       })
       .catch((e: unknown) => {
@@ -111,6 +141,7 @@ export default function IotmGamePage() {
       </div>
 
       <h1 className="mt-0">{config.name}</h1>
+
       {config.description && (
         <p style={{ color: 'var(--muted)', marginTop: -8, marginBottom: 16 }}>{config.description}</p>
       )}
