@@ -1,6 +1,5 @@
 import type { ComponentType } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { Logo } from './logo.tsx';
 import {
@@ -33,7 +32,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true },
       { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true },
       { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true },
-      { to: '/i/invest', label: 'Investment Opportunities™', icon: TrophyIcon, hideInScambait: true },
+      { href: 'https://mypayindia.com/accountservices/iotm/', label: 'Investment Opportunities™', icon: TrophyIcon, external: true, hideInScambait: true },
     ],
   },
   {
@@ -124,7 +123,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                       onClick={onClose}
                       className={({ isActive }) => {
                         if (!isActive) return '';
-                        return location.pathname === item.to ? 'active' : 'active active-parent';
+                        return location.pathname.startsWith(item.to ?? '') ? 'active' : 'active active-parent';
                       }}
                     >
                       {Icon && <Icon />}
