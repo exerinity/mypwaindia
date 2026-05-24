@@ -6,6 +6,7 @@
   grid-template-columns: 240px 1fr;
   flex: 1;
   min-height: 0;
+  align-items: stretch;
   background: linear-gradient(
     to right,
     var(--bg) 239px,
@@ -137,9 +138,24 @@
 .mpi-main {
   padding: 28px 32px 28px 16px;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-wrap {
   max-width: 1200px;
   margin: 0 auto 0 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+}
+
+.mpi-main:has(.settings-layout) {
+  padding: 0;
+}
+
+.content-wrap:has(.settings-layout) {
+  max-width: 100%;
+  margin: 0;
 }
