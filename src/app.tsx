@@ -16,16 +16,14 @@ import LeaderboardPage from './pages/leaderboard.tsx';
 import TeamPage from './pages/team.tsx';
 import ReleaseNotesPage from './pages/release_notes.tsx';
 import SettingsPage from './pages/settings.tsx';
+import OldSettingsPage from './pages/old_settings.tsx';
 import LogoutPage from './pages/logout.tsx';
 import OnboardingPage from './pages/onboarding.tsx';
 import NotFoundPage from './pages/not_found.tsx';
 import CLIPage from './pages/cli.tsx';
 import AcknowledgementsPage from './pages/acknowledgements.tsx';
-import ScambaitPage from './pages/scambait.tsx';
 import RestrictionsPage from './pages/restrictions.tsx';
 import ConnectionPage from './pages/connection.tsx';
-import IotmPage from './pages/iotm.tsx';
-import IotmGamePage from './pages/iotm_game.tsx';
 
 function PayLinkRedirect() {
   const { search } = useLocation();
@@ -71,16 +69,15 @@ export default function App() {
         <Route path="/i/leaderboard" element={<LeaderboardPage />} />
         <Route path="/i/team" element={<TeamPage />} />
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
+        <Route path="/settings/:category" element={<SettingsPage />} />
+        <Route path="/settings/old" element={<OldSettingsPage />} />
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
-        <Route path="/i/flow/scambaitmode" element={<ScambaitPage />} />
+        <Route path="/i/flow/scambaitmode" element={<Navigate to="/settings/scambait" replace />} />
         <Route path="/i/flow/connection" element={<ConnectionPage />} />
 
         <Route path="/i/flow/mci" element={<CLIPage />} />
         <Route path="/i/flow/mci/focus" element={<CLIPage />} />
-
-        <Route path="/i/invest" element={<IotmPage />} />
-        <Route path="/i/invest/:game" element={<IotmGamePage />} />
 
         {/* login */}
         <Route element={<RequireAuth />}>
