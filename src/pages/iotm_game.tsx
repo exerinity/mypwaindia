@@ -52,11 +52,14 @@ function buildInterceptor(): string {
 
     window.turnstile={
       render:function(){return 'mypwaindia-says-no';},
-      execute:function(){},
+      execute:function(){
+        if(window.turnstileResolve){
+          window.turnstileResolve('bypassed-by-pwa');
+          window.turnstileResolve=null;
+        }
+      },
       reset:function(){}
     };
-
-    window.getTurnstileToken=function(){return Promise.resolve('bypassed-by-pwa');};
 
     Object.defineProperty(window,'isVerified',{
       get:function(){return true;},
@@ -65,7 +68,7 @@ function buildInterceptor(): string {
 
     Object.defineProperty(window,'turnstileValidated',{
       get:function(){return true;},
-      set:function(){},
+      set:function(){/* nice try, showTurnstileSuccess */},
       configurable:true
     });
 
