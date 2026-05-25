@@ -54,7 +54,7 @@ export default function TransactionPage() {
             <span className={`link-status ${data.status}`}>{data.status}</span>
           </div>
           <div className="balance-display" style={{ color: data.sender?.id === active?.id ? 'var(--alert-error)' : 'var(--success)' }}>
-            {data.sender?.id === active?.id ? '−' : '+'}{format(data.amount)}
+            {data.sender?.id === active?.id ? '-' : '+'}{format(data.amount)}
           </div>
           <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '16px 0' }} />
           <div className="grid cols-2">
