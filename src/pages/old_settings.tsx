@@ -9,7 +9,7 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { normalizeHex } from '../utils/colors.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon, LogoutIcon } from '../components/icons.tsx';
+import { ArrowLeftIcon, ExternalIcon, LogoutIcon } from '../components/icons.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 
 const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
@@ -65,8 +65,11 @@ export default function OldSettingsPage() {
   }
 
   return (
-    <>
-      <h1 className="mt-0">Settings</h1>
+    <><h1 className="mt-0">Old settings</h1>
+
+      <p className="muted">
+        <Link to="/settings" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><ArrowLeftIcon /> Back to settings</Link>
+      </p>
 
       <div className="card mb-2">
         <h3 className="mt-0">Appearance</h3>
