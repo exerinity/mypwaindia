@@ -63,6 +63,7 @@ export default function App() {
       <Route path="/accountservices/transfer" element={<Navigate to="/account/transfer" replace />} />
       <Route path="/accountservices/iotm" element={<Navigate to="/i/invest" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
+      <Route path="/button" element={<Navigate to="/i/flow/button" replace />} />
 
       <Route path="/i/flow/login" element={<LoginPage />} />
       <Route path="/i/flow/logout" element={<LogoutPage />} />
