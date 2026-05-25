@@ -22,6 +22,7 @@ const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
 
 type CategoryId =
   | 'appearance'
+  | 'home'
   | 'data'
   | 'display'
   | 'accounts'
@@ -39,8 +40,29 @@ interface Category {
   to?: string;
 }
 
+const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
+  { value: '/dash', label: 'Dashboard' },
+  { value: '/account', label: 'Account' },
+  { value: '/account/transfer', label: 'Transfer' },
+  { value: '/account/history', label: 'Transaction history' },
+  { value: '/account/restrictions', label: 'Restrictions' },
+  { value: '/dash/statements', label: 'Statements (scambait)' },
+  { value: '/dash/cards', label: 'Cards (scambait)' },
+  { value: '/links', label: 'Payment links' },
+  { value: '/links/claim', label: 'Claim link' },
+  { value: '/settings/appearance', label: 'Settings' },
+  { value: '/settings/old', label: 'Old settings' },
+  { value: '/i/leaderboard', label: 'Leaderboard' },
+  { value: '/i/team', label: 'Meet the team' },
+  { value: '/i/release_notes', label: 'App release notes' },
+  { value: '/i/acknowledgements', label: 'Acknowledgements' },
+  { value: '/i/flow/mci', label: 'MyCLiIndia' },
+  { value: '/i/flow/button', label: 'The Button (Investment Opportunities™)' }
+];
+
 const CATEGORIES: Category[] = [
   { id: 'appearance', label: 'Appearance', desc: 'Theme and accent color' },
+  { id: 'home', label: 'Home screen', desc: 'Page shown when opening the app', hideWhenScambait: true },
   { id: 'data', label: 'Data & sync', desc: 'Auto-refresh and API settings' },
   { id: 'display', label: 'Display name', desc: 'How your name appears in the app' },
   { id: 'accounts', label: 'Saved accounts', desc: 'Manage your stored accounts' },
@@ -69,6 +91,9 @@ export default function SettingsPage() {
   const [accentInput, setAccentInput] = useState(settings.accent);
   const [removeOneTarget, setRemoveOneTarget] = useState<Account | null>(null);
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
+  const [customHomeInput, setCustomHomeInput] = useState<string | null>(() =>
+    HOME_PAGE_OPTIONS.some((o) => o.value === settings.homePage) ? null : settings.homePage
+  );
   const [scambaitKnocks, setScambaitKnocks] = useState(0);
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
   const [scambaitAlreadyOpen, setScambaitAlreadyOpen] = useState(false);
@@ -161,6 +186,57 @@ export default function SettingsPage() {
             </div>
           </>
         );
+
+      case 'home': {
+        const inCustomMode = customHomeInput !== null;
+        const selectValue = inCustomMode ? '__custom__' : settings.homePage;
+        const commitCustom = (val: string) => { if (val.trim()) update({ homePage: val.trim() }); };
+        return (
+          <>
+            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+              Change what page is loaded when you open the app without specifying a path.
+            </p>
+            <label htmlFor="home-page-select">Home page</label>
+            <div className="row gap-sm" style={{ marginTop: 6 }}>
+              <select
+                id="home-page-select"
+                value={selectValue}
+                onChange={(e) => {
+                  if (e.target.value === '__custom__') {
+                    setCustomHomeInput('');
+                  } else {
+                    update({ homePage: e.target.value });
+                    setCustomHomeInput(null);
+                  }
+                }}
+              >
+                {HOME_PAGE_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+                <option value="__custom__">Something else...</option>
+              </select>
+            </div>
+            {inCustomMode && (
+              <div className="row gap-sm" style={{ marginTop: 8 }}>
+                <input
+                  type="text"
+                  placeholder="/i/flow/onboarding"
+                  value={customHomeInput}
+                  autoFocus
+                  onChange={(e) => setCustomHomeInput(e.target.value)}
+                  onBlur={() => commitCustom(customHomeInput)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') commitCustom(customHomeInput); }}
+                  style={{ maxWidth: 240 }}
+                />
+              </div>
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+              <InfoIcon />
+              <span>If you open the app with a path, like <strong>mypayindia.sbs/account/transfer</strong>, this will not execute.</span>
+            </div>
+          </>
+        );
+      }
 
       case 'data':
         return (
