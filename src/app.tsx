@@ -24,6 +24,7 @@ import CLIPage from './pages/cli.tsx';
 import AcknowledgementsPage from './pages/acknowledgements.tsx';
 import RestrictionsPage from './pages/restrictions.tsx';
 import ConnectionPage from './pages/connection.tsx';
+import IotmButtonPage from './pages/iotm_button.tsx';
 
 function PayLinkRedirect() {
   const { search } = useLocation();
@@ -91,6 +92,7 @@ export default function App() {
           <Route path="/dash/statements" element={<StatementsPage />} />
           <Route path="/dash/cards" element={<CardsPage />} />
           <Route path="/i/transaction/:id" element={<TransactionPage />} />
+          <Route path="/i/flow/button" element={<IotmButtonPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
