@@ -19,6 +19,7 @@ export const RELEASES: Release[] = [
     notes: [
       'Again, removed the local Investment Opportunities™ page, I got so close this time...',
       <>Revamped <Link to="/settings">the settings page</Link></>,
+      <>Added a new setting: <Link to="/settings/home">home screen</Link>, which... changes the home screen</>,
       <>However, <Link to="/i/flow/button">the button has been added</Link>!</>
     ]
   },
