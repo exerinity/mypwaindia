@@ -41,7 +41,7 @@ interface Category {
 }
 
 const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
-  { value: '/dash', label: 'Dashboard' },
+  { value: '/dash', label: 'Dashboard (default)' },
   { value: '/account', label: 'Account' },
   { value: '/account/transfer', label: 'Transfer' },
   { value: '/account/history', label: 'Transaction history' },
