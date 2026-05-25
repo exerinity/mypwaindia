@@ -18,7 +18,8 @@ export const RELEASES: Release[] = [
     date: '24 May 2026',
     notes: [
       'Again, removed the local Investment Opportunities™ page, I got so close this time...',
-      <>Revamped <Link to="/settings">the settings page</Link></>
+      <>Revamped <Link to="/settings">the settings page</Link></>,
+      <>However, <Link to="/i/flow/button">the button has been added</Link>!</>
     ]
   },
   {
