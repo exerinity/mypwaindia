@@ -11,6 +11,7 @@ export interface Settings {
   autoRefreshOnlyWhenFocused: boolean;
   displayName: 'username' | 'first_name' | 'full_name';
   scambait: boolean;
+  homePage: string;
 }
 
 interface SettingsContextValue {
@@ -28,6 +29,7 @@ const DEFAULT_SETTINGS: Settings = {
   autoRefreshOnlyWhenFocused: true,
   displayName: 'username',
   scambait: false,
+  homePage: '/dash',
 };
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
