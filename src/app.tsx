@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { AppLayout } from './components/app_layout.tsx';
 import { RequireAuth } from './components/require_auth.tsx';
+import { useSettings } from './context/settings_ctx.tsx';
 
 import LoginPage from './pages/login.tsx';
 import DashboardPage from './pages/dashboard.tsx';
@@ -25,6 +26,11 @@ import AcknowledgementsPage from './pages/acknowledgements.tsx';
 import RestrictionsPage from './pages/restrictions.tsx';
 import ConnectionPage from './pages/connection.tsx';
 import IotmButtonPage from './pages/iotm_button.tsx';
+
+function HomeRedirect() {
+  const { settings } = useSettings();
+  return <Navigate to={settings.homePage} replace />;
+}
 
 function PayLinkRedirect() {
   const { search } = useLocation();
@@ -63,7 +69,7 @@ export default function App() {
       <Route path="/i/flow/onboarding" element={<OnboardingPage />} />
 
       <Route element={<AppLayout />}>
-        <Route path="/" element={<Navigate to="/dash" replace />} />
+        <Route path="/" element={<HomeRedirect />} />
 
         {/* public */}
         <Route path="/dash" element={<DashboardPage />} />
