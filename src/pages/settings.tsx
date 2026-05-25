@@ -291,7 +291,7 @@ export default function SettingsPage() {
         return (
           <>
             <p className="muted" style={{ marginBottom: 20, marginTop: 0 }}>
-              You can only do so much here — log in to MyPayIndia to change your info, email, and
+              You can only do so much here - log in to MyPayIndia to change your info, email, and
               even delete your account:
             </p>
             <a
@@ -323,7 +323,7 @@ export default function SettingsPage() {
 
             <div className="card mb-2">
               <h3 className="mt-0">What is scambait mode?</h3>
-              <p className="mt-0">Scambait mode transforms this app into a more convincing-looking interface for use in... scambaiting. Phone scammers often instruct their targets to install remote access software and navigate a banking app — but to their dismay, that geriatric geezer on the other end is using a mysterious online bank: MyPayIndia.</p>
+              <p className="mt-0">Scambait mode transforms this app into a more convincing-looking interface for use in... scambaiting. Phone scammers often instruct their targets to install remote access software and navigate a banking app - but to their dismay, that geriatric geezer on the other end is using a mysterious online bank: MyPayIndia.</p>
             </div>
 
             <div className="card mb-2">
@@ -331,7 +331,7 @@ export default function SettingsPage() {
               <ul className="mt-0 mb-0">
                 <li>Displays currency as USD ($) instead of INR</li>
                 <li>Adds a fake Cards page with plausible card details</li>
-                <li>Adds a fake Bank Statements page with realistic transaction history (1000 entries from 2017) — this page will override the actual transaction history</li>
+                <li>Adds a fake Bank Statements page with realistic transaction history (1000 entries from 2017) - this page will override the actual transaction history</li>
                 <li>Adjusts dashboard stats to look more convincing</li>
                 <li>Switches the name display to your full name automatically</li>
                 <li>Hides the payment links views &amp; meta pages (i.e. leaderboard, CLi, release notes, meet the team, etc.) that would look suspicious to a scammer</li>

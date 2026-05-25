@@ -141,7 +141,7 @@ export default function ClaimLinkPage() {
           <div className="grid cols-2" style={{ marginBottom: 16 }}>
             <div>
               <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>From</div>
-              <div>@{preview.creator?.username ?? '—'}</div>
+              <div>@{preview.creator?.username ?? '-'}</div>
             </div>
             <div>
               <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>Created</div>

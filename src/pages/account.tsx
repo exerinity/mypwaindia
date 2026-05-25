@@ -146,7 +146,7 @@ export default function AccountPage() {
     const [revealed, setRevealed] = useState(false);
     return (
       <tr key={s.id}>
-        <td>{s.device_info || '—'}{s.current && <strong> (current)</strong>}</td>
+        <td>{s.device_info || '-'}{s.current && <strong> (current)</strong>}</td>
         <td
           className="mono"
           onMouseEnter={() => setRevealed(true)}
@@ -247,7 +247,7 @@ export default function AccountPage() {
                   <div>
                     <div className="muted" style={{ fontSize: '0.8rem' }}>Date of birth</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      {u.date_of_birth || '—'}
+                      {u.date_of_birth || '-'}
                       {u.date_of_birth && (() => {
                         const a = calcAge(u.date_of_birth);
                         if (!a) return null;
@@ -447,7 +447,7 @@ export default function AccountPage() {
                     }}>
                       <div>
                         <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Device</div>
-                        <div style={{ fontSize: '0.9rem' }}>{killTarget.device_info || '—'}</div>
+                        <div style={{ fontSize: '0.9rem' }}>{killTarget.device_info || '-'}</div>
                       </div>
                       <div>
                         <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>IP address</div>

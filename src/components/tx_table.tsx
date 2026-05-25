@@ -122,8 +122,8 @@ export function TransactionTable({ transactions, currentUserId }: TransactionTab
                       {tx.transaction_id}
                     </Link>
                   </td>
-                  <td>{tx.sender?.username || '—'}</td>
-                  <td>{tx.recipient?.username || '—'}</td>
+                  <td>{tx.sender?.username || '-'}</td>
+                  <td>{tx.recipient?.username || '-'}</td>
                   <td style={{ textAlign: 'right', color: outgoing ? 'var(--alert-error)' : 'var(--success)', fontVariantNumeric: 'tabular-nums' }}>
                     {outgoing ? '-' : '+'}{format(tx.amount)}
                   </td>
