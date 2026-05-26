@@ -146,7 +146,7 @@ export default function IotmButtonPage() {
 
   const payoutPct = displayPayoutIn <= 0
     ? 100
-    : ((PAYOUT_EVERY - displayPayoutIn) / PAYOUT_EVERY) * 100;
+    : (displayPayoutIn / PAYOUT_EVERY) * 100;
 
   const leaderboard = state ? parseLeaderboardHtml(state.leaderboard) : null;
 
@@ -185,25 +185,9 @@ export default function IotmButtonPage() {
               </span>
             </div>
 
-            <div
-              role="progressbar"
-              aria-valuenow={Math.round(payoutPct)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              style={{ height: 5, borderRadius: 3, background: 'var(--border)', marginBottom: 18, overflow: 'hidden' }}
-            >
-              <div style={{
-                height: '100%',
-                width: `${payoutPct}%`,
-                background: 'var(--brand)',
-                borderRadius: 3,
-                transition: 'width 0.08s linear',
-              }} />
-            </div>
-
             <button
-              className="primary"
-              style={{ width: '100%', padding: '14px 0', fontSize: '1.1rem', fontWeight: 700 }}
+              className="primary the_button"
+              style={{ '--payout-percentage': `${payoutPct}%`, width: '100%', padding: '14px 0', fontSize: '1.1rem' } as React.CSSProperties}
               onClick={handleButtonClick}
             >
               Button

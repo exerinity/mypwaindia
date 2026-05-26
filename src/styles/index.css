@@ -23,6 +23,7 @@
 @import "utils.css";
 @import "cli.css";
 @import "settings.css";
+@import "iotm_button.css";
 
 @font-face {
   font-family: "Inter";

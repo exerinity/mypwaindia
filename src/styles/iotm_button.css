@@ -1,0 +1,16 @@
+/* =====================================================================
+   BUTT
+   ===================================================================== */
+
+.the_button {
+  width: 100%;
+  background: linear-gradient(to left, var(--brand) 0%, var(--brand) var(--payout-percentage), var(--success) var(--payout-percentage));
+  color: var(--brand-text);
+  font-weight: 700;
+  transition: background 0.08s linear;
+}
+
+.the_button:hover {
+  background: linear-gradient(to left, var(--brand-dark) 0%, var(--brand-dark) var(--payout-percentage), var(--success) var(--payout-percentage));
+  color: var(--brand-text);
+}
