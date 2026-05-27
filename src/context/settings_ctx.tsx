@@ -4,14 +4,24 @@ import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
 import { darken, isLight, normalizeHex } from '../utils/colors.js';
 import { formatINR, formatMoney } from '../utils/money.js';
 
+/** CSS custom-property keys that a custom theme may override. */
+export const CUSTOM_VAR_KEYS = [
+  '--bg', '--bg-elev', '--fg', '--muted', '--border',
+  '--card', '--card-soft', '--pill-bg',
+  '--success', '--error',
+  '--alert-success', '--alert-error', '--alert-info', '--alert-warning',
+  '--table-row-alt', '--shadow',
+] as const;
+
 export interface Settings {
-  theme: 'light' | 'dim' | 'dark';
+  theme: 'light' | 'dim' | 'dark' | 'custom';
   accent: string;
   autoRefresh: boolean;
   autoRefreshOnlyWhenFocused: boolean;
   displayName: 'username' | 'first_name' | 'full_name';
   scambait: boolean;
   homePage: string;
+  customTheme: Record<string, string>;
 }
 
 interface SettingsContextValue {
@@ -30,6 +40,7 @@ const DEFAULT_SETTINGS: Settings = {
   displayName: 'username',
   scambait: false,
   homePage: '/dash',
+  customTheme: {},
 };
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
@@ -44,12 +55,23 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    root.dataset.theme = settings.theme;
+    // Always strip any previously-inlined custom vars first so they don't
+    // bleed through when the user switches back to a built-in theme.
+    CUSTOM_VAR_KEYS.forEach((k) => root.style.removeProperty(k));
+
+    root.dataset.theme = settings.theme === 'custom' ? 'dark' : settings.theme;
+
+    if (settings.theme === 'custom') {
+      Object.entries(settings.customTheme).forEach(([k, v]) => {
+        if (v) root.style.setProperty(k, v);
+      });
+    }
+
     const accent = normalizeHex(settings.accent) || DEFAULT_SETTINGS.accent;
     root.style.setProperty('--brand', accent);
     root.style.setProperty('--brand-dark', darken(accent, 0.15));
     root.style.setProperty('--brand-text', isLight(accent) ? '#000' : '#fff');
-  }, [settings.theme, settings.accent]);
+  }, [settings.theme, settings.accent, settings.customTheme]);
 
   const update = (partial: Partial<Settings>) => setSettings((s) => ({ ...s, ...partial }));
   const reset = () => setSettings(DEFAULT_SETTINGS);
