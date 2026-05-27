@@ -55,8 +55,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    // Always strip any previously-inlined custom vars first so they don't
-    // bleed through when the user switches back to a built-in theme.
     CUSTOM_VAR_KEYS.forEach((k) => root.style.removeProperty(k));
 
     root.dataset.theme = settings.theme === 'custom' ? 'dark' : settings.theme;
