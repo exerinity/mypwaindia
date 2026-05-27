@@ -11,7 +11,7 @@
     background: none;
   }
 
-  .sidebar {
+  .mpi-sidebar {
     position: fixed;
     top: 0;
     left: 0;
@@ -23,15 +23,15 @@
     border-right: 1px solid var(--border);
   }
 
-  .sidebar.open {
+  .mpi-sidebar.open {
     transform: translateX(0);
   }
 
-  .sidebar-mobile-header {
+  .mpi-sidebarmobile-header {
     display: flex;
   }
 
-  .sidebar-close-btn {
+  .mpi-sidebarclose-btn {
     display: block;
   }
 
@@ -39,7 +39,7 @@
     padding: 18px 14px;
   }
 
-  .pill-row {
+  .mpi-pills {
     padding: 0 12px 10px;
   }
 
