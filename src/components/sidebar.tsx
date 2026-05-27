@@ -72,14 +72,14 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
   return (
     <>
       <div
-        className={`sidebar-overlay ${open ? 'open' : ''}`}
+        className={`mpi-sidebaroverlay ${open ? 'open' : ''}`}
         onClick={onClose}
         aria-hidden="true"
       />
-      <aside className={`sidebar ${open ? 'open' : ''}`} aria-label="Main navigation">
-        <div className="sidebar-mobile-header">
-          <Logo height={32} className="sidebar-logo" />
-          <button className="sidebar-close-btn" onClick={onClose} aria-label="Close menu">
+      <aside className={`mpi-sidebar ${open ? 'open' : ''}`} aria-label="Main navigation">
+        <div className="mpi-sidebarmobile-header">
+          <Logo height={32} className="mpi-sidebarlogo" />
+          <button className="mpi-sidebarclose-btn" onClick={onClose} aria-label="Close menu">
             <CloseIcon />
           </button>
         </div>
