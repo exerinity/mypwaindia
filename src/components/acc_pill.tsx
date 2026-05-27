@@ -42,13 +42,13 @@ export function AccountPill() {
         <Link to="/i/flow/login" className="pill clickable" style={{ textDecoration: 'none', color: 'inherit' }}>
           <span className="pill-label">Not logged in - log in here</span>
         </Link>
-        <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer"
+        <a href="/signup" target="_blank" rel="noopener noreferrer"
           className="pill clickable" style={{ textDecoration: 'none', color: 'inherit', gap: '6px' }}>
-          <span className="pill-label">Sign up on MyPayIndia.com</span><ExternalIcon />
+          <span className="pill-label">Sign up</span><ExternalIcon />
         </a>
         <a href="https://mypayindia.com/" target="_blank" rel="noopener noreferrer"
           className="pill clickable" style={{ textDecoration: 'none', color: 'inherit', gap: '6px' }}>
-          <span className="pill-label">Go to MyPayIndia.com</span><ExternalIcon />
+          <span className="pill-label">Home</span><ExternalIcon />
         </a>
       </>
     );
