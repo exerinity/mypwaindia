@@ -231,6 +231,8 @@ export default function SettingsPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 28px', marginTop: 6 }}>
                   {CUSTOM_THEME_VARS.filter((v) => v.isColor).map(({ key, label }) => {
                     const raw = settings.customTheme[key] ?? '';
+                    const def = THEME_DEFAULTS.dark[key];
+                    const isDefault = raw === def;
                     return (
                       <div key={key}>
                         <div style={{ fontSize: '0.78rem', color: 'var(--muted)', marginBottom: 4 }}>{label}</div>
@@ -247,24 +249,42 @@ export default function SettingsPage() {
                             placeholder="#000000"
                             style={{ maxWidth: 88 }}
                           />
+                          <button
+                            className="secondary compact"
+                            disabled={isDefault}
+                            onClick={() => update({ customTheme: { ...settings.customTheme, [key]: def } })}
+                            title={`Reset to default (based on Dark) (${def})`}
+                          >↺</button>
                         </div>
                       </div>
                     );
                   })}
                 </div>
 
-                {CUSTOM_THEME_VARS.filter((v) => !v.isColor).map(({ key, label }) => (
-                  <div key={key} style={{ marginTop: 14 }}>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--muted)', marginBottom: 4 }}>{label}</div>
-                    <input
-                      type="text"
-                      value={settings.customTheme[key] ?? ''}
-                      onChange={(e) => update({ customTheme: { ...settings.customTheme, [key]: e.target.value } })}
-                      placeholder="0 2px 8px rgba(0, 0, 0, 0.8)"
-                      style={{ maxWidth: 380 }}
-                    />
-                  </div>
-                ))}
+                {CUSTOM_THEME_VARS.filter((v) => !v.isColor).map(({ key, label }) => {
+                  const def = THEME_DEFAULTS.dark[key];
+                  const val = settings.customTheme[key] ?? '';
+                  return (
+                    <div key={key} style={{ marginTop: 14 }}>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--muted)', marginBottom: 4 }}>{label}</div>
+                      <div className="row gap-sm">
+                        <input
+                          type="text"
+                          value={val}
+                          onChange={(e) => update({ customTheme: { ...settings.customTheme, [key]: e.target.value } })}
+                          placeholder="0 2px 8px rgba(0, 0, 0, 0.8)"
+                          style={{ maxWidth: 340 }}
+                        />
+                        <button
+                          className="secondary compact"
+                          disabled={val === def}
+                          onClick={() => update({ customTheme: { ...settings.customTheme, [key]: def } })}
+                          title={`Reset to default (based on Dark)`}
+                        >↺</button>
+                      </div>
+                    </div>
+                  );
+                })}
 
                 <label className="mt-2">Export or import</label>
                 <div className="btn-row" style={{ marginTop: 4 }}>
@@ -273,7 +293,7 @@ export default function SettingsPage() {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'mypwaindia-theme.json';
+                    a.download = 'mpitheme.json';
                     a.click();
                     URL.revokeObjectURL(url);
                   }}>
