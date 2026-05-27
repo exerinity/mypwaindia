@@ -3,7 +3,7 @@ import { usePageTitle } from '../hooks/page_title.js';
 const DEVELOPERS = [
   {
     name: 'exerinity',
-    url: 'https://exerinity.com',
+    url: 'https://exerinity.com'
   },
 ];
 
@@ -16,8 +16,25 @@ const THX = [
   {
     name: 'Mystically',
     url: 'https://hello.mystically.dev',
-    idea: 'Guiding what scambait mode should mostly look like, spotting out an absurd typo, and API v2',
+    idea: 'Further scambait mode influence',
   },
+  {
+    name: 'tiago',
+    url: 'https://tiago.zip',
+    idea: 'Helping out with the original PWA (redesigning it), and the splash screen & account switcher'
+  }
+];
+
+const INSPIRATIONS = [
+  {
+    name: 'Twitter',
+    url: 'https://opensource.twitter.dev',
+    idea: 'Settings (v2) layout idea, and routing scheme (/i/flow, etc)',
+  },
+  {
+    name: 'tiago',
+    url: 'https://tiago.zip'
+  }
 ];
 
 const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
@@ -87,10 +104,10 @@ function PackageList({ packages }: { packages: Package[] }) {
 }
 
 export default function AcknowledgementsPage() {
-  usePageTitle('Acknowledgements');
+  usePageTitle('Hey I don\'t know who\'s reading this but if you are I love you and I hope you love this app anyway here\'s the credits of who and what helped out');
   return (
     <>
-      <h1 className="mt-0">Acknowledgements</h1>
+      <h1 className="mt-0">Acknowledgements & credits</h1>
 
       <h2>This app is developed by...</h2>
       <div className="card mb-2" style={{ padding: 0 }}>
@@ -118,6 +135,26 @@ export default function AcknowledgementsPage() {
             key={person.name}
             style={{
               borderBottom: i < THX.length - 1 ? '1px solid var(--border)' : 'none',
+              padding: '12px 16px',
+            }}
+          >
+            <strong>
+              {person.url
+                ? <a href={person.url} target="_blank" rel="noopener noreferrer">{person.name}</a>
+                : person.name}
+            </strong>
+            <p className="muted" style={{ margin: '4px 0 0', fontSize: '0.875rem' }}>{person.idea}</p>
+          </div>
+        ))}
+      </div>
+
+      <h2>with inspirations from...</h2>
+      <div className="card mb-2" style={{ padding: 0 }}>
+        {INSPIRATIONS.map((person, i) => (
+          <div
+            key={person.name}
+            style={{
+              borderBottom: i < INSPIRATIONS.length - 1 ? '1px solid var(--border)' : 'none',
               padding: '12px 16px',
             }}
           >
