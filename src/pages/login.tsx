@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { Env } from '../api/client.js';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
@@ -16,17 +16,25 @@ export default function LoginPage() {
   const { update: updateSettings } = useSettings();
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const toast = useToast();
   const [leaving, setLeaving] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState(searchParams.get('username') ?? '');
+  const [password, setPassword] = useState(searchParams.get('password') ?? '');
   const [totp, setTotp] = useState('');
   const [needs2fa, setNeeds2fa] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
-  const envRef = useRef<Env>('production');
+  const envRef = useRef<Env>(searchParams.get('env') === 'staging' ? 'staging' : 'production');
+  const formRef = useRef<HTMLFormElement>(null);
 
   const atCapacity = accounts.length >= maxAccounts;
+
+  useEffect(() => {
+    if (searchParams.get('username') && searchParams.get('password') && !searchParams.has('nologin')) {
+      formRef.current?.requestSubmit();
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,13 +44,15 @@ export default function LoginPage() {
     }
     const env = envRef.current;
     envRef.current = 'production';
+    const isScambait = searchParams.get('scambait') === 'true' || searchParams.get('s') === 'true';
+    if (isScambait) updateSettings({ scambait: true, displayName: 'full_name' });
     setBusy(true);
     setError(null);
     try {
       const from = (location.state as { from?: { pathname?: string; search?: string; hash?: string } })?.from;
       const dest = from ? (from.pathname ?? '/dash') + (from.search ?? '') + (from.hash ?? '') : '/dash';
       const onboarded = storageGet<number>(KEYS.ONBOARD, 0) === 1;
-      await login({ username, password, totp_code: totp || undefined, env }, onboarded ? dest : '/i/flow/onboarding');
+      await login({ username, password, totp_code: totp || undefined, env }, onboarded || isScambait ? dest : '/i/flow/onboarding');
     } catch (e) {
       const err = e as { code?: number };
       if (err.code === 1002) {
@@ -70,6 +80,7 @@ export default function LoginPage() {
         )}
 
         <form
+          ref={formRef}
           onSubmit={handleSubmit}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && e.ctrlKey) {
