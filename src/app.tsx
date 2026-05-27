@@ -27,6 +27,11 @@ import RestrictionsPage from './pages/restrictions.tsx';
 import ConnectionPage from './pages/connection.tsx';
 import IotmButtonPage from './pages/iotm_button.tsx';
 
+function LoginRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/i/flow/login${search}`} replace />;
+}
+
 function HomeRedirect() {
   const { settings } = useSettings();
   return <Navigate to={settings.homePage} replace />;
@@ -54,10 +59,13 @@ export default function App() {
     <Routes>
       <Route path="/pay/link" element={<PayLinkRedirect />} />
 
+      <Route path="/login" element={<LoginRedirect />} />
+
       <Route path="/leaderboard" element={<Navigate to="/i/leaderboard" replace />} />
       <Route path="/team" element={<Navigate to="/i/team" replace />} />
       <Route path="/docs" element={<ExternalRedirect to="https://mypayindia.com/docs" />} />
       <Route path="/app" element={<ExternalRedirect to="https://mypayindia.com/app" />} />
+      <Route path="/signup" element={<ExternalRedirect to="https://mypayindia.com/accountservices/register" />} />
       <Route path="/accountservices/dashboard" element={<Navigate to="/dash" replace />} />
       <Route path="/accountservices/transhist" element={<Navigate to="/account/history" replace />} />
       <Route path="/accountservices/transfer" element={<Navigate to="/account/transfer" replace />} />
