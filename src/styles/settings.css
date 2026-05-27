@@ -2,7 +2,7 @@
    SETTINGS 2
    ===================================================================== */
 
-.settings-layout {
+.mpi-settings-layout {
   display: grid;
   grid-template-columns: 300px 1fr;
   flex: 1;
@@ -10,7 +10,7 @@
   border-top: 1px solid var(--border);
 }
 
-.settings-nav {
+.mpi-settings-nav {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border);
@@ -18,25 +18,25 @@
   overflow: hidden;
 }
 
-.settings-nav-header {
+.mpi-settings-nav-header {
   padding: 24px 20px 16px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 
-.settings-nav-header h1 {
+.mpi-settings-nav-header h1 {
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0 0 14px;
 }
 
-.settings-search {
+.mpi-settings-search {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.settings-search input[type="search"] {
+.mpi-settings-search input[type="search"] {
   width: 100%;
   padding: 9px 14px 9px 36px;
   border-radius: 20px;
@@ -50,20 +50,20 @@
   -webkit-appearance: none;
 }
 
-.settings-search input[type="search"]::-webkit-search-cancel-button {
+.mpi-settings-search input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: none;
 }
 
-.settings-search input[type="search"]:focus {
+.mpi-settings-search input[type="search"]:focus {
   border-color: var(--brand);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 14%, transparent);
 }
 
-.settings-search input[type="search"]::placeholder {
+.mpi-settings-search input[type="search"]::placeholder {
   color: var(--muted);
 }
 
-.settings-search-icon {
+.mpi-settings-search-icon {
   position: absolute;
   left: 11px;
   color: var(--muted);
@@ -72,13 +72,13 @@
   pointer-events: none;
 }
 
-.settings-nav-list {
+.mpi-settings-nav-list {
   flex: 1;
   overflow-y: auto;
   padding: 8px 0;
 }
 
-.settings-nav-item {
+.mpi-settings-nav-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -97,18 +97,18 @@
   gap: 10px;
 }
 
-.settings-nav-item:hover {
+.mpi-settings-nav-item:hover {
   background: var(--bg-elev);
   text-decoration: none;
 }
 
-.settings-nav-item.active {
+.mpi-settings-nav-item.active {
   background: var(--bg-elev);
   border-left-color: var(--brand);
   font-weight: 500;
 }
 
-.settings-nav-item-label {
+.mpi-settings-nav-item-label {
   flex: 1;
   min-width: 0;
   white-space: nowrap;
@@ -116,33 +116,33 @@
   text-overflow: ellipsis;
 }
 
-.settings-nav-item-chevron {
+.mpi-settings-nav-item-chevron {
   color: var(--muted);
   flex-shrink: 0;
   display: flex;
   align-items: center;
 }
 
-.settings-nav-footer {
+.mpi-settings-nav-footer {
   flex-shrink: 0;
   padding: 12px 20px 16px;
   border-top: 1px solid var(--border);
 }
 
-.settings-nav-footer p {
+.mpi-settings-nav-footer p {
   margin: 0;
   font-size: 0.78rem;
   line-height: 1.6;
 }
 
-.settings-detail {
+.mpi-settings-detail {
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
 }
 
-.settings-detail-header {
+.mpi-settings-detail-header {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -158,7 +158,7 @@
   z-index: 1;
 }
 
-.settings-detail-back {
+.mpi-settings-detail-back {
   display: none;
   background: none;
   border: none;
@@ -173,47 +173,47 @@
   margin-left: -7px;
 }
 
-.settings-detail-back:hover {
+.mpi-settings-detail-back:hover {
   background: var(--bg-elev);
 }
 
-.settings-detail-scroll {
+.mpi-settings-detail-scroll {
   flex: 1;
   overflow-y: auto;
 }
 
-.settings-detail-content {
+.mpi-settings-detail-content {
   padding: 28px;
   max-width: 680px;
 }
 
 @media (max-width: 700px) {
-  .settings-layout {
+  .mpi-settings-layout {
     grid-template-columns: 1fr;
     border-top: none;
   }
 
-  .settings-nav {
+  .mpi-settings-nav {
     border-right: none;
   }
 
-  .settings-nav.settings-nav--hidden {
+  .mpi-settings-nav.mpi-settings-nav--hidden {
     display: none;
   }
 
-  .settings-detail {
+  .mpi-settings-detail {
     display: none;
   }
 
-  .settings-detail.settings-detail--visible {
+  .mpi-settings-detail.mpi-settings-detail--visible {
     display: flex;
   }
 
-  .settings-detail-back {
+  .mpi-settings-detail-back {
     display: flex;
   }
 
-  .settings-detail-content {
+  .mpi-settings-detail-content {
     max-width: 100%;
   }
 }
