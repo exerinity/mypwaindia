@@ -14,6 +14,13 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '13',
+    date: '27 May 2026',
+    notes: [
+      <>Added a new <Link to="/settings/appearance">custom theme setting</Link></>
+    ]
+  },
+  {
     version: '12',
     date: '24 May 2026',
     notes: [
