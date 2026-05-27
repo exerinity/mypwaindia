@@ -53,7 +53,7 @@
   height: 20px;
 }
 
-.pill-row {
+.mpi-pills {
   display: flex;
   align-items: center;
   gap: 8px;
