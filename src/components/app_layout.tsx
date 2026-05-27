@@ -89,7 +89,7 @@ export function AppLayout() {
       <div className="mpi-body">
         <Sidebar open={open} onClose={() => setOpen(false)} />
         <main className="mpi-main">
-          <div className="content-wrap">
+          <div className="mpi-wrap">
             <Outlet />
           </div>
         </main>
