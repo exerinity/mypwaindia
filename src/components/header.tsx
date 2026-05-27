@@ -19,7 +19,7 @@ export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
         <Link to="/dash" aria-label="Go to dashboard"><Logo /></Link>
         <div className="mpi-header-spacer" />
       </div>
-      <div className="pill-row" role="status" aria-live="polite">
+      <div className="mpi-pills" role="status" aria-live="polite">
         <AccountPill />
         <BalancePill />
         <InstallPill />
