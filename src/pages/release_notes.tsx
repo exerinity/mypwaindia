@@ -7,7 +7,7 @@ import { InfoIcon, StopIcon } from '../components/icons.tsx';
 type Release = {
   version: string;
   date: string;
-  notes: (string | React.ReactElement)[];
+  notes: (string | React.ReactElement | { h2: string } | { h3: string } | { p: string })[];
   subnotes?: (string | React.ReactElement)[];
   disclaimer?: string | React.ReactElement;
 };
@@ -17,7 +17,10 @@ export const RELEASES: Release[] = [
     version: '13',
     date: '27 May 2026',
     notes: [
-      <>Added a new <Link to="/settings/appearance">custom theme setting</Link></>
+      <>Added a new <Link to="/settings/appearance">custom theme setting</Link></>,
+      { h3: 'Some changes to logging in: you can now add parameters to the URL, after /i/flow/login or /login:' },
+      <><code>?username=JohnPayment&password=Applesandbananas1&scambait=true&env=staging</code> -- all of these are optional; but if username &amp; password are present, it will automatically log in. Override that with <code>&nologin</code>. The scambait flag can also be provided with just <code>s</code></>,
+      'Logging in with scambait mode enabled will skip the onboarding screen'
     ]
   },
   {
@@ -244,9 +247,23 @@ function ReleaseItem({ r, borderBottom }: { r: Release; borderBottom: boolean })
           {r.disclaimer && (
             <p className="muted" style={{ fontSize: '0.8rem', margin: '6px 0 4px' }}>{r.disclaimer}</p>
           )}
-          <ul style={{ marginTop: 6, marginBottom: 10 }}>
-            {r.notes.map((note, j) => <li key={j}>{note}</li>)}
-          </ul>
+          {(() => {
+            const out: React.ReactNode[] = [];
+            let buf: React.ReactNode[] = [];
+            const flush = (k: string) => { if (buf.length) { out.push(<ul key={k} style={{ marginTop: 6, marginBottom: 4 }}>{buf}</ul>); buf = []; } };
+            r.notes.forEach((note, j) => {
+              if (typeof note === 'object' && !React.isValidElement(note)) {
+                flush(`ul${j}`);
+                if ('h2' in note) out.push(<h2 key={j}>{note.h2}</h2>);
+                else if ('h3' in note) out.push(<h3 key={j}>{note.h3}</h3>);
+                else if ('p'  in note) out.push(<p  key={j}>{note.p}</p>);
+              } else {
+                buf.push(<li key={j}>{note as React.ReactNode}</li>);
+              }
+            });
+            flush('end');
+            return out;
+          })()}
           {r.subnotes && (
             <small>
               <ul style={{ marginBottom: 10 }}>
@@ -260,6 +277,13 @@ function ReleaseItem({ r, borderBottom }: { r: Release; borderBottom: boolean })
   );
 }
 
+type ReleaseBlock = { h2: string } | { h3: string } | { p: React.ReactNode };
+type ReleaseEntry = Release | ReleaseBlock;
+
+const RELEASE_LIST: ReleaseEntry[] = [
+  ...RELEASES,
+];
+
 export default function ReleaseNotesPage() {
   usePageTitle('Release notes');
   return (
@@ -270,9 +294,12 @@ export default function ReleaseNotesPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info"><InfoIcon /><span>Not every change is documented here. The app may receive minor changes without documentation.</span></div>
       <div className="card">
         <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
-        {RELEASES.map((r, i) => (
-          <ReleaseItem key={r.version} r={r} borderBottom={i < RELEASES.length - 1} />
-        ))}
+        {RELEASE_LIST.map((entry, i) => {
+          if ('h2' in entry) return <h2 key={i}>{entry.h2}</h2>;
+          if ('h3' in entry) return <h3 key={i}>{entry.h3}</h3>;
+          if ('p'  in entry) return <p  key={i}>{entry.p}</p>;
+          return <ReleaseItem key={entry.version} r={entry} borderBottom={i < RELEASE_LIST.length - 1} />;
+        })}
       </div>
       <AppFooter version={RELEASES[0].version} />
     </>
