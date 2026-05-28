@@ -11,6 +11,7 @@ import { formatDate } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
 import { WarningIcon } from '../components/icons.tsx';
+import { FloatingInput } from '../components/floating_input.tsx';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 const PRESETS_PAISA = [
   100,    // 1 INR
@@ -184,11 +185,10 @@ export default function LinksPage() {
               Reset
             </button>
           </div>
-          <label htmlFor="link-note" style={{ marginTop: 12 }}>Note (optional)</label>
-          <input
+          <FloatingInput
             id="link-note"
+            label="Note (optional)"
             type="text"
-            placeholder="What's this for?"
             value={note}
             onChange={(e) => setNote(e.target.value)}
             disabled={creating}
