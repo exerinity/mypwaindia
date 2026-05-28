@@ -78,6 +78,8 @@ export default function TeamPage() {
                 className="team-avatar"
                 src={m.avatar}
                 alt={m.name}
+                width={96}
+                height={96}
                 onError={(e) => { e.currentTarget.style.opacity = '0.4'; }}
               />
               <div className="team-name">{m.name}</div>
