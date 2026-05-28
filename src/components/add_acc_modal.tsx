@@ -5,6 +5,7 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 import { Logo } from './logo.tsx';
 import { WarningIcon, ErrorIcon } from './icons.tsx';
+import { FloatingInput } from './floating_input.tsx';
 import type { Env } from '../api/client.js';
 
 interface AddAccountModalProps { open: boolean; onClose: () => void }
@@ -73,15 +74,10 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
         )}
 
         <form onSubmit={handleSubmit}>
-          <label>Username or email</label>
-          <input type="text" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} required disabled={busy} />
-          <label>Password</label>
-          <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={busy} />
+          <FloatingInput label="Username or email" type="text" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} required disabled={busy} />
+          <FloatingInput label="Password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={busy} />
           {needs2fa && (
-            <>
-              <label>Two-factor code</label>
-              <input type="text" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" value={totp} onChange={(e) => setTotp(e.target.value)} disabled={busy} placeholder="123456" />
-            </>
+            <FloatingInput label="Two-factor code" type="text" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" value={totp} onChange={(e) => setTotp(e.target.value)} disabled={busy} />
           )}
           {error && <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><ErrorIcon /><span>{error.message}</span></div>}
           <button
