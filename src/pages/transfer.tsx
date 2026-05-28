@@ -10,6 +10,7 @@ import { useCurrency } from '../context/settings_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 import { HoldButton } from '../components/hold_btn.tsx';
 import { InfoIcon, WarningIcon } from '../components/icons.tsx';
+import { FloatingInput, FloatingTextarea } from '../components/floating_input.tsx';
 import { Modal } from '../components/modal.tsx';
 import type { Transaction } from '../components/tx_table.tsx';
 
@@ -152,12 +153,12 @@ export default function TransferPage() {
 
       <div className="card mb-2">
         <h3 className="mt-0">Compose</h3>
-        <input
+        <FloatingInput
+          label="Recipient"
           type="text"
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
           disabled={busy}
-          placeholder="Username or email"
         />
         {recentRecipients.length > 0 && (
           <>
@@ -178,8 +179,8 @@ export default function TransferPage() {
           </>
         )}
 
-        <label style={{ marginTop: 14, display: 'block' }}>Note (optional)</label>
-        <textarea
+        <FloatingTextarea
+          label="Note (optional)"
           value={note}
           onChange={(e) => setNote(e.target.value)}
           disabled={busy}
