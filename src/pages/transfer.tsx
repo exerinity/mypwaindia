@@ -111,7 +111,7 @@ export default function TransferPage() {
   return (
     <>
       <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭">
-        <img src="https://cdn.exerinity.com/images/mypwaindia/son.png" alt="" style={{ display: 'block', maxWidth: '100%' }} />
+        <img src="https://cologne.exerinity.com/son.png" alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
       <h1 className="mt-0">Transfer funds</h1>
       <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
