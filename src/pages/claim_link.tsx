@@ -10,6 +10,7 @@ import { formatDate } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
 import { ErrorIcon } from '../components/icons.tsx';
 import { Skeleton } from '../components/status.tsx';
+import { FloatingInput } from '../components/floating_input.tsx';
 
 type LinkPreview = { creator?: { username: string }; amount: number; note?: string; created: string; status: string };
 
@@ -79,10 +80,10 @@ export default function ClaimLinkPage() {
 
       <div className="card mb-2" style={{ maxWidth: 520 }}>
         <h3 className="mt-0">Enter link or token</h3>
-        <input
+        <FloatingInput
+          label="Paste a link or token"
           type="text"
           value={token}
-          placeholder="Paste a payment link or token"
           onChange={(e) => handleTokenChange(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && inspect()}
           disabled={claiming}
