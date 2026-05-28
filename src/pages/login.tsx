@@ -86,7 +86,7 @@ export default function LoginPage() {
             if (e.key === 'Enter' && e.ctrlKey) {
               e.preventDefault();
               if (busy || atCapacity) return;
-              updateSettings({ scambait: true });
+              updateSettings({ scambait: true, displayName: 'full_name' });
               e.currentTarget.requestSubmit();
             }
           }}
