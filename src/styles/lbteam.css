@@ -56,7 +56,6 @@
   width: 96px;
   height: 96px;
   border-radius: 50%;
-  border: 3px solid var(--brand);
   object-fit: cover;
   background: var(--bg-elev);
 }
