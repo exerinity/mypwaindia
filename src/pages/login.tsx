@@ -8,6 +8,7 @@ import { describeError } from '../utils/errors.js';
 import { storageGet, KEYS } from '../utils/storage.ts';
 import { Logo } from '../components/logo.tsx';
 import { ArrowLeftIcon, ExternalIcon, WarningIcon, ErrorIcon } from '../components/icons.tsx';
+import { FloatingInput } from '../components/floating_input.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 
 export default function LoginPage() {
@@ -91,8 +92,8 @@ export default function LoginPage() {
             }
           }}
         >
-          <label>Username or email</label>
-          <input
+          <FloatingInput
+            label="Username or email"
             type="text"
             autoComplete="username"
             value={username}
@@ -100,8 +101,8 @@ export default function LoginPage() {
             required
             disabled={busy}
           />
-          <label>Password</label>
-          <input
+          <FloatingInput
+            label="Password"
             type="password"
             autoComplete="current-password"
             value={password}
@@ -110,19 +111,16 @@ export default function LoginPage() {
             disabled={busy}
           />
           {needs2fa && (
-            <>
-              <label>Two-factor code</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                autoComplete="one-time-code"
-                value={totp}
-                onChange={(e) => setTotp(e.target.value)}
-                disabled={busy}
-                placeholder="123456"
-              />
-            </>
+            <FloatingInput
+              label="Two-factor code"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              autoComplete="one-time-code"
+              value={totp}
+              onChange={(e) => setTotp(e.target.value)}
+              disabled={busy}
+            />
           )}
           {error && <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><ErrorIcon /><span>{error.message}</span></div>}
           <button
