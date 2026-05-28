@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AppFooter } from '../components/app_footer.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
-import { InfoIcon, StopIcon } from '../components/icons.tsx';
+import { InfoIcon, StopIcon, WarningIcon } from '../components/icons.tsx';
 
 type Release = {
   version: string;
@@ -13,6 +13,13 @@ type Release = {
 };
 
 export const RELEASES: Release[] = [
+  {
+    version: '13a',
+    date: '28 May 2026',
+    notes: [
+      'Most inputs now use a floating label effect - the placeholder text shrinks and moves to the top when a field is focused'
+    ]
+  },
   {
     version: '13',
     date: '27 May 2026',
@@ -291,7 +298,7 @@ export default function ReleaseNotesPage() {
       <h1 className="mt-0">Release notes</h1>
       <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
       </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info"><InfoIcon /><span>Not every change is documented here. The app may receive minor changes without documentation.</span></div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info"><InfoIcon /><span>Not every change is documented here. The app may receive minor changes without documentation.<br></br>These are not the changelogs for MyPayIndia itself; these are the changelogs for this app.</span></div>
       <div className="card">
         <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
         {RELEASE_LIST.map((entry, i) => {
