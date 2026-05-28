@@ -57,7 +57,6 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
     packages: [
       { name: 'Vite', version: 6, license: 'MIT', url: 'https://vite.dev' },
       { name: 'TypeScript', version: 6, license: 'Apache-2.0', url: 'https://typescriptlang.org' },
-      { name: 'Terser', version: 5, license: 'BSD-2-Clause', url: 'https://terser.org' },
     ],
   },
   {
@@ -65,7 +64,6 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
     packages: [
       { name: '@vitejs/plugin-react', version: 4, license: 'MIT', url: 'https://github.com/vitejs/vite-plugin-react' },
       { name: 'vite-plugin-pwa', version: 0.21, license: 'MIT', url: 'https://vite-pwa-org.netlify.app' },
-      { name: 'vite-plugin-javascript-obfuscator', version: 3, license: 'MIT', url: 'https://github.com/elmeet/vite-plugin-javascript-obfuscator' },
     ],
   },
   {
