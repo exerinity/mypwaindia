@@ -10,7 +10,8 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { normalizeHex } from '../utils/colors.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon } from '../components/icons.tsx';
+import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon, WarningIcon } from '../components/icons.tsx';
+import { FloatingInput } from '../components/floating_input.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 
 
@@ -109,7 +110,7 @@ const CATEGORIES: Category[] = [
   { id: 'data', label: 'Data & sync', desc: 'Auto-refresh and API settings' },
   { id: 'display', label: 'Display name', desc: 'How your name appears in the app' },
   { id: 'scambait', label: 'Scambait mode', desc: 'Configure fake-banking mode for scambaiting', hideWhenScambait: true },
-  { id: 'old_settings', label: 'Old settings', desc: 'Legacy flat-card layout', to: '/settings/old' },
+  { id: 'old_settings', label: 'Old settings', desc: 'Legacy flat-card layout', to: '/settings/old', hideWhenScambait: true },
   { id: 'logout', label: 'Log out', desc: 'Sign out of this app', authRequired: true, to: '/i/flow/logout' },
   { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/accountservices/accsettings' },
   { id: 'mypayindia', label: 'MyPayIndia.com', desc: 'Visit the main website', href: 'https://mypayindia.com' },
@@ -383,18 +384,16 @@ export default function SettingsPage() {
               </select>
             </div>
             {inCustomMode && (
-              <div className="row gap-sm" style={{ marginTop: 8 }}>
-                <input
-                  type="text"
-                  placeholder="/i/flow/onboarding"
-                  value={customHomeInput}
-                  autoFocus
-                  onChange={(e) => setCustomHomeInput(e.target.value)}
-                  onBlur={() => commitCustom(customHomeInput)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') commitCustom(customHomeInput); }}
-                  style={{ maxWidth: 240 }}
-                />
-              </div>
+              <FloatingInput
+                label="Where?"
+                type="text"
+                value={customHomeInput}
+                autoFocus
+                onChange={(e) => setCustomHomeInput(e.target.value)}
+                onBlur={() => commitCustom(customHomeInput)}
+                onKeyDown={(e) => { if (e.key === 'Enter') commitCustom(customHomeInput); }}
+                style={{ maxWidth: 240 }}
+              />
             )}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
               <InfoIcon />
@@ -544,9 +543,12 @@ export default function SettingsPage() {
               </div>
             )}
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
-              <InfoIcon />
-              <span>When enabled, this setting will become hidden. Remember its path: <Link to="/settings/scambait">/settings/scambait</Link></span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className={`alert ${settings.scambait ? 'alert-warning' : 'alert-info'}`}>
+              {settings.scambait ? <WarningIcon /> : <InfoIcon />}
+              {settings.scambait
+                ? <span>This setting is now hidden. To disable it, come back to <Link to="/settings/scambait">/settings/scambait</Link>.</span>
+                : <span>When enabled, this setting will become hidden. Remember its path: <Link to="/settings/scambait">/settings/scambait</Link></span>
+              }
             </div>
 
             <div className="card mb-2">
@@ -566,7 +568,6 @@ export default function SettingsPage() {
               </ul>
               <p>Convincing, right?</p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-error">
-                <StopIcon />
                 <span>This is meant to be used against malicious activity. <strong>Do not use this <em>for</em> malicious activity.</strong></span>
               </div>
             </div>
@@ -590,7 +591,6 @@ export default function SettingsPage() {
                 </label>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-success">
-                <SuccessIcon />
                 <span>You should create a bespoke account for actually scambaiting with a full convincing name, and not use your main account.</span>
               </div>
               <p className="mb-0">You can also enable scambait mode by:</p>
@@ -616,14 +616,16 @@ export default function SettingsPage() {
         <div className={`mpi-settings-nav${mobileShowDetail ? ' mpi-settings-nav--hidden' : ''}`}>
           <div className="mpi-settings-nav-header">
             <h1>Settings</h1>
-            <div className="mpi-settings-search">
-              <span className="mpi-settings-search-icon"><SearchIcon /></span>
+            <div className="mpi-settings-search mpi-float">
               <input
+                id="settings-search"
                 type="search"
-                placeholder="Search Settings"
+                placeholder=" "
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
+              <label htmlFor="settings-search">Search settings</label>
+              <span className="mpi-settings-search-icon"><SearchIcon /></span>
             </div>
           </div>
 
