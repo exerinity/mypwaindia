@@ -1,7 +1,9 @@
 import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import { AppLayout } from './components/app_layout.tsx';
 import { RequireAuth } from './components/require_auth.tsx';
 import { useSettings } from './context/settings_ctx.tsx';
+import { setCanonical } from './utils/canonical.ts';
 
 import LoginPage from './pages/login.tsx';
 import DashboardPage from './pages/dashboard.tsx';
@@ -55,6 +57,9 @@ function MerchantRedirect() {
 }
 
 export default function App() {
+  const location = useLocation();
+  useEffect(() => { setCanonical(location.pathname); }, [location.pathname]);
+
   return (
     <Routes>
       <Route path="/pay/link" element={<PayLinkRedirect />} />
