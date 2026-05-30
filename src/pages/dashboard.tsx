@@ -4,14 +4,13 @@ import { useAuth } from '../context/auth_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
-import { getUserInfo, getRestrictions } from '../api/user.js';
+import { getUserInfo } from '../api/user.js';
 import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
 import { getDisplayName } from '../utils/display.js';
-import { InfoIcon, WarningIcon } from '../components/icons.tsx';
+import { InfoIcon } from '../components/icons.tsx';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { TransactionTable } from '../components/tx_table.tsx';
-import { getRestrictionInfo } from '../utils/restrictions.js';
 import { generateStatements } from '../utils/fake_statements.js';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -27,19 +26,12 @@ export default function DashboardPage() {
   type UserInfo = { balance: number; first_name: string; last_name: string };
   type TxList = { transactions: import('../components/tx_table.tsx').Transaction[] };
   type LinkList = { links: { id: number; status: string }[] };
-  type Restrictions = { restrictions: Record<string, { active: boolean }> };
 
   const userQ = useApiCall<UserInfo>(async () => {
     const info = await getUserInfo(active!) as UserInfo;
     updateAccountInfo(active!.id, { lastBalance: info.balance, firstName: info.first_name, lastName: info.last_name });
     return info;
   }, [active?.token], { refresh, skip: !active });
-
-  const restrictionsQ = useApiCall<Restrictions>(
-    () => getRestrictions(active!) as Promise<Restrictions>,
-    [active?.token],
-    { refresh, skip: !active }
-  );
 
   const txQ = useApiCall<TxList>(
     () => listTransactions(active!) as Promise<TxList>,
@@ -72,20 +64,9 @@ export default function DashboardPage() {
   const transactions = txQ.data?.transactions || [];
   const links = linksQ.data?.links || [];
   const activeLinks = links.filter((l) => l.status === 'active');
-  const restrictions = restrictionsQ.data?.restrictions || {};
-  const restrictionList = Object.entries(restrictions).filter(([, v]) => v?.active);
-
   return (
     <>
       <h1 className="mt-0">{scambait ? 'Hello' : 'Welcome back'}, {getDisplayName(active, settings.displayName)}{scambait ? '' : '!'}</h1>
-
-      {restrictionList.length > 0 && (
-        <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <WarningIcon /><span><strong>Your account has some active restrictions:</strong>{' '}
-          {restrictionList.map(([k]) => getRestrictionInfo(k).title).join(', ')}.
-          {' '}<Link to="/account/restrictions" className="muted">More...</Link></span>
-        </div>
-      )}
 
       <div className="grid cols-3 mb-2">
         <div className="card stat-card">
