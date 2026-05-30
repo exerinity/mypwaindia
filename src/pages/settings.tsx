@@ -10,10 +10,62 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { normalizeHex } from '../utils/colors.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon, WarningIcon } from '../components/icons.tsx';
+import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon } from '../components/icons.tsx';
 import { FloatingInput } from '../components/floating_input.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
+import { useApiCall } from '../hooks/api_call.js';
+import { listSessions, invalidateSession } from '../api/user.js';
+import { formatDate } from '../utils/dates.js';
+import { Skeleton, ErrorBox } from '../components/status.tsx';
+import { describeError } from '../utils/errors.js';
+import { HoldButton } from '../components/hold_btn.tsx';
 
+
+interface Session { id: string; device_info?: string; ip?: string; created_at: string; last_active: string; current?: boolean; invalidated?: boolean }
+
+type SessionSortCol = 'device' | 'created' | 'last_active' | 'status';
+const SESSION_COL_SORTS: Record<SessionSortCol, [string, string]> = {
+  device: ['device_az', 'device_za'],
+  created: ['created_desc', 'created_asc'],
+  last_active: ['last_active_desc', 'last_active_asc'],
+  status: ['status_active', 'status_invalidated'],
+};
+
+function SessionRow({ s, onTerminate }: { s: Session; onTerminate: (s: Session) => void }) {
+  const [revealed, setRevealed] = useState(false);
+  return (
+    <tr key={s.id}>
+      <td>{s.device_info || '-'}{s.current && <strong> (current)</strong>}</td>
+      <td
+        className="mono"
+        onMouseEnter={() => setRevealed(true)}
+        onMouseLeave={() => setRevealed(false)}
+        style={{
+          filter: revealed ? 'none' : 'blur(6px)',
+          transition: 'filter 0.25s',
+          cursor: 'default',
+          userSelect: 'none',
+        }}
+      >
+        {s.ip}
+      </td>
+      <td>{formatDate(s.created_at)}</td>
+      <td>{formatDate(s.last_active)}</td>
+      <td>
+        <span className={`link-status ${s.invalidated ? 'cancelled' : 'active'}`}>
+          {s.invalidated ? 'terminated' : 'active'}
+        </span>
+      </td>
+      <td>
+        {!s.invalidated && !s.current && (
+          <button className="compact danger" onClick={() => onTerminate(s)}>
+            Terminate
+          </button>
+        )}
+      </td>
+    </tr>
+  );
+}
 
 const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
   { value: 'light', label: 'Light' },
@@ -72,7 +124,8 @@ type CategoryId =
   | 'data'
   | 'display'
   | 'account'
-  | 'scambait';
+  | 'scambait'
+  | 'sessions';
 
 interface Category {
   id: string;
@@ -111,6 +164,7 @@ const CATEGORIES: Category[] = [
   { id: 'display', label: 'Display name', desc: 'How your name appears in the app' },
   { id: 'scambait', label: 'Scambait mode', desc: 'Configure fake-banking mode for scambaiting', hideWhenScambait: true },
   { id: 'old_settings', label: 'Old settings', desc: 'Legacy flat-card layout', to: '/settings/old', hideWhenScambait: true },
+  { id: 'sessions', label: 'Sessions', desc: 'View and manage active login sessions', authRequired: true },
   { id: 'logout', label: 'Log out', desc: 'Sign out of this app', authRequired: true, to: '/i/flow/logout' },
   { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/accountservices/accsettings' },
   { id: 'mypayindia', label: 'MyPayIndia.com', desc: 'Visit the main website', href: 'https://mypayindia.com' },
@@ -143,6 +197,69 @@ export default function SettingsPage() {
   const [scambaitAlreadyOpen, setScambaitAlreadyOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [mobileShowDetail, setMobileShowDetail] = useState(false);
+
+  const [sessionSort, setSessionSort] = useState('last_active_desc');
+  const [killTarget, setKillTarget] = useState<Session | null>(null);
+  const [terminateAllOpen, setTerminateAllOpen] = useState(false);
+  const [terminateAllSteps, setTerminateAllSteps] = useState([false, false, false]);
+  const terminateAllDone = terminateAllSteps.every(Boolean);
+
+  const sessionsQ = useApiCall<{ sessions: Session[] }>(
+    () => listSessions(active!) as Promise<{ sessions: Session[] }>,
+    [active?.token]
+  );
+
+  const sortedSessions = useMemo(() => {
+    const arr = [...(sessionsQ.data?.sessions || [])];
+    arr.sort((a, b) => {
+      switch (sessionSort) {
+        case 'device_az': return (a.device_info || '').localeCompare(b.device_info || '');
+        case 'device_za': return (b.device_info || '').localeCompare(a.device_info || '');
+        case 'created_asc': return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case 'created_desc': return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'last_active_asc': return new Date(a.last_active).getTime() - new Date(b.last_active).getTime();
+        case 'last_active_desc': return new Date(b.last_active).getTime() - new Date(a.last_active).getTime();
+        case 'status_active': return (a.invalidated ? 1 : 0) - (b.invalidated ? 1 : 0);
+        case 'status_invalidated': return (b.invalidated ? 1 : 0) - (a.invalidated ? 1 : 0);
+        default: return 0;
+      }
+    });
+    return arr;
+  }, [sessionsQ.data, sessionSort]);
+
+  function toggleSessionCol(col: SessionSortCol) {
+    const [first, second] = SESSION_COL_SORTS[col];
+    setSessionSort(prev => prev === first ? second : first);
+  }
+  function sessionColIndicator(col: SessionSortCol) {
+    const [first, second] = SESSION_COL_SORTS[col];
+    if (sessionSort === first) return ' ↓';
+    if (sessionSort === second) return ' ↑';
+    return ' ↕';
+  }
+
+  async function doKillSession(id: string) {
+    try {
+      await invalidateSession(active!, id);
+      toast.success('Session terminated');
+      sessionsQ.refetch();
+    } catch (e) {
+      toast.error(describeError(e));
+    }
+  }
+
+  async function doTerminateAll() {
+    const targets = (sessionsQ.data?.sessions ?? []).filter((s) => !s.invalidated && !s.current);
+    try {
+      await Promise.all(targets.map((s) => invalidateSession(active!, s.id)));
+      toast.success(`Terminated ${targets.length} session${targets.length === 1 ? '' : 's'}`);
+      sessionsQ.refetch();
+    } catch (e) {
+      toast.error(describeError(e));
+    }
+    setTerminateAllOpen(false);
+    setTerminateAllSteps([false, false, false]);
+  }
 
   const visibleCategories = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -604,6 +721,62 @@ export default function SettingsPage() {
           </>
         );
 
+      case 'sessions':
+        return (
+          <>
+            {!active && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+                <InfoIcon />
+                <span>To view sessions, <Link to="/i/flow/login">please log in</Link>.</span>
+              </div>
+            )}
+            {active && (sessionsQ.loading && !sessionsQ.data ? (
+              <>
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : undefined }}>
+                    <Skeleton width={`${25 + (i % 3) * 8}%`} height={13} />
+                    <Skeleton width={90} height={13} />
+                    <Skeleton width={80} height={13} />
+                    <Skeleton width={80} height={13} />
+                    <Skeleton width={55} height={13} />
+                  </div>
+                ))}
+              </>
+            ) : sessionsQ.error ? <ErrorBox error={sessionsQ.error} /> : (
+              <>
+                <div className="table-wrap">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th onClick={() => toggleSessionCol('device')} style={{ cursor: 'pointer' }}>Device{sessionColIndicator('device')}</th>
+                        <th>IP</th>
+                        <th onClick={() => toggleSessionCol('created')} style={{ cursor: 'pointer' }}>Created{sessionColIndicator('created')}</th>
+                        <th onClick={() => toggleSessionCol('last_active')} style={{ cursor: 'pointer' }}>Last active{sessionColIndicator('last_active')}</th>
+                        <th onClick={() => toggleSessionCol('status')} style={{ cursor: 'pointer' }}>Status{sessionColIndicator('status')}</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedSessions.map((s) => (
+                        <SessionRow key={s.id} s={s} onTerminate={setKillTarget} />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{ marginTop: 16 }}>
+                  <button
+                    className="danger"
+                    onClick={() => { setTerminateAllSteps([false, false, false]); setTerminateAllOpen(true); }}
+                    disabled={sortedSessions.filter((s) => !s.invalidated && !s.current).length === 0}
+                  >
+                    Terminate all sessions
+                  </button>
+                </div>
+              </>
+            ))}
+          </>
+        );
+
       default:
         return null;
     }
@@ -681,7 +854,7 @@ export default function SettingsPage() {
           </div>
 
           <div className="mpi-settings-detail-scroll">
-            <div className="mpi-settings-detail-content">
+            <div className={`mpi-settings-detail-content${activeCategory === 'sessions' ? ' mpi-settings-detail-content--wide' : ''}`}>
               {renderDetail()}
             </div>
           </div>
@@ -773,6 +946,85 @@ export default function SettingsPage() {
         confirmLabel="Delete all"
         message="This will delete all local keys, including credentials, your chosen theme, and onboarding status. In other words, it will clear everything. Continue?"
       />
+
+      <ConfirmModal
+        open={!!killTarget}
+        onClose={() => setKillTarget(null)}
+        onConfirm={() => {
+          if (killTarget) doKillSession(killTarget.id);
+          setKillTarget(null);
+        }}
+        title="Terminate session"
+        message={killTarget && (
+          <div>
+            <p className="mt-0" style={{ color: 'var(--muted)' }}>
+              This will immediately sign out and invalidate the following session:
+            </p>
+            <div style={{
+              background: 'var(--surface-2, var(--bg))',
+              border: '1px solid var(--border)',
+              borderRadius: 8,
+              padding: '16px 20px',
+              display: 'grid',
+              gridTemplateColumns: '1fr',
+              gap: '16px',
+              marginBottom: 20,
+            }}>
+              <div>
+                <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Device</div>
+                <div style={{ fontSize: '0.9rem' }}>{killTarget.device_info || '-'}</div>
+              </div>
+              <div>
+                <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>IP address</div>
+                <div className="mono" style={{ fontSize: '0.9rem' }}>{killTarget.ip}</div>
+              </div>
+              <div>
+                <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Created</div>
+                <div style={{ fontSize: '0.9rem' }}>{formatDate(killTarget.created_at)}</div>
+              </div>
+              <div>
+                <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Last active</div>
+                <div style={{ fontSize: '0.9rem' }}>{formatDate(killTarget.last_active)}</div>
+              </div>
+            </div>
+          </div>
+        )}
+        confirmLabel="Continue"
+      />
+
+      <Modal
+        open={terminateAllOpen}
+        onClose={() => setTerminateAllOpen(false)}
+        title="Terminate all sessions"
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 0 }} className="alert alert-error">
+          <ErrorIcon />
+          <span>This is a destructive action - read this carefully.</span>
+        </div>
+        <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>
+          You should only use this in extreme cases,
+          like if your password has been leaked and multiple people have access to your account. In that case, you should first <a href="https://mypayindia.com/accountservices/accsettings" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>change your password <ExternalIcon size={12} /></a>
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
+          {([0, 1, 2] as const).map((i) => (
+            <HoldButton
+              key={i}
+              className="danger"
+              disabled={terminateAllSteps[i] || (i > 0 && !terminateAllSteps[i - 1])}
+              onConfirm={() => setTerminateAllSteps((prev) => { const next = [...prev]; next[i] = true; return next; })}
+              style={{ opacity: terminateAllSteps[i] ? 0.5 : undefined }}
+            >
+              {terminateAllSteps[i] ? `Step ${i + 1} confirmed` : `Confirm (step ${i + 1})`}
+            </HoldButton>
+          ))}
+        </div>
+        {terminateAllDone && (
+          <div className="modal-actions">
+            <button className="secondary" onClick={() => setTerminateAllOpen(false)}>Cancel</button>
+            <button className="danger" onClick={doTerminateAll}>Proceed</button>
+          </div>
+        )}
+      </Modal>
 
       <Modal
         open={deleteStorageDoneOpen}
