@@ -815,7 +815,7 @@ export default function CLIPage() {
       const isHidden = promptMode === 'password';
       setPromptMode('none');
       if (isHidden) {
-        push(L.cmd(`[${username}@mypayindia ~]$ ${'·'.repeat(Math.max(raw.length, 1))}`));
+        push(L.cmd(`[${username}@mypayindia ~]$ ${'-'.repeat(Math.max(raw.length, 1))}`));
       } else {
         push(L.out(`> ${raw}`));
       }

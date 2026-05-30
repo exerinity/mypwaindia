@@ -35,7 +35,7 @@ export function ErrorBox({ error }: { error: unknown }) {
       <ErrorIcon />
       <span>
         {e.message || String(error)}
-        {parts.length > 0 && <span className="muted" style={{ marginLeft: 8, fontSize: '0.85em' }}>({parts.join(' · ')})</span>}
+        {parts.length > 0 && <span className="muted" style={{ marginLeft: 8, fontSize: '0.85em' }}>({parts.join(' - ')})</span>}
       </span>
     </div>
   );
