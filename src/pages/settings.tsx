@@ -163,11 +163,11 @@ const CATEGORIES: Category[] = [
   { id: 'data', label: 'Data & sync', desc: 'Auto-refresh and API settings' },
   { id: 'display', label: 'Display name', desc: 'How your name appears in the app' },
   { id: 'scambait', label: 'Scambait mode', desc: 'Configure fake-banking mode for scambaiting', hideWhenScambait: true },
-  { id: 'old_settings', label: 'Old settings', desc: 'Legacy flat-card layout', to: '/settings/old', hideWhenScambait: true },
   { id: 'sessions', label: 'Sessions', desc: 'View and manage active login sessions', authRequired: true },
   { id: 'logout', label: 'Log out', desc: 'Sign out of this app', authRequired: true, to: '/i/flow/logout' },
   { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/accountservices/accsettings' },
   { id: 'mypayindia', label: 'MyPayIndia.com', desc: 'Visit the main website', href: 'https://mypayindia.com' },
+  { id: 'old_settings', label: 'Old settings', desc: 'Legacy flat-card layout', to: '/settings/old', hideWhenScambait: true },
 ];
 
 export default function SettingsPage() {
@@ -972,7 +972,7 @@ export default function SettingsPage() {
         }}
         title="Delete all storage?"
         confirmLabel="Delete all"
-        message="This will delete all local keys, including credentials, your chosen theme, and onboarding status. In other words, it will clear everything. Continue?"
+        message={<>This will delete all local keys, including credentials, your chosen theme, and onboarding status. In other words, it will clear <strong>absolutely everything</strong>. Continue?</>}
       />
 
       <ConfirmModal
