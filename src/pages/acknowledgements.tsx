@@ -1,3 +1,4 @@
+import { ExternalIcon } from '../components/icons.js';
 import { usePageTitle } from '../hooks/page_title.js';
 
 const DEVELOPERS = [
@@ -102,10 +103,14 @@ function PackageList({ packages }: { packages: Package[] }) {
 }
 
 export default function AcknowledgementsPage() {
-  usePageTitle('Hey I don\'t know who\'s reading this but if you are I love you and I hope you love this app anyway here\'s the credits of who and what helped out');
+  usePageTitle('Acknowledgements');
   return (
     <>
-      <h1 className="mt-0">Acknowledgements & credits</h1>
+      <h1 className="mt-0">Acknowledgements</h1>
+
+      <p>The second incarnation of the MyPayIndia PWA is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™. <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>The first incarnation <ExternalIcon size={12} /></a> was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 went live.</p>
+
+      <p>This page is a list of everything and everybody who made it possible:</p>
 
       <h2>This app is developed by...</h2>
       <div className="card mb-2" style={{ padding: 0 }}>
