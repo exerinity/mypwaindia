@@ -93,6 +93,7 @@
 .mpi-settings-nav-item:hover {
   background: var(--bg-elev);
   text-decoration: none;
+  color: inherit;
 }
 
 .mpi-settings-nav-item.active {
