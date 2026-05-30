@@ -207,7 +207,7 @@ export default function LinksPage() {
         </div>
       </div>
 
-      <div className="row" style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem' }}>
+      <div className="row" style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem', marginBottom: '0.75rem' }}>
         <h3 style={{ margin: 0 }}>Live payment links ({activeLinks.length})</h3>
         {activeLinks.length > 0 && (
           <button
@@ -264,7 +264,7 @@ export default function LinksPage() {
             </div>
       }
 
-      <h3 className="mt-3">Void payment links ({otherLinks.length})</h3>
+      <h3 className="mt-3" style={{ marginBottom: '0.75rem' }}>Void payment links ({otherLinks.length})</h3>
       {otherLinks.length === 0 ? <Empty>Nothing here yet...</Empty> :
         <div className="grid" style={{ gap: 10 }}>
           {otherLinks.map((l) => (
@@ -287,7 +287,7 @@ export default function LinksPage() {
         onClose={() => setShowCancelAll(false)}
         onConfirm={() => { setShowCancelAll(false); doDeleteAllLinks(); }}
         title="Cancel all active links"
-        message={`Cancel all ${activeLinks.length} active link${activeLinks.length !== 1 ? 's' : ''} (${formatINR(activeLinks.reduce((s, l) => s + l.amount, 0))} total)? All amounts will be refunded to your balance.`}
+        message={`Cancel ${activeLinks.length} active link${activeLinks.length !== 1 ? 's' : ''} (consisting of ${formatINR(activeLinks.reduce((s, l) => s + l.amount, 0))})? All amounts will be refunded to your balance.`}
         confirmLabel="Cancel all"
       />
       <ConfirmModal
