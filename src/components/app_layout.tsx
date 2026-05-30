@@ -10,6 +10,10 @@ import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { WarningIcon } from './icons.tsx';
+import { storageGet, KEYS } from '../utils/storage.ts';
+import { useApiCall } from '../hooks/api_call.js';
+import { getRestrictions } from '../api/user.js';
+import { getRestrictionInfo } from '../utils/restrictions.js';
 
 export function AppLayout() {
   const [open, setOpen] = useState(false);
@@ -28,6 +32,14 @@ export function AppLayout() {
   const toast = useToast();
   const navigate = useNavigate();
   useGlobalAutoRefresh();
+
+  type Restrictions = { restrictions: Record<string, { active: boolean }> };
+  const restrictionsQ = useApiCall<Restrictions>(
+    () => getRestrictions(active!) as Promise<Restrictions>,
+    [active?.token],
+    { refresh: settings.autoRefresh, skip: !active }
+  );
+  const restrictionList = Object.entries(restrictionsQ.data?.restrictions || {}).filter(([, v]) => v?.active);
 
   const updateToastShown = useRef(false);
   const { needRefresh: [needRefresh] } = useRegisterSW();
@@ -81,6 +93,18 @@ export function AppLayout() {
     <div className="mpi-shell">
       <Header onToggleSidebar={() => setOpen((o) => !o)} />
       <VerificationBanner />
+      {restrictionList.length > 0 && (
+        <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <WarningIcon />Your account has some active restrictions:{' '}
+          {restrictionList.map(([k]) => getRestrictionInfo(k).title).join(', ')}.
+          {' '}<Link to="/account/restrictions" className="link">More...</Link>
+        </div>
+      )}
+      {active && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
+        <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
+        </div>
+      )}
       {!isOnline && (
         <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/flow/connection" className="link">Diagnose...</Link>
