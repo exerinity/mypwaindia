@@ -1,17 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
-import { getUserInfo, getRestrictions, listSessions, invalidateSession, verifyEmail } from '../api/user.js';
+import { getUserInfo, getRestrictions, verifyEmail } from '../api/user.js';
 import { formatDate, calcAge } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { WarningIcon } from '../components/icons.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
-import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
 
 export default function AccountPage() {
@@ -21,34 +20,11 @@ export default function AccountPage() {
   const formatBalance = useCurrency();
   const toast = useToast();
   const [sendingVerify, setSendingVerify] = useState(false);
-  interface Age { years: number; months: number; weeks: number; days: number }
-  interface Session { id: string; device_info?: string; ip?: string; created_at: string; last_active: string; current?: boolean; invalidated?: boolean }
-  type UserInfo = { balance: number; first_name: string; last_name: string; email: string; date_of_birth?: string; created: string; mfa_enabled: boolean; username: string; role: string };
-  type Restrictions = { restrictions: Record<string, { active: boolean; expires_at?: string; value?: unknown }> };
-
-  type SessionSortCol = 'device' | 'created' | 'last_active' | 'status';
-  const SESSION_COL_SORTS: Record<SessionSortCol, [string, string]> = {
-    device:      ['device_az',          'device_za'],
-    created:     ['created_desc',       'created_asc'],
-    last_active: ['last_active_desc',   'last_active_asc'],
-    status:      ['status_active',      'status_invalidated'],
-  };
-  const [sessionSort, setSessionSort] = useState('last_active_desc');
-
-  function toggleSessionCol(col: SessionSortCol) {
-    const [first, second] = SESSION_COL_SORTS[col];
-    setSessionSort(prev => prev === first ? second : first);
-  }
-  function sessionColIndicator(col: SessionSortCol) {
-    const [first, second] = SESSION_COL_SORTS[col];
-    if (sessionSort === first) return ' ↓';
-    if (sessionSort === second) return ' ↑';
-    return ' ↕';
-  }
-
-  const [killTarget, setKillTarget] = useState<Session | null>(null);
   const [personalDetailsOpen, setPersonalDetailsOpen] = useState(false);
   const [securityCode, setSecurityCode] = useState(['', '', '', '', '']);
+  interface Age { years: number; months: number; weeks: number; days: number }
+  type UserInfo = { balance: number; first_name: string; last_name: string; email: string; date_of_birth?: string; created: string; mfa_enabled: boolean; username: string; role: string };
+  type Restrictions = { restrictions: Record<string, { active: boolean; expires_at?: string; value?: unknown }> };
 
   const userQ = useApiCall<UserInfo>(async () => {
     const info = await getUserInfo(active!) as UserInfo;
@@ -62,29 +38,6 @@ export default function AccountPage() {
     { refresh: settings.autoRefresh }
   );
 
-  const sessionsQ = useApiCall<{ sessions: Session[] }>(
-    () => listSessions(active!) as Promise<{ sessions: Session[] }>,
-    [active?.token]
-  );
-
-  const sortedSessions = useMemo(() => {
-    const arr = [...(sessionsQ.data?.sessions || [])];
-    arr.sort((a, b) => {
-      switch (sessionSort) {
-        case 'device_az':          return (a.device_info || '').localeCompare(b.device_info || '');
-        case 'device_za':          return (b.device_info || '').localeCompare(a.device_info || '');
-        case 'created_asc':        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-        case 'created_desc':       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        case 'last_active_asc':    return new Date(a.last_active).getTime() - new Date(b.last_active).getTime();
-        case 'last_active_desc':   return new Date(b.last_active).getTime() - new Date(a.last_active).getTime();
-        case 'status_active':      return (a.invalidated ? 1 : 0) - (b.invalidated ? 1 : 0);
-        case 'status_invalidated': return (b.invalidated ? 1 : 0) - (a.invalidated ? 1 : 0);
-        default: return 0;
-      }
-    });
-    return arr;
-  }, [sessionsQ.data, sessionSort]);
-
   async function handleVerify() {
     setSendingVerify(true);
     try {
@@ -94,16 +47,6 @@ export default function AccountPage() {
       toast.error(describeError(e));
     } finally {
       setSendingVerify(false);
-    }
-  }
-
-  async function doKillSession(id: string) {
-    try {
-      await invalidateSession(active!, id);
-      toast.success('Session terminated');
-      sessionsQ.refetch();
-    } catch (e) {
-      toast.error(describeError(e));
     }
   }
 
@@ -142,42 +85,6 @@ export default function AccountPage() {
     );
   }
 
-  function SessionRow({ s }: { s: Session }) {
-    const [revealed, setRevealed] = useState(false);
-    return (
-      <tr key={s.id}>
-        <td>{s.device_info || '-'}{s.current && <strong> (current)</strong>}</td>
-        <td
-          className="mono"
-          onMouseEnter={() => setRevealed(true)}
-          onMouseLeave={() => setRevealed(false)}
-          style={{
-            filter: revealed ? 'none' : 'blur(6px)',
-            transition: 'filter 0.25s',
-            cursor: 'default',
-            userSelect: 'none',
-          }}
-        >
-          {s.ip}
-        </td>
-        <td>{formatDate(s.created_at)}</td>
-        <td>{formatDate(s.last_active)}</td>
-        <td>
-          <span className={`link-status ${s.invalidated ? 'cancelled' : 'active'}`}>
-            {s.invalidated ? 'terminated' : 'active'}
-          </span>
-        </td>
-        <td>
-          {!s.invalidated && !s.current && (
-            <button className="compact danger" onClick={() => setKillTarget(s)}>
-              Terminate
-            </button>
-          )}
-        </td>
-      </tr>
-    );
-  }
-
   const u = userQ.data;
   const restrictionList = Object.entries(restrictionsQ.data?.restrictions || {})
     .filter(([, v]) => v?.active);
@@ -210,18 +117,7 @@ export default function AccountPage() {
             </div>
           </div>
           <div className="card mb-2"><Skeleton width={160} height={32} radius={6} /></div>
-          <div className="card">
-            <Skeleton width={120} height={18} style={{ marginBottom: 16 }} />
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : undefined }}>
-                <Skeleton width={`${30 + (i % 3) * 10}%`} height={13} />
-                <Skeleton width={80} height={13} />
-                <Skeleton width={70} height={13} />
-                <Skeleton width={70} height={13} />
-                <Skeleton width={50} height={13} />
-              </div>
-            ))}
-          </div>
+          <div className="card"><Skeleton width={120} height={18} /></div>
         </>
       ) :
         userQ.error ? <ErrorBox error={userQ.error} /> :
@@ -310,42 +206,14 @@ export default function AccountPage() {
                 </button>
               </div>
 
-              <div className="card">
-                <h3 className="mt-0">Active sessions</h3>
-                {sessionsQ.loading && !sessionsQ.data ? (
-                  <>
-                    {Array.from({ length: 3 }).map((_, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: i < 2 ? '1px solid var(--border)' : undefined }}>
-                        <Skeleton width={`${25 + (i % 3) * 8}%`} height={13} />
-                        <Skeleton width={90} height={13} />
-                        <Skeleton width={80} height={13} />
-                        <Skeleton width={80} height={13} />
-                        <Skeleton width={55} height={13} />
-                      </div>
-                    ))}
-                  </>
-                ) :
-                  sessionsQ.error ? <ErrorBox error={sessionsQ.error} /> : (
-                    <div className="table-wrap">
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th onClick={() => toggleSessionCol('device')} style={{ cursor: 'pointer' }}>Device{sessionColIndicator('device')}</th>
-                            <th>IP</th>
-                            <th onClick={() => toggleSessionCol('created')} style={{ cursor: 'pointer' }}>Created{sessionColIndicator('created')}</th>
-                            <th onClick={() => toggleSessionCol('last_active')} style={{ cursor: 'pointer' }}>Last active{sessionColIndicator('last_active')}</th>
-                            <th onClick={() => toggleSessionCol('status')} style={{ cursor: 'pointer' }}>Status{sessionColIndicator('status')}</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {sortedSessions.map((s) => (
-                            <SessionRow key={s.id} s={s} />
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+              <div className="card mb-2">
+                <div className="row spread" style={{ alignItems: 'center' }}>
+                  <div>
+                    <h3 className="mt-0" style={{ margin: 0 }}>Sessions</h3>
+                    <p className="muted" style={{ margin: '4px 0 0', fontSize: '0.875rem' }}>The list of sessions has moved to settings.</p>
+                  </div>
+                  <Link to="/settings/sessions" className="btn secondary">Go</Link>
+                </div>
               </div>
 
               <div className="btn-row mt-2">
@@ -421,51 +289,6 @@ export default function AccountPage() {
                   </button>
                 </div>
               </Modal>
-
-              <ConfirmModal
-                open={!!killTarget}
-                onClose={() => setKillTarget(null)}
-                onConfirm={() => {
-                  if (killTarget) doKillSession(killTarget.id);
-                  setKillTarget(null);
-                }}
-                title="Terminate session"
-                message={killTarget && (
-                  <div>
-                    <p className="mt-0" style={{ color: 'var(--muted)' }}>
-                      This will immediately sign out and invalidate the following session:
-                    </p>
-                    <div style={{
-                      background: 'var(--surface-2, var(--bg))',
-                      border: '1px solid var(--border)',
-                      borderRadius: 8,
-                      padding: '16px 20px',
-                      display: 'grid',
-                      gridTemplateColumns: '1fr',
-                      gap: '16px',
-                      marginBottom: 20,
-                    }}>
-                      <div>
-                        <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Device</div>
-                        <div style={{ fontSize: '0.9rem' }}>{killTarget.device_info || '-'}</div>
-                      </div>
-                      <div>
-                        <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>IP address</div>
-                        <div className="mono" style={{ fontSize: '0.9rem' }}>{killTarget.ip}</div>
-                      </div>
-                      <div>
-                        <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Created</div>
-                        <div style={{ fontSize: '0.9rem' }}>{formatDate(killTarget.created_at)}</div>
-                      </div>
-                      <div>
-                        <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Last active</div>
-                        <div style={{ fontSize: '0.9rem' }}>{formatDate(killTarget.last_active)}</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                confirmLabel="Continue"
-              />
             </>
           )}
     </>
