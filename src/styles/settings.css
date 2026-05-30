@@ -180,6 +180,10 @@
   max-width: 680px;
 }
 
+.mpi-settings-detail-content--wide {
+  max-width: none;
+}
+
 @media (max-width: 700px) {
   .mpi-settings-layout {
     grid-template-columns: 1fr;
