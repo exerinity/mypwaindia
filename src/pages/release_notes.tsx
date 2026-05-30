@@ -17,7 +17,9 @@ export const RELEASES: Release[] = [
     version: '13a',
     date: '28 May 2026',
     notes: [
-      'Most inputs now use a floating label effect - the placeholder text shrinks and moves to the top when a field is focused'
+      'Most inputs now use a floating label effect - the placeholder text shrinks and moves to the top when a field is focused',
+      <>Moved the sessions list from the account view <Link to="/settings/sessions">to settings</Link> with a new terminate all sessions button</>,
+      'Cleaned up some broken styles, especially on mobile: the sidebar now reaches the bottom instead of having a weird cutoff 3/4 the way'
     ]
   },
   {
@@ -237,13 +239,12 @@ export const RELEASES: Release[] = [
   },
 ];
 
-function ReleaseItem({ r, borderBottom }: { r: Release; borderBottom: boolean }) {
-  const [open, setOpen] = useState(false);
+function ReleaseItem({ r, borderBottom, open, onToggle }: { r: Release; borderBottom: boolean; open: boolean; onToggle: () => void }) {
   return (
     <div style={{ borderBottom: borderBottom ? '1px solid var(--border)' : 'none', padding: '4px 0' }}>
       <button
         className="release-summary"
-        onClick={() => setOpen(o => !o)}
+        onClick={onToggle}
         aria-expanded={open}
       >
         <strong>Version {r.version}</strong>
@@ -293,6 +294,21 @@ const RELEASE_LIST: ReleaseEntry[] = [
 
 export default function ReleaseNotesPage() {
   usePageTitle('Release notes');
+  const [expandedVersions, setExpandedVersions] = useState<Set<string>>(new Set());
+  const allExpanded = expandedVersions.size === RELEASES.length;
+
+  function toggleVersion(version: string) {
+    setExpandedVersions(prev => {
+      const next = new Set(prev);
+      if (next.has(version)) next.delete(version); else next.add(version);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    setExpandedVersions(allExpanded ? new Set() : new Set(RELEASES.map(r => r.version)));
+  }
+
   return (
     <>
       <h1 className="mt-0">Release notes</h1>
@@ -300,12 +316,25 @@ export default function ReleaseNotesPage() {
       </p>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info"><InfoIcon /><span>Not every change is documented here. The app may receive minor changes without documentation.<br></br>These are not the changelogs for MyPayIndia itself; these are the changelogs for this app.</span></div>
       <div className="card">
-        <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
+        <div className="row spread" style={{ marginBottom: 12 }}>
+          <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
+          <button className="compact secondary" onClick={toggleAll}>
+            {allExpanded ? 'Close all' : 'Open all'}
+          </button>
+        </div>
         {RELEASE_LIST.map((entry, i) => {
           if ('h2' in entry) return <h2 key={i}>{entry.h2}</h2>;
           if ('h3' in entry) return <h3 key={i}>{entry.h3}</h3>;
           if ('p'  in entry) return <p  key={i}>{entry.p}</p>;
-          return <ReleaseItem key={entry.version} r={entry} borderBottom={i < RELEASE_LIST.length - 1} />;
+          return (
+            <ReleaseItem
+              key={entry.version}
+              r={entry}
+              borderBottom={i < RELEASE_LIST.length - 1}
+              open={expandedVersions.has(entry.version)}
+              onToggle={() => toggleVersion(entry.version)}
+            />
+          );
         })}
       </div>
       <AppFooter version={RELEASES[0].version} />
