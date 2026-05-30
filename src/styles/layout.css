@@ -151,11 +151,34 @@
   width: 100%;
 }
 
+.mpi-shell:has(.mpi-settings-layout) {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.mpi-body:has(.mpi-settings-layout) {
+  overflow: hidden;
+}
+
+@media (min-width: 901px) {
+  .mpi-body:has(.mpi-settings-layout) .mpi-sidebar {
+    position: static;
+    align-self: stretch;
+    max-height: none;
+  }
+}
+
 .mpi-main:has(.mpi-settings-layout) {
   padding: 0;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .mpi-wrap:has(.mpi-settings-layout) {
   max-width: 100%;
   margin: 0;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
