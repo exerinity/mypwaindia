@@ -24,14 +24,14 @@ export default function OnboardingPage() {
   return (
     <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div className="card" style={{ maxWidth: 520, width: '100%' }}>
-        <h1 style={{ marginTop: 0 }}>Welcome to the MyPayIndia PWA</h1>
+        <h1 style={{ marginTop: 0 }}>Welcome to MyPWAIndia!</h1>
         <p>
           This is an experimental progressive web app/alternative client for MyPayIndia.
-          This app is still in an early state, so please keep in mind:
+          Please keep in mind:
         </p>
         <ul>
           <li>
-            This is not a substitute for{' '}
+            This is not (a substitute for){' '}
             <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>{' '}
             and does not take precedence over it
           </li>
@@ -39,6 +39,9 @@ export default function OnboardingPage() {
             Not everything that can be performed on{' '}
             <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>{' '}
             can be performed here
+          </li>
+          <li>
+            Roughly 90% of things can be done here from <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>
           </li>
           <li>
             This app is (or should be seen as) completely standalone from the main{' '}
@@ -51,31 +54,17 @@ export default function OnboardingPage() {
             constituted by your initial registration
           </li>
           <li>
-            <strong>This app is not complete and still an early work in progress</strong>
+            <strong>This app is still an early work in progress</strong>
           </li>
           <li>
-            This app was recently fully remade in React. You might be looking for the legacy web app. <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">You can find it here <ExternalIcon size={14} /></a>
+            <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noopener noreferrer">
+            Please submit feedback in the Discord, @exerinity #dev
+          </a>
           </li>
         </ul>
         <button onClick={accept} style={{ width: '100%', marginTop: '8px' }}>
-          Got it, let's go
+          I understand, let me in!
         </button>
-        <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'block', textDecoration: 'none', marginTop: '8px' }}>
-          <button className="secondary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} type="button">
-            Legacy web app <ExternalIcon size={14} />
-          </button>
-        </a>
-        <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'block', textDecoration: 'none', marginTop: '8px' }}>
-          <button className="secondary" style={{ width: '100%' }} type="button">
-            Go back to MyPayIndia.com <ExternalIcon size={14} />
-          </button>
-        </a>
-        <p className="muted" style={{ fontSize: '0.8rem', marginTop: 24 }}>
-          <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noopener noreferrer">
-            Please submit feedback in the Discord server, mentioning @exerinity
-          </a><br></br>
-          You will not see this again, even after you log out, unless you clear the storage for this app (or visit /i/flow/onboarding lolz)
-        </p>
         <AppFooter version={RELEASES[0].version} />
       </div>
     </div>
