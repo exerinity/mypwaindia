@@ -59,7 +59,7 @@ export default function DashboardPage() {
     return (
       <>
         <h1 className="mt-0">Welcome to the MyPayIndia PWA</h1>
-        <p>You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
+        <p className="mt-0 mb-0">You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
         You can navigate most of the app logged out, but to actually do everything, please <Link to="/i/flow/login">log in</Link>. 
         If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
         <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
