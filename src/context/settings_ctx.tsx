@@ -33,7 +33,7 @@ interface SettingsContextValue {
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 const DEFAULT_SETTINGS: Settings = {
-  theme: 'dark',
+  theme: 'dim',
   accent: '#d03505',
   autoRefresh: true,
   autoRefreshOnlyWhenFocused: true,
