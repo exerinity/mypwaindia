@@ -52,9 +52,10 @@ export default function TeamPage() {
   return (
     <>
       <h1 className="mt-0">Meet the team</h1>
-      <p className="muted mb-2">Currently our team consists of {team.length || (
+      <p className="mt-0 mb-0">Get to know the people behind MyPayIndia, the future of online banking!</p>
+      <p className="mt-0 mb-0 muted"><i>Currently our team consists of <strong>{team.length || (
         <span className="skeleton" style={{ display: 'inline-block', width: 24, height: '1.2em', borderRadius: 3, verticalAlign: 'middle' }} />
-      )} people:</p>
+      )}</strong> people:</i></p>
 
       {loading && !data ? (
         <div className="grid cols-3">
