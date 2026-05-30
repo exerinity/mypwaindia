@@ -18,7 +18,7 @@ export const RELEASES: Release[] = [
     date: '28 May 2026',
     notes: [
       'Most inputs now use a floating label effect - the placeholder text shrinks and moves to the top when a field is focused',
-      <>Moved the sessions list from the account view <Link to="/settings/sessions">to settings</Link> with a new terminate all sessions button</>,
+      <>Moved the sessions list from the account view <Link to="/settings/sessions">to settings</Link> with a new dramatic terminate all sessions button</>,
       'Cleaned up some broken styles, especially on mobile: the sidebar now reaches the bottom instead of having a weird cutoff 3/4 the way'
     ]
   },
