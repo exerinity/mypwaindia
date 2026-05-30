@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import type { Account } from '../context/auth_ctx.tsx';
 import type { Settings } from '../context/settings_ctx.tsx';
 import { useNavigate, useParams, Link } from 'react-router-dom';
@@ -203,6 +203,8 @@ export default function SettingsPage() {
   const [terminateAllOpen, setTerminateAllOpen] = useState(false);
   const [terminateAllSteps, setTerminateAllSteps] = useState([false, false, false]);
   const terminateAllDone = terminateAllSteps.every(Boolean);
+  const [terminatingProgress, setTerminatingProgress] = useState<{ current: number; total: number } | null>(null);
+  const terminateStopRef = useRef(false);
 
   const sessionsQ = useApiCall<{ sessions: Session[] }>(
     () => listSessions(active!) as Promise<{ sessions: Session[] }>,
@@ -250,15 +252,27 @@ export default function SettingsPage() {
 
   async function doTerminateAll() {
     const targets = (sessionsQ.data?.sessions ?? []).filter((s) => !s.invalidated && !s.current);
-    try {
-      await Promise.all(targets.map((s) => invalidateSession(active!, s.id)));
-      toast.success(`Terminated ${targets.length} session${targets.length === 1 ? '' : 's'}`);
-      sessionsQ.refetch();
-    } catch (e) {
-      toast.error(describeError(e));
-    }
     setTerminateAllOpen(false);
     setTerminateAllSteps([false, false, false]);
+    terminateStopRef.current = false;
+    setTerminatingProgress({ current: 0, total: targets.length });
+    let terminated = 0;
+    for (let i = 0; i < targets.length; i++) {
+      if (terminateStopRef.current) break;
+      setTerminatingProgress({ current: i + 1, total: targets.length });
+      try {
+        await invalidateSession(active!, targets[i].id);
+        terminated++;
+      } catch (e) {
+        toast.error(describeError(e));
+      }
+      if (i < targets.length - 1 && !terminateStopRef.current) {
+        await new Promise<void>((r) => setTimeout(r, 500));
+      }
+    }
+    setTerminatingProgress(null);
+    toast.success(`Terminated ${terminated} session${terminated === 1 ? '' : 's'}`);
+    sessionsQ.refetch();
   }
 
   const visibleCategories = useMemo(() => {
@@ -744,6 +758,20 @@ export default function SettingsPage() {
               </>
             ) : sessionsQ.error ? <ErrorBox error={sessionsQ.error} /> : (
               <>
+                <div className="row gap-sm" style={{ marginBottom: 14, flexWrap: 'wrap' }}>
+                  {(() => {
+                    const total = sortedSessions.length;
+                    const active = sortedSessions.filter((s) => !s.invalidated).length;
+                    const terminated = sortedSessions.filter((s) => s.invalidated).length;
+                    return (
+                      <>
+                        <span className="link-status active">{active} active</span>
+                        <span className="link-status cancelled">{terminated} terminated</span>
+                        <span className="muted" style={{ fontSize: '0.875rem', alignSelf: 'center' }}>{total} total</span>
+                      </>
+                    );
+                  })()}
+                </div>
                 <div className="table-wrap">
                   <table className="table">
                     <thead>
@@ -767,7 +795,7 @@ export default function SettingsPage() {
                   <button
                     className="danger"
                     onClick={() => { setTerminateAllSteps([false, false, false]); setTerminateAllOpen(true); }}
-                    disabled={sortedSessions.filter((s) => !s.invalidated && !s.current).length === 0}
+                    disabled={sortedSessions.filter((s) => !s.invalidated && !s.current).length < 3}
                   >
                     Terminate all sessions
                   </button>
@@ -994,8 +1022,9 @@ export default function SettingsPage() {
 
       <Modal
         open={terminateAllOpen}
+        fullscreen
         onClose={() => setTerminateAllOpen(false)}
-        title="Terminate all sessions"
+        title={`Terminate all ${sortedSessions.filter((s) => !s.invalidated && !s.current).length} sessions`}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 0 }} className="alert alert-error">
           <ErrorIcon />
@@ -1024,6 +1053,23 @@ export default function SettingsPage() {
             <button className="danger" onClick={doTerminateAll}>Proceed</button>
           </div>
         )}
+      </Modal>
+
+      <Modal
+        open={!!terminatingProgress}
+        onClose={() => { terminateStopRef.current = true; }}
+        title="Terminating sessions..."
+        fullscreen
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 0, marginBottom: 16 }}>
+          <span className="spinner" />
+          <span>Terminating {terminatingProgress?.current} of {terminatingProgress?.total} session{terminatingProgress?.total === 1 ? '' : 's'}...</span>
+        </div>
+        <div className="btn-row">
+          <button className="danger" onClick={() => { terminateStopRef.current = true; }}>
+            Stop
+          </button>
+        </div>
       </Modal>
 
       <Modal
