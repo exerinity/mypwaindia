@@ -29,7 +29,7 @@ function Root() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('mpi-root')!).render(
+ReactDOM.createRoot(document.getElementById('mpi-meow')!).render(
   <React.StrictMode>
     <Root />
   </React.StrictMode>
