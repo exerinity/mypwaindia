@@ -29,8 +29,8 @@ const THX = [
 const INSPIRATIONS = [
   {
     name: 'Twitter',
-    url: 'https://opensource.twitter.dev',
-    idea: 'Settings (v2) layout idea, and routing scheme (/i/flow, etc)',
+    url: 'https://twitter.dev',
+    idea: 'Settings (v2) layout idea, and routing scheme (/i/flow, etc), tab title ("This / MyPayIndia" "That / Twitter")',
   },
   {
     name: 'tiago',
@@ -42,7 +42,7 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
   {
     title: 'API',
     packages: [
-      { name: 'MyPayIndia API v2', url: 'https://mypayindia.com/docs/api' },
+      { name: 'MyPayIndia API', version: 2, url: 'https://mypayindia.com/docs/api' },
     ],
   },
   {
