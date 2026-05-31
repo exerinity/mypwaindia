@@ -1075,12 +1075,12 @@ export default function SettingsPage() {
       <Modal
         open={deleteStorageDoneOpen}
         onClose={() => setDeleteStorageDoneOpen(false)}
-        title="Doneso! All data wiped."
+        title="All data wiped."
       >
         <p style={{ marginTop: 0 }}>Would you like to reload the app?</p>
         <div className="btn-row">
-          <button onClick={() => window.location.reload()}>Yeah</button>
-          <button className="secondary" onClick={() => setDeleteStorageDoneOpen(false)}>Nah</button>
+          <button onClick={() => window.location.reload()}>Yes</button>
+          <button className="secondary" onClick={() => setDeleteStorageDoneOpen(false)}>No</button>
         </div>
       </Modal>
     </>
