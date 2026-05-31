@@ -162,7 +162,7 @@ export default function TransferPage() {
         />
         {recentRecipients.length > 0 && (
           <>
-            <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent</div>
+            <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
             <div className="preset-stack-row">
               {recentRecipients.map((u) => (
                 <button
