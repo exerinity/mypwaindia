@@ -88,11 +88,18 @@
 }
 
 .mpi-sidebar .links a.active.active-parent {
-  background: var(--brand-dark);
+  background: var(--brand);
+  color: var(--brand-text);
+  font-weight: 500;
+  opacity: 0.55;
+}
+
+.mpi-sidebar .links a.active.active-parent svg {
   opacity: 0.75;
 }
 
 .mpi-sidebar .links a.active.active-parent:hover {
+  background: var(--bg-elev);
   opacity: 1;
 }
 
