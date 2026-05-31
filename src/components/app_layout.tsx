@@ -100,7 +100,7 @@ export function AppLayout() {
           {' '}<Link to="/account/restrictions" className="link">More...</Link>
         </div>
       )}
-      {active && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
+      {active && !settings.scambait && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
         <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
         </div>
