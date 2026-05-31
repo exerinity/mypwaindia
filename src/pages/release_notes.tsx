@@ -15,11 +15,12 @@ type Release = {
 export const RELEASES: Release[] = [
   {
     version: '13a',
-    date: '28 May 2026',
+    date: '31 May 2026',
     notes: [
       'Most inputs now use a floating label effect - the placeholder text shrinks and moves to the top when a field is focused',
       <>Moved the sessions list from the account view <Link to="/settings/sessions">to settings</Link> with a new dramatic terminate all sessions button</>,
-      'Cleaned up some broken styles, especially on mobile: the sidebar now reaches the bottom instead of having a weird cutoff 3/4 the way'
+      'Cleaned up some broken styles, especially on mobile: the sidebar now reaches the bottom instead of having a weird cutoff 3/4 the way',
+      <>Added some stats to the top of the <Link to="/account/history">transaction history page</Link></>
     ]
   },
   {
