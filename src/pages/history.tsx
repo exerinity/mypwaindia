@@ -1,7 +1,8 @@
+import { useMemo } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
 import { usePageTitle } from '../hooks/page_title.js';
-import { useSettings } from '../context/settings_ctx.tsx';
+import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
 import { listTransactions } from '../api/transactions.js';
 import { TransactionTable } from '../components/tx_table.tsx';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
@@ -10,6 +11,7 @@ export default function HistoryPage() {
   usePageTitle('Transaction history');
   const { active } = useAuth();
   const { settings } = useSettings();
+  const format = useCurrency();
   type TxList = { transactions: import('../components/tx_table.tsx').Transaction[] };
   const { data, loading, error } = useApiCall<TxList>(
     () => listTransactions(active!) as Promise<TxList>,
@@ -17,9 +19,64 @@ export default function HistoryPage() {
     { refresh: settings.autoRefresh }
   );
 
+  const stats = useMemo(() => {
+    const txs = data?.transactions;
+    if (!txs || !active?.id) return null;
+    let outgoing = 0, incoming = 0;
+    const sentTo: Record<string, number> = {};
+    const receivedFrom: Record<string, number> = {};
+    for (const tx of txs) {
+      if (tx.status === 'cancelled') continue;
+      if (tx.sender?.id === active.id) {
+        outgoing += tx.amount;
+        const name = tx.recipient?.username;
+        if (name) sentTo[name] = (sentTo[name] ?? 0) + tx.amount;
+      } else if (tx.recipient?.id === active.id) {
+        incoming += tx.amount;
+        const name = tx.sender?.username;
+        if (name) receivedFrom[name] = (receivedFrom[name] ?? 0) + tx.amount;
+      }
+    }
+    const topSent = Object.entries(sentTo).sort((a, b) => b[1] - a[1])[0];
+    const topReceived = Object.entries(receivedFrom).sort((a, b) => b[1] - a[1])[0];
+    return { total: txs.length, outgoing, incoming, topSent, topReceived };
+  }, [data, active?.id]);
+
   return (
     <>
       <h1 className="mt-0">Transaction history</h1>
+
+      {!settings.scambait && stats && (
+        <div className="card" style={{ marginBottom: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px 24px' }}>
+          <div>
+            <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total transactions to list</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{stats.total}</div>
+          </div>
+          <div>
+            <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total outgoing</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--alert-error)' }}>{format(stats.outgoing)}</div>
+          </div>
+          <div>
+            <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total incoming</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--success)' }}>{format(stats.incoming)}</div>
+          </div>
+          {stats.topSent && (
+            <div>
+              <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Largest receiver</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{stats.topSent[0]}</div>
+              <div className="muted" style={{ fontSize: '0.8rem' }}>{format(stats.topSent[1])} sent</div>
+            </div>
+          )}
+          {stats.topReceived && (
+            <div>
+              <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Largest donor</div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{stats.topReceived[0]}</div>
+              <div className="muted" style={{ fontSize: '0.8rem' }}>{format(stats.topReceived[1])} received</div>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="card">
         {loading && !data ? (
           <div>
