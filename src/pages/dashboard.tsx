@@ -105,13 +105,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="card">
-        <div className="row spread mb-2">
-          <h3 style={{ margin: 0 }}>Recent activity</h3>
-          {scambait
-            ? <Link to="/dash/statements" className="muted">View all</Link>
-            : <Link to="/account/history" className="muted">View all</Link>
-          }
-        </div>
+        <h3 style={{ margin: '0 0 12px' }}>Recent activity</h3>
         {scambait ? (
           <div className="table-wrap">
             <table className="table">
@@ -156,8 +150,15 @@ export default function DashboardPage() {
               <TransactionTable
                 transactions={transactions.slice(0, 10)}
                 currentUserId={active?.id}
+                hideLimitControl
               />
         )}
+        <div style={{ marginTop: 16, textAlign: 'center' }}>
+          {scambait
+            ? <Link to="/dash/statements" className="btn secondary" style={{ width: '100%' }}>View all transactions</Link>
+            : <Link to="/account/history" className="btn secondary" style={{ width: '100%' }}>View all transactions</Link>
+          }
+        </div>
       </div>
     </>
   );
