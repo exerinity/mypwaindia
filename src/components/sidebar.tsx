@@ -123,7 +123,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                       onClick={onClose}
                       className={({ isActive }) => {
                         if (!isActive) return '';
-                        return location.pathname.startsWith(item.to ?? '') ? 'active' : 'active active-parent';
+                        return location.pathname === item.to ? 'active' : 'active active-parent';
                       }}
                     >
                       {Icon && <Icon />}
