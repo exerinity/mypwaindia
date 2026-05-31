@@ -27,7 +27,7 @@ const SORT_OPTIONS = [
   { value: 'recipient_za','label': 'Recipient (Z-A)' },
 ];
 
-interface TransactionTableProps { transactions: Transaction[]; currentUserId?: number }
+interface TransactionTableProps { transactions: Transaction[]; currentUserId?: number; hideLimitControl?: boolean }
 type SortCol = 'date' | 'amount' | 'sender' | 'recipient';
 const COL_SORTS: Record<SortCol, [string, string]> = {
   date:      ['date_desc', 'date_asc'],
@@ -36,7 +36,7 @@ const COL_SORTS: Record<SortCol, [string, string]> = {
   recipient: ['recipient_az', 'recipient_za'],
 };
 
-export function TransactionTable({ transactions, currentUserId }: TransactionTableProps) {
+export function TransactionTable({ transactions, currentUserId, hideLimitControl }: TransactionTableProps) {
   const format = useCurrency();
   const [sort, setSort] = useState('date_desc');
   const [limit, setLimit] = useState<number | 'all'>(25);
@@ -80,15 +80,17 @@ export function TransactionTable({ transactions, currentUserId }: TransactionTab
   return (
     <>
       <div className="table-controls">
-        <label>
-          Show
-          <select value={limit} onChange={(e) => setLimit(e.target.value === 'all' ? 'all' : Number(e.target.value))}>
-            {RESULT_OPTIONS.map((n) => (
-              <option key={n} value={n}>{n === 'all' ? 'All' : `${n}`}</option>
-            ))}
-          </select>
-          results
-        </label>
+        {!hideLimitControl && (
+          <label>
+            Show up to
+            <select value={limit} onChange={(e) => setLimit(e.target.value === 'all' ? 'all' : Number(e.target.value))}>
+              {RESULT_OPTIONS.map((n) => (
+                <option key={n} value={n}>{n === 'all' ? 'All' : `${n}`}</option>
+              ))}
+            </select>
+            entries
+          </label>
+        )}
         <label>
           Sort by
           <select value={sort} onChange={(e) => setSort(e.target.value)}>
