@@ -75,8 +75,8 @@ export default function LoginPage() {
         <h2 className="mt-0">Log in to MyPayIndia</h2>
 
         {atCapacity && (
-          <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <WarningIcon /><span>You have {maxAccounts} accounts saved on this device. Remove one before adding another.</span>
+          <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <WarningIcon /><span>Account limit at capacity</span>
           </div>
         )}
 
@@ -159,7 +159,7 @@ export default function LoginPage() {
 
         <div className="mt-2 center">
           <button className="muted" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'inherit', font: 'inherit', padding: 0 }} onClick={() => setLeaving(true)}>
-            <ArrowLeftIcon /> Nevermind, go back
+            <ArrowLeftIcon /> {accounts.length >= maxAccounts ? 'Go back and remove an account' : 'Nevermind, go back'}
           </button>
         </div>
       </div>
