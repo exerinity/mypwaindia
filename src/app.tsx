@@ -28,6 +28,7 @@ import AcknowledgementsPage from './pages/acknowledgements.tsx';
 import RestrictionsPage from './pages/restrictions.tsx';
 import ConnectionPage from './pages/connection.tsx';
 import IotmButtonPage from './pages/iotm_button.tsx';
+import InvestPage from './pages/invest.tsx';
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -37,6 +38,12 @@ function LoginRedirect() {
 function HomeRedirect() {
   const { settings } = useSettings();
   return <Navigate to={settings.homePage} replace />;
+}
+
+function TransactionRedirect() {
+  const { search } = useLocation();
+  const id = new URLSearchParams(search).get('id');
+  return <Navigate to={id ? `/i/flow/transaction/${id}` : '/dash'} replace />;
 }
 
 function PayLinkRedirect() {
@@ -73,12 +80,14 @@ export default function App() {
       <Route path="/signup" element={<ExternalRedirect to="https://mypayindia.com/accountservices/register" />} />
       <Route path="/accountservices/dashboard" element={<Navigate to="/dash" replace />} />
       <Route path="/accountservices/transhist" element={<Navigate to="/account/history" replace />} />
+      <Route path="/accountservices/trans" element={<TransactionRedirect />} />
       <Route path="/accountservices/transfer" element={<Navigate to="/account/transfer" replace />} />
-      <Route path="/accountservices/iotm/button/" element={<Navigate to="/i/flow/button" replace />} />
+      <Route path="/accountservices/account/iotm/button/" element={<Navigate to="/account/iotm/button" replace />} />
+      <Route path="/accountservices/iotm/button/" element={<Navigate to="/account/iotm/button" replace />} />
       <Route path="/accountservices/paymentlinks" element={<Navigate to="/links" replace />} />
       <Route path="/accountservices/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
-      <Route path="/button" element={<Navigate to="/i/flow/button" replace />} />
+      <Route path="/button" element={<Navigate to="/account/iotm/button" replace />} />
 
       <Route path="/i/flow/login" element={<LoginPage />} />
       <Route path="/i/flow/logout" element={<LogoutPage />} />
@@ -113,8 +122,10 @@ export default function App() {
           <Route path="/links/claim/:token" element={<ClaimLinkPage />} />
           <Route path="/dash/statements" element={<StatementsPage />} />
           <Route path="/dash/cards" element={<CardsPage />} />
-          <Route path="/i/transaction/:id" element={<TransactionPage />} />
-          <Route path="/i/flow/button" element={<IotmButtonPage />} />
+          <Route path="/i/flow/transaction/:id" element={<TransactionPage />} />
+          <Route path="/i/flow/button" element={<Navigate to="/account/iotm/button" replace />} />
+          <Route path="/account/iotm/button" element={<IotmButtonPage />} />
+          <Route path="/account/iotm" element={<InvestPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
