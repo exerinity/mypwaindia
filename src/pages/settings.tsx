@@ -496,7 +496,7 @@ export default function SettingsPage() {
         return (
           <>
             <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
-              Change what page is loaded when you open the app.
+              Change what page is loaded when you open the app
             </p>
             <label htmlFor="home-page-select">Home page</label>
             <div className="row gap-sm" style={{ marginTop: 6 }}>
@@ -532,7 +532,7 @@ export default function SettingsPage() {
             )}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
               <InfoIcon />
-              <span>If you open the app with a path, like <strong>mypayindia.sbs/account/transfer</strong>, this will not execute.</span>
+              <span>This will not execute if you visit a page, obviously</span>
             </div>
           </>
         );
@@ -541,7 +541,7 @@ export default function SettingsPage() {
       case 'data':
         return (
           <>
-            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>Manage your accounts, app data, and MyPayIndia account.</p>
+            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>Manage your accounts, app data, and MyPayIndia account</p>
             <h2 className="mt-2">Syncing</h2>
             <div className="checkbox-row">
               <input
@@ -585,7 +585,7 @@ export default function SettingsPage() {
               </div>
             </div>
             {accounts.length === 0 ? (
-              <p className="muted">No accounts saved.</p>
+              <p className="muted">No accounts saved</p>
             ) : (
               <div className="table-wrap">
                 <table className="table">
@@ -667,7 +667,7 @@ export default function SettingsPage() {
             </div>{!active && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
                 <InfoIcon />
-                <span>To use this setting, <Link to="/i/flow/login">please log in</Link>.</span>
+                <span>To use this setting, <Link to="/i/flow/login">please log in</Link></span>
               </div>
             )}
           </>
@@ -679,7 +679,7 @@ export default function SettingsPage() {
             {!active && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
                 <InfoIcon />
-                <span>To use scambait mode, <Link to="/i/flow/login">please log in</Link>.</span>
+                <span>To use scambait mode, <Link to="/i/flow/login">please log in</Link></span>
               </div>
             )}
 
@@ -750,7 +750,7 @@ export default function SettingsPage() {
             {!active && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
                 <InfoIcon />
-                <span>To view sessions, <Link to="/i/flow/login">please log in</Link>.</span>
+                <span>To view sessions, <Link to="/i/flow/login">please log in</Link></span>
               </div>
             )}
             {active && (sessionsQ.loading && !sessionsQ.data ? (
@@ -905,7 +905,7 @@ export default function SettingsPage() {
         onClose={() => setRemoveOneTarget(null)}
         onConfirm={() => { if (removeOneTarget) removeAccount(removeOneTarget.id); setRemoveOneTarget(null); }}
         title="Remove this account?"
-        message={<>Are you sure you want to remove <strong>{removeOneTarget?.username || ''}</strong>?{accounts.length === 1 ? ' This is your only saved account, so you will be completely logged out of the app.' : ' You will then be logged into the next available account.'}</>}
+        message={<>Are you sure you want to remove <strong>{removeOneTarget?.username || ''}</strong>?{accounts.length === 1 ? ' This is your only saved account, so you will be completely logged out of the app' : ' You will then be logged into the next available account'}</>}
         confirmLabel="Remove"
       />
 
@@ -1038,7 +1038,7 @@ export default function SettingsPage() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 0 }} className="alert alert-error">
           <ErrorIcon />
-          <span>This is a destructive action - read this carefully.</span>
+          <span>This is a destructive action - read this carefully</span>
         </div>
         <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>
           You should only use this in extreme cases,
@@ -1085,7 +1085,7 @@ export default function SettingsPage() {
       <Modal
         open={deleteStorageDoneOpen}
         onClose={() => setDeleteStorageDoneOpen(false)}
-        title="All data wiped."
+        title="All data wiped"
       >
         <p style={{ marginTop: 0 }}>Would you like to reload the app?</p>
         <div className="btn-row">
