@@ -101,7 +101,7 @@ export default function TransferPage() {
         const info = await getUserInfo(active!) as { balance: number };
         updateBalance(active!.id, info.balance);
       } catch { }
-      navigate(`/i/transaction/${res.transaction_id}`);
+      navigate(`/i/flow/transaction/${res.transaction_id}`);
     } catch (err) {
       toast.error(describeError(err));
     } finally {
@@ -111,7 +111,7 @@ export default function TransferPage() {
 
   return (
     <>
-      <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭">
+      <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭" fullscreen>
         <img src="https://cologne.exerinity.com/son.png" alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
       <h1 className="mt-0">Transfer funds</h1>
