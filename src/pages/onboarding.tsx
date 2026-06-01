@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { AppFooter } from '../components/app_footer.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
@@ -11,6 +12,7 @@ export default function OnboardingPage() {
   usePageTitle('Welcome to the MyPayIndia PWA');
   const { active } = useAuth();
   const navigate = useNavigate();
+  const [leaving, setLeaving] = useState(false);
 
   if (!active) {
     return <Navigate to="/i/flow/login" replace />;
@@ -18,11 +20,11 @@ export default function OnboardingPage() {
 
   function accept() {
     storageSet(KEYS.ONBOARD, 1);
-    navigate('/dash', { replace: true });
+    setLeaving(true);
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div className={leaving ? 'page-slide-out' : 'page-slide-in'} onAnimationEnd={() => { if (leaving) navigate('/dash', { replace: true }); }} style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div className="card" style={{ maxWidth: 520, width: '100%' }}>
         <h1 style={{ marginTop: 0 }}>Welcome to MyPWAIndia!</h1>
         <p>
