@@ -172,12 +172,12 @@ const CATEGORIES: Category[] = [
 
 export default function SettingsPage() {
   const { category } = useParams<{ category: string }>();
-  const activeCategory = (
-    CATEGORIES.find((c) => !c.href && c.id === category)?.id ?? 'appearance'
-  ) as CategoryId;
+  const matchedCategory = CATEGORIES.find((c) => !c.href && c.id === category);
+  const isUnknownCategory = !!category && !matchedCategory;
+  const activeCategory = (matchedCategory?.id ?? 'appearance') as CategoryId;
   const activeCat = CATEGORIES.find((c) => !c.href && c.id === activeCategory)!;
 
-  usePageTitle(activeCat.label);
+  usePageTitle(isUnknownCategory ? 'What' : activeCat.label);
 
   const { settings, update, reset } = useSettings();
   const { accounts, removeAccount, active } = useAuth();
@@ -322,6 +322,8 @@ export default function SettingsPage() {
   }
 
   function renderDetail() {
+    if (isUnknownCategory) return <h2>Where the fuck are you going</h2>;
+
     switch (activeCategory) {
 
       case 'appearance':
@@ -878,7 +880,7 @@ export default function SettingsPage() {
             >
               <ArrowLeftIcon size={18} />
             </button>
-            <span>{activeCat.label}</span>
+            <span>{isUnknownCategory ? 'What' : activeCat.label}</span>
           </div>
 
           <div className="mpi-settings-detail-scroll">
