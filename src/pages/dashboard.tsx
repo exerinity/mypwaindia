@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
@@ -8,10 +8,11 @@ import { getUserInfo } from '../api/user.js';
 import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
 import { getDisplayName } from '../utils/display.js';
-import { InfoIcon } from '../components/icons.tsx';
+import { InfoIcon, CloseIcon } from '../components/icons.tsx';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { TransactionTable } from '../components/tx_table.tsx';
 import { generateStatements } from '../utils/fake_statements.js';
+import { storageGet, storageSet } from '../utils/storage.ts';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
@@ -44,6 +45,8 @@ export default function DashboardPage() {
     [active?.token],
     { refresh, skip: !active }
   );
+
+  const [hdHidden, setHdHidden] = useState(() => storageGet<number>('hidePathHint', 0) === 1);
 
   const fakeStatements = useMemo(() => scambait ? generateStatements(1000, active?.id ?? null).slice(0, 10) : [], [scambait, active?.id]);
 
@@ -103,6 +106,22 @@ export default function DashboardPage() {
           : <Link to="/account/history" className="btn ghost">Full transaction history</Link>
         }
       </div>
+
+      {!hdHidden && !scambait && (
+        <div className="alert alert-success mb-2" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+          <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><InfoIcon /></span>
+          <span style={{ flex: 1 }}>
+            <strong className="stat-label">Did you know?</strong><br></br>MyPWAIndia understands (most) MyPayIndia.com URL paths - so coming from <strong>mypayindia.com/accountservices/transhist</strong> and replacing <strong>.com</strong> with <strong>.sbs</strong> will automatically take you to the right page!
+          </span>
+          <button
+            className="btn ghost"
+            style={{ flexShrink: 0, padding: '0 4px', lineHeight: 0 }}
+            onClick={() => { storageSet('hidePathHint', 1); setHdHidden(true); }}
+          >
+            <CloseIcon size={16} />
+          </button>
+        </div>
+      )}
 
       <div className="card">
         <h3 style={{ margin: '0 0 12px' }}>Recent activity</h3>
