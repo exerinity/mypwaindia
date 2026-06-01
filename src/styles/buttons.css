@@ -2,7 +2,8 @@
    BUTTONS
    ===================================================================== */
 button,
-.btn {
+.btn,
+a.option {
   background: var(--brand);
   color: var(--brand-text);
   border: none;
@@ -80,6 +81,48 @@ button.ghost,
 button.ghost:hover,
 .btn.ghost:hover {
   background: var(--bg-elev);
+}
+
+button.option,
+.btn.option,
+a.option {
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 14px 16px;
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+  text-align: left;
+  line-height: 1.2;
+}
+
+button.option:hover,
+.btn.option:hover,
+a.option:hover {
+  background: var(--bg-elev);
+  color: var(--fg);
+  text-decoration: none;
+}
+
+button.option:disabled {
+  background: transparent !important;
+  color: var(--fg) !important;
+  opacity: 0.4;
+}
+
+button.option .option-label,
+a.option .option-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+button.option .option-desc,
+a.option .option-desc {
+  font-size: 0.83rem;
+  color: var(--muted);
+  font-weight: 400;
 }
 
 .btn-row {
