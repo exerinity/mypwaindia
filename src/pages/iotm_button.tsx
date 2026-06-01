@@ -34,6 +34,33 @@ interface LeaderEntry {
   clicks: string;
 }
 
+function AnimatedNumber({ value }: { value: number }) {
+  const [displayed, setDisplayed] = useState(value);
+  const displayedRef = useRef(value);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const from = displayedRef.current;
+    const to = value;
+    if (from === to) return;
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    const duration = 600;
+    const start = performance.now();
+    function step(now: number) {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const current = Math.round(from + (to - from) * eased);
+      displayedRef.current = current;
+      setDisplayed(current);
+      if (t < 1) rafRef.current = requestAnimationFrame(step);
+    }
+    rafRef.current = requestAnimationFrame(step);
+    return () => { if (rafRef.current !== null) cancelAnimationFrame(rafRef.current); };
+  }, [value]);
+
+  return <>{displayed.toLocaleString()}</>;
+}
+
 function parseLeaderboardHtml(html: string): { globalClicks: string; entries: LeaderEntry[] } {
   const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
   const p = doc.querySelector('p');
@@ -101,6 +128,24 @@ export default function IotmButtonPage() {
       });
 
     return () => { cancelled = true; };
+  }, [active?.token]);
+
+  useEffect(() => {
+    if (!active?.token) return;
+    const id = setInterval(() => {
+      fetch(`${API_BASE}/accountservices/iotm/button/?minimal`, {
+        headers: { Authorization: `Bearer ${active.token}` },
+        credentials: 'include',
+      })
+        .then((r) => r.ok ? r.text() : Promise.reject())
+        .then((html) => {
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+          const leaderboard = doc.querySelector('#click_leaderboard')?.innerHTML ?? '';
+          setState((s) => s ? { ...s, leaderboard } : s);
+        })
+        .catch(() => {});
+    }, 10000);
+    return () => clearInterval(id);
   }, [active?.token]);
 
   const sendBatch = useCallback(() => {
@@ -204,7 +249,7 @@ export default function IotmButtonPage() {
             <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: '0 0 12px' }}>
               Global clicks:{' '}
               <strong style={{ color: 'var(--fg)' }}>
-                {parseInt(leaderboard.globalClicks.replace(/,/g, ''), 10).toLocaleString()}
+                <AnimatedNumber value={parseInt(leaderboard.globalClicks.replace(/,/g, ''), 10)} />
               </strong>
             </p>
           )}
@@ -223,7 +268,7 @@ export default function IotmButtonPage() {
                   {leaderboard.entries.map((entry, i) => {
                     const isMe = active?.username === entry.user;
                     return (
-                      <tr key={i} style={isMe ? { background: 'color-mix(in srgb, var(--brand) 10%, transparent)' } : undefined}>
+                      <tr key={entry.user} style={isMe ? { background: 'color-mix(in srgb, var(--brand) 10%, transparent)' } : undefined}>
                         <td style={{
                           fontVariantNumeric: 'tabular-nums',
                           fontWeight: 700,
@@ -241,7 +286,7 @@ export default function IotmButtonPage() {
                           )}
                         </td>
                         <td style={{ fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}>
-                          {parseInt(entry.clicks, 10).toLocaleString()}
+                          <AnimatedNumber value={parseInt(entry.clicks.replace(/,/g, ''), 10)} />
                         </td>
                       </tr>
                     );
