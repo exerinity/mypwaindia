@@ -17,12 +17,14 @@ export const RELEASES: Release[] = [
     version: '13b',
     date: '1 Jun 2026',
     notes: [
+      { h3: 'Happy Pride month!',},
       <>The Button has moved to <Link to="/account/iotm/button">/account/iotm/button</Link> (old link still redirects)</>,
       <>The <Link to="/i/leaderboard">leaderboard</Link> now auto-refreshes every 10 seconds with a counting-up animation on balances, and a pause/refresh now control</>,
       'The clickerboard on the Button page also auto-refreshes every 10 seconds with the same animation',
       'Added a dismissable "Did you know?" hint on the dashboard about mypayindia.sbs path mapping',
       'Added more redirects: /accountservices/paymentlinks, /accountservices/logout, /accountservices/trans?id=X (deeplinks to a transaction)',
       'Navigating to an unknown settings category now gives you a more... "appropriate" message',
+      'Pride logo added'
     ]
   },
   {
