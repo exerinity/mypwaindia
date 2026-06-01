@@ -42,7 +42,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/team** - list of team members
 - **/i/release_notes** - app release notes
 - **/i/acknowledgements** - thanks and acknowledgements
-- **/i/transaction/:id** - transaction detail viewer
+- **/i/flow/transaction/:id** - transaction detail viewer
 
 ### Internal flow
 - **/i/flow/login** - log in
