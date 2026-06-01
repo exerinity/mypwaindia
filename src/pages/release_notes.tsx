@@ -24,6 +24,7 @@ export const RELEASES: Release[] = [
       'Added a dismissable "Did you know?" hint on the dashboard about mypayindia.sbs path mapping',
       'Added more redirects: /accountservices/paymentlinks, /accountservices/logout, /accountservices/trans?id=X (deeplinks to a transaction)',
       'Navigating to an unknown settings category now gives you a more... "appropriate" message',
+      <>Added an "Add account" modal to the <Link to="/settings/data">saved accounts area</Link> in settings where you can either just add details or normally log in</>,
       'Pride logo added'
     ]
   },
