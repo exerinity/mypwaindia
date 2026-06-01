@@ -8,7 +8,7 @@ import { getUserInfo } from '../api/user.js';
 import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
 import { getDisplayName } from '../utils/display.js';
-import { InfoIcon, CloseIcon } from '../components/icons.tsx';
+import { InfoIcon, CloseIcon, BulbIcon } from '../components/icons.tsx';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { TransactionTable } from '../components/tx_table.tsx';
 import { generateStatements } from '../utils/fake_statements.js';
@@ -58,7 +58,7 @@ export default function DashboardPage() {
         You can navigate most of the app logged out, but to actually do everything, please <Link to="/i/flow/login">log in</Link>. 
         If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
         <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <InfoIcon /><span>If you are looking for the legacy app, you can find it here: <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">https://legacy.app.mypayindia.com</a></span>
+          <BulbIcon /><span>If you are looking for the legacy app, you can find it here: <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">https://legacy.app.mypayindia.com</a></span>
         </div>
       </>
     );
@@ -108,10 +108,10 @@ export default function DashboardPage() {
       </div>
 
       {!hdHidden && !scambait && (
-        <div className="alert alert-success mb-2" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-          <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><InfoIcon /></span>
+        <div className="alert mb-2" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+          <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><BulbIcon /></span>
           <span style={{ flex: 1 }}>
-            <strong className="stat-label">Did you know?</strong><br></br>MyPWAIndia understands (most) MyPayIndia.com URL paths - so coming from <strong>mypayindia.com/accountservices/transhist</strong> and replacing <strong>.com</strong> with <strong>.sbs</strong> will automatically take you to the right page!
+            <strong className="stat-label">Tip</strong><br></br>MyPWAIndia understands (most) MyPayIndia.com URL paths - so coming from <strong>mypayindia.com/accountservices/transhist</strong> and replacing <strong>.com</strong> with <strong>.sbs</strong> will automatically take you to the right page!
           </span>
           <button
             className="btn ghost"
