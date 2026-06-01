@@ -115,7 +115,7 @@ export function AccountPill() {
                 </button>
               ) : (
                 <span className="acct-add-btn" style={{ color: 'var(--muted)', cursor: 'default' }}>
-                  Account limit reached ({maxAccounts})
+                  Account limit at capacity ({maxAccounts})
                 </span>
               )}
             </div>
