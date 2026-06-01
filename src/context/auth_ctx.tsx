@@ -18,6 +18,7 @@ export interface Account {
   lastName?: string;
   lastBalance?: number;
   password?: string;
+  credentialOnly?: boolean;
 }
 
 interface LoginParams {
@@ -41,6 +42,7 @@ interface AuthContextValue {
   switchAccount: (id: number) => Promise<void>;
   removeAccount: (id: number) => void;
   addOrReplaceAccount: (acc: Account) => void;
+  saveCredentials: (params: { username: string; password: string; env?: Env }) => void;
   updateBalance: (id: number, balance: number) => void;
   updateAccountInfo: (id: number, info: Partial<Account>) => void;
   refreshActive: () => Promise<unknown>;
@@ -79,6 +81,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const saveCredentials = useCallback(({ username, password, env = 'production' }: { username: string; password: string; env?: Env }) => {
+    setAccounts((prev) => {
+      if (prev.length >= MAX_ACCOUNTS) {
+        throw new Error(`You can have at most ${MAX_ACCOUNTS} accounts saved!`);
+      }
+      const stub: Account = {
+        id: -Date.now(),
+        username,
+        password,
+        role: '',
+        token: '',
+        env,
+        addedAt: new Date().toISOString(),
+        credentialOnly: true,
+      };
+      const next = [...prev, stub];
+      setAccs(next);
+      return next;
+    });
+  }, []);
+
   const login = useCallback(async ({ username, password, totp_code, env = 'production' }: LoginParams, redirectTo?: string): Promise<Account> => {
     const snapshot: Account[] = storageGet(KEYS.ACCOUNTS, []);
     const data = await apiLogin({ username, password, totp_code, env }) as LoginApiResponse;
@@ -105,14 +128,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const all: Account[] = storageGet(KEYS.ACCOUNTS, []);
     const target = all.find((a) => a.id === id);
     try { await apiLogout(); } catch (_) {}
+    let nextActiveId = id;
     if (target?.password) {
       try {
         const data = await apiLogin({ username: target.username, password: target.password, env: target.env }) as LoginApiResponse;
+        const realId = data.user.id;
         const current: Account[] = storageGet(KEYS.ACCOUNTS, []);
-        storageSet(KEYS.ACCOUNTS, current.map((a) => a.id === id ? { ...a, token: data.session_id } : a));
+        // If a real account with this server ID already exists, activate that and drop the stub
+        const existingReal = current.find((a) => a.id === realId && a.id !== id);
+        if (existingReal) {
+          storageSet(KEYS.ACCOUNTS, current
+            .filter((a) => a.id !== id)
+            .map((a) => a.id === realId ? { ...a, token: data.session_id } : a));
+        } else {
+          storageSet(KEYS.ACCOUNTS, current.map((a) => a.id === id ? {
+            ...a,
+            id: realId,
+            token: data.session_id,
+            role: data.user.role,
+            username: data.user.username,
+            credentialOnly: false,
+          } : a));
+        }
+        nextActiveId = realId;
       } catch (_) {}
     }
-    storageSet(KEYS.ACTIVE_ACCOUNT, id);
+    storageSet(KEYS.ACTIVE_ACCOUNT, nextActiveId);
     window.location.reload();
   }, []);
 
@@ -174,11 +215,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     switchAccount,
     removeAccount,
     addOrReplaceAccount,
+    saveCredentials,
     updateBalance,
     updateAccountInfo,
     refreshActive,
     maxAccounts: MAX_ACCOUNTS,
-  }), [accounts, active, activeId, login, logout, switchAccount, removeAccount, addOrReplaceAccount, updateBalance, updateAccountInfo, refreshActive]);
+  }), [accounts, active, activeId, login, logout, switchAccount, removeAccount, addOrReplaceAccount, saveCredentials, updateBalance, updateAccountInfo, refreshActive]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
