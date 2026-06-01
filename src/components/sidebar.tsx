@@ -32,7 +32,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true },
       { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true },
       { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true },
-      { to: '/i/flow/button', label: 'Button', icon: TrophyIcon, hideInScambait: true },
+      { to: '/account/iotm', label: 'Investment Opportunities™', icon: TrophyIcon, hideInScambait: true },
     ],
   },
   {
