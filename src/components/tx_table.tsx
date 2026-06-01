@@ -120,7 +120,7 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
               return (
                 <tr key={tx.id}>
                   <td>
-                    <Link to={`/i/transaction/${tx.transaction_id}`} className="mono">
+                    <Link to={`/i/flow/transaction/${tx.transaction_id}`} className="mono">
                       {tx.transaction_id}
                     </Link>
                   </td>
