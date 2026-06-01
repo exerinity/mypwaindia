@@ -2,7 +2,7 @@ export const ERROR_MESSAGES = {
   1001: 'You are either not logged in or your session has expired. Please log in (again)',
   1002: 'You need a 2FA code...',
   1003: 'This account has been suspended',
-  1004: 'Either your or the recipient account is frozen and you are not permitted to perform this action',
+  1004: 'You are not permitted to perform this action.',
   1005: 'One of those are wrong',
   1010: 'Invalid 2FA code',
   1012: 'Your email is not yet verified - verify it to perform this action',
