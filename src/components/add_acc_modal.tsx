@@ -1,100 +1,121 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Modal } from './modal.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { describeError } from '../utils/errors.js';
-import { Logo } from './logo.tsx';
-import { WarningIcon, ErrorIcon } from './icons.tsx';
 import { FloatingInput } from './floating_input.tsx';
-import type { Env } from '../api/client.js';
+import { WarningIcon, ErrorIcon, ChevronRight, ExternalIcon } from './icons.tsx';
 
 interface AddAccountModalProps { open: boolean; onClose: () => void }
 
+type Step = 'choice' | 'save-creds';
+
 export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
-  const { login, accounts, maxAccounts } = useAuth();
+  const { accounts, maxAccounts, saveCredentials } = useAuth();
   const toast = useToast();
+
+  const [step, setStep] = useState<Step>('choice');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [totp, setTotp] = useState('');
-  const [needs2fa, setNeeds2fa] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<{ message: string } | null>(null);
-  const envRef = useRef<Env>('production');
+  const [error, setError] = useState<string | null>(null);
 
   const atCapacity = accounts.length >= maxAccounts;
 
   function reset() {
-    setUsername(''); setPassword(''); setTotp('');
-    setNeeds2fa(false); setError(null); setBusy(false);
-    envRef.current = 'production';
+    setStep('choice');
+    setUsername('');
+    setPassword('');
+    setError(null);
   }
 
   function handleClose() {
-    if (busy) return;
     reset();
     onClose();
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSaveCreds(e: React.FormEvent) {
     e.preventDefault();
-    if (atCapacity) {
-      toast.error(`You're at ${maxAccounts} accounts. That's too many - drop one first!`);
-      return;
-    }
-    const env = envRef.current;
-    envRef.current = 'production';
-    setBusy(true);
     setError(null);
     try {
-      const acc = await login({ username, password, totp_code: totp || undefined, env });
-      toast.success(`Added ${acc.username}`);
-      reset();
-      onClose();
+      saveCredentials({ username: username.trim(), password });
+      toast.success(`Credentials saved for ${username.trim()}`);
+      handleClose();
     } catch (err) {
-      if ((err as { code?: number }).code === 1002) {
-        setNeeds2fa(true);
-        setError({ message: 'Enter your 2FA code' });
-      } else if ((err as { code?: number }).code === 1010) {
-        setError({ message: 'Incorrect 2FA code' });
-      } else {
-        setError({ message: describeError(err) });
-      }
-    } finally {
-      setBusy(false);
+      setError(describeError(err));
     }
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title="Add account" fullscreen className="slide">
-      <div>
-        {atCapacity && (
-          <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <WarningIcon /><span>You have {maxAccounts} accounts saved. Remove one before adding another.</span>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <FloatingInput label="Username or email" type="text" autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} required disabled={busy} />
-          <FloatingInput label="Password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required disabled={busy} />
-          {needs2fa && (
-            <FloatingInput label="Two-factor code" type="text" inputMode="numeric" pattern="[0-9]*" autoComplete="one-time-code" value={totp} onChange={(e) => setTotp(e.target.value)} disabled={busy} />
+    <Modal open={open} onClose={handleClose} title="Add account" className="slide">
+      {step === 'choice' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {atCapacity && (
+            <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <WarningIcon /><span>You can only have {maxAccounts} accounts saved</span>
+            </div>
           )}
-          {error && <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><ErrorIcon /><span>{error.message}</span></div>}
-          <button
-            type="submit"
-            disabled={busy || atCapacity}
-            style={{ width: '100%' }}
-            onContextMenu={(e) => {
-              e.preventDefault();
-              if (busy || atCapacity) return;
-              envRef.current = 'staging';
-              e.currentTarget.form?.requestSubmit();
-            }}
-          >
-            {busy ? <><span className="spinner" /> Signing in...</> : 'Add account'}
+          <button className="option" onClick={() => setStep('save-creds')} disabled={atCapacity} style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <span className="option-label">Just save credentials</span>
+              <span className="option-desc">for logging in later (not recommended)</span>
+            </div>
+            <ChevronRight />
           </button>
+          {atCapacity ? (
+            <button className="option" disabled style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <span className="option-label">Log in</span>
+                <span className="option-desc">through the full login flow (/i/flow/login)</span>
+              </div>
+              <ExternalIcon />
+            </button>
+          ) : (
+            <Link to="/i/flow/login" className="option" onClick={handleClose} style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <span className="option-label">Log in</span>
+                <span className="option-desc">through the full login flow (/i/flow/login)</span>
+              </div>
+              <ExternalIcon />
+            </Link>
+          )}
+        </div>
+      ) : (
+        <form onSubmit={handleSaveCreds}>
+          <p className="muted" style={{ marginTop: 0, fontSize: '0.875rem' }}>
+            These details will be saved but a session will not be initiated. You can switch to it any time in the account switcher and its information (like name and balance) will be populated
+          </p>
+          <FloatingInput
+            label="Username or email"
+            type="text"
+            autoComplete="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <FloatingInput
+            label="Password"
+            type="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          {error && (
+            <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <ErrorIcon /><span>{error}</span>
+            </div>
+          )}
+          <div className="btn-row">
+            <button type="button" className="secondary" onClick={() => { setError(null); setStep('choice'); }}>
+              Back
+            </button>
+            <button type="submit">
+              Save
+            </button>
+          </div>
         </form>
-      </div>
+      )}
     </Modal>
   );
 }
