@@ -5,7 +5,7 @@ export function Logo({ height = 38, className = 'mpi-header-logo' }: { height?: 
   const w = Math.round(height * LOGO_W / LOGO_H);
   return (
     <img
-      src="/i/mypayindia-full.png"
+      src="/i/mygayindia-full.png"
       alt="MyPayIndia"
       width={w}
       height={height}
