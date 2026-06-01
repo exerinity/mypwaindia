@@ -66,7 +66,7 @@ export default function ClaimLinkPage() {
         const info = await getUserInfo(active!) as { balance: number };
         updateBalance(active!.id, info.balance);
       } catch { /* non-critical */ }
-      navigate(`/i/transaction/${res.transaction_id}`);
+      navigate(`/i/flow/transaction/${res.transaction_id}`);
     } catch (e) {
       toast.error(describeError(e));
     } finally {
