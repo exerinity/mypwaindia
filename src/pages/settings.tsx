@@ -18,6 +18,7 @@ import { listSessions, invalidateSession } from '../api/user.js';
 import { formatDate } from '../utils/dates.js';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { describeError } from '../utils/errors.js';
+import { AddAccountModal } from '../components/add_acc_modal.tsx';
 import { HoldButton } from '../components/hold_btn.tsx';
 
 
@@ -184,6 +185,7 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const toast = useToast();
 
+  const [addAccountOpen, setAddAccountOpen] = useState(false);
   const [accentInput, setAccentInput] = useState(settings.accent);
   const [removeOneTarget, setRemoveOneTarget] = useState<Account | null>(null);
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
@@ -571,11 +573,16 @@ export default function SettingsPage() {
               <span className="muted" style={{ fontSize: '0.9rem' }}>
                 {accounts.length} saved
               </span>
-              {accounts.length > 0 && (
-                <button className="compact danger" onClick={() => setRemoveAllOpen(true)}>
-                  Remove all
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="compact" onClick={() => setAddAccountOpen(true)}>
+                  Add account
                 </button>
-              )}
+                {accounts.length > 0 && (
+                  <button className="compact danger" onClick={() => setRemoveAllOpen(true)}>
+                    Remove all
+                  </button>
+                )}
+              </div>
             </div>
             {accounts.length === 0 ? (
               <p className="muted">No accounts saved.</p>
@@ -891,6 +898,8 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      <AddAccountModal open={addAccountOpen} onClose={() => setAddAccountOpen(false)} />
+
       <ConfirmModal
         open={!!removeOneTarget}
         onClose={() => setRemoveOneTarget(null)}
@@ -1024,7 +1033,6 @@ export default function SettingsPage() {
 
       <Modal
         open={terminateAllOpen}
-        fullscreen
         onClose={() => setTerminateAllOpen(false)}
         title={`Terminate all ${sortedSessions.filter((s) => !s.invalidated && !s.current).length} sessions`}
       >
