@@ -22,7 +22,7 @@
   <meta name="apple-mobile-web-app-title" content="MyPayIndia" />
   <style>
     :root{--brand:#d03505;--brand-dark:#b22d04;--brand-text:#fff;--radius:10px;--border:#333;--fg:#eaeaea;--bg-elev:#1a1a1a;--pill-bg:#232323}
-    #splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#121212}
+    #splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#121212;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
     #splash img.splash-logo{height:52px;animation:sli .5s ease .1s both}
     #splash.out{animation:slo .5s ease forwards;pointer-events:none}
     @keyframes sli{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
