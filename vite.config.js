@@ -21,7 +21,7 @@ export default defineConfig({
         display: 'standalone',
         start_url: '/dash',
         id: 'com.exerinity.mypayindia',
-        icons: [{ src: '/i/mypayindia.png', sizes: '64x64', type: 'image/png', purpose: 'any maskable' }]
+        icons: [{ src: '/i/mygayindia.png', sizes: '64x64', type: 'image/png', purpose: 'any maskable' }]
       }
     })
   ],
