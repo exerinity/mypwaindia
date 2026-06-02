@@ -1053,7 +1053,7 @@ export default function SettingsPage() {
               onConfirm={() => setTerminateAllSteps((prev) => { const next = [...prev]; next[i] = true; return next; })}
               style={{ opacity: terminateAllSteps[i] ? 0.5 : undefined }}
             >
-              {terminateAllSteps[i] ? `Step ${i + 1} confirmed` : `Confirm (step ${i + 1})`}
+              {terminateAllSteps[i] ? `Step ${i + 1} confirmed` : `Hold to confirm (step ${i + 1})`}
             </HoldButton>
           ))}
         </div>
