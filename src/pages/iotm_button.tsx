@@ -267,6 +267,32 @@ export default function IotmButtonPage() {
             >
               Button
             </button>
+
+            {(() => {
+              if (!leaderboard) return null;
+              const myIndex = leaderboard.entries.findIndex((e) => e.user === active?.username);
+              if (myIndex === -1) return (
+                <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0' }}>
+                  You are not yet on the clickerboard
+                </p>
+              );
+              const myRank = leaderboard.entries[myIndex].rank;
+              if (myIndex === 0) return (
+                <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0' }}>
+                  You are <strong style={{ color: 'var(--fg)' }}>#{myRank}</strong> on the clickerboard
+                </p>
+              );
+              const above = leaderboard.entries[myIndex - 1];
+              const myClicks = parseInt(leaderboard.entries[myIndex].clicks.replace(/,/g, ''), 10);
+              const aboveClicks = parseInt(above.clicks.replace(/,/g, ''), 10);
+              const gap = aboveClicks - myClicks + 1;
+              return (
+                <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0' }}>
+                  You are <strong style={{ color: 'var(--fg)' }}>{myRank}</strong> on the clickerboard<br></br>
+                  <strong style={{ color: 'var(--fg)' }}>{gap.toLocaleString()}</strong> clicks away from surpassing <strong style={{ color: 'var(--fg)' }}>{above.user}</strong>
+                </p>
+              );
+            })()}
           </>
         )}
       </div>
