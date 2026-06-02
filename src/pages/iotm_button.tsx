@@ -70,7 +70,8 @@ function parseLeaderboardHtml(html: string): { globalClicks: string; entries: Le
   const entries: LeaderEntry[] = [];
   rows.forEach((row) => {
     const rank = row.querySelector('.rank-col')?.textContent?.trim() ?? '';
-    const user = row.querySelector('.user-col')?.textContent?.trim() ?? '';
+    const userEl = row.querySelector('.user-col');
+    const user = (userEl?.firstChild?.textContent ?? userEl?.textContent ?? '').trim();
     const clicks = row.querySelector('.balance-col')?.textContent?.trim() ?? '';
     if (rank && user && clicks) entries.push({ rank, user, clicks });
   });
@@ -95,6 +96,7 @@ export default function IotmButtonPage() {
   const tempClicks = useRef(0);
   const recentClickTimes = useRef<number[]>([]);
   const [, forceUpdate] = useState(0);
+  const [use24h, setUse24h] = useState(false);
 
   useEffect(() => {
     if (!active?.token) return;
@@ -304,7 +306,7 @@ export default function IotmButtonPage() {
               const isActive = autoClicking || (recent.length > 0 && nowTs - recent[recent.length - 1] < 3000);
               const cps = autoClicking ? 10 : (recent.length > 1 ? (recent.length - 1) / 3 : 0);
               const secsLeft = isActive && cps > 0 ? gap / cps : null;
-              function fmtTime(s: number) {
+              function fmtDuration(s: number) {
                 const d = Math.floor(s / 86400);
                 const h = Math.floor((s % 86400) / 3600);
                 const m = Math.floor((s % 3600) / 60);
@@ -316,11 +318,30 @@ export default function IotmButtonPage() {
                 parts.push(`${sec}s`);
                 return parts.join(' ');
               }
+              function fmtEta(ms: number) {
+                const eta = new Date(ms);
+                const today = new Date();
+                const isToday = eta.getDate() === today.getDate() && eta.getMonth() === today.getMonth() && eta.getFullYear() === today.getFullYear();
+                const timeStr = eta.toLocaleTimeString([], use24h
+                  ? { hour: '2-digit', minute: '2-digit', hour12: false }
+                  : { hour: 'numeric', minute: '2-digit', hour12: true });
+                if (isToday) return `at ${timeStr}`;
+                const day = eta.getDate();
+                const month = eta.toLocaleString('default', { month: 'long' });
+                return `on ${day} ${month} at ${timeStr}`;
+              }
               return (
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0' }}>
                   You are <strong style={{ color: 'var(--fg)' }}>{myRank}</strong> on the clickerboard<br />
                   <strong style={{ color: 'var(--fg)' }}>{gap.toLocaleString()}</strong> clicks away from surpassing <strong style={{ color: 'var(--fg)' }}>{above.user}</strong>
-                  {secsLeft !== null && <> (~{fmtTime(secsLeft)} ETA)</>}
+                  {secsLeft !== null && (
+                    <> (~{fmtDuration(secsLeft)},{' '}
+                      <span
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setUse24h((v) => !v)}
+                      >{fmtEta(Date.now() + secsLeft * 1000)}</span>)
+                    </>
+                  )}
                   {!isActive && <> (no ETA)</>}
                 </p>
               );
@@ -361,24 +382,25 @@ export default function IotmButtonPage() {
                   {leaderboard.entries.map((entry, i) => {
                     const isMe = active?.username === entry.user;
                     return (
-                      <tr key={entry.user} style={isMe ? { background: 'color-mix(in srgb, var(--brand) 10%, transparent)' } : undefined}>
+                      <tr key={entry.user}>
                         <td style={{
                           fontVariantNumeric: 'tabular-nums',
                           fontWeight: 700,
                           color: i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? '#cd7f32' : 'var(--muted)',
                           width: 56,
+                          ...(isMe && { background: 'color-mix(in srgb, var(--brand-dark) 70%, transparent)' }),
                         }}>
                           {entry.rank}
                         </td>
-                        <td style={{ fontWeight: isMe ? 700 : undefined }}>
+                        <td style={{ fontWeight: isMe ? 700 : undefined, ...(isMe && { background: 'color-mix(in srgb, var(--brand-dark) 70%, transparent)' }) }}>
                           {entry.user}
                           {isMe && (
-                            <span style={{ marginLeft: 8, fontSize: '0.72rem', color: 'var(--brand)', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                            <span style={{ marginLeft: 8, fontSize: '0.72rem', background: 'var(--brand)', color: 'var(--brand-text)', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '1px 5px', borderRadius: 4 }}>
                               you
                             </span>
                           )}
                         </td>
-                        <td style={{ fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}>
+                        <td style={{ fontVariantNumeric: 'tabular-nums', textAlign: 'right', ...(isMe && { background: 'color-mix(in srgb, var(--brand-dark) 70%, transparent)' }) }}>
                           <AnimatedNumber value={parseInt(entry.clicks.replace(/,/g, ''), 10)} />
                         </td>
                       </tr>
