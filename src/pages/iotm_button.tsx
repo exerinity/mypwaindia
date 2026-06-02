@@ -448,7 +448,7 @@ export default function IotmButtonPage() {
               onClick={() => setShowDotModal(true)}
             >
               A <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#ef4444', opacity: 0.3, verticalAlign: 'middle', marginRight: 4 }} />
-              means the user is probably actively clicking. Click to learn more or close...
+              means the user is probably actively clicking. Click to learn more or remove...
             </p>
           )}
 
