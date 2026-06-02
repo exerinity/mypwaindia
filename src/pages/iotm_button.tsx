@@ -356,7 +356,7 @@ export default function IotmButtonPage() {
                   You are <strong style={{ color: 'var(--fg)' }}>{myRank}</strong> on the clickerboard<br />
                   <strong style={{ color: 'var(--fg)' }}>{gap.toLocaleString()}</strong> clicks away from surpassing <strong style={{ color: 'var(--fg)' }}>{above.user}</strong>
                   {secsLeft !== null && (
-                    <> (~{fmtDuration(secsLeft)},{' '}
+                    <> (ETA ~{fmtDuration(secsLeft)},{' '}
                       <span
                         style={{ cursor: 'pointer' }}
                         onClick={() => setUse24h((v) => !v)}
