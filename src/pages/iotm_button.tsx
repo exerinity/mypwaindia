@@ -6,6 +6,7 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { API_BASE } from '../api/config.js';
 import { ArrowLeftIcon, ExternalIcon } from '../components/icons.tsx';
 import { ErrorBox, Skeleton } from '../components/status.tsx';
+import { formatPaisa } from '../utils/money.js';
 
 const MIN_CLICK_DELAY_MS = 100;
 const CLICK_BATCH_SIZE = 10;
@@ -35,7 +36,7 @@ interface LeaderEntry {
   clicks: string;
 }
 
-function AnimatedNumber({ value }: { value: number }) {
+function AnimatedNumber({ value, format = (n: number) => n.toLocaleString() }: { value: number; format?: (n: number) => string }) {
   const [displayed, setDisplayed] = useState(value);
   const displayedRef = useRef(value);
   const rafRef = useRef<number | null>(null);
@@ -59,7 +60,25 @@ function AnimatedNumber({ value }: { value: number }) {
     return () => { if (rafRef.current !== null) cancelAnimationFrame(rafRef.current); };
   }, [value]);
 
-  return <>{displayed.toLocaleString()}</>;
+  return <>{format(displayed)}</>;
+}
+
+function SlotBalance({ value }: { value: string }) {
+  return (
+    <span style={{ display: 'inline-flex', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+      {value.split('').map((char, i) => {
+        const isDigit = /\d/.test(char);
+        return (
+          <span key={i} style={{ overflow: 'hidden', height: '1em' }}>
+            {isDigit
+              ? <span key={char} style={{ display: 'block', animation: 'slot-roll 0.22s cubic-bezier(0.2, 0, 0.2, 1)' }}>{char}</span>
+              : char
+            }
+          </span>
+        );
+      })}
+    </span>
+  );
 }
 
 function parseLeaderboardHtml(html: string): { globalClicks: string; entries: LeaderEntry[] } {
@@ -174,7 +193,7 @@ export default function IotmButtonPage() {
           const rupees = parseFloat(balance.replace(/,/g, ''));
           if (!isNaN(rupees) && active) updateBalance(active.id, Math.round(rupees * 100));
         } else {
-          toast.error('Server error: ' + (res.message ?? 'Unknown error'));
+          toast.error((res.message ?? 'Unknown error'));
         }
       })
       .catch((e: unknown) => console.error('Button click error:', e));
@@ -263,7 +282,7 @@ export default function IotmButtonPage() {
               Balance
             </p>
             <p style={{ fontSize: '2.1rem', fontWeight: 700, margin: '0 0 20px', lineHeight: 1.2 }}>
-              {state?.balance ?? '–'}&nbsp;
+              <SlotBalance value={state ? formatPaisa(Math.round(parseFloat(state.balance.replace(/,/g, '')) * 100)) : '0.00'} />&nbsp;
               <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--muted)' }}>INR</span>
             </p>
 
