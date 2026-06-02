@@ -96,7 +96,7 @@ const PAGE_MAP = {
   cli: '/i/flow/mci',
   acknowledgements: '/i/acknowledgements',
   connection: '/i/flow/connection',
-  button: '/account/iotm/button', iotm: '/account/iotm/button',
+  button: '/iotm/button', iotm: '/iotm/button',
   login: '/i/flow/login',
   logout: '/i/flow/logout',
   onboarding: '/i/flow/onboarding',

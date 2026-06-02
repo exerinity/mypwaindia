@@ -155,7 +155,7 @@ const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/i/release_notes', label: 'App release notes' },
   { value: '/i/acknowledgements', label: 'Acknowledgements' },
   { value: '/i/flow/mci', label: 'MyCLiIndia' },
-  { value: '/account/iotm/button', label: 'The Button (Investment Opportunities™)' }
+  { value: '/iotm/button', label: 'The Button (Investment Opportunities™)' }
 ];
 
 const CATEGORIES: Category[] = [

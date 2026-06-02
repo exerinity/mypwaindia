@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
+import { useToast } from '../context/toast_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { API_BASE } from '../api/config.js';
 import { ArrowLeftIcon, ExternalIcon } from '../components/icons.tsx';
@@ -79,6 +80,7 @@ function parseLeaderboardHtml(html: string): { globalClicks: string; entries: Le
 export default function IotmButtonPage() {
   usePageTitle('Button');
   const { active } = useAuth();
+  const toast = useToast();
 
   const [state, setState] = useState<ButtonState | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -166,7 +168,7 @@ export default function IotmButtonPage() {
           setDisplayClicks(clicks);
           setDisplayPayoutIn(payout_in);
         } else {
-          window.alert('Server error: ' + (res.message ?? 'Unknown error'));
+          toast.error('Server error: ' + (res.message ?? 'Unknown error'));
         }
       })
       .catch((e: unknown) => console.error('Button click error:', e));
@@ -188,6 +190,34 @@ export default function IotmButtonPage() {
       sendBatch();
     }
   }
+
+  const [autoClicking, setAutoClicking] = useState(false);
+
+  const autoClick = useCallback(() => {
+    tempClicks.current++;
+    localClicks.current++;
+    localPayoutIn.current = localPayoutIn.current > 1 ? localPayoutIn.current - 1 : PAYOUT_EVERY;
+    setDisplayClicks(localClicks.current);
+    setDisplayPayoutIn(localPayoutIn.current);
+    if (tempClicks.current >= CLICK_BATCH_SIZE) sendBatch();
+  }, [sendBatch]);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.ctrlKey && e.altKey && e.key === 'x') {
+        e.preventDefault();
+        setAutoClicking((v) => !v);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  useEffect(() => {
+    if (!autoClicking || !active?.token) return;
+    const id = setInterval(autoClick, 100);
+    return () => clearInterval(id);
+  }, [autoClicking, active?.token, autoClick]);
 
   const payoutPct = displayPayoutIn <= 0
     ? 100
@@ -243,7 +273,12 @@ export default function IotmButtonPage() {
 
       {!loading && !error && (
         <div className="card">
-          <h3 style={{ marginTop: 0, marginBottom: 14 }}>Clickerboard</h3>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
+            <h3 style={{ marginTop: 0, marginBottom: 0 }}>Clickerboard</h3>
+            <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
+              This is updated every 10 seconds or every 10 clicks you make
+            </span>
+          </div>
 
           {leaderboard && leaderboard.globalClicks && (
             <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: '0 0 12px' }}>
