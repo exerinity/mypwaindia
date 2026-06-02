@@ -80,7 +80,7 @@ function parseLeaderboardHtml(html: string): { globalClicks: string; entries: Le
 
 export default function IotmButtonPage() {
   usePageTitle('Button');
-  const { active } = useAuth();
+  const { active, updateBalance } = useAuth();
   const toast = useToast();
 
   const [state, setState] = useState<ButtonState | null>(null);
@@ -171,12 +171,14 @@ export default function IotmButtonPage() {
           localPayoutIn.current = payout_in;
           setDisplayClicks(clicks);
           setDisplayPayoutIn(payout_in);
+          const rupees = parseFloat(balance.replace(/,/g, ''));
+          if (!isNaN(rupees) && active) updateBalance(active.id, Math.round(rupees * 100));
         } else {
           toast.error('Server error: ' + (res.message ?? 'Unknown error'));
         }
       })
       .catch((e: unknown) => console.error('Button click error:', e));
-  }, [active?.token]);
+  }, [active, updateBalance]);
 
   function recordClick() {
     const t = Date.now();
