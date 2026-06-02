@@ -93,6 +93,8 @@ export default function IotmButtonPage() {
   const localPayoutIn = useRef(0);
   const lastClickTime = useRef(0);
   const tempClicks = useRef(0);
+  const recentClickTimes = useRef<number[]>([]);
+  const [, forceUpdate] = useState(0);
 
   useEffect(() => {
     if (!active?.token) return;
@@ -174,10 +176,16 @@ export default function IotmButtonPage() {
       .catch((e: unknown) => console.error('Button click error:', e));
   }, [active?.token]);
 
+  function recordClick() {
+    const t = Date.now();
+    recentClickTimes.current = [...recentClickTimes.current, t].filter((x) => x > t - 5000);
+  }
+
   function handleButtonClick() {
     const now = Date.now();
     if (now - lastClickTime.current <= MIN_CLICK_DELAY_MS) return;
     lastClickTime.current = now;
+    recordClick();
 
     tempClicks.current++;
     localClicks.current++;
@@ -194,6 +202,7 @@ export default function IotmButtonPage() {
   const [autoClicking, setAutoClicking] = useState(false);
 
   const autoClick = useCallback(() => {
+    recordClick();
     tempClicks.current++;
     localClicks.current++;
     localPayoutIn.current = localPayoutIn.current > 1 ? localPayoutIn.current - 1 : PAYOUT_EVERY;
@@ -218,6 +227,11 @@ export default function IotmButtonPage() {
     const id = setInterval(autoClick, 100);
     return () => clearInterval(id);
   }, [autoClicking, active?.token, autoClick]);
+
+  useEffect(() => {
+    const id = setInterval(() => forceUpdate((n) => n + 1), 500);
+    return () => clearInterval(id);
+  }, []);
 
   const payoutPct = displayPayoutIn <= 0
     ? 100
@@ -285,10 +299,29 @@ export default function IotmButtonPage() {
               const above = leaderboard.entries[myIndex - 1];
               const aboveClicks = parseInt(above.clicks.replace(/,/g, ''), 10);
               const gap = Math.max(aboveClicks - displayClicks + 1, 0);
+              const nowTs = Date.now();
+              const recent = recentClickTimes.current.filter((t) => t > nowTs - 3000);
+              const isActive = autoClicking || (recent.length > 0 && nowTs - recent[recent.length - 1] < 3000);
+              const cps = autoClicking ? 10 : (recent.length > 1 ? (recent.length - 1) / 3 : 0);
+              const secsLeft = isActive && cps > 0 ? gap / cps : null;
+              function fmtTime(s: number) {
+                const d = Math.floor(s / 86400);
+                const h = Math.floor((s % 86400) / 3600);
+                const m = Math.floor((s % 3600) / 60);
+                const sec = Math.floor(s % 60);
+                const parts = [];
+                if (d > 0) parts.push(`${d}d`);
+                if (h > 0) parts.push(`${h}h`);
+                if (m > 0) parts.push(`${m}m`);
+                parts.push(`${sec}s`);
+                return parts.join(' ');
+              }
               return (
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0' }}>
-                  You are <strong style={{ color: 'var(--fg)' }}>{myRank}</strong> on the clickerboard<br></br>
+                  You are <strong style={{ color: 'var(--fg)' }}>{myRank}</strong> on the clickerboard<br />
                   <strong style={{ color: 'var(--fg)' }}>{gap.toLocaleString()}</strong> clicks away from surpassing <strong style={{ color: 'var(--fg)' }}>{above.user}</strong>
+                  {secsLeft !== null && <> (~{fmtTime(secsLeft)} ETA)</>}
+                  {!isActive && <> (no ETA)</>}
                 </p>
               );
             })()}
