@@ -283,9 +283,8 @@ export default function IotmButtonPage() {
                 </p>
               );
               const above = leaderboard.entries[myIndex - 1];
-              const myClicks = parseInt(leaderboard.entries[myIndex].clicks.replace(/,/g, ''), 10);
               const aboveClicks = parseInt(above.clicks.replace(/,/g, ''), 10);
-              const gap = aboveClicks - myClicks + 1;
+              const gap = Math.max(aboveClicks - displayClicks + 1, 0);
               return (
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0' }}>
                   You are <strong style={{ color: 'var(--fg)' }}>{myRank}</strong> on the clickerboard<br></br>
