@@ -6,7 +6,7 @@ const SKILL_GAMES = [
   { label: 'Intelligence Identifier', href: 'https://mypayindia.com/accountservices/iotm/intelligenceid' },
   { label: 'Minesweeper', href: 'https://mypayindia.com/accountservices/iotm/minesweeper' },
   { label: 'Wordle', href: 'https://mypayindia.com/accountservices/iotm/wordle' },
-  { label: 'Button', to: '/account/iotm/button' },
+  { label: 'Button', to: '/iotm/button' },
 ];
 
 const LUCK_GAMES = [
