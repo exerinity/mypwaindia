@@ -6,6 +6,7 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { API_BASE } from '../api/config.js';
 import { ArrowLeftIcon, ExternalIcon } from '../components/icons.tsx';
 import { ErrorBox, Skeleton } from '../components/status.tsx';
+import { Modal } from '../components/modal.tsx';
 import { formatPaisa } from '../utils/money.js';
 
 const MIN_CLICK_DELAY_MS = 100;
@@ -115,7 +116,13 @@ export default function IotmButtonPage() {
   const tempClicks = useRef(0);
   const recentClickTimes = useRef<number[]>([]);
   const [, forceUpdate] = useState(0);
+  const nextRefreshAt = useRef(0);
+  const autoClickingRef = useRef(false);
   const [use24h, setUse24h] = useState(false);
+  const leaderboardSnapshots = useRef<Map<string, number>[]>([]);
+  const [activeUsers, setActiveUsers] = useState<Set<string>>(new Set());
+  const [showDotModal, setShowDotModal] = useState(false);
+  const [dotHintDismissed, setDotHintDismissed] = useState(() => !!localStorage.getItem('noButtonActiveDot'));
 
   useEffect(() => {
     if (!active?.token) return;
@@ -157,7 +164,17 @@ export default function IotmButtonPage() {
 
   useEffect(() => {
     if (!active?.token) return;
+    nextRefreshAt.current = Date.now() + 10000;
     const id = setInterval(() => {
+      const now = Date.now();
+      const recentClicks = recentClickTimes.current.filter((t) => t > now - 2000);
+      const clicking = autoClickingRef.current || recentClicks.length > 0;
+      if (clicking) {
+        nextRefreshAt.current = now + 10000;
+        return;
+      }
+      if (now < nextRefreshAt.current) return;
+      nextRefreshAt.current = now + 10000;
       fetch(`${API_BASE}/accountservices/iotm/button/?minimal`, {
         headers: { Authorization: `Bearer ${active.token}` },
         credentials: 'include',
@@ -169,7 +186,7 @@ export default function IotmButtonPage() {
           setState((s) => s ? { ...s, leaderboard } : s);
         })
         .catch(() => {});
-    }, 10000);
+    }, 1000);
     return () => clearInterval(id);
   }, [active?.token]);
 
@@ -223,6 +240,7 @@ export default function IotmButtonPage() {
   }
 
   const [autoClicking, setAutoClicking] = useState(false);
+  useEffect(() => { autoClickingRef.current = autoClicking; }, [autoClicking]);
 
   const autoClick = useCallback(() => {
     recordClick();
@@ -255,6 +273,26 @@ export default function IotmButtonPage() {
     const id = setInterval(() => forceUpdate((n) => n + 1), 500);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    if (!state?.leaderboard) return;
+    const parsed = parseLeaderboardHtml(state.leaderboard);
+    const snapshot = new Map<string, number>();
+    parsed.entries.forEach((e) => snapshot.set(e.user, parseInt(e.clicks.replace(/,/g, ''), 10)));
+    const history = leaderboardSnapshots.current;
+    history.push(snapshot);
+    if (history.length > 5) history.shift();
+    if (history.length >= 2) {
+      const oldest = history[0];
+      const newest = history[history.length - 1];
+      const next = new Set<string>();
+      newest.forEach((newClicks, user) => {
+        const oldClicks = oldest.get(user);
+        if (oldClicks !== undefined && newClicks > oldClicks) next.add(user);
+      });
+      setActiveUsers(next);
+    }
+  }, [state?.leaderboard]);
 
   const payoutPct = displayPayoutIn <= 0
     ? 100
@@ -373,11 +411,26 @@ export default function IotmButtonPage() {
 
       {!loading && !error && (
         <div className="card">
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
             <h3 style={{ marginTop: 0, marginBottom: 0 }}>Clickerboard</h3>
-            <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
-              This is updated every 10 seconds or every 10 clicks you make
-            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+              <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>
+                This is updated every 10 seconds or every 10 clicks you make
+              </span>
+              {(() => {
+                const now = Date.now();
+                const recentClicks = recentClickTimes.current.filter((t) => t > now - 2000);
+                const clicking = autoClicking || recentClicks.length > 0;
+                if (clicking) {
+                  return <span style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>(paused while clicking)</span>;
+                }
+                if (nextRefreshAt.current > 0) {
+                  const secsLeft = Math.max(0, Math.ceil((nextRefreshAt.current - now) / 1000));
+                  return <span style={{ fontSize: '0.65rem', color: 'var(--muted)' }}>(refreshing in {secsLeft}s)</span>;
+                }
+                return null;
+              })()}
+            </div>
           </div>
 
           {leaderboard && leaderboard.globalClicks && (
@@ -388,6 +441,30 @@ export default function IotmButtonPage() {
               </strong>
             </p>
           )}
+
+          {!dotHintDismissed && (
+            <p
+              style={{ fontSize: '0.7rem', color: 'var(--muted)', margin: '0 0 10px', cursor: 'pointer', userSelect: 'none' }}
+              onClick={() => setShowDotModal(true)}
+            >
+              A <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: '#ef4444', opacity: 0.3, verticalAlign: 'middle', marginRight: 4 }} />
+              means the user is probably actively clicking. Click to learn more or close...
+            </p>
+          )}
+
+          <Modal open={showDotModal} onClose={() => setShowDotModal(false)} title="Active indicator">
+            <p className="mt-0 mb-0">A faint red dot appears between a user's rank and name when they are likely currently clicking.</p>
+            <p>Activity is tracked across the last 5 snapshots. A new snapshot is taken automatically every 10 seconds or every 10 clicks you make. If someone's click count is higher in the most recent snapshot, they get the dot.</p>
+            <p style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>The dot fades away automatically if their count stops increasing.<br></br>Like almost every gizmo in this page, it's all just an estimation.</p>
+            <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+              <button className="primary" onClick={() => {
+                localStorage.setItem('noButtonActiveDot', '1');
+                setDotHintDismissed(true);
+                setShowDotModal(false);
+              }}>Hide the dot</button>
+              <button onClick={() => setShowDotModal(false)}>OK</button>
+            </div>
+          </Modal>
 
           {leaderboard && leaderboard.entries.length > 0 ? (
             <div className="table-wrap">
@@ -405,6 +482,7 @@ export default function IotmButtonPage() {
                     return (
                       <tr key={entry.user}>
                         <td style={{
+                          position: 'relative',
                           fontVariantNumeric: 'tabular-nums',
                           fontWeight: 700,
                           color: i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? '#cd7f32' : 'var(--muted)',
@@ -412,6 +490,9 @@ export default function IotmButtonPage() {
                           ...(isMe && { background: 'color-mix(in srgb, var(--brand-dark) 70%, transparent)' }),
                         }}>
                           {entry.rank}
+                          {!dotHintDismissed && activeUsers.has(entry.user) && (
+                            <span title="This user seems to be actively clicking" style={{ position: 'absolute', right: -4, top: '50%', transform: 'translateY(-50%)', width: 6, height: 6, borderRadius: '50%', background: '#ef4444', opacity: 0.3, zIndex: 1 }} />
+                          )}
                         </td>
                         <td style={{ fontWeight: isMe ? 700 : undefined, ...(isMe && { background: 'color-mix(in srgb, var(--brand-dark) 70%, transparent)' }) }}>
                           {entry.user}
