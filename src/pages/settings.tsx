@@ -20,6 +20,7 @@ import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { describeError } from '../utils/errors.js';
 import { AddAccountModal } from '../components/add_acc_modal.tsx';
 import { HoldButton } from '../components/hold_btn.tsx';
+import { hideGet, hideSetValue } from '../utils/storage.ts';
 
 
 interface Session { id: string; device_info?: string; ip?: string; created_at: string; last_active: string; current?: boolean; invalidated?: boolean }
@@ -123,7 +124,6 @@ type CategoryId =
   | 'appearance'
   | 'home'
   | 'data'
-  | 'display'
   | 'account'
   | 'scambait'
   | 'sessions';
@@ -149,7 +149,7 @@ const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/links', label: 'Payment links' },
   { value: '/links/claim', label: 'Claim link' },
   { value: '/settings/appearance', label: 'Settings' },
-  { value: '/settings/old', label: 'Old settings' },
+  { value: '/settings:old', label: 'Old settings' },
   { value: '/i/leaderboard', label: 'Leaderboard' },
   { value: '/i/team', label: 'Meet the team' },
   { value: '/i/release_notes', label: 'App release notes' },
@@ -161,14 +161,13 @@ const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
 const CATEGORIES: Category[] = [
   { id: 'appearance', label: 'Appearance', desc: 'Theme and accent color' },
   { id: 'home', label: 'Home screen', desc: 'Page shown when opening the app', hideWhenScambait: true },
-  { id: 'data', label: 'Data & sync', desc: 'Auto-refresh and API settings' },
-  { id: 'display', label: 'Display name', desc: 'How your name appears in the app' },
-  { id: 'scambait', label: 'Scambait mode', desc: 'Configure fake-banking mode for scambaiting', hideWhenScambait: true },
+  { id: 'data', label: 'Data control', desc: 'Edit saved accounts, API settings, and other small settings' },
+  { id: 'scambait', label: 'Scambait mode', desc: '67', hideWhenScambait: true },
   { id: 'sessions', label: 'Sessions', desc: 'View and manage active login sessions', authRequired: true },
-  { id: 'logout', label: 'Log out', desc: 'Sign out of this app', authRequired: true, to: '/i/flow/logout' },
+  { id: 'logout', label: 'Log out', desc: 'Log out of MyPWAIndia', authRequired: true, to: '/i/flow/logout' },
   { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/accountservices/accsettings' },
   { id: 'mypayindia', label: 'MyPayIndia.com', desc: 'Visit the main website', href: 'https://mypayindia.com' },
-  { id: 'old_settings', label: 'Old settings', desc: 'Legacy flat-card layout', to: '/settings/old', hideWhenScambait: true },
+  { id: 'old_settings', label: 'Old settings', desc: 'Legacy flat-card layout', to: '/settings:old', hideWhenScambait: true },
 ];
 
 export default function SettingsPage() {
@@ -192,6 +191,10 @@ export default function SettingsPage() {
   const [customHomeInput, setCustomHomeInput] = useState<string | null>(() =>
     HOME_PAGE_OPTIONS.some((o) => o.value === settings.homePage) ? null : settings.homePage
   );
+  const [hideInstall, setHideInstall] = useState(() => hideGet('install'));
+  const [hideSbshint, setHideSbshint] = useState(() => hideGet('sbshint'));
+  const [hideClickers, setHideClickers] = useState(() => hideGet('clickers'));
+
   const [deleteStorageConfirmOpen, setDeleteStorageConfirmOpen] = useState(false);
   const [deleteStorageDoneOpen, setDeleteStorageDoneOpen] = useState(false);
   const [scambaitKnocks, setScambaitKnocks] = useState(0);
@@ -331,7 +334,8 @@ export default function SettingsPage() {
       case 'appearance':
         return (
           <>
-            <label>Theme</label>
+          <h3 className="mt-0">Theme</h3><p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>Change the theme and accent color, or make your own</p>
+            <label>Preset</label>
             <div className="btn-row">
               {THEME_OPTIONS.map((opt) => (
                 <button
@@ -486,6 +490,36 @@ export default function SettingsPage() {
                 Default
               </button>
             </div>
+
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+            <h3 className="mt-0">Display name</h3>
+            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+              Change how your name appears throughout the app
+            </p>
+            <div className="btn-row">
+              {(
+                [
+                  { value: 'username', label: 'Username' },
+                  { value: 'first_name', label: 'First name' },
+                  { value: 'full_name', label: 'Full name' },
+                ] as { value: Settings['displayName']; label: string }[]
+              ).map((opt) => (
+                <button
+                  key={opt.value}
+                  className={settings.displayName === opt.value ? '' : 'secondary'}
+                  onClick={() => update({ displayName: opt.value })}
+                  disabled={!active}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            {!active && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+                <InfoIcon />
+                <span>To use this setting, <Link to="/i/flow/login">please log in</Link></span>
+              </div>
+            )}
           </>
         );
 
@@ -542,7 +576,8 @@ export default function SettingsPage() {
         return (
           <>
             <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>Manage your accounts, app data, and MyPayIndia account</p>
-            <h2 className="mt-2">Syncing</h2>
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+            <h3 className="mt-2">Syncing</h3>
             <div className="checkbox-row">
               <input
                 type="checkbox"
@@ -568,7 +603,35 @@ export default function SettingsPage() {
               </label>
             </div>
 
-            <h2 className="mt-2">Saved accounts</h2>
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+            <h3 className="mt-0">Hide stuff</h3>
+            <p style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+              If you pressed hide on something, you can unhide it here. Or hide everything in one go</p>
+            {(
+              [
+                { key: 'install', label: 'Install app pill', value: hideInstall, set: setHideInstall },
+                { key: 'sbshint', label: 'Path shortcut tip on dashboard', value: hideSbshint, set: setHideSbshint },
+                { key: 'clickers', label: 'Active clickers dot (the button)', value: hideClickers, set: setHideClickers },
+              ] as const
+            ).map(({ key, label, value, set }, i) => (
+              <React.Fragment key={key}>
+                {i > 0 && <hr style={{ margin: '0', border: 'none', borderTop: '1px solid var(--border)' }} />}
+                <div className="row spread" style={{ alignItems: 'center', padding: '10px 0' }}>
+                  <span style={{ fontSize: '0.9rem' }}>{label}</span>
+                  <label className="toggle-switch">
+                    <input
+                      type="checkbox"
+                      checked={value}
+                      onChange={(e) => { hideSetValue(key, e.target.checked); set(e.target.checked); }}
+                    />
+                    <span className="toggle-track" />
+                  </label>
+                </div>
+              </React.Fragment>
+            ))}
+
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+            <h3 className="mt-0">Saved accounts</h3>
             <div className="row spread" style={{ marginBottom: 14, marginTop: 4 }}>
               <span className="muted" style={{ fontSize: '0.9rem' }}>
                 {accounts.length} saved
@@ -621,7 +684,8 @@ export default function SettingsPage() {
               </div>
             )}
 
-            <h2 className="mt-2">App data</h2>
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+            <h2 className="mt-0">App data</h2>
             <div className="btn-row" style={{ marginTop: 4 }}>
               <button
                 className="secondary"
@@ -637,39 +701,6 @@ export default function SettingsPage() {
                 Delete all storage
               </button>
             </div>
-          </>
-        );
-
-      case 'display':
-        return (
-          <>
-
-            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
-              What name to show in the pill, dashboard, and everywhere else.
-            </p>
-            <div className="btn-row">
-              {(
-                [
-                  { value: 'username', label: 'Username' },
-                  { value: 'first_name', label: 'First name' },
-                  { value: 'full_name', label: 'Full name' },
-                ] as { value: Settings['displayName']; label: string }[]
-              ).map((opt) => (
-                <button
-                  key={opt.value}
-                  className={settings.displayName === opt.value ? '' : 'secondary'}
-                  onClick={() => update({ displayName: opt.value })}
-                  disabled={!active}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>{!active && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
-                <InfoIcon />
-                <span>To use this setting, <Link to="/i/flow/login">please log in</Link></span>
-              </div>
-            )}
           </>
         );
 
@@ -853,6 +884,7 @@ export default function SettingsPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mpi-settings-nav-item"
+                  title={cat.desc}
                 >
                   <span className="mpi-settings-nav-item-label">{cat.label}</span>
                   <span className="mpi-settings-nav-item-chevron"><ExternalIcon size={14} /></span>
@@ -862,6 +894,7 @@ export default function SettingsPage() {
                   key={cat.id}
                   to={cat.to ?? `/settings/${cat.id}`}
                   className={`mpi-settings-nav-item${!cat.to && activeCategory === cat.id ? ' active' : ''}`}
+                  title={cat.desc}
                   onClick={() => setMobileShowDetail(true)}
                 >
                   <span className="mpi-settings-nav-item-label">{cat.label}</span>
@@ -891,7 +924,7 @@ export default function SettingsPage() {
           </div>
 
           <div className="mpi-settings-detail-scroll">
-            <div className={`mpi-settings-detail-content${activeCategory === 'sessions' ? ' mpi-settings-detail-content--wide' : ''}`}>
+            <div className={`mpi-settings-detail-content${activeCategory === 'sessions' || activeCategory === 'scambait' ? ' mpi-settings-detail-content--wide' : ''}`}>
               {renderDetail()}
             </div>
           </div>
