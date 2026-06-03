@@ -89,7 +89,7 @@ const PAGE_MAP = {
   claim: '/links/claim',
   settings: '/settings',
   scambait: '/settings/scambait',
-  oldsettings: '/settings/old',
+  oldsettings: '/settings:old',
   leaderboard: '/i/leaderboard', lb: '/i/leaderboard',
   team: '/i/team',
   notes: '/i/release_notes', releases: '/i/release_notes',
