@@ -12,7 +12,7 @@ import { InfoIcon, CloseIcon, BulbIcon } from '../components/icons.tsx';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { TransactionTable } from '../components/tx_table.tsx';
 import { generateStatements } from '../utils/fake_statements.js';
-import { storageGet, storageSet } from '../utils/storage.ts';
+import { hideGet, hideSet } from '../utils/storage.ts';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
@@ -46,7 +46,7 @@ export default function DashboardPage() {
     { refresh, skip: !active }
   );
 
-  const [hdHidden, setHdHidden] = useState(() => storageGet<number>('hidePathHint', 0) === 1);
+  const [hdHidden, setHdHidden] = useState(() => hideGet('sbshint'));
 
   const fakeStatements = useMemo(() => scambait ? generateStatements(1000, active?.id ?? null).slice(0, 10) : [], [scambait, active?.id]);
 
@@ -116,7 +116,7 @@ export default function DashboardPage() {
           <button
             className="btn ghost"
             style={{ flexShrink: 0, padding: '0 4px', lineHeight: 0 }}
-            onClick={() => { storageSet('hidePathHint', 1); setHdHidden(true); }}
+            onClick={() => { hideSet('sbshint'); setHdHidden(true); }}
           >
             <CloseIcon size={16} />
           </button>
