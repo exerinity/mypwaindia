@@ -8,6 +8,7 @@ import { ArrowLeftIcon, ExternalIcon } from '../components/icons.tsx';
 import { ErrorBox, Skeleton } from '../components/status.tsx';
 import { Modal } from '../components/modal.tsx';
 import { formatPaisa } from '../utils/money.js';
+import { hideGet, hideSet } from '../utils/storage.ts';
 
 const MIN_CLICK_DELAY_MS = 100;
 const CLICK_BATCH_SIZE = 10;
@@ -122,7 +123,7 @@ export default function IotmButtonPage() {
   const leaderboardSnapshots = useRef<Map<string, number>[]>([]);
   const [activeUsers, setActiveUsers] = useState<Set<string>>(new Set());
   const [showDotModal, setShowDotModal] = useState(false);
-  const [dotHintDismissed, setDotHintDismissed] = useState(() => !!localStorage.getItem('noButtonActiveDot'));
+  const [dotHintDismissed, setDotHintDismissed] = useState(() => hideGet('clickers'));
 
   useEffect(() => {
     if (!active?.token) return;
@@ -434,11 +435,20 @@ export default function IotmButtonPage() {
           </div>
 
           {leaderboard && leaderboard.globalClicks && (
-            <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: '0 0 12px' }}>
+            <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: '0 0 4px' }}>
               Global clicks:{' '}
               <strong style={{ color: 'var(--fg)' }}>
                 <AnimatedNumber value={parseInt(leaderboard.globalClicks.replace(/,/g, ''), 10)} />
               </strong>
+            </p>
+          )}
+          {leaderboard && (
+            <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: '0 0 12px' }}>
+              Active clickers:{' '}
+              {activeUsers.size === 0
+                ? <Skeleton height={13} style={{ width: 24, display: 'inline-block', verticalAlign: 'middle' }} />
+                : <strong style={{ color: 'var(--fg)' }}>{activeUsers.size}</strong>
+              }
             </p>
           )}
 
@@ -458,7 +468,7 @@ export default function IotmButtonPage() {
             <p style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>The dot fades away automatically if their count stops increasing.<br></br>Like almost every gizmo in this page, it's all just an estimation.</p>
             <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
               <button className="primary" onClick={() => {
-                localStorage.setItem('noButtonActiveDot', '1');
+                hideSet('clickers');
                 setDotHintDismissed(true);
                 setShowDotModal(false);
               }}>Hide the dot</button>
