@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Modal } from './modal.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { ExternalIcon } from './icons.tsx';
-import { storageGet, storageSet } from '../utils/storage.ts';
+import { hideGet, hideSet } from '../utils/storage.ts';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -13,7 +13,7 @@ export function InstallPill() {
   const { settings } = useSettings();
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [hidden, setHidden] = useState(() => storageGet<boolean>('hideInstall', false));
+  const [hidden, setHidden] = useState(() => hideGet('install'));
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -27,7 +27,7 @@ export function InstallPill() {
   if (settings.scambait || hidden) return null;
 
   function hide() {
-    storageSet('hideInstall', true);
+    hideSet('install');
     setHidden(true);
     setShowModal(false);
   }
