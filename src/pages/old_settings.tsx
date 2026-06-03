@@ -19,7 +19,7 @@ const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
 ];
 
 export default function OldSettingsPage() {
-  usePageTitle('Old settings');
+  usePageTitle('Settings');
   const { settings, update, reset } = useSettings();
   const { accounts, removeAccount, active } = useAuth();
   const navigate = useNavigate();
@@ -67,13 +67,9 @@ export default function OldSettingsPage() {
   return (
     <><div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-error">
       <ErrorIcon />
-      <span>This page is no longer being updated</span>
+      <span>This page is not updated anymore, meaning it does not have the latest settings, and some existing settings may not work anymore<br></br><Link to="/settings">Go to new settings...</Link></span>
     </div>
-      <h1 className="mt-0">Old settings</h1>
-
-      <p className="muted">
-        <Link to="/settings" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><ArrowLeftIcon /> Back to settings</Link>
-      </p>
+      <h1 className="mt-0">Settings</h1>
 
       <div className="card mb-2">
         <h3 className="mt-0">Appearance</h3>
