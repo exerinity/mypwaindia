@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { ExternalIcon } from '../components/icons.js';
 import { usePageTitle } from '../hooks/page_title.js';
 
@@ -23,6 +24,11 @@ const THX = [
     name: 'tiago',
     url: 'https://tiago.zip',
     idea: 'Helping out with the original PWA (redesigning it), and the splash screen & account switcher'
+  },
+  {
+    name: 'IBM_PC',
+    url: 'https://ibmpc.gr',
+    idea: <>CSS for <Link to="/iotm/button">the button</Link></>
   }
 ];
 
