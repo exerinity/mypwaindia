@@ -7,12 +7,30 @@ import { InfoIcon, StopIcon, WarningIcon } from '../components/icons.tsx';
 type Release = {
   version: string;
   date: string;
-  notes: (string | React.ReactElement | { h2: string } | { h3: string } | { p: string })[];
+  notes: (string | React.ReactElement | { h2: string | React.ReactElement } | { h3: string | React.ReactElement } | { p: string | React.ReactElement })[];
   subnotes?: (string | React.ReactElement)[];
   disclaimer?: string | React.ReactElement;
 };
 
 export const RELEASES: Release[] = [
+  {
+    version: '14',
+    date: '3 Jun 2026',
+    notes: [
+      { h3: <><Link to="/iotm/button">The Button changes</Link></> },
+      'The balance now animates with a slot-machine effect',
+      'A faint red dot now appears next to active clickers on the clickerboard (based on snapshot comparisons); click it to learn more or dismiss it',
+      'The auto-refresh now pauses while you\'re clicking and shows a countdown ("refreshing in Xs") when idle',
+      'Your updated balance now syncs back to the app immediately',
+      { h3: <><Link to="/settings">Settings changes</Link></> },
+      'Display name setting merged into the Appearance section',
+      <>Renamed "Data &amp; sync" to <Link to="/settings/data">Data control</Link> - and added a "Hide stuff" section so you can toggle things you previously dismissed</>,
+      'Scambait mode and Sessions panels now use the wide layout',
+      'Settings nav items now show a tooltip with the category description on hover',
+      { h3: 'Miscellaneous' },
+      'Unified all "hide this" storage flags under a single key rather than having individual flags',
+    ],
+  },
   {
     version: '13b',
     date: '1 Jun 2026',
@@ -302,7 +320,7 @@ function ReleaseItem({ r, borderBottom, open, onToggle }: { r: Release; borderBo
   );
 }
 
-type ReleaseBlock = { h2: string } | { h3: string } | { p: React.ReactNode };
+type ReleaseBlock = { h2: string | React.ReactElement } | { h3: string | React.ReactElement } | { p: React.ReactNode };
 type ReleaseEntry = Release | ReleaseBlock;
 
 const RELEASE_LIST: ReleaseEntry[] = [
