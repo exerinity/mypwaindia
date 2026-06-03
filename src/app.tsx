@@ -103,7 +103,7 @@ export default function App() {
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
         <Route path="/settings/:category" element={<SettingsPage />} />
-        <Route path="/settings/old" element={<OldSettingsPage />} />
+        <Route path="/settings:old" element={<OldSettingsPage />} />
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
         <Route path="/i/flow/scambaitmode" element={<Navigate to="/settings/scambait" replace />} />
         <Route path="/i/flow/connection" element={<ConnectionPage />} />
