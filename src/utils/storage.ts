@@ -29,4 +29,19 @@ export const KEYS = {
   ACTIVE_ACCOUNT: 'mpi_active_account',
   SETTINGS: 'mpi_settings',
   ONBOARD: 'accepted_onboard',
+  HIDE: 'mpi_hide',
 };
+
+type HideKey = 'install' | 'sbshint' | 'clickers';
+
+export function hideGet(key: HideKey): boolean {
+  return storageGet<Partial<Record<HideKey, boolean>>>(KEYS.HIDE, {})[key] ?? false;
+}
+
+export function hideSet(key: HideKey): void {
+  storageSet(KEYS.HIDE, { ...storageGet<Partial<Record<HideKey, boolean>>>(KEYS.HIDE, {}), [key]: true });
+}
+
+export function hideSetValue(key: HideKey, value: boolean): void {
+  storageSet(KEYS.HIDE, { ...storageGet<Partial<Record<HideKey, boolean>>>(KEYS.HIDE, {}), [key]: value });
+}
