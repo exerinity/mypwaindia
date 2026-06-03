@@ -39,8 +39,8 @@ const INSPIRATIONS = [
     idea: 'Settings (v2) layout idea, and routing scheme (/i/flow, etc), tab title ("This / MyPayIndia" "That / Twitter")',
   },
   {
-    name: 'tiago',
-    url: 'https://tiago.zip'
+    name: 'The main website',
+    idea: 'General layout and design inspiration'
   }
 ];
 
