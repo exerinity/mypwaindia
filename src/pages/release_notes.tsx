@@ -25,17 +25,19 @@ export const RELEASES: Release[] = [
       { h3: <><Link to="/settings">Settings changes</Link></> },
       'Display name setting merged into the Appearance section',
       <>Renamed "Data &amp; sync" to <Link to="/settings/data">Data control</Link> - and added a "Hide stuff" section so you can toggle things you previously dismissed</>,
+      <>Added a <Link to="/settings/appearance">custom theme setting</Link> with link sharing</>,
       'Scambait mode and Sessions panels now use the wide layout',
       'Settings nav items now show a tooltip with the category description on hover',
       { h3: 'Miscellaneous' },
       'Unified all "hide this" storage flags under a single key rather than having individual flags',
+      <>Added a <Link to="/account/transfer/bulk">bulk transfer page</Link></>
     ],
   },
   {
     version: '13b',
     date: '1 Jun 2026',
     notes: [
-      { h3: 'Happy Pride month!',},
+      { h3: 'Happy Pride month!', },
       <>The Button has moved to <Link to="/iotm/button">/iotm/button</Link> (old link still redirects)</>,
       <>The <Link to="/i/leaderboard">leaderboard</Link> now auto-refreshes every 10 seconds with a counting-up animation on balances, and a pause/refresh now control</>,
       'The clickerboard on the Button page also auto-refreshes every 10 seconds with the same animation',
@@ -299,7 +301,7 @@ function ReleaseItem({ r, borderBottom, open, onToggle }: { r: Release; borderBo
                 flush(`ul${j}`);
                 if ('h2' in note) out.push(<h2 key={j}>{note.h2}</h2>);
                 else if ('h3' in note) out.push(<h3 key={j}>{note.h3}</h3>);
-                else if ('p'  in note) out.push(<p  key={j}>{note.p}</p>);
+                else if ('p' in note) out.push(<p key={j}>{note.p}</p>);
               } else {
                 buf.push(<li key={j}>{note as React.ReactNode}</li>);
               }
@@ -360,7 +362,7 @@ export default function ReleaseNotesPage() {
         {RELEASE_LIST.map((entry, i) => {
           if ('h2' in entry) return <h2 key={i}>{entry.h2}</h2>;
           if ('h3' in entry) return <h3 key={i}>{entry.h3}</h3>;
-          if ('p'  in entry) return <p  key={i}>{entry.p}</p>;
+          if ('p' in entry) return <p key={i}>{entry.p}</p>;
           return (
             <ReleaseItem
               key={entry.version}
