@@ -10,7 +10,7 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { normalizeHex } from '../utils/colors.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon } from '../components/icons.tsx';
+import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon, BulbIcon } from '../components/icons.tsx';
 import { FloatingInput } from '../components/floating_input.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useApiCall } from '../hooks/api_call.js';
@@ -334,7 +334,10 @@ export default function SettingsPage() {
       case 'appearance':
         return (
           <>
-          <h3 className="mt-0">Theme</h3><p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>Change the theme and accent color, or make your own</p>
+            <h3 className="mt-0">Theme</h3><p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>Change the theme and accent color, or make your own</p>
+            <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <BulbIcon></BulbIcon><span>Try out the custom theme system!</span>
+            </div>
             <label>Preset</label>
             <div className="btn-row">
               {THEME_OPTIONS.map((opt) => (
@@ -426,18 +429,18 @@ export default function SettingsPage() {
                   );
                 })}
 
-                <label className="mt-2">Export or import</label>
+                <label className="mt-2">Share</label>
                 <div className="btn-row" style={{ marginTop: 4 }}>
                   <button className="secondary compact" onClick={() => {
                     const blob = new Blob([JSON.stringify(settings.customTheme, null, 2)], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'mpitheme.json';
+                    a.download = 'mpi_theme.json';
                     a.click();
                     URL.revokeObjectURL(url);
                   }}>
-                    Export
+                    Export file
                   </button>
                   <button className="secondary compact" onClick={() => {
                     const input = document.createElement('input');
@@ -465,7 +468,22 @@ export default function SettingsPage() {
                     };
                     input.click();
                   }}>
-                    Import
+                    Import file
+                  </button>
+                  <button className="secondary compact" onClick={() => {
+                    const colorKeys = CUSTOM_VAR_KEYS.filter((k) => k !== '--shadow');
+                    const colorsHex = colorKeys.map((k) => {
+                      const norm = normalizeHex(settings.customTheme[k] ?? '');
+                      return (norm ?? '#000000').slice(1);
+                    }).join('');
+                    const accentHex = (normalizeHex(settings.accent) ?? '#d03505').slice(1);
+                    const url = `https://mypayindia.sbs/i/flow/theme?id=${colorsHex}${accentHex}`;
+                    navigator.clipboard.writeText(url).then(
+                      () => toast.success('The theme has been encoded into a link and copied to your clipboard!'),
+                      () => toast.error('Copying failed, why not create a file?'),
+                    );
+                  }}>
+                    Generate link
                   </button>
                 </div>
               </>
