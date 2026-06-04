@@ -9,6 +9,7 @@ import LoginPage from './pages/login.tsx';
 import DashboardPage from './pages/dashboard.tsx';
 import AccountPage from './pages/account.tsx';
 import TransferPage from './pages/transfer.tsx';
+import BulkTransferPage from './pages/bulk_transfer.tsx';
 import HistoryPage from './pages/history.tsx';
 import StatementsPage from './pages/statements.tsx';
 import CardsPage from './pages/cards.tsx';
@@ -29,6 +30,7 @@ import RestrictionsPage from './pages/restrictions.tsx';
 import ConnectionPage from './pages/connection.tsx';
 import IotmButtonPage from './pages/iotm_button.tsx';
 import IOTMPage from './pages/iotm.tsx';
+import ThemeApplyPage from './pages/theme_apply.tsx';
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -55,6 +57,11 @@ function PayLinkRedirect() {
 function ExternalRedirect({ to }: { to: string }) {
   window.location.replace(to);
   return null;
+}
+
+function ThemeRedirect() {
+  const { search } = useLocation();
+  return <Navigate to={`/i/flow/theme${search}`} replace />;
 }
 
 function MerchantRedirect() {
@@ -107,6 +114,8 @@ export default function App() {
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
         <Route path="/i/flow/scambaitmode" element={<Navigate to="/settings/scambait" replace />} />
         <Route path="/i/flow/connection" element={<ConnectionPage />} />
+        <Route path="/i/flow/theme" element={<ThemeApplyPage />} />
+        <Route path="/theme" element={<ThemeRedirect />} />
 
         <Route path="/i/flow/mci" element={<CLIPage />} />
         <Route path="/i/flow/mci/focus" element={<CLIPage />} />
@@ -116,6 +125,7 @@ export default function App() {
           <Route path="/account" element={<AccountPage />} />
           <Route path="/account/restrictions" element={<RestrictionsPage />} />
           <Route path="/account/transfer" element={<TransferPage />} />
+          <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
           <Route path="/account/history" element={<HistoryPage />} />
           <Route path="/links" element={<LinksPage />} />
           <Route path="/links/claim" element={<ClaimLinkPage />} />
