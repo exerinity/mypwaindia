@@ -2,20 +2,40 @@ import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { AppFooter } from '../components/app_footer.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
-import { storageSet, KEYS } from '../utils/storage.ts';
+import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
 import { usePageTitle } from '../hooks/page_title.js';
 import { RELEASES } from './release_notes.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { ExternalIcon } from '../components/icons.tsx';
+import { ConfirmModal } from '../components/confirm_modal.tsx';
 
 export default function OnboardingPage() {
   usePageTitle('Welcome to the MyPayIndia PWA');
   const { active } = useAuth();
   const navigate = useNavigate();
   const [leaving, setLeaving] = useState(false);
+  const [alreadyAccepted] = useState(() => storageGet<number>(KEYS.ONBOARD, 0) === 1);
+  const [showAnyway, setShowAnyway] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(true);
 
   if (!active) {
     return <Navigate to="/i/flow/login" replace />;
+  }
+
+  if (alreadyAccepted && !showAnyway) {
+    return (
+      <ConfirmModal
+        open={confirmOpen}
+        fullscreen
+        title="Just making sure..."
+        message="You've already accepted the onboarding message. Would you like to see it again anyway?"
+        confirmLabel="Yeah gimme"
+        cancelLabel="Nah"
+        danger={false}
+        onClose={() => { setConfirmOpen(false); navigate(-1); }}
+        onConfirm={() => setShowAnyway(true)}
+      />
+    );
   }
 
   function accept() {
@@ -38,11 +58,6 @@ export default function OnboardingPage() {
             and does not take precedence over it
           </li>
           <li>
-            Not everything that can be performed on{' '}
-            <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>{' '}
-            can be performed here
-          </li>
-          <li>
             Roughly 90% of things can be done here from <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>
           </li>
           <li>
@@ -58,12 +73,12 @@ export default function OnboardingPage() {
           <li>
             <strong>This app is still an early work in progress</strong>
           </li>
-          <li>
-            <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noopener noreferrer">
-            Please submit feedback in the Discord, @exerinity #dev
-          </a>
-          </li>
         </ul>
+        <p className="mt-0 mb-0">
+          <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noopener noreferrer">
+            Please submit feedback in the Discord, mentioning @exerinity in the #dev channel <ExternalIcon />
+          </a>
+        </p>
         <button onClick={accept} style={{ width: '100%', marginTop: '8px' }}>
           I understand, let me in!
         </button>
