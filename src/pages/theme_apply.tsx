@@ -135,7 +135,7 @@ export default function ThemeApplyPage() {
           >
             {previewing ? 'Stop' : 'Show me first'}
           </button>
-          <button className="secondary" onClick={() => navigate(-1)}>No</button>
+          <button className="secondary" onClick={() => navigate('/dash')}>No</button>
         </div>
       </div>
     </div>
