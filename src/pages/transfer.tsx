@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
@@ -15,13 +15,13 @@ import { Modal } from '../components/modal.tsx';
 import type { Transaction } from '../components/tx_table.tsx';
 
 const PRESETS_PAISA = [
-  100,    // ₹1
-  500,    // ₹5
-  1000,   // ₹10
-  5000,   // ₹50
-  10000,  // ₹100
-  50000,  // ₹500
-  100000, // ₹1,000
+  100,    // 1
+  500,    // 5
+  1000,   // 10
+  5000,   // 50
+  10000,  // 100
+  50000,  // 500
+  100000, // 1,000
 ];
 
 export default function TransferPage() {
@@ -111,10 +111,13 @@ export default function TransferPage() {
 
   return (
     <>
-      <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭" fullscreen>
+      <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭">
         <img src="https://cologne.exerinity.com/son.png" alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
       <h1 className="mt-0">Transfer funds</h1>
+      <p className="muted" style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
+        Sending to multiple people? <Link to="/account/transfer/bulk">Bulk transfer...</Link>
+      </p>
       <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <InfoIcon /><span>Please note that transfers above a certain amount are subject to manual review by our team.</span>
       </div>
