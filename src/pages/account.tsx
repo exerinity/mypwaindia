@@ -225,7 +225,7 @@ export default function AccountPage() {
                   </button>
                 )}
               </div>
-              <Modal open={personalDetailsOpen} onClose={() => { setPersonalDetailsOpen(false); setSecurityCode(['', '', '', '', '']); }} title="Personal details">
+              <Modal open={personalDetailsOpen} onClose={() => { setPersonalDetailsOpen(false); setSecurityCode(['', '', '', '', '']); }} title="Personal details" fullscreen>
                 <p style={{ marginTop: 0 }}>
                   For security purposes, your personal details cannot be displayed directly.
                 </p>
