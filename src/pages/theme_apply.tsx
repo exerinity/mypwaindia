@@ -96,7 +96,7 @@ export default function ThemeApplyPage() {
   return (
     <div className="mpi-themeap">
       <h1 className="mt-0">Apply this theme?</h1>
-      <p className="mt-0 mb-0">Someone has been kind enough to share this theme with you! <Link to="/settings/appearance">You can modify it further in settings</Link>. You can also create links just like this there too!</p>
+      <p className="mt-0 mb-0"><Link to="/settings/appearance">You can modify it further in settings</Link>. You can also create links just like this there too!</p>
       <div className="card" style={{ maxWidth: 480 }}>
         <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', marginBottom: 20 }}>
           {entries.map(([key, value], i) => (
