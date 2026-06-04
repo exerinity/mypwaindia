@@ -82,7 +82,7 @@ export default function ThemeApplyPage() {
     return (
       <div className="mpi-themeap">
         <h1 className="mt-0">Bad theme</h1>
-        <p className="mt-0 mb-0">This theme is either corrupt, invalid, or you didn't apply one at all. Why not you go make one?</p>
+        <p className="mt-0 mb-0">This theme is either corrupt, invalid, or you didn't apply one at all. Why not go make one?</p>
         <button className="secondary" onClick={() => navigate('/settings/appearance')}>Go to settings</button>
       </div>
     );
