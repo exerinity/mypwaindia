@@ -9,10 +9,12 @@ import './styles/index.css';
 
 function Root() {
   useEffect(() => {
+    console.log(`loaded in ${(performance.now() - (window as any).__t0).toFixed(1)}ms`);
     const el = document.getElementById('splash');
     if (!el) return;
     el.classList.add('out');
-    const t = setTimeout(() => el.remove(), 500);
+    document.getElementById('mpi-meow')?.classList.add('in');
+    const t = setTimeout(() => el.remove(), 550);
     return () => clearTimeout(t);
   }, []);
 
