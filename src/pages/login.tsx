@@ -70,7 +70,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={leaving ? 'page-slide-out' : 'page-slide-in'} onAnimationEnd={() => { if (leaving) navigate('/dash'); }} style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div className={leaving ? 'page-slide-out' : 'page-slide-in'} onAnimationEnd={() => { if (leaving) { if ((window.history.state?.idx ?? 0) > 0) navigate(-1); else navigate('/dash'); } }} style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div className="card" style={{ maxWidth: 400, width: '100%' }}>
         <h2 className="mt-0">Log in to MyPayIndia</h2>
 

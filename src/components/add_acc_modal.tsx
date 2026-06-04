@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Modal } from './modal.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
@@ -12,8 +12,16 @@ interface AddAccountModalProps { open: boolean; onClose: () => void }
 type Step = 'choice' | 'save-creds';
 
 export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
-  const { accounts, maxAccounts, saveCredentials } = useAuth();
+  const { accounts, active, maxAccounts, saveCredentials } = useAuth();
   const toast = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (open && !active?.token) {
+      onClose();
+      navigate('/i/flow/login');
+    }
+  }, [open]);
 
   const [step, setStep] = useState<Step>('choice');
   const [username, setUsername] = useState('');
