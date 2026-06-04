@@ -26,6 +26,7 @@ export default function NotFoundPage() {
           rel="noreferrer"
         >Try on legacy app <ExternalIcon size={11} /></a>
       </div>
+      <small><i>(if you're certain there should be something here, refresh the page with CTRL+Shift+R, the cached router might be out of date)</i></small>
     </>
   );
 }
