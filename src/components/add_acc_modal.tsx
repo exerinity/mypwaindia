@@ -66,7 +66,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
           <button className="option" onClick={() => setStep('save-creds')} disabled={atCapacity} style={{ flexDirection: 'row', alignItems: 'center' }}>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
               <span className="option-label">Just save credentials</span>
-              <span className="option-desc">for logging in later (not recommended)</span>
+              <span className="option-desc">for logging in later</span>
             </div>
             <ChevronRight />
           </button>
@@ -74,7 +74,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
             <button className="option" disabled style={{ flexDirection: 'row', alignItems: 'center' }}>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <span className="option-label">Log in</span>
-                <span className="option-desc">through the full login flow (/i/flow/login)</span>
+                <span className="option-desc">through the full login flow</span>
               </div>
               <ExternalIcon />
             </button>
@@ -82,7 +82,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
             <Link to="/i/flow/login" className="option" onClick={handleClose} style={{ flexDirection: 'row', alignItems: 'center' }}>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <span className="option-label">Log in</span>
-                <span className="option-desc">through the full login flow (/i/flow/login)</span>
+                <span className="option-desc">through the full login flow</span>
               </div>
               <ExternalIcon />
             </Link>
@@ -91,7 +91,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
       ) : (
         <form onSubmit={handleSaveCreds}>
           <p className="muted" style={{ marginTop: 0, fontSize: '0.875rem' }}>
-            These details will be saved but a session will not be initiated. You can switch to it any time in the account switcher and its information (like name and balance) will be populated
+            These details will be saved but a session will not be initiated. You can switch to it any time in the account switcher and its information (like name and balance) will then be populated
           </p>
           <FloatingInput
             label="Username or email"
