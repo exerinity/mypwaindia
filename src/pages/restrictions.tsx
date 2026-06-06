@@ -27,9 +27,9 @@ export default function RestrictionsPage() {
   return (
     <>
       <h1 className="mt-0">Restrictions</h1>
-      <p className="muted" style={{ marginBottom: 20 }}>
+      <p className="mt-0 mb-0" style={{ marginBottom: 20 }}>
         <Link to="/account" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-          <ArrowLeftIcon /> Back to account
+          <ArrowLeftIcon /> Back
         </Link>
       </p>
 
@@ -51,7 +51,7 @@ export default function RestrictionsPage() {
       ) : error ? (
         <ErrorBox error={error} />
       ) : restrictionList.length === 0 ? (
-        <p>You don't have any active restrictions on your account. If you were expecting to see anything here or somehow landed on this page by mistake, you might want to clear your cache and/or log out and back in.</p>
+        <p className="mt-0 mb-0">You don't have any active restrictions on your account. If you were expecting to see anything here or somehow landed on this page by mistake, you might want to clear your cache and/or log out and back in.</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {restrictionList.map(([key, val]) => {
@@ -63,7 +63,7 @@ export default function RestrictionsPage() {
                   <h2 style={{ margin: 0, fontSize: '1.15rem' }}>{info.title}</h2>
                 </div>
 
-                <p style={{ margin: '0 0 20px', lineHeight: 1.65 }}>
+                <p className="mt-0 mb-0" style={{ margin: '0 0 20px', lineHeight: 1.65 }}>
                   {info.longDescription ?? info.description}
                 </p>
 

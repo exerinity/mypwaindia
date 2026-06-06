@@ -137,6 +137,15 @@ export default function LoginPage() {
           >
             {busy ? <><span className="spinner" /> Logging in...</> : <>Log in</>}
           </button>
+          <a
+            href="https://mypayindia.com/accountservices/register"
+            target="_blank"
+            rel="noreferrer"
+            className="btn secondary"
+            style={{ width: '100%', marginTop: '12px', justifyContent: 'center' }}
+          >
+            Sign up on the main website <ExternalIcon></ExternalIcon>
+          </a>
         </form>
 
         <div className="mt-2 center">
