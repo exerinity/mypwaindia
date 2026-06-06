@@ -24,7 +24,7 @@ export default function TransactionPage() {
   return (
     <>
       <h1 className="mt-0">Transaction</h1>
-      <p className="muted">
+      <p className="mt-0 mb-0">
         <Link to="/account/history" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><ArrowLeftIcon /> Back to history</Link>
       </p>
 
