@@ -1120,7 +1120,6 @@ export default function SettingsPage() {
         open={!!terminatingProgress}
         onClose={() => { terminateStopRef.current = true; }}
         title="Terminating sessions..."
-        fullscreen
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 0, marginBottom: 16 }}>
           <span className="spinner" />
