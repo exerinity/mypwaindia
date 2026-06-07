@@ -41,8 +41,10 @@ export function AppLayout() {
     { refresh: settings.autoRefresh, skip: !active }
   );
   const restrictionList = Object.entries(restrictionsQ.data?.restrictions || {}).filter(([, v]) => v?.active);
-  const fetchFailedCode = (restrictionsQ.error as { code?: number } | null)?.code;
-  const fetchFailed = fetchFailedCode === -1 || fetchFailedCode === -2;
+  const fetchFailedError = restrictionsQ.error as { code?: number; status?: number } | null;
+  const fetchFailedCode = fetchFailedError?.code;
+  const bastionDown = [502, 503, 504, 523].includes(fetchFailedError?.status ?? 0);
+  const fetchFailed = fetchFailedCode === -1 || fetchFailedCode === -2 || bastionDown;
   const sessionExpired = fetchFailedCode === 1001;
 
   const updateToastShown = useRef(false);
