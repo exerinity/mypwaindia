@@ -18,6 +18,7 @@ export interface Settings {
   accent: string;
   autoRefresh: boolean;
   autoRefreshOnlyWhenFocused: boolean;
+  autoUpdate: boolean;
   displayName: 'username' | 'first_name' | 'full_name';
   scambait: boolean;
   homePage: string;
@@ -37,6 +38,7 @@ const DEFAULT_SETTINGS: Settings = {
   accent: '#d03505',
   autoRefresh: true,
   autoRefreshOnlyWhenFocused: true,
+  autoUpdate: false,
   displayName: 'username',
   scambait: false,
   homePage: '/dash',
