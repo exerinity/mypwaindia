@@ -10,7 +10,8 @@ import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { WarningIcon } from './icons.tsx';
-import { storageGet, KEYS } from '../utils/storage.ts';
+import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
+import { RELEASES } from '../pages/release_notes.tsx';
 import { useApiCall } from '../hooks/api_call.js';
 import { getRestrictions } from '../api/user.js';
 import { getRestrictionInfo } from '../utils/restrictions.js';
@@ -45,24 +46,60 @@ export function AppLayout() {
   const sessionExpired = fetchFailedCode === 1001;
 
   const updateToastShown = useRef(false);
-  const { needRefresh: [needRefresh] } = useRegisterSW();
+  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW();
+
+  function syncLastVersion(announce: boolean) {
+    const latest = RELEASES[0].version;
+    const stored = storageGet<string | null>(KEYS.LAST_VERSION, null);
+    if (stored === latest) return;
+    if (announce && stored !== null) {
+      const id = toast.push("MyPWAIndia has been updated - would you like to read what's new?", 'success', 0, {
+        label: 'Go',
+        onClick: () => {
+          toast.remove(id);
+          navigate('/i/release_notes');
+        },
+      }, () => {
+        if (settings.autoUpdate) return;
+        const hintId = toast.push('You can enable automatic refreshing in settings', 'info', 6000, {
+          label: 'Show me...',
+          onClick: () => {
+            toast.remove(hintId);
+            navigate('/settings/data');
+          },
+        });
+      });
+    }
+    storageSet(KEYS.LAST_VERSION, latest);
+  }
+
+  useEffect(() => {
+    syncLastVersion(true);
+  }, []);
+
+  function performUpdate() {
+    toast.info('Updating, one moment...');
+    syncLastVersion(false);
+    navigator.serviceWorker.addEventListener('controllerchange', () => window.location.reload(), { once: true });
+    updateServiceWorker(true);
+  }
 
   useEffect(() => {
     if (needRefresh && !updateToastShown.current) {
       updateToastShown.current = true;
-      toast.push('A new version is available, refresh to update', 'info', 0, {
-        label: 'Refresh',
-        onClick: async () => {
-          try {
-            const regs = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(regs.map(r => r.unregister()));
-          } finally {
-            window.location.reload();
-          }
-        },
-      });
+      if (settings.autoUpdate) {
+        performUpdate();
+      } else {
+        const id = toast.push('A new version is available, would you like to reload?', 'info', 0, {
+          label: 'Go',
+          onClick: () => {
+            toast.remove(id);
+            performUpdate();
+          },
+        });
+      }
     }
-  }, [needRefresh, toast]);
+  }, [needRefresh, toast, settings.autoUpdate]);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
