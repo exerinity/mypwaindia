@@ -9,27 +9,11 @@ export default defineConfig({
       registerType: 'autoUpdate',
       manifestFilename: 'mypayindia.webmanifest',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
-      workbox: {
-        globPatterns: ['**/*.{woff2,png,svg,ico}'],
-        navigateFallback: undefined,
-        runtimeCaching: [
-          {
-            urlPattern: ({ request }) => request.mode === 'navigate',
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'pages-cache',
-              networkTimeoutSeconds: 4
-            }
-          },
-          {
-            urlPattern: ({ request }) => request.destination === 'script' || request.destination === 'style',
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'assets-cache',
-              networkTimeoutSeconds: 4
-            }
-          }
-        ]
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,woff2,png,svg,ico}']
       },
       manifest: {
         name: 'MyPayIndia PWA',
