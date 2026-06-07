@@ -61,7 +61,7 @@ export function AppLayout() {
         },
       }, () => {
         if (settings.autoUpdate) return;
-        const hintId = toast.push('You can enable automatic refreshing in settings', 'info', 6000, {
+        const hintId = toast.push('You can enable automatic updates in settings', 'info', 6000, {
           label: 'Show me...',
           onClick: () => {
             toast.remove(hintId);
