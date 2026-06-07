@@ -40,6 +40,9 @@ export function AppLayout() {
     { refresh: settings.autoRefresh, skip: !active }
   );
   const restrictionList = Object.entries(restrictionsQ.data?.restrictions || {}).filter(([, v]) => v?.active);
+  const fetchFailedCode = (restrictionsQ.error as { code?: number } | null)?.code;
+  const fetchFailed = fetchFailedCode === -1 || fetchFailedCode === -2;
+  const sessionExpired = fetchFailedCode === 1001;
 
   const updateToastShown = useRef(false);
   const { needRefresh: [needRefresh] } = useRegisterSW();
@@ -103,6 +106,16 @@ export function AppLayout() {
       {active && !settings.scambait && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
         <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
+        </div>
+      )}
+      {sessionExpired && (
+        <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <WarningIcon /> Your session has expired. Would you like to <Link to="/settings/sessions" className="link">reinitialize the session</Link>?
+        </div>
+      )}
+      {fetchFailed && (
+        <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link>
         </div>
       )}
       {!isOnline && (

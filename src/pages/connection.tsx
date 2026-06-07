@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { usePageTitle } from '../hooks/page_title.js';
+import { Link } from 'react-router-dom';
 
 type CheckState = 'loading' | 'success' | 'fail';
 
@@ -47,7 +48,7 @@ export default function ConnectionPage() {
   let conclusion: React.ReactNode = 'Waiting for the results...';
   if (allDone) {
     if (onLine && bastion && mpi) {
-      conclusion = <>You are connected to the internet, the gateway responded and so did MyPayIndia. If the app is misbehaving, there may be a stale cache - press <kbd>Ctrl+Shift+R</kbd> to update it</>;
+      conclusion = <>You are connected to the internet, the gateway responded and so did MyPayIndia. If the app is misbehaving, there may be a stale cache - press <kbd>Ctrl+Shift+R</kbd> to update it. Or your session may have expired - <Link to="/settings/sessions" className="link">reinitialize the session</Link>.</>;
     } else if (onLine && !bastion && mpi) {
       conclusion = <>The gateway is unresponsive. Please notify <a href="https://exerinity.com/hello">exerinity</a>.</>;
     } else if (onLine && bastion && !mpi) {

@@ -6,6 +6,7 @@ import { AppFooter } from '../components/app_footer.tsx';
 import { RELEASES } from './release_notes.tsx';
 import { useSettings, CUSTOM_VAR_KEYS } from '../context/settings_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
+import { login as apiLogin, logout as apiLogout } from '../api/auth.js';
 import { useToast } from '../context/toast_ctx.tsx';
 import { normalizeHex } from '../utils/colors.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
@@ -181,7 +182,7 @@ export default function SettingsPage() {
   usePageTitle(isUnknownCategory ? 'What' : activeCat.label);
 
   const { settings, update, reset } = useSettings();
-  const { accounts, removeAccount, active } = useAuth();
+  const { accounts, removeAccount, active, updateAccountInfo } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -189,6 +190,7 @@ export default function SettingsPage() {
   const [accentInput, setAccentInput] = useState(settings.accent);
   const [removeOneTarget, setRemoveOneTarget] = useState<Account | null>(null);
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
+  const [reinitStage, setReinitStage] = useState<'logout' | 'sleeping' | 'login' | null>(null);
   const [customHomeInput, setCustomHomeInput] = useState<string | null>(() =>
     HOME_PAGE_OPTIONS.some((o) => o.value === settings.homePage) ? null : settings.homePage
   );
@@ -244,6 +246,24 @@ export default function SettingsPage() {
     if (sessionSort === first) return ' ↓';
     if (sessionSort === second) return ' ↑';
     return ' ↕';
+  }
+
+  async function doReinitializeSession() {
+    if (!active?.password) return;
+    setReinitStage('logout');
+    try { await apiLogout(); } catch (_) { }
+    setReinitStage('sleeping');
+    await new Promise<void>((r) => setTimeout(r, 1000));
+    setReinitStage('login');
+    try {
+      const data = await apiLogin({ username: active.username, password: active.password, env: active.env }) as { user: { role: string; username: string }; session_id: string };
+      updateAccountInfo(active.id, { token: data.session_id, role: data.user.role, username: data.user.username });
+      toast.success('Session reinitialized');
+    } catch (e) {
+      toast.error(describeError(e));
+    } finally {
+      setReinitStage(null);
+    }
   }
 
   async function doKillSession(id: string) {
@@ -803,6 +823,31 @@ export default function SettingsPage() {
                 <span>To view sessions, <Link to="/i/flow/login">please log in</Link></span>
               </div>
             )}
+            {active && (
+              <>
+                <h3 className="mt-0">Reinitialize session</h3>
+                <p style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+                  If something feels stuck or out of sync, you can tell bastion to log you out and back in using your saved credentials.
+                </p>
+                <div className="row spread" style={{ alignItems: 'center', marginBottom: 20 }}>
+                  <button
+                    className="compact"
+                    disabled={!active.password || reinitStage !== null}
+                    onClick={doReinitializeSession}
+                  >
+                    {reinitStage === 'logout' && <><span className="spinner" /> Logging out...</>}
+                    {reinitStage === 'sleeping' && <><span className="spinner" /> Waiting...</>}
+                    {reinitStage === 'login' && <><span className="spinner" /> Logging in...</>}
+                    {reinitStage === null && 'Reinitialize session'}
+                  </button>
+                  {!active.password && (
+                    <span className="muted" style={{ fontSize: '0.85rem' }}>No saved password for this account, so this can't be done</span>
+                  )}
+                </div>
+                <hr style={{ margin: '0 0 20px', borderColor: 'var(--border)' }} />
+              </>
+            )}
+
             {active && (sessionsQ.loading && !sessionsQ.data ? (
               <>
                 {Array.from({ length: 3 }).map((_, i) => (

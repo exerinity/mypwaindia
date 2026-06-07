@@ -114,7 +114,7 @@ export default function AcknowledgementsPage() {
     <>
       <h1 className="mt-0">Acknowledgements</h1>
 
-      <p className="mt-0 mb-0">The second incarnation of the MyPayIndia PWA is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™. <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>The first incarnation <ExternalIcon size={12} /></a> was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 went live.</p>
+      <p className="mt-0 mb-0">The second incarnation of the MyPayIndia PWA is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (sans <Link to="/iotm/button">the button</Link>). <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>The first incarnation <ExternalIcon size={12} /></a> was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 went live.</p>
 
       <p className="mt-0 mb-0">This page is a list of everything and everybody who made it possible:</p>
 
