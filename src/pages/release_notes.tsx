@@ -14,6 +14,14 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '14a',
+    date: '7 Jun 2026',
+    notes: [
+      <>Added a new devtools/debug/toys/whatever page: <Link to="/i/flow/mpti">MyPWAToysIndia</Link></>,
+      <>Buffed toast notifications: new animations, and hovering over them halts the time to expire</>
+    ]
+  },
+  {
     version: '14',
     date: '3 Jun 2026',
     notes: [
