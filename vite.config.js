@@ -11,7 +11,7 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
       workbox: {
         globPatterns: ['**/*.{woff2,png,svg,ico}'],
-        navigateFallback: '/index.html',
+        navigateFallback: undefined,
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.mode === 'navigate',
