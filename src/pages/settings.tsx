@@ -641,6 +641,17 @@ export default function SettingsPage() {
                 Only when focused
               </label>
             </div>
+            <div className="checkbox-row" style={{ marginTop: '0.5rem' }}>
+              <input
+                type="checkbox"
+                id="auto-update"
+                checked={settings.autoUpdate}
+                onChange={(e) => update({ autoUpdate: e.target.checked })}
+              />
+              <label htmlFor="auto-update" style={{ margin: 0 }}>
+                Automatically update the app when a new version is available
+              </label>
+            </div>
 
             <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
             <h3 className="mt-0">Hide stuff</h3>
