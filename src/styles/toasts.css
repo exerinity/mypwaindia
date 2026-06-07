@@ -21,6 +21,31 @@
   min-width: 220px;
   box-shadow: var(--shadow);
   background: var(--card);
+  animation: toast-slide-up 0.25s ease-out;
+}
+
+.toast.toast-leaving {
+  animation: toast-fade-out 0.2s ease-in forwards;
+}
+
+@keyframes toast-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .toast-x {
