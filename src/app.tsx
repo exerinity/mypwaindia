@@ -31,6 +31,7 @@ import ConnectionPage from './pages/connection.tsx';
 import IotmButtonPage from './pages/iotm_button.tsx';
 import IOTMPage from './pages/iotm.tsx';
 import ThemeApplyPage from './pages/theme_apply.tsx';
+import MPTIPage from './pages/toys.tsx';
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -119,6 +120,7 @@ export default function App() {
 
         <Route path="/i/flow/mci" element={<CLIPage />} />
         <Route path="/i/flow/mci/focus" element={<CLIPage />} />
+        <Route path="/i/flow/mpti" element={<MPTIPage />} />
 
         {/* login */}
         <Route element={<RequireAuth />}>
