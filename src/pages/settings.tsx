@@ -165,6 +165,7 @@ const CATEGORIES: Category[] = [
   { id: 'scambait', label: 'Scambait mode', desc: '67', hideWhenScambait: true },
   { id: 'sessions', label: 'Sessions', desc: 'View and manage active login sessions', authRequired: true },
   { id: 'logout', label: 'Log out', desc: 'Log out of MyPWAIndia', authRequired: true, to: '/i/flow/logout' },
+  { id: 'toys', label: 'Toys', desc: 'Poke around with UI components', to: '/i/flow/mpti', hideWhenScambait: true },
   { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/accountservices/accsettings' },
   { id: 'mypayindia', label: 'MyPayIndia.com', desc: 'Visit the main website', href: 'https://mypayindia.com' },
   { id: 'old_settings', label: 'Old settings', desc: 'Legacy flat-card layout', to: '/settings:old', hideWhenScambait: true },
