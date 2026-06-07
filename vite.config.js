@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       manifestFilename: 'mypayindia.webmanifest',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
       strategies: 'injectManifest',
