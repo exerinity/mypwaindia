@@ -23,12 +23,13 @@ interface Toast {
   message: string;
   kind: ToastKind;
   action?: ToastAction;
+  onDismiss?: () => void;
   leaving?: boolean;
 }
 
 interface ToastContextValue {
   toasts: Toast[];
-  push: (message: string, kind?: ToastKind, timeout?: number, action?: ToastAction) => number;
+  push: (message: string, kind?: ToastKind, timeout?: number, action?: ToastAction, onDismiss?: () => void) => number;
   remove: (id: number) => void;
   success: (message: string, timeout?: number) => number;
   error: (message: string, timeout?: number) => number;
@@ -61,7 +62,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       clearTimeout(timer.timeoutId);
       timers.current.delete(id);
     }
-    setToasts((t) => t.map((x) => (x.id === id ? { ...x, leaving: true } : x)));
+    setToasts((t) => {
+      const found = t.find((x) => x.id === id);
+      if (found && !found.leaving) found.onDismiss?.();
+      return t.map((x) => (x.id === id ? { ...x, leaving: true } : x));
+    });
     setTimeout(() => remove(id), EXIT_DURATION);
   }, [remove]);
 
@@ -85,9 +90,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     timers.current.set(id, { timeoutId, remaining: timer.remaining, start: Date.now() });
   }, [dismiss]);
 
-  const push = useCallback((message: string, kind: ToastKind = 'info', timeout = 4000, action?: ToastAction): number => {
+  const push = useCallback((message: string, kind: ToastKind = 'info', timeout = 4000, action?: ToastAction, onDismiss?: () => void): number => {
     const id = nextId++;
-    setToasts((t) => [...t, { id, message, kind, action }]);
+    setToasts((t) => [...t, { id, message, kind, action, onDismiss }]);
     if (timeout > 0) scheduleRemoval(id, timeout);
     return id;
   }, [scheduleRemoval]);
