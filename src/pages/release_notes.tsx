@@ -18,7 +18,8 @@ export const RELEASES: Release[] = [
     date: '7 Jun 2026',
     notes: [
       <>Added a new devtools/debug/toys/whatever page: <Link to="/i/flow/mpti">MyPWAToysIndia</Link></>,
-      <>Buffed toast notifications: new animations, and hovering over them halts the time to expire</>
+      <>Buffed toast notifications: new animations, and hovering over them halts the time to expire</>,
+      'Toasts should now show when the app has an update and also after an update offering to show the release notes',
     ]
   },
   {
