@@ -7,13 +7,21 @@
   min-height: 100vh;
 }
 
-.mpi-header {
+.mpi-sticky-top {
   position: sticky;
   top: 0;
   z-index: 50;
+}
+
+.mpi-header {
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   padding-top: env(safe-area-inset-top);
+}
+
+.verification-banner-stack {
+  display: flex;
+  flex-direction: column;
 }
 
 .mpi-header-row {

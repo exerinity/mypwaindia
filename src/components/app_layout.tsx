@@ -133,35 +133,40 @@ export function AppLayout() {
 
   return (
     <div className="mpi-shell">
-      <Header onToggleSidebar={() => setOpen((o) => !o)} />
-      <VerificationBanner />
-      {restrictionList.length > 0 && (
-        <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <WarningIcon />Your account has some active restrictions:{' '}
-          {restrictionList.map(([k]) => getRestrictionInfo(k).title).join(', ')}.
-          {' '}<Link to="/account/restrictions" className="link">More...</Link>
+      <div className="mpi-sticky-top">
+        <Header onToggleSidebar={() => setOpen((o) => !o)} />
+        <div className="verification-banner-stack">
+          <VerificationBanner />
+          {restrictionList.length > 0 && (
+            <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <WarningIcon />Your account has some active restrictions:{' '}
+              {restrictionList.map(([k]) => getRestrictionInfo(k).title).join(', ')}.
+              {' '}<Link to="/account/restrictions" className="link">More...</Link>
+            </div>
+          )}
+          {active && !settings.scambait && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
+            <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
+            </div>
+          )}
+          {sessionExpired && (
+            <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <WarningIcon /> Your session has expired. <Link to="/settings/sessions" className="link">Reinitialize the session...</Link>
+            </div>
+          )}
+          {fetchFailed && (
+            <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link>
+            </div>
+          )}
+          {!isOnline && (
+            <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/flow/connection" className="link">Diagnose...</Link>
+            </div>
+          )}
+          <div id="mpi-toy-banners" />
         </div>
-      )}
-      {active && !settings.scambait && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
-        <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
-        </div>
-      )}
-      {sessionExpired && (
-        <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <WarningIcon /> Your session has expired. Would you like to <Link to="/settings/sessions" className="link">reinitialize the session</Link>?
-        </div>
-      )}
-      {fetchFailed && (
-        <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link>
-        </div>
-      )}
-      {!isOnline && (
-        <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/flow/connection" className="link">Diagnose...</Link>
-        </div>
-      )}
+      </div>
       <div className="mpi-body">
         <Sidebar open={open} onClose={() => setOpen(false)} />
         <main className="mpi-main">

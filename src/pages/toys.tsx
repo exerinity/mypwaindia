@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
 import { Modal } from '../components/modal.tsx';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { HoldButton } from '../components/hold_btn.tsx';
+import { WarningIcon } from '../components/icons.tsx';
+import { Link } from 'react-router-dom';
+import { storageSet, KEYS } from '../utils/storage.ts';
 
 const TOAST_KINDS = ['info', 'success', 'error', 'warning'] as const;
 type ToastKind = (typeof TOAST_KINDS)[number];
@@ -27,6 +31,37 @@ export default function MPTIPage() {
   const [toastTimeout, setToastTimeout] = useState(4000);
   const [toastAction, setToastAction] = useState(false);
 
+  const [showRestrictionsBanner, setShowRestrictionsBanner] = useState(false);
+  const [showOnboardingBanner, setShowOnboardingBanner] = useState(false);
+  const [showSessionExpiredBanner, setShowSessionExpiredBanner] = useState(false);
+  const [showFetchFailedBanner, setShowFetchFailedBanner] = useState(false);
+  const [showOfflineBanner, setShowOfflineBanner] = useState(false);
+
+  const [bannerPortal, setBannerPortal] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    setBannerPortal(document.getElementById('mpi-toy-banners'));
+  }, []);
+
+  const BANNER_TOGGLES: { id: string; label: string; checked: boolean; onChange: (v: boolean) => void }[] = [
+    { id: 'dt-banner-restrictions', label: 'Account restrictions', checked: showRestrictionsBanner, onChange: setShowRestrictionsBanner },
+    { id: 'dt-banner-onboarding', label: 'Onboarding reminder', checked: showOnboardingBanner, onChange: setShowOnboardingBanner },
+    { id: 'dt-banner-session', label: 'Session expired', checked: showSessionExpiredBanner, onChange: setShowSessionExpiredBanner },
+    { id: 'dt-banner-fetch', label: 'Data fetch failed', checked: showFetchFailedBanner, onChange: setShowFetchFailedBanner },
+    { id: 'dt-banner-offline', label: 'Offline', checked: showOfflineBanner, onChange: setShowOfflineBanner },
+  ];
+
+  function simulateUpdater() {
+    const newVersionId = toast.push('A new version is available, would you like to reload?', 'info', 0, {
+      label: 'Go',
+      onClick: () => {
+        toast.remove(newVersionId);
+        toast.info('Updating, one moment...');
+        storageSet(KEYS.LAST_VERSION, '8');
+        setTimeout(() => window.location.reload(), 600);
+      },
+    });
+  }
+
   function fireToast() {
     toast.push(
       toastMessage,
@@ -39,7 +74,39 @@ export default function MPTIPage() {
   return (
     <div className="mpi-mpti">
       <h1 className="mt-0">Toys</h1>
-      <p className="mt-0 mb-0">Poke around with various UI components here. Nothing here actually does anything, but you can test interactive components like modals, toasts and buttons. Have fun!</p> 
+      <p className="mt-0 mb-0">Poke around with various UI components here. Nothing here actually does anything, but you can test interactive components like modals, toasts and buttons. Have fun!</p>
+
+      {bannerPortal && createPortal(
+        <>
+          {showRestrictionsBanner && (
+            <div className="verification-banner banner-error" style={{ display: 'flex', gap: 8 }}>
+              <WarningIcon />Your account has some active restrictions: Account Frozen, Banned from Investment Opportunities™.
+              {' '}<Link to="/account/restrictions" className="link">More...</Link>
+            </div>
+          )}
+          {showOnboardingBanner && (
+            <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
+              <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
+            </div>
+          )}
+          {showSessionExpiredBanner && (
+            <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
+              <WarningIcon /> Your session has expired. <Link to="/settings/sessions" className="link">Reinitialize the session...</Link>
+            </div>
+          )}
+          {showFetchFailedBanner && (
+            <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
+              <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link>
+            </div>
+          )}
+          {showOfflineBanner && (
+            <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
+              <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/flow/connection" className="link">Diagnose...</Link>
+            </div>
+          )}
+        </>,
+        bannerPortal
+      )}
 
       <div className="card mb-2">
         <h2 className="mt-0">Compose a modal</h2>
@@ -73,6 +140,24 @@ export default function MPTIPage() {
         <div className="btn-row">
           <HoldButton onConfirm={() => setHoldCount((c) => c + 1)}>Go</HoldButton>
         </div>
+      </div>
+
+      <div className="card mb-2">
+        <h2 className="mt-0">Simulate update</h2>
+        <div className="btn-row">
+          <button onClick={simulateUpdater}>Go</button>
+        </div>
+      </div>
+
+      <div className="card mb-2">
+        <h2 className="mt-0">Show banners</h2>
+        <p className="mt-0">Toggle the various warning banners that can appear at the top of the app layout to preview their look.</p>
+        {BANNER_TOGGLES.map(({ id, label, checked, onChange }) => (
+          <div className="checkbox-row" key={id}>
+            <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+            <label htmlFor={id} style={{ margin: 0 }}>{label}</label>
+          </div>
+        ))}
       </div>
 
       <div className="card">
