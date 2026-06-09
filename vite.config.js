@@ -29,6 +29,7 @@ export default defineConfig({
     })
   ],
   build: {
+    modulePreload: false,
     minify: 'esbuild',
     sourcemap: false,
     target: 'esnext',
@@ -37,8 +38,18 @@ export default defineConfig({
         entryFileNames: 'mypwaindia.js',
         chunkFileNames: '[name]-[hash].js',
         assetFileNames: '[name]-[hash].[ext]',
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom']
+        manualChunks(id) {
+          if (id.includes('node_modules')) return 'vendor';
+          if (id.match(/pages\/(login|logout|onboarding)/)) return 'auth';
+          if (id.match(/pages\/(transfer|bulk_transfer)/)) return 'transfers';
+          if (id.match(/pages\/(history|statements|transaction)/)) return 'history';
+          if (id.match(/pages\/(links|claim_link)/)) return 'links';
+          if (id.match(/pages\/(leaderboard|team)/)) return 'social';
+          if (id.match(/pages\/(settings|old_settings)/)) return 'settings';
+          if (id.match(/pages\/(iotm|iotm_button)/)) return 'iotm';
+          if (id.match(/pages\/(cli|toys)/)) return 'tools';
+          if (id.match(/pages\/(release_notes|acknowledgements|restrictions|connection)/)) return 'info';
+          if (id.match(/pages\/(not_found|flow_not_found|theme_apply)/)) return 'misc';
         }
       }
     }
