@@ -47,13 +47,20 @@ export default function StatementsPage() {
   const totalDebits = statements.filter((s) => s.amount < 0).reduce((acc, s) => acc + s.amount, 0);
   const totalCredits = statements.filter((s) => s.amount > 0).reduce((acc, s) => acc + s.amount, 0);
 
+  if (!settings.scambait) {
+    return (
+      <>
+        <Modal open onClose={() => navigate(-1)} title="Enable scambait mode first" fullscreen>
+          <div className="center">
+            This page is a scambait mode-only page. <Link to="/i/flow/scambaitmode">Would you like to enable it?</Link>
+          </div>
+        </Modal>
+      </>
+    );
+  }
+
   return (
     <>
-      <Modal open={!settings.scambait} onClose={() => navigate(-1)} title="Enable scambait mode first" fullscreen>
-        <div className="center">
-          This page is a scambait mode-only page. <Link to="/i/flow/scambaitmode">Would you like to enable it?</Link>
-        </div>
-      </Modal>
       <h1 className="mt-0">Bank statements</h1>
 
       <div className="grid cols-2 mb-2">
