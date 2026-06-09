@@ -63,7 +63,7 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
     title: 'Build tooling',
     packages: [
       { name: 'Vite', version: 6, license: 'MIT', url: 'https://vite.dev' },
-      { name: 'TypeScript', version: 6, license: 'Apache-2.0', url: 'https://typescriptlang.org' },
+      { name: 'TypeScript', version: 6, url: 'https://typescriptlang.org' },
     ],
   },
   {
