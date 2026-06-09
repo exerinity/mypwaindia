@@ -1,38 +1,38 @@
-import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Routes, Route, Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
+import { useEffect, lazy, Suspense } from 'react';
 import { AppLayout } from './components/app_layout.tsx';
 import { RequireAuth } from './components/require_auth.tsx';
 import { useSettings } from './context/settings_ctx.tsx';
 import { setCanonical } from './utils/canonical.ts';
 
-import LoginPage from './pages/login.tsx';
-import DashboardPage from './pages/dashboard.tsx';
-import AccountPage from './pages/account.tsx';
-import TransferPage from './pages/transfer.tsx';
-import BulkTransferPage from './pages/bulk_transfer.tsx';
-import HistoryPage from './pages/history.tsx';
-import StatementsPage from './pages/statements.tsx';
-import CardsPage from './pages/cards.tsx';
-import TransactionPage from './pages/transaction.tsx';
-import LinksPage from './pages/links.tsx';
-import ClaimLinkPage from './pages/claim_link.tsx';
-import LeaderboardPage from './pages/leaderboard.tsx';
-import TeamPage from './pages/team.tsx';
-import ReleaseNotesPage from './pages/release_notes.tsx';
-import SettingsPage from './pages/settings.tsx';
-import OldSettingsPage from './pages/old_settings.tsx';
-import LogoutPage from './pages/logout.tsx';
-import OnboardingPage from './pages/onboarding.tsx';
-import NotFoundPage from './pages/not_found.tsx';
-import CLIPage from './pages/cli.tsx';
-import AcknowledgementsPage from './pages/acknowledgements.tsx';
-import RestrictionsPage from './pages/restrictions.tsx';
-import ConnectionPage from './pages/connection.tsx';
-import IotmButtonPage from './pages/iotm_button.tsx';
-import IOTMPage from './pages/iotm.tsx';
-import ThemeApplyPage from './pages/theme_apply.tsx';
-import MPTIPage from './pages/toys.tsx';
-import FlowNotFoundPage from './pages/flow_not_found.tsx';
+const LoginPage = lazy(() => import('./pages/login.tsx'));
+const LogoutPage = lazy(() => import('./pages/logout.tsx'));
+const OnboardingPage = lazy(() => import('./pages/onboarding.tsx'));
+const DashboardPage = lazy(() => import('./pages/dashboard.tsx'));
+const AccountPage = lazy(() => import('./pages/account.tsx'));
+const CardsPage = lazy(() => import('./pages/cards.tsx'));
+const TransferPage = lazy(() => import('./pages/transfer.tsx'));
+const BulkTransferPage = lazy(() => import('./pages/bulk_transfer.tsx'));
+const HistoryPage = lazy(() => import('./pages/history.tsx'));
+const StatementsPage = lazy(() => import('./pages/statements.tsx'));
+const TransactionPage = lazy(() => import('./pages/transaction.tsx'));
+const LinksPage = lazy(() => import('./pages/links.tsx'));
+const ClaimLinkPage = lazy(() => import('./pages/claim_link.tsx'));
+const LeaderboardPage = lazy(() => import('./pages/leaderboard.tsx'));
+const TeamPage = lazy(() => import('./pages/team.tsx'));
+const SettingsPage = lazy(() => import('./pages/settings.tsx'));
+const OldSettingsPage = lazy(() => import('./pages/old_settings.tsx'));
+const IotmButtonPage = lazy(() => import('./pages/iotm_button.tsx'));
+const IOTMPage = lazy(() => import('./pages/iotm.tsx'));
+const CLIPage = lazy(() => import('./pages/cli.tsx'));
+const MPTIPage = lazy(() => import('./pages/toys.tsx'));
+const ReleaseNotesPage = lazy(() => import('./pages/release_notes.tsx'));
+const AcknowledgementsPage = lazy(() => import('./pages/acknowledgements.tsx'));
+const RestrictionsPage = lazy(() => import('./pages/restrictions.tsx'));
+const ConnectionPage = lazy(() => import('./pages/connection.tsx'));
+const ThemeApplyPage = lazy(() => import('./pages/theme_apply.tsx'));
+const NotFoundPage = lazy(() => import('./pages/not_found.tsx'));
+const FlowNotFoundPage = lazy(() => import('./pages/flow_not_found.tsx'));
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -98,9 +98,11 @@ export default function App() {
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
 
-      <Route path="/i/flow/login" element={<LoginPage />} />
-      <Route path="/i/flow/logout" element={<LogoutPage />} />
-      <Route path="/i/flow/onboarding" element={<OnboardingPage />} />
+      <Route element={<Suspense fallback={null}><Outlet /></Suspense>}>
+        <Route path="/i/flow/login" element={<LoginPage />} />
+        <Route path="/i/flow/logout" element={<LogoutPage />} />
+        <Route path="/i/flow/onboarding" element={<OnboardingPage />} />
+      </Route>
 
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomeRedirect />} />
