@@ -15,7 +15,7 @@ This repo is not intended for self-hosting or contributing; it is meant to just 
 ## The builder: why is it so aggressive?
 ~~Corporations. This is meant to parody corporations. And corporations put as many walls up as possible with their web apps.~~
 
-It's not anymore. I lobotomized it, so its mostly just one big JavaScript file you can read. I realized that, nobody gives a shit about that "vibe" of being locked-down and corporate, and all I was really doing is upsetting actual users.
+It's not anymore. I lobotomized it. I realized that nobody gives a shit about that "vibe" of being locked-down and corporate, and all I was really doing is upsetting actual users, wasting resources, so on...
 
 ## "Scambait" mode
 Scambait mode transforms this app into a more convincing-looking interface for use in... scambaiting. Phone scammers often instruct their targets to install remote access software and navigate a banking app - but to their dismay, that geriatric geezer on the other end is using a mysterious online bank: MyPayIndia.
