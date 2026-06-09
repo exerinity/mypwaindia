@@ -156,7 +156,7 @@ export function AppLayout() {
           )}
           {fetchFailed && (
             <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link>
+              <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link> <a href="https://status.mypayindia.com" target="_blank">Status page...</a>
             </div>
           )}
           {!isOnline && (
