@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Header } from './header.tsx';
@@ -171,7 +171,14 @@ export function AppLayout() {
         <Sidebar open={open} onClose={() => setOpen(false)} />
         <main className="mpi-main">
           <div className="mpi-wrap">
-            <Outlet />
+            <Suspense fallback={
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>
+                <span className="skeleton" style={{ height: 28, width: '38%', borderRadius: 6 }} />
+                <span className="skeleton" style={{ height: 16, width: '65%' }} />
+                <span className="skeleton" style={{ height: 16, width: '50%' }} />
+                <span className="skeleton" style={{ height: 16, width: '58%', marginTop: 8 }} />
+              </div>
+            }><Outlet /></Suspense>
           </div>
         </main>
       </div>
