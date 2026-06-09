@@ -16,7 +16,7 @@ export const ERROR_MESSAGES = {
   3001: 'Payment link not found!',
   3002: 'Payment link was already claimed :(',
   3003: 'Payment link was cancelled :(',
-  9003: 'MyPayIndia is in maintenance mode - stand down.',
+  9003: 'MyPayIndia is in maintenance mode - hold your horses',
   9004: 'Invalid input',
   9005: 'Session not found or already invalidated',
   9006: 'Rate limit exceeded, please wait a moment and try again',

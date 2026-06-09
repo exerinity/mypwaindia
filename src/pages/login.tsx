@@ -58,9 +58,9 @@ export default function LoginPage() {
       const err = e as { code?: number };
       if (err.code === 1002) {
         setNeeds2fa(true);
-        setError({ message: 'Enter your 2FA code...' });
+        setError({ message: 'Enter your 2FA code.' });
       } else if (err.code === 1010) {
-        setError({ message: 'That 2FA code did not work. Be quick now...' });
+        setError({ message: 'Incorrect 2FA code, try again.' });
       } else {
         setError({ message: describeError(e) });
       }
