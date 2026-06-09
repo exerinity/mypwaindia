@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import FlowNotFoundPage from './flow_not_found.tsx';
 import { useSettings, CUSTOM_VAR_KEYS } from '../context/settings_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
@@ -41,7 +42,6 @@ const VAR_LABELS: Record<string, string> = {
 };
 
 export default function ThemeApplyPage() {
-  usePageTitle('Apply theme');
   const location = useLocation();
   const navigate = useNavigate();
   const { update } = useSettings();
@@ -78,15 +78,8 @@ export default function ThemeApplyPage() {
     navigate('/settings/appearance');
   }
 
-  if (!parsed) {
-    return (
-      <div className="mpi-themeap">
-        <h1 className="mt-0">Bad theme</h1>
-        <p className="mt-0 mb-0">This theme is either corrupt, invalid, or you didn't apply one at all. Why not go make one?</p>
-        <button className="secondary" onClick={() => navigate('/settings/appearance')}>Go to settings</button>
-      </div>
-    );
-  }
+  if (!parsed) return <FlowNotFoundPage />;
+    usePageTitle('Apply theme');
 
   const entries = [
     ...Object.entries(parsed.customTheme),
