@@ -32,6 +32,7 @@ import IotmButtonPage from './pages/iotm_button.tsx';
 import IOTMPage from './pages/iotm.tsx';
 import ThemeApplyPage from './pages/theme_apply.tsx';
 import MPTIPage from './pages/toys.tsx';
+import FlowNotFoundPage from './pages/flow_not_found.tsx';
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -140,6 +141,7 @@ export default function App() {
           <Route path="/iotm" element={<IOTMPage />} />
         </Route>
 
+        <Route path="/i/flow/*" element={<FlowNotFoundPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
