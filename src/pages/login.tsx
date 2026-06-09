@@ -25,6 +25,7 @@ export default function LoginPage() {
   const [totp, setTotp] = useState('');
   const [needs2fa, setNeeds2fa] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [stagingLogin, setStagingLogin] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
   const envRef = useRef<Env>(searchParams.get('env') === 'staging' ? 'staging' : 'production');
   const formRef = useRef<HTMLFormElement>(null);
@@ -45,6 +46,7 @@ export default function LoginPage() {
     }
     const env = envRef.current;
     envRef.current = 'production';
+    setStagingLogin(false);
     const isScambait = searchParams.get('scambait') === 'true' || searchParams.get('s') === 'true';
     if (isScambait) updateSettings({ scambait: true, displayName: 'full_name' });
     setBusy(true);
@@ -132,10 +134,11 @@ export default function LoginPage() {
               e.preventDefault();
               if (busy || atCapacity) return;
               envRef.current = 'staging';
+              setStagingLogin(true);
               e.currentTarget.form?.requestSubmit();
             }}
           >
-            {busy ? <><span className="spinner" /> Logging in...</> : <>Log in</>}
+            {busy ? <><span className="spinner" /> {stagingLogin ? 'Logging into staging...' : 'Logging in...'}</> : <>Log in</>}
           </button>
           <a
             href="https://mypayindia.com/accountservices/register"
