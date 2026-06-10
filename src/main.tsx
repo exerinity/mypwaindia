@@ -5,6 +5,7 @@ import App from './app.tsx';
 import { AuthProvider } from './context/auth_ctx.tsx';
 import { SettingsProvider } from './context/settings_ctx.tsx';
 import { ToastProvider } from './context/toast_ctx.tsx';
+import { ChunkErrorBoundary } from './components/boundary_err.tsx';
 import './styles/index.css';
 
 function Root() {
@@ -20,13 +21,15 @@ function Root() {
 
   return (
     <BrowserRouter>
-      <SettingsProvider>
-        <AuthProvider>
-          <ToastProvider>
-            <App />
-          </ToastProvider>
-        </AuthProvider>
-      </SettingsProvider>
+      <ChunkErrorBoundary>
+        <SettingsProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <App />
+            </ToastProvider>
+          </AuthProvider>
+        </SettingsProvider>
+      </ChunkErrorBoundary>
     </BrowserRouter>
   );
 }
