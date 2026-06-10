@@ -79,7 +79,7 @@ export default function ThemeApplyPage() {
   }
 
   if (!parsed) return <FlowNotFoundPage />;
-    usePageTitle('Apply theme');
+  usePageTitle('Apply theme');
 
   const entries = [
     ...Object.entries(parsed.customTheme),

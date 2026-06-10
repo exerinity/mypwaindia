@@ -22,6 +22,7 @@ import { describeError } from '../utils/errors.js';
 import { AddAccountModal } from '../components/add_acc_modal.tsx';
 import { HoldButton } from '../components/hold_btn.tsx';
 import { hideGet, hideSetValue } from '../utils/storage.ts';
+import FlowNotFoundPage from './flow_not_found.tsx';
 
 
 interface Session { id: string; device_info?: string; ip?: string; created_at: string; last_active: string; current?: boolean; invalidated?: boolean }
@@ -181,7 +182,7 @@ export default function SettingsPage() {
   const activeCategory = (matchedCategory?.id ?? 'appearance') as CategoryId;
   const activeCat = CATEGORIES.find((c) => !c.href && c.id === activeCategory)!;
 
-  usePageTitle(isUnknownCategory ? 'What' : activeCat.label + ' / Settings');
+  usePageTitle(activeCat.label + ' / Settings');
 
   const { settings, update, reset } = useSettings();
   const { accounts, removeAccount, active, updateAccountInfo } = useAuth();
@@ -415,7 +416,7 @@ export default function SettingsPage() {
   }
 
   function renderDetail() {
-    if (isUnknownCategory) return <h2>Where the fuck are you going</h2>;
+    if (isUnknownCategory) return <FlowNotFoundPage />;
 
     switch (activeCategory) {
 
