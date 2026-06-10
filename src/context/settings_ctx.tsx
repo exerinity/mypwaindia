@@ -23,6 +23,7 @@ export interface Settings {
   scambait: boolean;
   homePage: string;
   customTheme: Record<string, string>;
+  swEnabled: boolean;
 }
 
 interface SettingsContextValue {
@@ -43,6 +44,7 @@ const DEFAULT_SETTINGS: Settings = {
   scambait: false,
   homePage: '/dash',
   customTheme: {},
+  swEnabled: true,
 };
 
 export function SettingsProvider({ children }: { children: ReactNode }) {

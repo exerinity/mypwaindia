@@ -125,6 +125,7 @@ type CategoryId =
   | 'appearance'
   | 'home'
   | 'data'
+  | 'sw'
   | 'account'
   | 'scambait'
   | 'sessions';
@@ -163,6 +164,7 @@ const CATEGORIES: Category[] = [
   { id: 'appearance', label: 'Appearance', desc: 'Theme and accent color' },
   { id: 'home', label: 'Home screen', desc: 'Page shown when opening the app', hideWhenScambait: true },
   { id: 'data', label: 'Data control', desc: 'Edit saved accounts, API settings, and other small settings' },
+  { id: 'sw', label: 'Service worker', desc: 'Manage the service worker', hideWhenScambait: true },
   { id: 'scambait', label: 'Scambait mode', desc: '67', hideWhenScambait: true },
   { id: 'sessions', label: 'Sessions', desc: 'View and manage active login sessions', authRequired: true },
   { id: 'logout', label: 'Log out', desc: 'Log out of MyPWAIndia', authRequired: true, to: '/i/flow/logout' },
@@ -179,7 +181,7 @@ export default function SettingsPage() {
   const activeCategory = (matchedCategory?.id ?? 'appearance') as CategoryId;
   const activeCat = CATEGORIES.find((c) => !c.href && c.id === activeCategory)!;
 
-  usePageTitle(isUnknownCategory ? 'What' : activeCat.label);
+  usePageTitle(isUnknownCategory ? 'What' : activeCat.label + ' / Settings');
 
   const { settings, update, reset } = useSettings();
   const { accounts, removeAccount, active, updateAccountInfo } = useAuth();
@@ -191,6 +193,9 @@ export default function SettingsPage() {
   const [removeOneTarget, setRemoveOneTarget] = useState<Account | null>(null);
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
   const [reinitStage, setReinitStage] = useState<'logout' | 'sleeping' | 'login' | null>(null);
+  const [reinit2faOpen, setReinit2faOpen] = useState(false);
+  const [reinit2faCode, setReinit2faCode] = useState('');
+  const [reinit2faError, setReinit2faError] = useState<string | null>(null);
   const [customHomeInput, setCustomHomeInput] = useState<string | null>(() =>
     HOME_PAGE_OPTIONS.some((o) => o.value === settings.homePage) ? null : settings.homePage
   );
@@ -248,22 +253,43 @@ export default function SettingsPage() {
     return ' ↕';
   }
 
+  async function performReinitLogin(totpCode?: string) {
+    setReinitStage('login');
+    try {
+      const data = await apiLogin({ username: active!.username, password: active!.password!, totp_code: totpCode || undefined, env: active!.env }) as { user: { role: string; username: string }; session_id: string };
+      updateAccountInfo(active!.id, { token: data.session_id, role: data.user.role, username: data.user.username });
+      toast.success('Session reinitialized');
+      setReinit2faOpen(false);
+      setReinit2faCode('');
+      setReinit2faError(null);
+    } catch (e) {
+      const err = e as { code?: number };
+      if (err.code === 1002) {
+        setReinit2faError(null);
+        setReinit2faOpen(true);
+      } else if (err.code === 1010) {
+        setReinit2faError('Incorrect 2FA code, try again.');
+        setReinit2faOpen(true);
+      } else {
+        toast.error(describeError(e));
+        setReinit2faOpen(false);
+      }
+    } finally {
+      setReinitStage(null);
+    }
+  }
+
   async function doReinitializeSession() {
     if (!active?.password) return;
     setReinitStage('logout');
     try { await apiLogout(); } catch (_) { }
     setReinitStage('sleeping');
     await new Promise<void>((r) => setTimeout(r, 1000));
-    setReinitStage('login');
-    try {
-      const data = await apiLogin({ username: active.username, password: active.password, env: active.env }) as { user: { role: string; username: string }; session_id: string };
-      updateAccountInfo(active.id, { token: data.session_id, role: data.user.role, username: data.user.username });
-      toast.success('Session reinitialized');
-    } catch (e) {
-      toast.error(describeError(e));
-    } finally {
-      setReinitStage(null);
-    }
+    await performReinitLogin();
+  }
+
+  async function submitReinit2fa() {
+    await performReinitLogin(reinit2faCode);
   }
 
   async function doKillSession(id: string) {
@@ -345,6 +371,47 @@ export default function SettingsPage() {
     if (!norm) { toast.error("That's not a valid hex color"); return; }
     update({ accent: norm });
     setAccentInput(norm);
+  }
+
+  async function getSwRegistration() {
+    if (!('serviceWorker' in navigator)) return undefined;
+    return navigator.serviceWorker.getRegistration();
+  }
+
+  async function handleDeleteSw() {
+    const reg = await getSwRegistration();
+    if (!reg) { toast.warning('No service worker is registered'); return; }
+    await reg.unregister();
+    toast.success('Service worker deleted');
+  }
+
+  async function handleDoNotRegisterSw() {
+    update({ swEnabled: false });
+    const reg = await getSwRegistration();
+    if (reg) {
+      await reg.unregister();
+      toast.success('Service worker disabled and stopped');
+    } else {
+      toast.success('Service worker will not be registered');
+    }
+  }
+
+  async function handleReloadSw() {
+    const reg = await getSwRegistration();
+    if (!reg) { toast.warning('No service worker is registered'); return; }
+    await reg.update();
+    toast.success('Checked for a service worker update');
+  }
+
+  async function handleSwToggle(e: React.ChangeEvent<HTMLInputElement>) {
+    const enabled = e.target.checked;
+    update({ swEnabled: enabled });
+    if (!enabled) {
+      const reg = await getSwRegistration();
+      if (reg) await reg.unregister();
+    } else {
+      toast.success('The service worker will register when you reload the app');
+    }
   }
 
   function renderDetail() {
@@ -754,6 +821,65 @@ export default function SettingsPage() {
           </>
         );
 
+      case 'sw':
+        return (
+          <>
+            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+              Manage the service worker. The service worker makes the app work offline and could speed up navigation, but it could also contribute to stale caches
+            </p>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+              <InfoIcon />
+              If you don't know what a service worker is, or are not experiencing any issues with updating/data, you should leave these settings alone.
+            </div>
+
+            {!('serviceWorker' in navigator) && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+                <InfoIcon />
+                <span>Your browser doesn't support service workers, so these settings won't do anything</span>
+              </div>
+            )}
+
+            <div className="row spread" style={{ alignItems: 'center', padding: '10px 0' }}>
+              <div>
+                <strong>Use service worker</strong>
+                <p className="muted" style={{ margin: '2px 0 0', fontSize: '0.875rem' }}>
+                  {settings.swEnabled ? 'Enabled' : 'Disabled (any active service worker will be stopped)'}
+                </p>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={settings.swEnabled}
+                  onChange={handleSwToggle}
+                />
+                <span className="toggle-track" />
+              </label>
+            </div>
+
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+            <h3 className="mt-0">Actions</h3>
+
+            <div className="btn-row" style={{ marginTop: 4 }}>
+              <button className="secondary" onClick={handleReloadSw}>
+                Reload service worker
+              </button>
+              <button className="secondary danger" onClick={handleDoNotRegisterSw}>
+                Do not register service worker
+              </button>
+              <button className="secondary danger" onClick={handleDeleteSw}>
+                Delete service worker
+              </button>
+            </div>
+            <p className="muted" style={{ fontSize: '0.85rem', marginTop: 12 }}>
+              <strong>Reload</strong> checks for and installs an updated service worker<br></br>
+              <strong>Do not register</strong> stops the active service worker and prevents it from
+              registering again<br></br>
+              <strong>Delete</strong> immediately unregisters and ends the active service worker
+            </p>
+          </>
+        );
+
       case 'scambait':
         return (
           <>
@@ -843,13 +969,13 @@ export default function SettingsPage() {
                 <div className="row spread" style={{ alignItems: 'center', marginBottom: 20 }}>
                   <button
                     className="compact"
-                    disabled={!active.password || reinitStage !== null}
+                    disabled={!active.password || reinitStage !== null || reinit2faOpen}
                     onClick={doReinitializeSession}
                   >
                     {reinitStage === 'logout' && <><span className="spinner" /> Logging out...</>}
                     {reinitStage === 'sleeping' && <><span className="spinner" /> Waiting...</>}
                     {reinitStage === 'login' && <><span className="spinner" /> Logging in...</>}
-                    {reinitStage === null && 'Reinitialize session'}
+                    {reinitStage === null && (reinit2faOpen ? 'Waiting for 2FA code...' : 'Reinitialize session')}
                   </button>
                   {!active.password && (
                     <span className="muted" style={{ fontSize: '0.85rem' }}>No saved password for this account, so this can't be done</span>
@@ -999,7 +1125,7 @@ export default function SettingsPage() {
           </div>
 
           <div className="mpi-settings-detail-scroll">
-            <div className={`mpi-settings-detail-content${activeCategory === 'sessions' || activeCategory === 'scambait' ? ' mpi-settings-detail-content--wide' : ''}`}>
+            <div className="mpi-settings-detail-content">
               {renderDetail()}
             </div>
           </div>
@@ -1187,6 +1313,47 @@ export default function SettingsPage() {
             Stop
           </button>
         </div>
+      </Modal>
+
+      <Modal
+        open={reinit2faOpen}
+        onClose={() => { setReinit2faOpen(false); setReinit2faCode(''); setReinit2faError(null); }}
+        title="You need a 2FA code"
+      >
+        <form onSubmit={(e) => { e.preventDefault(); submitReinit2fa(); }}>
+          <p className="mt-0" style={{ color: 'var(--muted)' }}>
+            Enter the two-factor code for <strong>{active?.username}</strong> to finish reinitializing the session
+          </p>
+          <FloatingInput
+            label="Two-factor code"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="one-time-code"
+            value={reinit2faCode}
+            onChange={(e) => setReinit2faCode(e.target.value)}
+            autoFocus
+            disabled={reinitStage === 'login'}
+          />
+          {reinit2faError && (
+            <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <ErrorIcon /><span>{reinit2faError}</span>
+            </div>
+          )}
+          <div className="modal-actions">
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => { setReinit2faOpen(false); setReinit2faCode(''); setReinit2faError(null); }}
+              disabled={reinitStage === 'login'}
+            >
+              Cancel
+            </button>
+            <button type="submit" disabled={reinitStage === 'login' || !reinit2faCode}>
+              {reinitStage === 'login' ? <><span className="spinner" /> Logging in...</> : 'Continue'}
+            </button>
+          </div>
+        </form>
       </Modal>
 
       <Modal

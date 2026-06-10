@@ -48,7 +48,19 @@ export function AppLayout() {
   const sessionExpired = fetchFailedCode === 1001;
 
   const updateToastShown = useRef(false);
-  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW();
+  const swRegistrationRef = useRef<ServiceWorkerRegistration | undefined>(undefined);
+  const swEnabledRef = useRef(settings.swEnabled);
+  swEnabledRef.current = settings.swEnabled;
+  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW({
+    onRegisteredSW(_url, registration) {
+      swRegistrationRef.current = registration;
+      if (!swEnabledRef.current) registration?.unregister();
+    },
+  });
+
+  useEffect(() => {
+    if (!settings.swEnabled) swRegistrationRef.current?.unregister();
+  }, [settings.swEnabled]);
 
   function syncLastVersion(announce: boolean) {
     const latest = RELEASES[0].version;
