@@ -14,6 +14,16 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '15',
+    date: '10 Jun 2026',
+    notes: [
+      <>The reinitialize session button in <Link to="/settings/sessions">sessions</Link> now handles 2FA codes</>,
+      <>Added a <Link to="/settings/sw">service worker control setting</Link></>,
+      'All settings pages now take up the whole container',
+      'Compiled scripts have been split up per category and now load lazily'
+    ]
+  },
+  {
     version: '14a',
     date: '7 Jun 2026',
     notes: [
