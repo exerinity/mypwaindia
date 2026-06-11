@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useApiCall } from '../hooks/api_call.js';
+import { useCachedQuery } from '../hooks/cached_query.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { getTeam } from '../api/info.js';
 import { formatDateShort, calcAge } from '../utils/dates.js';
@@ -46,7 +46,7 @@ function AgeTag({ age }: { age: Age }) {
 
 export default function TeamPage() {
   usePageTitle('Meet the team');
-  const { data, loading, error } = useApiCall<{ team: TeamMember[] }>(() => getTeam() as Promise<{ team: TeamMember[] }>, []);
+  const { data, loading, error } = useCachedQuery<{ team: TeamMember[] }>('team', () => getTeam() as Promise<{ team: TeamMember[] }>, []);
   const team = data?.team || [];
 
   return (
