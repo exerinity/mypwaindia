@@ -1,15 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
-import { useApiCall } from '../hooks/api_call.js';
+import { useCachedQuery } from '../hooks/cached_query.js';
+import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useSettings } from '../context/settings_ctx.tsx';
+import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { listLinks, createLink, cancelLink } from '../api/links.js';
-import { getUserInfo } from '../api/user.js';
 import { formatINR, rupeesToPaisa } from '../utils/money.js';
 import { formatDate } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
+import { RefreshStatus } from '../components/refresh_status.tsx';
 import { WarningIcon } from '../components/icons.tsx';
 import { FloatingInput } from '../components/floating_input.tsx';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
@@ -25,8 +27,9 @@ const PRESETS_PAISA = [
 
 export default function LinksPage() {
   usePageTitle('Payment links');
-  const { active, updateBalance } = useAuth();
+  const { active } = useAuth();
   const { settings } = useSettings();
+  const { userInfo, refetchUserInfo } = useGlobalData();
   const toast = useToast();
   const [stackPaisa, setStackPaisa] = useState(0);
   const [note, setNote] = useState('');
@@ -38,23 +41,19 @@ export default function LinksPage() {
   const [showCancelAll, setShowCancelAll] = useState(false);
   const [cancelAllProgress, setCancelAllProgress] = useState<{ done: number; total: number } | null>(null);
 
-  const linksQ = useApiCall<{ links: Link[] }>(
+  const linksQ = useCachedQuery<{ links: Link[] }>(
+    active ? `links:${active.id}` : null,
     () => listLinks(active!) as Promise<{ links: Link[] }>,
     [active?.token],
-    { refresh: settings.autoRefresh }
+    { skip: !active }
   );
 
-  const userQ = useApiCall<{ balance: number }>(
-    async () => {
-      const info = await getUserInfo(active!) as { balance: number };
-      updateBalance(active!.id, info.balance);
-      return info;
-    },
-    [active?.token],
-    { refresh: settings.autoRefresh }
+  const { secondsLeft, refreshNow } = useRefreshTimer(
+    [linksQ.refetch, refetchUserInfo],
+    { enabled: settings.autoRefresh && !!active }
   );
 
-  const balance = userQ.data?.balance ?? null;
+  const balance = userInfo?.balance ?? null;
 
   const { activeLinks, otherLinks } = useMemo(() => {
     const arr = linksQ.data?.links || [];
@@ -101,10 +100,7 @@ export default function LinksPage() {
       } catch {}
       reset();
       linksQ.refetch();
-      try {
-        const info = await getUserInfo(active!) as { balance: number };
-        updateBalance(active!.id, info.balance);
-      } catch {}
+      refetchUserInfo();
     } catch (e) {
       toast.error(describeError(e));
     } finally {
@@ -129,10 +125,7 @@ export default function LinksPage() {
     setCancelAllProgress(null);
     toast.success(`OK, all of your payment links were cancelled. (${cancelled} link${cancelled !== 1 ? 's' : ''} cancelled)`);
     linksQ.refetch();
-    try {
-      const info = await getUserInfo(active!) as { balance: number };
-      updateBalance(active!.id, info.balance);
-    } catch {}
+    refetchUserInfo();
   }
 
   async function doCancelLink(token: string) {
@@ -140,10 +133,7 @@ export default function LinksPage() {
       await cancelLink(active!, token);
       toast.success('OK, that link was cancelled.');
       linksQ.refetch();
-      try {
-        const info = await getUserInfo(active!) as { balance: number };
-        updateBalance(active!.id, info.balance);
-      } catch {}
+      refetchUserInfo();
     } catch (e) {
       toast.error(describeError(e));
     }
@@ -282,6 +272,7 @@ export default function LinksPage() {
           ))}
         </div>
       }
+      <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} />
       <ConfirmModal
         open={showCancelAll}
         onClose={() => setShowCancelAll(false)}
