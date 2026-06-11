@@ -5,15 +5,13 @@ import { Header } from './header.tsx';
 import { Sidebar } from './sidebar.tsx';
 import { VerificationBanner } from './verify_banner.tsx';
 import { ConfirmModal } from './confirm_modal.tsx';
-import { useGlobalAutoRefresh } from '../hooks/autorefresh.js';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
+import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { WarningIcon } from './icons.tsx';
 import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
 import { RELEASES } from '../pages/release_notes.tsx';
-import { useApiCall } from '../hooks/api_call.js';
-import { getRestrictions } from '../api/user.js';
 import { getRestrictionInfo } from '../utils/restrictions.js';
 
 export function AppLayout() {
@@ -32,16 +30,10 @@ export function AppLayout() {
   const { active } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
-  useGlobalAutoRefresh();
 
-  type Restrictions = { restrictions: Record<string, { active: boolean }> };
-  const restrictionsQ = useApiCall<Restrictions>(
-    () => getRestrictions(active!) as Promise<Restrictions>,
-    [active?.token],
-    { refresh: settings.autoRefresh, skip: !active }
-  );
-  const restrictionList = Object.entries(restrictionsQ.data?.restrictions || {}).filter(([, v]) => v?.active);
-  const fetchFailedError = restrictionsQ.error as { code?: number; status?: number } | null;
+  const { restrictions, restrictionsError } = useGlobalData();
+  const restrictionList = Object.entries(restrictions?.restrictions || {}).filter(([, v]) => v?.active);
+  const fetchFailedError = restrictionsError as { code?: number; status?: number } | null;
   const fetchFailedCode = fetchFailedError?.code;
   const bastionDown = [502, 503, 504, 523].includes(fetchFailedError?.status ?? 0);
   const fetchFailed = fetchFailedCode === -1 || fetchFailedCode === -2 || bastionDown;
