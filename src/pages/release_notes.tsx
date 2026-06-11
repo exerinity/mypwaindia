@@ -15,12 +15,20 @@ type Release = {
 export const RELEASES: Release[] = [
   {
     version: '15',
-    date: '10 Jun 2026',
+    date: '12 Jun 2026',
     notes: [
+      { h3: 'Miscellaneous' },
       <>The reinitialize session button in <Link to="/settings/sessions">sessions</Link> now handles 2FA codes</>,
       <>Added a <Link to="/settings/sw">service worker control setting</Link></>,
       'All settings pages now take up the whole container',
-      'Compiled scripts have been split up per category and now load lazily'
+      'Compiled scripts have been split up per category and now load lazily',
+      { h3: 'Auto-refresh overhaul' },
+      'The dashboard, account, history, payment links, restrictions, and sessions pages now share a single 30-second refresh cycle, cutting down on duplicate/unnecessary network requests',
+      'Leaving a page and coming back now shows your last-loaded data instantly instead, while a fresh copy loads in the background',
+      'Pages with auto-refresh now show a small "refreshing in Xs" link to manually refresh and reset the timer',
+      { h3: 'Scambait mode' },
+      <>Added fake routing numbers, account numbers, and SWIFT/BIC codes to <Link to="/dash/cards">cards</Link></>,
+      'In Appearance settings, the custom theme promo, the Custom theme option, and the Display name section are now hidden... for legitimacy',
     ]
   },
   {
