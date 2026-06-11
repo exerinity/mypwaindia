@@ -22,7 +22,7 @@ export class ChunkErrorBoundary extends Component<Props, State> {
     return (
       <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: '#121212', fontFamily: 'system-ui,-apple-system,sans-serif' }}>
         <div style={{ background: '#171717', border: '1px solid #333', borderRadius: 10, padding: 32, width: '100%', maxWidth: 420, boxShadow: '0 2px 8px rgba(0,0,0,0.6)', textAlign: 'center', color: '#eaeaea' }}>
-          <img src="/i/mygayindia-full.png" alt="MyPayIndia" width={135} height={50} style={{ marginBottom: 20 }} />
+          <img src="/i/mygayindia-full.webp" alt="MyPayIndia" width={135} height={50} style={{ marginBottom: 20 }} />
           <h2 style={{ margin: '0 0 8px', fontSize: '1.2rem' }}>Well, this is awkward...</h2>
           <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0 0 20px' }}>
             {isChunkError

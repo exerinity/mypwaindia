@@ -8,7 +8,7 @@ export function Logo({ height = 38, className = 'mpi-header-logo' }: { height?: 
   const w = Math.round(height * LOGO_W / LOGO_H);
   return (
     <img
-      src={settings.scambait ? '/i/mypayindia-full.png' : '/i/mygayindia-full.png'}
+      src={settings.scambait ? '/i/mypayindia-full.webp' : '/i/mygayindia-full.webp'}
       alt="MyPayIndia"
       width={w}
       height={height}
