@@ -5,6 +5,8 @@ import App from './app.tsx';
 import { AuthProvider } from './context/auth_ctx.tsx';
 import { SettingsProvider } from './context/settings_ctx.tsx';
 import { ToastProvider } from './context/toast_ctx.tsx';
+import { GlobalDataProvider } from './context/global_data_ctx.tsx';
+import { DataCacheProvider } from './context/data_cache_ctx.tsx';
 import { ChunkErrorBoundary } from './components/boundary_err.tsx';
 import './styles/index.css';
 
@@ -25,7 +27,11 @@ function Root() {
         <SettingsProvider>
           <AuthProvider>
             <ToastProvider>
-              <App />
+              <DataCacheProvider>
+                <GlobalDataProvider>
+                  <App />
+                </GlobalDataProvider>
+              </DataCacheProvider>
             </ToastProvider>
           </AuthProvider>
         </SettingsProvider>
