@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useApiCall } from '../hooks/api_call.js';
 import { usePageTitle } from '../hooks/page_title.js';
-import { getLeaderboard } from '../api/info.ts';
+import { getLeaderboard } from '../api/flow.ts';
 import { formatINR } from '../utils/money.js';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCachedQuery } from '../hooks/cached_query.js';
 import { usePageTitle } from '../hooks/page_title.js';
-import { getTeam } from '../api/info.js';
+import { getTeam } from '../api/flow.js';
 import { formatDateShort, calcAge } from '../utils/dates.js';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
 import { ExternalIcon } from '../components/icons.tsx';
