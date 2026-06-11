@@ -2,20 +2,22 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
-import { useApiCall } from '../hooks/api_call.js';
+import { useGlobalData } from '../context/global_data_ctx.tsx';
+import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
-import { getUserInfo, getRestrictions, verifyEmail } from '../api/user.js';
+import { verifyEmail } from '../api/user.js';
 import { formatDate, calcAge } from '../utils/dates.js';
 import { describeError } from '../utils/errors.js';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
+import { RefreshStatus } from '../components/refresh_status.tsx';
 import { WarningIcon } from '../components/icons.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
 import { Modal } from '../components/modal.tsx';
 
 export default function AccountPage() {
   usePageTitle('Account');
-  const { active, updateAccountInfo } = useAuth();
+  const { active } = useAuth();
   const { settings } = useSettings();
   const formatBalance = useCurrency();
   const toast = useToast();
@@ -23,19 +25,15 @@ export default function AccountPage() {
   const [personalDetailsOpen, setPersonalDetailsOpen] = useState(false);
   const [securityCode, setSecurityCode] = useState(['', '', '', '', '']);
   interface Age { years: number; months: number; weeks: number; days: number }
-  type UserInfo = { balance: number; first_name: string; last_name: string; email: string; date_of_birth?: string; created: string; mfa_enabled: boolean; username: string; role: string };
-  type Restrictions = { restrictions: Record<string, { active: boolean; expires_at?: string; value?: unknown }> };
 
-  const userQ = useApiCall<UserInfo>(async () => {
-    const info = await getUserInfo(active!) as UserInfo;
-    updateAccountInfo(active!.id, { lastBalance: info.balance, firstName: info.first_name, lastName: info.last_name });
-    return info;
-  }, [active?.token], { refresh: settings.autoRefresh });
+  const {
+    userInfo, userInfoLoading, userInfoError,
+    restrictions, refetchUserInfo, refetchRestrictions,
+  } = useGlobalData();
 
-  const restrictionsQ = useApiCall<Restrictions>(
-    () => getRestrictions(active!) as Promise<Restrictions>,
-    [active?.token],
-    { refresh: settings.autoRefresh }
+  const { secondsLeft, refreshNow } = useRefreshTimer(
+    [refetchUserInfo, refetchRestrictions],
+    { enabled: settings.autoRefresh && !!active }
   );
 
   async function handleVerify() {
@@ -85,15 +83,15 @@ export default function AccountPage() {
     );
   }
 
-  const u = userQ.data;
-  const restrictionList = Object.entries(restrictionsQ.data?.restrictions || {})
+  const u = userInfo;
+  const restrictionList = Object.entries(restrictions?.restrictions || {})
     .filter(([, v]) => v?.active);
 
   return (
     <>
       <h1 className="mt-0">Account</h1>
 
-      {userQ.loading && !u ? (
+      {userInfoLoading && !u ? (
         <>
           <div className="card mb-2">
             <div className="row spread">
@@ -120,7 +118,7 @@ export default function AccountPage() {
           <div className="card"><Skeleton width={120} height={18} /></div>
         </>
       ) :
-        userQ.error ? <ErrorBox error={userQ.error} /> :
+        userInfoError ? <ErrorBox error={userInfoError} /> :
           u && (
             <>
               <div className="card mb-2">
@@ -215,6 +213,8 @@ export default function AccountPage() {
                   <Link to="/settings/sessions" className="btn secondary">Go</Link>
                 </div>
               </div>
+
+              <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} />
 
               <div className="btn-row mt-2">
                 <Link to="/account/transfer" className="btn">Transfer funds</Link>
