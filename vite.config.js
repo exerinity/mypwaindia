@@ -36,8 +36,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         entryFileNames: 'mypwaindia.js',
-        chunkFileNames: '[name]-[hash].js',
-        assetFileNames: '[name]-[hash].[ext]',
+        chunkFileNames: '[name].js',
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.css')) return assetInfo.name === 'index.css' ? 'mypwaindia.css' : '[name].css';
+          return '[name].[ext]';
+        },
         manualChunks(id) {
           if (id.includes('node_modules')) return 'vendor';
           if (id.match(/pages\/(login|logout|onboarding)/)) return 'auth';
@@ -50,6 +53,13 @@ export default defineConfig({
           if (id.match(/pages\/(cli|toys)/)) return 'tools';
           if (id.match(/pages\/(release_notes|acknowledgements|restrictions|connection)/)) return 'info';
           if (id.match(/pages\/(not_found|flow_not_found|theme_apply)/)) return 'misc';
+          if (id.match(/pages\/(account|dashboard)/)) return 'client';
+          if (id.match(/pages\/cards/)) return 'scambait';
+          if (id.match(/\/(hooks|utils)\//)) return 'helpers';
+          if (id.match(/components\/(boundary_err|status|require_auth|verify_banner)/)) return 'stability';
+          if (id.match(/components\/(acc_pill|add_acc_modal|logout_modal|bal_pill|install_pill)/)) return 'tandem';
+          if (id.match(/context\//)) return 'bastion';
+          if (id.match(/components\/(app_layout|sidebar|header|app_footer)/)) return 'commander';
         }
       }
     }
