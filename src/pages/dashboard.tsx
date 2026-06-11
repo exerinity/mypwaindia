@@ -1,16 +1,18 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
-import { useApiCall } from '../hooks/api_call.js';
+import { useCachedQuery } from '../hooks/cached_query.js';
+import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
-import { getUserInfo } from '../api/user.js';
+import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
 import { getDisplayName } from '../utils/display.js';
 import { InfoIcon, CloseIcon, BulbIcon } from '../components/icons.tsx';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { TransactionTable } from '../components/tx_table.tsx';
+import { RefreshStatus } from '../components/refresh_status.tsx';
 import { generateStatements } from '../utils/fake_statements.js';
 import { hideGet, hideSet } from '../utils/storage.ts';
 
@@ -18,32 +20,33 @@ const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeri
 
 export default function DashboardPage() {
   usePageTitle('Dashboard');
-  const { active, updateAccountInfo } = useAuth();
+  const { active } = useAuth();
   const { settings } = useSettings();
   const format = useCurrency();
   const scambait = settings.scambait;
   const refresh = settings.autoRefresh;
+  const { userInfo, refetchUserInfo } = useGlobalData();
 
-  type UserInfo = { balance: number; first_name: string; last_name: string };
   type TxList = { transactions: import('../components/tx_table.tsx').Transaction[] };
   type LinkList = { links: { id: number; status: string }[] };
 
-  const userQ = useApiCall<UserInfo>(async () => {
-    const info = await getUserInfo(active!) as UserInfo;
-    updateAccountInfo(active!.id, { lastBalance: info.balance, firstName: info.first_name, lastName: info.last_name });
-    return info;
-  }, [active?.token], { refresh, skip: !active });
-
-  const txQ = useApiCall<TxList>(
+  const txQ = useCachedQuery<TxList>(
+    active ? `dashboard-tx:${active.id}` : null,
     () => listTransactions(active!) as Promise<TxList>,
     [active?.token],
-    { refresh, skip: !active }
+    { skip: !active }
   );
 
-  const linksQ = useApiCall<LinkList>(
+  const linksQ = useCachedQuery<LinkList>(
+    active ? `dashboard-links:${active.id}` : null,
     () => listLinks(active!) as Promise<LinkList>,
     [active?.token],
-    { refresh, skip: !active }
+    { skip: !active }
+  );
+
+  const { secondsLeft, refreshNow } = useRefreshTimer(
+    [txQ.refetch, linksQ.refetch, refetchUserInfo],
+    { enabled: refresh && !!active }
   );
 
   const [hdHidden, setHdHidden] = useState(() => hideGet('sbshint'));
@@ -75,7 +78,7 @@ export default function DashboardPage() {
         <div className="card stat-card">
           <span className="stat-label">Balance</span>
           <span className="stat-value">
-            {format(userQ.data?.balance ?? active?.lastBalance ?? 0)}
+            {format(userInfo?.balance ?? active?.lastBalance ?? 0)}
           </span>
           <span className="stat-sub">{getDisplayName(active, settings.displayName)}</span>
         </div>
@@ -179,6 +182,7 @@ export default function DashboardPage() {
           }
         </div>
       </div>
+      <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={refresh} />
     </>
   );
 }
