@@ -11,6 +11,7 @@ export default function LogoutPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   async function handleLogout() {
     setIsSubmitting(true);
@@ -26,7 +27,7 @@ export default function LogoutPage() {
   }
 
   return (
-    <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div className={leaving ? 'page-slide-out' : 'page-slide-in'} onAnimationEnd={() => { if (leaving) { if ((window.history.state?.idx ?? 0) > 0) navigate(-1); else navigate('/dash'); } }} style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div className="card" style={{ maxWidth: 400, width: '100%' }}>
         <h2 className="mt-0">Log out</h2>
         <p className="muted">
@@ -42,7 +43,7 @@ export default function LogoutPage() {
             <LogoutIcon />
             {isSubmitting ? 'Logging out...' : 'Log out'}
           </button>
-          <button className="secondary" onClick={() => navigate(-1)} disabled={isSubmitting}>
+          <button className="secondary" onClick={() => setLeaving(true)} disabled={isSubmitting}>
             Cancel
           </button>
         </div>
