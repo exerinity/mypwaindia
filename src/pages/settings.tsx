@@ -14,10 +14,12 @@ import { Modal } from '../components/modal.tsx';
 import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon, BulbIcon } from '../components/icons.tsx';
 import { FloatingInput } from '../components/floating_input.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
-import { useApiCall } from '../hooks/api_call.js';
+import { useCachedQuery } from '../hooks/cached_query.js';
+import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { listSessions, invalidateSession } from '../api/user.js';
 import { formatDate } from '../utils/dates.js';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
+import { RefreshStatus } from '../components/refresh_status.tsx';
 import { describeError } from '../utils/errors.js';
 import { AddAccountModal } from '../components/add_acc_modal.tsx';
 import { HoldButton } from '../components/hold_btn.tsx';
@@ -220,9 +222,16 @@ export default function SettingsPage() {
   const [terminatingProgress, setTerminatingProgress] = useState<{ current: number; total: number } | null>(null);
   const terminateStopRef = useRef(false);
 
-  const sessionsQ = useApiCall<{ sessions: Session[] }>(
+  const sessionsQ = useCachedQuery<{ sessions: Session[] }>(
+    active ? `sessions:${active.id}` : null,
     () => listSessions(active!) as Promise<{ sessions: Session[] }>,
-    [active?.token]
+    [active?.token],
+    { skip: !active }
+  );
+
+  const { secondsLeft: sessionsSecondsLeft, refreshNow: refreshSessionsNow } = useRefreshTimer(
+    [sessionsQ.refetch],
+    { enabled: settings.autoRefresh && !!active }
   );
 
   const sortedSessions = useMemo(() => {
@@ -424,12 +433,14 @@ export default function SettingsPage() {
         return (
           <>
             <h3 className="mt-0">Theme</h3><p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>Change the theme and accent color, or make your own</p>
-            <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <BulbIcon></BulbIcon><span>Try out the custom theme system!</span>
-            </div>
+            {!settings.scambait && (
+              <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <BulbIcon></BulbIcon><span>Try out the custom theme system!</span>
+              </div>
+            )}
             <label>Preset</label>
             <div className="btn-row">
-              {THEME_OPTIONS.map((opt) => (
+              {THEME_OPTIONS.filter((opt) => !settings.scambait || opt.value !== 'custom').map((opt) => (
                 <button
                   key={opt.value}
                   className={settings.theme === opt.value ? '' : 'secondary'}
@@ -598,34 +609,38 @@ export default function SettingsPage() {
               </button>
             </div>
 
-            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
-            <h3 className="mt-0">Display name</h3>
-            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
-              Change how your name appears throughout the app
-            </p>
-            <div className="btn-row">
-              {(
-                [
-                  { value: 'username', label: 'Username' },
-                  { value: 'first_name', label: 'First name' },
-                  { value: 'full_name', label: 'Full name' },
-                ] as { value: Settings['displayName']; label: string }[]
-              ).map((opt) => (
-                <button
-                  key={opt.value}
-                  className={settings.displayName === opt.value ? '' : 'secondary'}
-                  onClick={() => update({ displayName: opt.value })}
-                  disabled={!active}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-            {!active && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
-                <InfoIcon />
-                <span>To use this setting, <Link to="/i/flow/login">please log in</Link></span>
-              </div>
+            {!settings.scambait && (
+              <>
+                <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+                <h3 className="mt-0">Display name</h3>
+                <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+                  Change how your name appears throughout the app
+                </p>
+                <div className="btn-row">
+                  {(
+                    [
+                      { value: 'username', label: 'Username' },
+                      { value: 'first_name', label: 'First name' },
+                      { value: 'full_name', label: 'Full name' },
+                    ] as { value: Settings['displayName']; label: string }[]
+                  ).map((opt) => (
+                    <button
+                      key={opt.value}
+                      className={settings.displayName === opt.value ? '' : 'secondary'}
+                      onClick={() => update({ displayName: opt.value })}
+                      disabled={!active}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {!active && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+                    <InfoIcon />
+                    <span>To use this setting, <Link to="/i/flow/login">please log in</Link></span>
+                  </div>
+                )}
+              </>
             )}
           </>
         );
@@ -1042,6 +1057,7 @@ export default function SettingsPage() {
                     Terminate all sessions
                   </button>
                 </div>
+                <RefreshStatus seconds={sessionsSecondsLeft} onRefresh={refreshSessionsNow} enabled={settings.autoRefresh} />
               </>
             ))}
           </>
