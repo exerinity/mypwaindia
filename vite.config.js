@@ -39,7 +39,7 @@ export default defineConfig({
         chunkFileNames: '[name].js',
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) return assetInfo.name === 'index.css' ? 'mypwaindia.css' : '[name].css';
-          return '[name].[ext]';
+          return '[name]-[hash].[ext]';
         },
         manualChunks(id) {
           if (id.includes('node_modules')) return 'vendor';
