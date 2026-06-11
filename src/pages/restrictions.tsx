@@ -8,10 +8,10 @@ import { formatDate } from '../utils/dates.js';
 import { getRestrictionInfo } from '../utils/restrictions.js';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { RefreshStatus } from '../components/refresh_status.tsx';
-import { WarningIcon, ArrowLeftIcon } from '../components/icons.tsx';
+import { WarningIcon, ArrowLeftIcon, SuccessIcon } from '../components/icons.tsx';
 
 export default function RestrictionsPage() {
-  usePageTitle('Account Restrictions');
+  usePageTitle('Account restrictions');
   const { active } = useAuth();
   const { settings } = useSettings();
 
@@ -24,14 +24,12 @@ export default function RestrictionsPage() {
 
   return (
     <>
-      <h1 className="mt-0">Restrictions</h1>
+      <h1 className="mt-0">{data && restrictionList.length === 0 ? 'No restrictions' : 'Restrictions'}</h1>
       <p className="mt-0 mb-0" style={{ marginBottom: 20 }}>
         <Link to="/account" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
           <ArrowLeftIcon /> Back
         </Link>
       </p>
-      <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} />
-
       {loading && !data ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {Array.from({ length: 2 }).map((_, i) => (
@@ -50,7 +48,7 @@ export default function RestrictionsPage() {
       ) : error ? (
         <ErrorBox error={error} />
       ) : restrictionList.length === 0 ? (
-        <p className="mt-0 mb-0">You don't have any active restrictions on your account. If you were expecting to see anything here or somehow landed on this page by mistake, you might want to clear your cache and/or log out and back in.</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-success"><SuccessIcon /><span>You don't have any active restrictions on your account.</span></div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {restrictionList.map(([key, val]) => {
@@ -90,6 +88,7 @@ export default function RestrictionsPage() {
           })}
         </div>
       )}
+      <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} />
     </>
   );
 }

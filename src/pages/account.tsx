@@ -219,6 +219,7 @@ export default function AccountPage() {
               <div className="btn-row mt-2">
                 <Link to="/account/transfer" className="btn">Transfer funds</Link>
                 <Link to="/account/history" className="btn secondary">Transaction history</Link>
+                <Link to="/account/restrictions" className="btn secondary">See restrictions</Link>
                 {settings.scambait && (
                   <button className="btn secondary" onClick={() => setPersonalDetailsOpen(true)}>
                     View personal details
