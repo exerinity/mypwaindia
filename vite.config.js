@@ -36,11 +36,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         entryFileNames: 'mypwaindia.js',
-        chunkFileNames: '[name].js',
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name?.endsWith('.css')) return assetInfo.name === 'index.css' ? 'mypwaindia.css' : '[name].css';
-          return '[name]-[hash].[ext]';
-        },
+        chunkFileNames: '[name]-[hash].js',
+        assetFileNames: '[name]-[hash].[ext]',
         manualChunks(id) {
           if (id.includes('node_modules')) return 'vendor';
           if (id.match(/pages\/(login|logout|onboarding)/)) return 'auth';
