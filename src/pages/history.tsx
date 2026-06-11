@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
-import { useApiCall } from '../hooks/api_call.js';
+import { useCachedQuery } from '../hooks/cached_query.js';
+import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
 import { listTransactions } from '../api/transactions.js';
 import { TransactionTable } from '../components/tx_table.tsx';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
+import { RefreshStatus } from '../components/refresh_status.tsx';
 
 export default function HistoryPage() {
   usePageTitle('Transaction history');
@@ -13,11 +15,14 @@ export default function HistoryPage() {
   const { settings } = useSettings();
   const format = useCurrency();
   type TxList = { transactions: import('../components/tx_table.tsx').Transaction[] };
-  const { data, loading, error } = useApiCall<TxList>(
+  const { data, loading, error, refetch } = useCachedQuery<TxList>(
+    active ? `history-tx:${active.id}` : null,
     () => listTransactions(active!) as Promise<TxList>,
     [active?.token],
-    { refresh: settings.autoRefresh }
+    { skip: !active }
   );
+
+  const { secondsLeft, refreshNow } = useRefreshTimer([refetch], { enabled: settings.autoRefresh && !!active });
 
   const stats = useMemo(() => {
     const txs = data?.transactions;
@@ -95,6 +100,7 @@ export default function HistoryPage() {
            currentUserId={active?.id}
          />}
       </div>
+      <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} />
     </>
   );
 }
