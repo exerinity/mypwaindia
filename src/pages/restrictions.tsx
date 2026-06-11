@@ -1,24 +1,22 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
-import { useApiCall } from '../hooks/api_call.js';
+import { useSettings } from '../context/settings_ctx.tsx';
+import { useGlobalData } from '../context/global_data_ctx.tsx';
+import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
-import { getRestrictions } from '../api/user.js';
 import { formatDate } from '../utils/dates.js';
 import { getRestrictionInfo } from '../utils/restrictions.js';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
+import { RefreshStatus } from '../components/refresh_status.tsx';
 import { WarningIcon, ArrowLeftIcon } from '../components/icons.tsx';
-
-type RestrictionVal = { active: boolean; expires_at?: string; value?: unknown };
-type Restrictions = { restrictions: Record<string, RestrictionVal> };
 
 export default function RestrictionsPage() {
   usePageTitle('Account Restrictions');
   const { active } = useAuth();
+  const { settings } = useSettings();
 
-  const { data, loading, error } = useApiCall<Restrictions>(
-    () => getRestrictions(active!) as Promise<Restrictions>,
-    [active?.token]
-  );
+  const { restrictions: data, restrictionsLoading: loading, restrictionsError: error, refetchRestrictions } = useGlobalData();
+  const { secondsLeft, refreshNow } = useRefreshTimer([refetchRestrictions], { enabled: settings.autoRefresh && !!active });
 
   const restrictionList = data
     ? Object.entries(data.restrictions).filter(([, v]) => v?.active)
@@ -32,6 +30,7 @@ export default function RestrictionsPage() {
           <ArrowLeftIcon /> Back
         </Link>
       </p>
+      <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} />
 
       {loading && !data ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
