@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
-import { useApiCall } from '../hooks/api_call.js';
-import { getUserInfo, verifyEmail } from '../api/user.js';
+import { useGlobalData } from '../context/global_data_ctx.tsx';
+import { verifyEmail } from '../api/user.js';
 import { useToast } from '../context/toast_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 
@@ -10,12 +10,8 @@ export function VerificationBanner() {
   const toast = useToast();
   const [sending, setSending] = useState(false);
 
-  const { data } = useApiCall<{ email_verified: boolean }>(
-    () => getUserInfo(active!) as Promise<{ email_verified: boolean }>,
-    [active?.token],
-    { skip: !active }
-  );
-  if (!data || data.email_verified !== false) return null;
+  const { userInfo } = useGlobalData();
+  if (!active || !userInfo || userInfo.email_verified !== false) return null;
 
   async function send() {
     setSending(true);
