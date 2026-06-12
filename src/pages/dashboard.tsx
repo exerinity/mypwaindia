@@ -53,6 +53,16 @@ export default function DashboardPage() {
 
   const fakeStatements = useMemo(() => scambait ? generateStatements(1000, active?.id ?? null).slice(0, 10) : [], [scambait, active?.id]);
 
+  const uniqueUserCount = useMemo(() => {
+    const ids = new Set<number>();
+    for (const tx of txQ.data?.transactions || []) {
+      if (tx.sender) ids.add(tx.sender.id);
+      if (tx.recipient) ids.add(tx.recipient.id);
+    }
+    ids.delete(Number(active?.id));
+    return ids.size;
+  }, [txQ.data, active?.id]);
+
   if (!active) {
     return (
       <>
@@ -88,7 +98,7 @@ export default function DashboardPage() {
           <span className="stat-value">
             {scambait ? 150 + ((Number(active?.id) * 31 + 127) % 850) : transactions.length}
           </span>
-          <span className="stat-sub">{scambait ? 'since 2017' : 'all-time movement'}</span>
+          <span className="stat-sub">{scambait ? 'since 2017' : `with ${uniqueUserCount} different users`}</span>
         </div>
 
         <div className="card stat-card">

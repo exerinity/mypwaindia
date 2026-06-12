@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import type { ReactNode } from 'react';
+import { ExternalIcon } from './icons.tsx';
 
 const CHUNK_ERROR = /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i;
 
@@ -24,6 +25,7 @@ export class ChunkErrorBoundary extends Component<Props, State> {
         <div style={{ background: '#171717', border: '1px solid #333', borderRadius: 10, padding: 32, width: '100%', maxWidth: 420, boxShadow: '0 2px 8px rgba(0,0,0,0.6)', textAlign: 'center', color: '#eaeaea' }}>
           <img src="/i/mygayindia-full.webp" alt="MyPayIndia" width={135} height={50} style={{ marginBottom: 20 }} />
           <h2 style={{ margin: '0 0 8px', fontSize: '1.2rem' }}>Well, this is awkward...</h2>
+          <p>Something went seriously awry trying to load this page/view and the app was halted to prevent further issues. The error is:</p>
           <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0 0 20px' }}>
             {isChunkError
               ? "A required part of the app couldn't be loaded. This usually happens when the app has been updated since this page was opened, or you are intentionally blocking scripts."
@@ -31,6 +33,8 @@ export class ChunkErrorBoundary extends Component<Props, State> {
           </p>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button onClick={() => window.location.reload()} style={{ display: 'inline-flex', alignItems: 'center', padding: '9px 16px', borderRadius: 8, background: '#d03505', color: '#fff', fontSize: '0.875rem', fontWeight: 500, border: 'none', cursor: 'pointer' }}>Reload</button>
+            <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', borderRadius: 8, background: 'transparent', color: '#eaeaea', fontSize: '0.875rem', fontWeight: 500, border: '1px solid #333', cursor: 'pointer', textDecoration: 'none' }}>MyPayIndia.com <ExternalIcon size={12} /></a>
+            <button onClick={() => window.location.href = `/dash?_=${Date.now()}`} style={{ display: 'inline-flex', alignItems: 'center', padding: '9px 16px', borderRadius: 8, background: 'transparent', color: '#eaeaea', fontSize: '0.875rem', fontWeight: 500, border: '1px solid #333', cursor: 'pointer' }}>Hard reload</button>
           </div>
           <hr style={{ border: 'none', borderTop: '1px solid #2a2a2a', margin: '20px 0 16px' }} />
           <p style={{ color: '#aaa', fontSize: '0.78rem', margin: 0 }}>
