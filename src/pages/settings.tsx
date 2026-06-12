@@ -205,6 +205,7 @@ export default function SettingsPage() {
   const [hideInstall, setHideInstall] = useState(() => hideGet('install'));
   const [hideSbshint, setHideSbshint] = useState(() => hideGet('sbshint'));
   const [hideClickers, setHideClickers] = useState(() => hideGet('clickers'));
+  const [hideIotmWelcome, setHideIotmWelcome] = useState(() => hideGet('iotm_welcome'));
 
   const [deleteStorageConfirmOpen, setDeleteStorageConfirmOpen] = useState(false);
   const [deleteStorageDoneOpen, setDeleteStorageDoneOpen] = useState(false);
@@ -745,6 +746,7 @@ export default function SettingsPage() {
                 { key: 'install', label: 'Install app pill', value: hideInstall, set: setHideInstall },
                 { key: 'sbshint', label: 'Path shortcut tip on dashboard', value: hideSbshint, set: setHideSbshint },
                 { key: 'clickers', label: 'Active clickers dot (the button)', value: hideClickers, set: setHideClickers },
+                { key: 'iotm_welcome', label: 'Welcome message (the button)', value: hideIotmWelcome, set: setHideIotmWelcome },
               ] as const
             ).map(({ key, label, value, set }, i) => (
               <React.Fragment key={key}>

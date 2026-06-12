@@ -124,6 +124,10 @@ export default function IotmButtonPage() {
   const [activeUsers, setActiveUsers] = useState<Set<string>>(new Set());
   const [showDotModal, setShowDotModal] = useState(false);
   const [dotHintDismissed, setDotHintDismissed] = useState(() => hideGet('clickers'));
+  const [showWelcomeModal, setShowWelcomeModal] = useState(() => !hideGet('iotm_welcome'));
+  const [connectionLost, setConnectionLost] = useState(false);
+  const failedRequests = useRef(0);
+  const pendingAutoResume = useRef(false);
 
   useEffect(() => {
     if (!active?.token) return;
@@ -182,6 +186,14 @@ export default function IotmButtonPage() {
       })
         .then((r) => r.ok ? r.text() : Promise.reject())
         .then((html) => {
+          failedRequests.current = 0;
+          setConnectionLost(false);
+          if (pendingAutoResume.current) {
+            pendingAutoResume.current = false;
+            setAutoClicking(true);
+            setAutoClickStatus('active');
+            toast.info('Autoclicker resumed');
+          }
           const doc = new DOMParser().parseFromString(html, 'text/html');
           const leaderboard = doc.querySelector('#click_leaderboard')?.innerHTML ?? '';
           setState((s) => s ? { ...s, leaderboard } : s);
@@ -201,20 +213,48 @@ export default function IotmButtonPage() {
     })
       .then((r) => r.json() as Promise<ClickResponse>)
       .then((res) => {
+        failedRequests.current = 0;
+        setConnectionLost(false);
+        if (pendingAutoResume.current) {
+          pendingAutoResume.current = false;
+          setAutoClicking(true);
+          setAutoClickStatus('active');
+          toast.info('Autoclicker resumed');
+        }
         if (res.success && res.data) {
           const { clicks, payout_in, balance, leaderboard } = res.data;
-          setState((s) => ({ ...s!, balance, clicks, payout_in, leaderboard: leaderboard ?? s?.leaderboard ?? '' }));
-          localClicks.current = clicks;
-          localPayoutIn.current = payout_in;
-          setDisplayClicks(clicks);
-          setDisplayPayoutIn(payout_in);
-          const rupees = parseFloat(balance.replace(/,/g, ''));
-          if (!isNaN(rupees) && active) updateBalance(active.id, Math.round(rupees * 100));
+          const apply = () => {
+            setState((s) => ({ ...s!, balance, clicks, payout_in, leaderboard: leaderboard ?? s?.leaderboard ?? '' }));
+            localClicks.current = clicks;
+            localPayoutIn.current = payout_in;
+            setDisplayClicks(clicks);
+            setDisplayPayoutIn(payout_in);
+            const rupees = parseFloat(balance.replace(/,/g, ''));
+            if (!isNaN(rupees) && active) updateBalance(active.id, Math.round(rupees * 100));
+          };
+          if (clicks < localClicks.current) {
+            setDesync(true);
+            setTimeout(() => {
+              apply();
+              setDesync(false);
+            }, 700);
+          } else {
+            apply();
+          }
         } else {
           toast.error((res.message ?? 'Unknown error'));
         }
       })
-      .catch((e: unknown) => console.error('Button click error:', e));
+      .catch((e: unknown) => {
+        console.error('Button click error:', e);
+        failedRequests.current++;
+        if (failedRequests.current > 3) {
+          setConnectionLost(true);
+          if (autoClickingRef.current) pendingAutoResume.current = true;
+          setAutoClicking(false);
+          setAutoClickStatus('paused');
+        }
+      });
   }, [active, updateBalance]);
 
   function recordClick() {
@@ -223,8 +263,15 @@ export default function IotmButtonPage() {
   }
 
   function handleButtonClick() {
+    if (autoClickingRef.current) {
+      setAutoClicking(false);
+      setAutoClickStatus('paused');
+      toast.info('Autoclicker interrupted, pausing...');
+      return;
+    }
     const now = Date.now();
     if (now - lastClickTime.current <= MIN_CLICK_DELAY_MS) return;
+    pendingAutoResume.current = false;
     lastClickTime.current = now;
     recordClick();
 
@@ -241,7 +288,11 @@ export default function IotmButtonPage() {
   }
 
   const [autoClicking, setAutoClicking] = useState(false);
+  const [autoClickStatus, setAutoClickStatus] = useState<'none' | 'active' | 'paused'>('none');
+  const autoClickStatusRef = useRef(autoClickStatus);
+  const [desync, setDesync] = useState(false);
   useEffect(() => { autoClickingRef.current = autoClicking; }, [autoClicking]);
+  useEffect(() => { autoClickStatusRef.current = autoClickStatus; }, [autoClickStatus]);
 
   const autoClick = useCallback(() => {
     recordClick();
@@ -257,7 +308,11 @@ export default function IotmButtonPage() {
     function onKey(e: KeyboardEvent) {
       if (e.ctrlKey && e.altKey && e.key === 'x') {
         e.preventDefault();
-        setAutoClicking((v) => !v);
+        pendingAutoResume.current = false;
+        const next = !autoClickingRef.current;
+        setAutoClicking(next);
+        setAutoClickStatus(next ? 'active' : 'none');
+        if (next && autoClickStatusRef.current === 'paused') toast.info('Autoclicker resumed');
       }
     }
     window.addEventListener('keydown', onKey);
@@ -266,7 +321,7 @@ export default function IotmButtonPage() {
 
   useEffect(() => {
     if (!autoClicking || !active?.token) return;
-    const id = setInterval(autoClick, 100);
+    const id = setInterval(autoClick, 150);
     return () => clearInterval(id);
   }, [autoClicking, active?.token, autoClick]);
 
@@ -317,13 +372,56 @@ export default function IotmButtonPage() {
           <ErrorBox error={error} />
         ) : (
           <>
-            <p style={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--muted)', margin: '0 0 4px' }}>
+            <p
+              style={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--muted)', margin: '0 0 4px', userSelect: 'none' }}
+              onDoubleClick={() => {
+                pendingAutoResume.current = false;
+                if (autoClicking) {
+                  setAutoClicking(false);
+                  setAutoClickStatus('none');
+                  return;
+                }
+                if (autoClickStatus === 'paused') {
+                  setAutoClicking(true);
+                  setAutoClickStatus('active');
+                  toast.info('Autoclicker resumed');
+                  return;
+                }
+                const id = toast.push('Activate autoclicker?', 'info', 0, { label: 'Yes', onClick: () => {
+                  setAutoClicking(true);
+                  setAutoClickStatus('active');
+                  toast.remove(id);
+                  toast.success('The autoclicker is now active and clicking every 150 ms. To deactivate, double click BALANCE again or interrupt it');
+                } });
+              }}
+            >
               Balance
+              {autoClickStatus !== 'none' && (
+                <span
+                  style={{ float: 'right', fontSize: '0.72rem', textTransform: 'none', letterSpacing: 'normal', fontWeight: 400, ...(autoClickStatus === 'paused' && { cursor: 'pointer' }) }}
+                  onClick={(e) => {
+                    if (autoClickStatus !== 'paused') return;
+                    e.stopPropagation();
+                    pendingAutoResume.current = false;
+                    setAutoClicking(true);
+                    setAutoClickStatus('active');
+                    toast.info('Autoclicker resumed');
+                  }}
+                >
+                  {autoClickStatus === 'active' ? 'Autoclicker active' : 'Autoclicker interrupted - click here to resume'}
+                </span>
+              )}
             </p>
-            <p style={{ fontSize: '2.1rem', fontWeight: 700, margin: '0 0 20px', lineHeight: 1.2 }}>
-              <SlotBalance value={state ? formatPaisa(Math.round(parseFloat(state.balance.replace(/,/g, '')) * 100)) : '0.00'} />&nbsp;
-              <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--muted)' }}>INR</span>
-            </p>
+            {desync || connectionLost ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, margin: '0 0 20px' }}>
+                <Skeleton height={34} style={{ width: '55%' }} />
+              </div>
+            ) : (
+              <p style={{ fontSize: '2.1rem', fontWeight: 700, margin: '0 0 20px', lineHeight: 1.2 }}>
+                <SlotBalance value={state ? formatPaisa(Math.round(parseFloat(state.balance.replace(/,/g, '')) * 100)) : '0.00'} />&nbsp;
+                <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--muted)' }}>INR</span>
+              </p>
+            )}
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
               <span style={{ fontWeight: 600 }}>
@@ -345,6 +443,18 @@ export default function IotmButtonPage() {
             </button>
 
             {(() => {
+              if (connectionLost) return (
+                <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span className="spinner" />
+                  Connection lost, waiting for reconnection...
+                </p>
+              );
+              if (desync) return (
+                <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span className="spinner" />
+                  Syncing with the server... one moment
+                </p>
+              );
               if (!leaderboard) return null;
               const myIndex = leaderboard.entries.findIndex((e) => e.user === active?.username);
               if (myIndex === -1) return (
@@ -526,6 +636,25 @@ export default function IotmButtonPage() {
           )}
         </div>
       )}
+
+      <Modal
+        open={showWelcomeModal}
+        onClose={() => { hideSet('iotm_welcome'); setShowWelcomeModal(false); }}
+        title="Welcome to the MyPWAIndia button"
+      >
+        <p className="mt-0">The MyPWAIndia button is a more polished and interactive version of the original. As in, more numbers and things flying around. <strong>Keep in mind:</strong></p>
+        <ul>
+          <li>This is based on the same logic and players as the original</li>
+          <li>All calculations, like time to surpass, active clickers, and distance are completely estimated - the server may differ</li>
+          <li>There is a secret autoclicker somewhere...</li>
+        </ul>
+        <p className="mb-0">Happy clicking!</p>
+        <div className="btn-row" style={{ marginTop: 16 }}>
+          <button className="primary" onClick={() => { hideSet('iotm_welcome'); setShowWelcomeModal(false); }}>
+            Okay
+          </button>
+        </div>
+      </Modal>
     </>
   );
 }
