@@ -232,7 +232,7 @@ export default function IotmButtonPage() {
             const rupees = parseFloat(balance.replace(/,/g, ''));
             if (!isNaN(rupees) && active) updateBalance(active.id, Math.round(rupees * 100));
           };
-          if (clicks < localClicks.current) {
+          if (clicks < localClicks.current || clicks - localClicks.current >= 15) {
             setDesync(true);
             setTimeout(() => {
               apply();

@@ -16,7 +16,7 @@
   border-top-color: var(--brand);
   border-right-color: var(--brand);
   border-radius: 50%;
-  animation: spin 0.65s linear infinite;
+  animation: spin 1.2s linear infinite;
 }
 
 .spinner.lg {
