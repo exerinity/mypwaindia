@@ -33,7 +33,7 @@ export const KEYS = {
   LAST_VERSION: 'mpi_last_version',
 };
 
-type HideKey = 'install' | 'sbshint' | 'clickers';
+type HideKey = 'install' | 'sbshint' | 'clickers' | 'iotm_welcome';
 
 export function hideGet(key: HideKey): boolean {
   return storageGet<Partial<Record<HideKey, boolean>>>(KEYS.HIDE, {})[key] ?? false;

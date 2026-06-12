@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
@@ -30,10 +30,14 @@ export default function TransferPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const format = useCurrency();
-  const [recipient, setRecipient] = useState('');
-  const [note, setNote] = useState('');
+  const [searchParams] = useSearchParams();
+  const [recipient, setRecipient] = useState(() => searchParams.get('to') ?? '');
+  const [note, setNote] = useState(() => searchParams.get('message') ?? '');
   const [busy, setBusy] = useState(false);
-  const [stackPaisa, setStackPaisa] = useState(0);
+  const [stackPaisa, setStackPaisa] = useState(() => {
+    const amount = parseFloat(searchParams.get('amount') ?? '');
+    return !isNaN(amount) && amount > 0 ? Math.round(amount * 100) : 0;
+  });
   const [rawInput, setRawInput] = useState('');
   const [editingAmount, setEditingAmount] = useState(false);
   const [showSonModal, setShowSonModal] = useState(false);
