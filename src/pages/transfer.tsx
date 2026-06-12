@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
+import { useCachedQuery } from '../hooks/cached_query.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { transfer, listTransactions } from '../api/transactions.js';
 import { getUserInfo } from '../api/user.js';
@@ -12,6 +13,7 @@ import { HoldButton } from '../components/hold_btn.tsx';
 import { InfoIcon, WarningIcon } from '../components/icons.tsx';
 import { FloatingInput, FloatingTextarea } from '../components/floating_input.tsx';
 import { Modal } from '../components/modal.tsx';
+import { Skeleton } from '../components/status.tsx';
 import type { Transaction } from '../components/tx_table.tsx';
 
 const PRESETS_PAISA = [
@@ -51,9 +53,11 @@ export default function TransferPage() {
     [active?.token]
   );
 
-  const txQ = useApiCall<{ transactions: Transaction[] }>(
+  const txQ = useCachedQuery<{ transactions: Transaction[] }>(
+    active ? `history-tx:${active.id}` : null,
     () => listTransactions(active!) as Promise<{ transactions: Transaction[] }>,
-    [active?.token]
+    [active?.token],
+    { skip: !active }
   );
 
   const balance = userQ.data?.balance ?? null;
@@ -167,7 +171,16 @@ export default function TransferPage() {
           onChange={(e) => setRecipient(e.target.value)}
           disabled={busy}
         />
-        {recentRecipients.length > 0 && (
+        {txQ.loading ? (
+          <>
+            <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
+            <div className="preset-stack-row">
+              {[72, 56, 88, 64].map((w, i) => (
+                <Skeleton key={i} width={w} height={31} radius={10} />
+              ))}
+            </div>
+          </>
+        ) : recentRecipients.length > 0 && (
           <>
             <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
             <div className="preset-stack-row">

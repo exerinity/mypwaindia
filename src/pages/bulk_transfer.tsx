@@ -3,6 +3,7 @@ import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useApiCall } from '../hooks/api_call.js';
+import { useCachedQuery } from '../hooks/cached_query.js';
 import { transfer, listTransactions } from '../api/transactions.js';
 import { getUserInfo } from '../api/user.js';
 import type { Transaction } from '../components/tx_table.tsx';
@@ -12,6 +13,7 @@ import { HoldButton } from '../components/hold_btn.tsx';
 import { InfoIcon, WarningIcon, CloseIcon } from '../components/icons.tsx';
 import { FloatingInput, FloatingTextarea } from '../components/floating_input.tsx';
 import { Modal } from '../components/modal.tsx';
+import { Skeleton } from '../components/status.tsx';
 import { Link } from 'react-router-dom';
 
 const PRESETS_PAISA = [
@@ -50,9 +52,11 @@ export default function BulkTransferPage() {
     [active?.token]
   );
 
-  const txQ = useApiCall<{ transactions: Transaction[] }>(
+  const txQ = useCachedQuery<{ transactions: Transaction[] }>(
+    active ? `history-tx:${active.id}` : null,
     () => listTransactions(active!) as Promise<{ transactions: Transaction[] }>,
-    [active?.token]
+    [active?.token],
+    { skip: !active }
   );
 
   const recentRecipients = useMemo(() => {
@@ -218,7 +222,16 @@ export default function BulkTransferPage() {
           onChange={(e) => setRecipient(e.target.value)}
           disabled={sending}
         />
-        {recentRecipients.length > 0 && (
+        {txQ.loading ? (
+          <>
+            <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
+            <div className="preset-stack-row">
+              {[72, 56, 88, 64].map((w, i) => (
+                <Skeleton key={i} width={w} height={31} radius={10} />
+              ))}
+            </div>
+          </>
+        ) : recentRecipients.length > 0 && (
           <>
             <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
             <div className="preset-stack-row">
