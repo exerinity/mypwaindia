@@ -17,6 +17,8 @@ export const RELEASES: Release[] = [
     version: '15',
     date: '13 Jun 2026',
     notes: [
+      { h3: <><Link to="/iotm/button">The Button changes</Link></> },
+      'An autoclicker is now available under a subscription',
       { h3: 'Settings' },
       <>The reinitialize session button in <Link to="/settings/sessions">sessions</Link> now handles 2FA codes</>,
       <>Added a <Link to="/settings/sw">service worker control setting</Link></>,
@@ -25,6 +27,7 @@ export const RELEASES: Release[] = [
       { h3: 'Miscellaneous' },
       'All settings pages now take up the whole container',
       'Compiled scripts have been split up per category and now load lazily',
+      <>Added a <Link to="/i/flow/subscriptions">subscriptions page</Link></>,
       { h3: 'Auto-refresh overhaul' },
       'The dashboard, account, history, payment links, restrictions, and sessions pages now share a single 30-second refresh cycle, cutting down on duplicate/unnecessary network requests',
       'Leaving a page and coming back now shows your last-loaded data instantly instead, while a fresh copy loads in the background',
