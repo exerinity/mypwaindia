@@ -13,6 +13,35 @@ export const CUSTOM_VAR_KEYS = [
   '--table-row-alt', '--shadow',
 ] as const;
 
+/** shared list of pages */
+export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
+  { value: '/dash', label: 'Dashboard' },
+  { value: '/account', label: 'Account' },
+  { value: '/account/transfer', label: 'Transfer funds' },
+  { value: '/account/history', label: 'Full transaction history' },
+  { value: '/account/restrictions', label: 'Active restrictions' },
+  { value: '/dash/statements', label: 'Statements' },
+  { value: '/dash/cards', label: 'Cards' },
+  { value: '/links', label: 'Create a payment link' },
+  { value: '/links/claim', label: 'Claim a payment link' },
+  { value: '/settings/appearance', label: 'Settings' },
+  { value: '/settings:old', label: 'Old settings' },
+  { value: '/i/leaderboard', label: 'Leaderboard' },
+  { value: '/i/team', label: 'Meet the team' },
+  { value: '/i/release_notes', label: 'App release notes' },
+  { value: '/i/acknowledgements', label: 'Acknowledgements' },
+  { value: '/i/flow/mci', label: 'MyCLiIndia' },
+  { value: '/iotm', label: 'Investment Opportunities™' },
+  { value: '/iotm/button', label: 'The Button' },
+];
+
+export const DEFAULT_DASHBOARD_BUTTONS = [
+  '/account/transfer',
+  '/links',
+  '/links/claim',
+  '/account/history',
+];
+
 export interface Settings {
   theme: 'light' | 'dim' | 'dark' | 'custom';
   accent: string;
@@ -22,6 +51,7 @@ export interface Settings {
   displayName: 'username' | 'first_name' | 'full_name';
   scambait: boolean;
   homePage: string;
+  dashboardButtons: string[];
   customTheme: Record<string, string>;
   swEnabled: boolean;
 }
@@ -34,7 +64,7 @@ interface SettingsContextValue {
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
-const DEFAULT_SETTINGS: Settings = {
+export const DEFAULT_SETTINGS: Settings = {
   theme: 'dim',
   accent: '#d03505',
   autoRefresh: true,
@@ -43,6 +73,7 @@ const DEFAULT_SETTINGS: Settings = {
   displayName: 'username',
   scambait: false,
   homePage: '/dash',
+  dashboardButtons: DEFAULT_DASHBOARD_BUTTONS,
   customTheme: {},
   swEnabled: true,
 };
