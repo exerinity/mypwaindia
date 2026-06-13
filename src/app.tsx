@@ -31,6 +31,7 @@ const AcknowledgementsPage = lazy(() => import('./pages/acknowledgements.tsx'));
 const RestrictionsPage = lazy(() => import('./pages/restrictions.tsx'));
 const ConnectionPage = lazy(() => import('./pages/connection.tsx'));
 const ThemeApplyPage = lazy(() => import('./pages/theme_apply.tsx'));
+const SettingsApplyPage = lazy(() => import('./pages/settings_apply.tsx'));
 const NotFoundPage = lazy(() => import('./pages/not_found.tsx'));
 const FlowNotFoundPage = lazy(() => import('./pages/flow_not_found.tsx'));
 
@@ -119,6 +120,7 @@ export default function App() {
         <Route path="/i/flow/scambaitmode" element={<Navigate to="/settings/scambait" replace />} />
         <Route path="/i/flow/connection" element={<ConnectionPage />} />
         <Route path="/i/flow/theme" element={<ThemeApplyPage />} />
+        <Route path="/i/flow/settings" element={<SettingsApplyPage />} />
         <Route path="/theme" element={<ThemeRedirect />} />
 
         <Route path="/i/flow/mci" element={<CLIPage />} />
