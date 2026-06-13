@@ -15,11 +15,14 @@ type Release = {
 export const RELEASES: Release[] = [
   {
     version: '15',
-    date: '12 Jun 2026',
+    date: '13 Jun 2026',
     notes: [
-      { h3: 'Miscellaneous' },
+      { h3: 'Settings' },
       <>The reinitialize session button in <Link to="/settings/sessions">sessions</Link> now handles 2FA codes</>,
       <>Added a <Link to="/settings/sw">service worker control setting</Link></>,
+      <>Added a new <Link to="/settings/port">share settings</Link> page</>,
+      <>Added a new <Link to="/settings/home">speed dial setting</Link>, where you can modify the 4 action buttons on the dashboard</>,
+      { h3: 'Miscellaneous' },
       'All settings pages now take up the whole container',
       'Compiled scripts have been split up per category and now load lazily',
       { h3: 'Auto-refresh overhaul' },
