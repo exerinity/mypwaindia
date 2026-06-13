@@ -20,6 +20,7 @@ const LinksPage = lazy(() => import('./pages/links.tsx'));
 const ClaimLinkPage = lazy(() => import('./pages/claim_link.tsx'));
 const LeaderboardPage = lazy(() => import('./pages/leaderboard.tsx'));
 const TeamPage = lazy(() => import('./pages/team.tsx'));
+const SubscriptionsPage = lazy(() => import('./pages/subscriptions.tsx'));
 const SettingsPage = lazy(() => import('./pages/settings.tsx'));
 const IotmButtonPage = lazy(() => import('./pages/iotm_button.tsx'));
 const IOTMPage = lazy(() => import('./pages/iotm.tsx'));
@@ -133,6 +134,7 @@ export default function App() {
           <Route path="/account/transfer" element={<TransferPage />} />
           <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
           <Route path="/account/history" element={<HistoryPage />} />
+          <Route path="/i/flow/subscriptions" element={<SubscriptionsPage />} />
           <Route path="/links" element={<LinksPage />} />
           <Route path="/links/claim" element={<ClaimLinkPage />} />
           <Route path="/links/claim/:token" element={<ClaimLinkPage />} />

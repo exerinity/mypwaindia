@@ -1,0 +1,33 @@
+/* =====================================================================
+   SUBSCRIPTIONS
+   ===================================================================== */
+.sub-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sub-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sub-card .sub-info {
+  flex: 1;
+  min-width: 200px;
+  display: grid;
+  gap: 2px;
+}
+
+.link-status.trialing {
+  background: rgba(47, 143, 252, 0.15);
+  color: var(--alert-info);
+}
+
+.link-status.past_due {
+  background: rgba(230, 160, 50, 0.18);
+  color: var(--alert-warning);
+}
