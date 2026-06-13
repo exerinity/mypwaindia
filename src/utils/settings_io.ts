@@ -9,9 +9,11 @@ export interface SettingsExport {
   onboard: number;
 }
 
-const PAGE_LABELS: Record<string, string> = Object.fromEntries(
-  HOME_PAGE_OPTIONS.map((o) => [o.value, o.label]),
-);
+let pageLabels: Record<string, string> | null = null;
+function pageLabel(value: string): string {
+  if (!pageLabels) pageLabels = Object.fromEntries(HOME_PAGE_OPTIONS.map((o) => [o.value, o.label]));
+  return pageLabels[value] ?? value;
+}
 
 export const SETTINGS_FIELD_LABELS: { key: keyof Settings; label: string }[] = [
   { key: 'theme', label: 'Theme' },
@@ -44,9 +46,9 @@ export function describeHide(payload: SettingsExport): string {
 
 export function describeSettingValue(key: keyof Settings, value: unknown): string {
   if (typeof value === 'boolean') return value ? 'Yes' : 'No';
-  if (key === 'homePage' && typeof value === 'string') return PAGE_LABELS[value] ?? value;
+  if (key === 'homePage' && typeof value === 'string') return pageLabel(value);
   if (key === 'dashboardButtons' && Array.isArray(value)) {
-    return value.length ? value.map((v) => PAGE_LABELS[v] ?? v).join(', ') : '(none)';
+    return value.length ? value.map((v) => pageLabel(v)).join(', ') : '(none)';
   }
   if (Array.isArray(value)) return value.length ? value.join(', ') : '(none)';
   if (value && typeof value === 'object') {
