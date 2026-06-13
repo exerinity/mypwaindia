@@ -4,14 +4,14 @@ import type { Settings } from '../context/settings_ctx.tsx';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { AppFooter } from '../components/app_footer.tsx';
 import { RELEASES } from './release_notes.tsx';
-import { useSettings, CUSTOM_VAR_KEYS } from '../context/settings_ctx.tsx';
+import { useSettings, CUSTOM_VAR_KEYS, HOME_PAGE_OPTIONS, DEFAULT_DASHBOARD_BUTTONS } from '../context/settings_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { login as apiLogin, logout as apiLogout } from '../api/auth.js';
 import { useToast } from '../context/toast_ctx.tsx';
 import { normalizeHex } from '../utils/colors.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon, BulbIcon } from '../components/icons.tsx';
+import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon, BulbIcon, PlusIcon, CloseIcon } from '../components/icons.tsx';
 import { FloatingInput } from '../components/floating_input.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useCachedQuery } from '../hooks/cached_query.js';
@@ -24,6 +24,12 @@ import { describeError } from '../utils/errors.js';
 import { AddAccountModal } from '../components/add_acc_modal.tsx';
 import { HoldButton } from '../components/hold_btn.tsx';
 import { hideGet, hideSetValue } from '../utils/storage.ts';
+import {
+  collectSettingsExport,
+  parseSettingsExport,
+  applySettingsImport,
+  settingsToSearchParams,
+} from '../utils/settings_io.ts';
 import FlowNotFoundPage from './flow_not_found.tsx';
 
 
@@ -128,6 +134,7 @@ type CategoryId =
   | 'appearance'
   | 'home'
   | 'data'
+  | 'port'
   | 'sw'
   | 'account'
   | 'scambait'
@@ -143,30 +150,11 @@ interface Category {
   to?: string;
 }
 
-const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
-  { value: '/dash', label: 'Dashboard (default)' },
-  { value: '/account', label: 'Account' },
-  { value: '/account/transfer', label: 'Transfer' },
-  { value: '/account/history', label: 'Transaction history' },
-  { value: '/account/restrictions', label: 'Restrictions' },
-  { value: '/dash/statements', label: 'Statements (scambait)' },
-  { value: '/dash/cards', label: 'Cards (scambait)' },
-  { value: '/links', label: 'Payment links' },
-  { value: '/links/claim', label: 'Claim link' },
-  { value: '/settings/appearance', label: 'Settings' },
-  { value: '/settings:old', label: 'Old settings' },
-  { value: '/i/leaderboard', label: 'Leaderboard' },
-  { value: '/i/team', label: 'Meet the team' },
-  { value: '/i/release_notes', label: 'App release notes' },
-  { value: '/i/acknowledgements', label: 'Acknowledgements' },
-  { value: '/i/flow/mci', label: 'MyCLiIndia' },
-  { value: '/iotm/button', label: 'The Button (Investment Opportunities™)' }
-];
-
 const CATEGORIES: Category[] = [
   { id: 'appearance', label: 'Appearance', desc: 'Theme and accent color' },
   { id: 'home', label: 'Home screen', desc: 'Page shown when opening the app', hideWhenScambait: true },
   { id: 'data', label: 'Data control', desc: 'Edit saved accounts, API settings, and other small settings' },
+  { id: 'port', label: 'Share settings', desc: 'Move your settings in or out', hideWhenScambait: true },
   { id: 'sw', label: 'Service worker', desc: 'Manage the service worker', hideWhenScambait: true },
   { id: 'scambait', label: 'Scambait mode', desc: '67', hideWhenScambait: true },
   { id: 'sessions', label: 'Sessions', desc: 'View and manage active login sessions', authRequired: true },
@@ -222,6 +210,8 @@ export default function SettingsPage() {
   const terminateAllDone = terminateAllSteps.every(Boolean);
   const [terminatingProgress, setTerminatingProgress] = useState<{ current: number; total: number } | null>(null);
   const terminateStopRef = useRef(false);
+
+  const [importJson, setImportJson] = useState('');
 
   const sessionsQ = useCachedQuery<{ sessions: Session[] }>(
     active ? `sessions:${active.id}` : null,
@@ -652,6 +642,7 @@ export default function SettingsPage() {
         const commitCustom = (val: string) => { if (val.trim()) update({ homePage: val.trim() }); };
         return (
           <>
+            <h3 className="mt-0">Default page</h3>
             <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
               Change what page is loaded when you open the app
             </p>
@@ -690,6 +681,145 @@ export default function SettingsPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
               <InfoIcon />
               <span>This will not execute if you visit a page, obviously</span>
+            </div>
+
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+            <h3 className="mt-0">Speed dial</h3>
+            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
+              Customize the action buttons shown on your dashboard (up to 5)
+            </p>
+            {settings.dashboardButtons.map((route, i) => (
+              <div key={i} className="row gap-sm" style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
+                <select
+                  value={route}
+                  style={{ flex: 1, minWidth: 0 }}
+                  onChange={(e) => {
+                    const next = [...settings.dashboardButtons];
+                    next[i] = e.target.value;
+                    update({ dashboardButtons: next });
+                  }}
+                >
+                  {HOME_PAGE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+                <button
+                  className="btn ghost"
+                  style={{ padding: '0 6px', lineHeight: 0, flexShrink: 0 }}
+                  aria-label="Remove button"
+                  onClick={() => update({ dashboardButtons: settings.dashboardButtons.filter((_, j) => j !== i) })}
+                >
+                  <CloseIcon size={16} />
+                </button>
+              </div>
+            ))}
+            <div className="row gap-sm" style={{ marginTop: 10 }}>
+              {settings.dashboardButtons.length < 5 && (
+                <button
+                  className="btn secondary row gap-sm"
+                  onClick={() => update({ dashboardButtons: [...settings.dashboardButtons, HOME_PAGE_OPTIONS[0].value] })}
+                >
+                  <PlusIcon size={16} /> Add button
+                </button>
+              )}
+              <button
+                className="btn ghost"
+                onClick={() => update({ dashboardButtons: [...DEFAULT_DASHBOARD_BUTTONS] })}
+              >
+                Reset to defaults
+              </button>
+            </div>
+          </>
+        );
+      }
+
+      case 'port': {
+        const applyJson = (raw: string) => {
+          const parsed = parseSettingsExport(raw);
+          if (!parsed) { toast.error('That is not correct JSON'); return; }
+          applySettingsImport(parsed, update);
+          toast.success('Settings imported');
+          setImportJson('');
+        };
+        return (
+          <>
+            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+              Export or import your settings. This can be done in 3 methods; the third is recommended. This is useful for having consistency across devices or showing someone else <i>exactly</i> how your app is configured
+            </p>
+
+            <h3 className="mt-0">Copy &amp; paste</h3>
+            <div className="btn-row" style={{ marginTop: 4 }}>
+              <button className="secondary compact" onClick={() => {
+                const json = JSON.stringify(collectSettingsExport(settings), null, 2);
+                navigator.clipboard.writeText(json).then(
+                  () => toast.success('Settings JSON copied to clipboard'),
+                  () => toast.error('Copying failed, try exporting a file'),
+                );
+              }}>
+                Copy settings in JSON
+              </button>
+            </div>
+            <label htmlFor="settings-import-json" className="mt-2">Paste JSON to import</label>
+            <textarea
+              id="settings-import-json"
+              value={importJson}
+              onChange={(e) => setImportJson(e.target.value)}
+              placeholder='{ "settings": { ... } }'
+              style={{ marginTop: 6, minHeight: 120, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: '0.8rem' }}
+            />
+            <div className="btn-row" style={{ marginTop: 6 }}>
+              <button className="secondary compact" disabled={!importJson.trim()} onClick={() => applyJson(importJson)}>
+                Apply pasted JSON
+              </button>
+            </div>
+
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+            <h3 className="mt-0">JSON file</h3>
+            <div className="btn-row" style={{ marginTop: 4 }}>
+              <button className="secondary compact" onClick={() => {
+                const json = JSON.stringify(collectSettingsExport(settings), null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'mpi_settings.json';
+                a.click();
+                URL.revokeObjectURL(url);
+              }}>
+                Export file
+              </button>
+              <button className="secondary compact" onClick={() => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json,application/json';
+                input.onchange = () => {
+                  const file = input.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = (e) => applyJson(e.target?.result as string);
+                  reader.readAsText(file);
+                };
+                input.click();
+              }}>
+                Import file
+              </button>
+            </div>
+
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+            <h3 className="mt-0">Shareable link (recommended)</h3>
+            <p className="muted" style={{ fontSize: '0.85rem', marginTop: 0, marginBottom: 8 }}>
+              With this, you are able to choose what incoming settings are applied before accepting
+            </p>
+            <div className="btn-row" style={{ marginTop: 4 }}>
+              <button className="secondary compact" onClick={() => {
+                const url = `https://mypayindia.sbs/i/flow/settings?${settingsToSearchParams(collectSettingsExport(settings))}`;
+                navigator.clipboard.writeText(url).then(
+                  () => toast.success('Settings link copied to clipboard!'),
+                  () => toast.error('Copying failed, why not export a file?'),
+                );
+              }}>
+                Generate link
+              </button>
             </div>
           </>
         );
