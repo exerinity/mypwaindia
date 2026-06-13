@@ -4,7 +4,7 @@ import { useAuth } from '../context/auth_ctx.tsx';
 import { useCachedQuery } from '../hooks/cached_query.js';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
-import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
+import { useSettings, useCurrency, HOME_PAGE_OPTIONS } from '../context/settings_ctx.tsx';
 import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
@@ -111,13 +111,21 @@ export default function DashboardPage() {
       </div>
 
       <div className="btn-row mb-2">
-        <Link to="/account/transfer" className="btn secondary">Transfer funds</Link>
-        {!scambait && <Link to="/links" className="btn secondary">Create a payment link</Link>}
-        {!scambait && <Link to="/links/claim" className="btn secondary">Claim a payment link</Link>}
-        {scambait
-          ? <Link to="/dash/statements" className="btn ghost">Full statements</Link>
-          : <Link to="/account/history" className="btn ghost">Full transaction history</Link>
-        }
+        {scambait ? (
+          <>
+            <Link to="/account/transfer" className="btn secondary">Transfer funds</Link>
+            <Link to="/dash/statements" className="btn ghost">Full statements</Link>
+          </>
+        ) : (
+          settings.dashboardButtons.map((route, i) => {
+            const opt = HOME_PAGE_OPTIONS.find((o) => o.value === route);
+            return (
+              <Link key={`${route}:${i}`} to={route} className="btn secondary">
+                {opt ? opt.label : route}
+              </Link>
+            );
+          })
+        )}
       </div>
 
       {!hdHidden && !scambait && (
