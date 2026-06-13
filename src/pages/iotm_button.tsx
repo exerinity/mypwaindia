@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
+import { useApiCall } from '../hooks/api_call.js';
 import { API_BASE } from '../api/config.js';
+import { checkSubscription, createSubscribeSession } from '../api/subscribe.js';
 import { ArrowLeftIcon, ExternalIcon } from '../components/icons.tsx';
 import { ErrorBox, Skeleton } from '../components/status.tsx';
 import { Modal } from '../components/modal.tsx';
 import { formatPaisa } from '../utils/money.js';
+import { describeError } from '../utils/errors.js';
 import { hideGet, hideSet } from '../utils/storage.ts';
 
 const MIN_CLICK_DELAY_MS = 100;
@@ -294,6 +297,57 @@ export default function IotmButtonPage() {
   useEffect(() => { autoClickingRef.current = autoClicking; }, [autoClicking]);
   useEffect(() => { autoClickStatusRef.current = autoClickStatus; }, [autoClickStatus]);
 
+  const subQ = useApiCall(
+    () => checkSubscription(active!.token),
+    [active?.token],
+    { skip: !active?.token }
+  );
+  const hasAccess = !!subQ.data?.subscribed;
+  const hasAccessRef = useRef(hasAccess);
+  useEffect(() => { hasAccessRef.current = hasAccess; }, [hasAccess]);
+  const [subscribing, setSubscribing] = useState(false);
+
+  useEffect(() => {
+    if (!hasAccess && autoClicking) {
+      setAutoClicking(false);
+      setAutoClickStatus('none');
+    }
+  }, [hasAccess, autoClicking]);
+
+  function toggleAutoclicker() {
+    if (!hasAccessRef.current) return;
+    pendingAutoResume.current = false;
+    if (autoClicking) {
+      setAutoClicking(false);
+      setAutoClickStatus('none');
+      return;
+    }
+    if (autoClickStatus === 'paused') {
+      setAutoClicking(true);
+      setAutoClickStatus('active');
+      toast.info('Autoclicker resumed');
+      return;
+    }
+    const id = toast.push('Activate autoclicker?', 'info', 0, { label: 'Yes', onClick: () => {
+      setAutoClicking(true);
+      setAutoClickStatus('active');
+      toast.remove(id);
+      toast.success('Autoclicker active. To stop, double click BALANCE again or interrupt it');
+    } });
+  }
+
+  async function startSubscribe() {
+    if (!active) return;
+    setSubscribing(true);
+    try {
+      const { checkout_url } = await createSubscribeSession(active.token);
+      window.location.href = checkout_url;
+    } catch (e) {
+      toast.error(describeError(e));
+      setSubscribing(false);
+    }
+  }
+
   const autoClick = useCallback(() => {
     recordClick();
     tempClicks.current++;
@@ -308,6 +362,7 @@ export default function IotmButtonPage() {
     function onKey(e: KeyboardEvent) {
       if (e.ctrlKey && e.altKey && e.key === 'x') {
         e.preventDefault();
+        if (!hasAccessRef.current) return;
         pendingAutoResume.current = false;
         const next = !autoClickingRef.current;
         setAutoClicking(next);
@@ -374,43 +429,56 @@ export default function IotmButtonPage() {
           <>
             <p
               style={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--muted)', margin: '0 0 4px', userSelect: 'none' }}
-              onDoubleClick={() => {
-                pendingAutoResume.current = false;
-                if (autoClicking) {
-                  setAutoClicking(false);
-                  setAutoClickStatus('none');
-                  return;
-                }
-                if (autoClickStatus === 'paused') {
-                  setAutoClicking(true);
-                  setAutoClickStatus('active');
-                  toast.info('Autoclicker resumed');
-                  return;
-                }
-                const id = toast.push('Activate autoclicker?', 'info', 0, { label: 'Yes', onClick: () => {
-                  setAutoClicking(true);
-                  setAutoClickStatus('active');
-                  toast.remove(id);
-                  toast.success('The autoclicker is now active and clicking every 150 ms. To deactivate, double click BALANCE again or interrupt it');
-                } });
-              }}
+              onDoubleClick={toggleAutoclicker}
             >
               Balance
-              {autoClickStatus !== 'none' && (
-                <span
-                  style={{ float: 'right', fontSize: '0.72rem', textTransform: 'none', letterSpacing: 'normal', fontWeight: 400, ...(autoClickStatus === 'paused' && { cursor: 'pointer' }) }}
-                  onClick={(e) => {
-                    if (autoClickStatus !== 'paused') return;
-                    e.stopPropagation();
-                    pendingAutoResume.current = false;
-                    setAutoClicking(true);
-                    setAutoClickStatus('active');
-                    toast.info('Autoclicker resumed');
-                  }}
-                >
-                  {autoClickStatus === 'active' ? 'Autoclicker active' : 'Autoclicker interrupted - click here to resume'}
-                </span>
-              )}
+              {(() => {
+                const indicatorStyle: React.CSSProperties = { float: 'right', fontSize: '0.72rem', textTransform: 'none', letterSpacing: 'normal', fontWeight: 400 };
+                if (subQ.loading) {
+                  return <span style={indicatorStyle}>Loading...</span>;
+                }
+                if (!hasAccess) {
+                  return (
+                    <span
+                      style={{ ...indicatorStyle, cursor: subscribing ? 'default' : 'pointer', textDecoration: 'underline' }}
+                      onClick={(e) => { e.stopPropagation(); if (!subscribing) startSubscribe(); }}
+                    >
+                      {subscribing ? 'Taking you to MyPayIndia...' : 'Unlock access to autoclicker'}
+                    </span>
+                  );
+                }
+                if (autoClickStatus !== 'none') {
+                  return (
+                    <span
+                      style={{ ...indicatorStyle, ...(autoClickStatus === 'paused' && { cursor: 'pointer' }) }}
+                      onClick={(e) => {
+                        if (autoClickStatus !== 'paused') return;
+                        e.stopPropagation();
+                        pendingAutoResume.current = false;
+                        setAutoClicking(true);
+                        setAutoClickStatus('active');
+                        toast.info('Autoclicker resumed');
+                      }}
+                    >
+                      {autoClickStatus === 'active' ? 'Autoclicker active' : 'Autoclicker interrupted - click here to resume'}
+                    </span>
+                  );
+                }
+                return (
+                  <span
+                    style={{ ...indicatorStyle, cursor: 'pointer', textDecoration: 'underline' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      pendingAutoResume.current = false;
+                      setAutoClicking(true);
+                      setAutoClickStatus('active');
+                      toast.success('Autoclicker active. To stop, double click BALANCE again or interrupt it');
+                    }}
+                  >
+                    Activate autoclicker
+                  </span>
+                );
+              })()}
             </p>
             {desync || connectionLost ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6, margin: '0 0 20px' }}>
@@ -646,7 +714,7 @@ export default function IotmButtonPage() {
         <ul>
           <li>This is based on the same logic and players as the original</li>
           <li>All calculations, like time to surpass, active clickers, and distance are completely estimated - the server may differ</li>
-          <li>There is a secret autoclicker somewhere...</li>
+          <li>An autoclicker is available to subscribers</li>
         </ul>
         <p className="mb-0">Happy clicking!</p>
         <div className="btn-row" style={{ marginTop: 16 }}>
