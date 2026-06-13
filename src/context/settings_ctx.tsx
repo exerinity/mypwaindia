@@ -25,7 +25,6 @@ export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/links', label: 'Create a payment link' },
   { value: '/links/claim', label: 'Claim a payment link' },
   { value: '/settings/appearance', label: 'Settings' },
-  { value: '/settings:old', label: 'Old settings' },
   { value: '/i/leaderboard', label: 'Leaderboard' },
   { value: '/i/team', label: 'Meet the team' },
   { value: '/i/release_notes', label: 'App release notes' },

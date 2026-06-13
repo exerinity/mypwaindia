@@ -21,7 +21,6 @@ const ClaimLinkPage = lazy(() => import('./pages/claim_link.tsx'));
 const LeaderboardPage = lazy(() => import('./pages/leaderboard.tsx'));
 const TeamPage = lazy(() => import('./pages/team.tsx'));
 const SettingsPage = lazy(() => import('./pages/settings.tsx'));
-const OldSettingsPage = lazy(() => import('./pages/old_settings.tsx'));
 const IotmButtonPage = lazy(() => import('./pages/iotm_button.tsx'));
 const IOTMPage = lazy(() => import('./pages/iotm.tsx'));
 const CLIPage = lazy(() => import('./pages/cli.tsx'));
@@ -115,7 +114,7 @@ export default function App() {
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
         <Route path="/settings/:category" element={<SettingsPage />} />
-        <Route path="/settings:old" element={<OldSettingsPage />} />
+        <Route path="/settings:old" element={<FlowNotFoundPage />} />
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
         <Route path="/i/flow/scambaitmode" element={<Navigate to="/settings/scambait" replace />} />
         <Route path="/i/flow/connection" element={<ConnectionPage />} />

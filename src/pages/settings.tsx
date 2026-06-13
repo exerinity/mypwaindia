@@ -11,7 +11,7 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { normalizeHex } from '../utils/colors.js';
 import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon, ArrowLeftIcon, ChevronRight, SearchIcon, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon, BulbIcon, PlusIcon, CloseIcon } from '../components/icons.tsx';
+import { ExternalIcon, ArrowLeftIcon, ChevronRight, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon, BulbIcon, PlusIcon, CloseIcon } from '../components/icons.tsx';
 import { FloatingInput } from '../components/floating_input.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useCachedQuery } from '../hooks/cached_query.js';
@@ -162,7 +162,6 @@ const CATEGORIES: Category[] = [
   { id: 'toys', label: 'Toys', desc: 'Poke around with UI components', to: '/i/flow/mpti', hideWhenScambait: true },
   { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/accountservices/accsettings' },
   { id: 'mypayindia', label: 'MyPayIndia.com', desc: 'Visit the main website', href: 'https://mypayindia.com' },
-  { id: 'old_settings', label: 'Old settings', desc: 'Legacy flat-card layout', to: '/settings:old', hideWhenScambait: true },
 ];
 
 export default function SettingsPage() {
@@ -200,7 +199,6 @@ export default function SettingsPage() {
   const [scambaitKnocks, setScambaitKnocks] = useState(0);
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
   const [scambaitAlreadyOpen, setScambaitAlreadyOpen] = useState(false);
-  const [search, setSearch] = useState('');
   const [mobileShowDetail, setMobileShowDetail] = useState(false);
 
   const [sessionSort, setSessionSort] = useState('last_active_desc');
@@ -329,14 +327,12 @@ export default function SettingsPage() {
   }
 
   const visibleCategories = useMemo(() => {
-    const q = search.toLowerCase().trim();
     return CATEGORIES.filter((c) => {
       if (c.authRequired && !active) return false;
       if (c.hideWhenScambait && settings.scambait) return false;
-      if (!q) return true;
-      return c.label.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q);
+      return true;
     });
-  }, [search, active, settings.scambait]);
+  }, [active, settings.scambait]);
 
   function handleScambaitToggle() {
     if (settings.scambait) {
@@ -1207,17 +1203,6 @@ export default function SettingsPage() {
         <div className={`mpi-settings-nav${mobileShowDetail ? ' mpi-settings-nav--hidden' : ''}`}>
           <div className="mpi-settings-nav-header">
             <h1>Settings</h1>
-            <div className="mpi-settings-search mpi-float">
-              <input
-                id="settings-search"
-                type="search"
-                placeholder=" "
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <label htmlFor="settings-search">Search settings</label>
-              <span className="mpi-settings-search-icon"><SearchIcon /></span>
-            </div>
           </div>
 
           <div className="mpi-settings-nav-list">

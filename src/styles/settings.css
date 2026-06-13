@@ -1,5 +1,5 @@
 /* =====================================================================
-   SETTINGS 2
+   SETTINGS
    ===================================================================== */
 
 .mpi-settings-layout {
@@ -30,40 +30,6 @@
   margin: 0 0 14px;
 }
 
-
-.mpi-settings-search.mpi-float {
-  margin-top: 10px;
-}
-
-.mpi-settings-search.mpi-float > input {
-  padding-top: 16px;
-  padding-bottom: 6px;
-  padding-left: 36px;
-  font-size: 0.875rem;
-}
-
-.mpi-settings-search.mpi-float > label {
-  left: 36px;
-  font-size: 0.875rem;
-}
-
-.mpi-settings-search.mpi-float > input:focus ~ label,
-.mpi-settings-search.mpi-float > input:not(:placeholder-shown) ~ label {
-  top: 4px;
-  left: 36px;
-  font-size: 0.65rem;
-}
-
-.mpi-settings-search-icon {
-  position: absolute;
-  left: 11px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--muted);
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-}
 
 .mpi-settings-nav-list {
   flex: 1;
