@@ -2,9 +2,30 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+function umami() {
+  return {
+    name: 'umami',
+    apply: 'build',
+    transformIndexHtml() {
+      return [
+        {
+          tag: 'script',
+          attrs: {
+            defer: true,
+            src: 'https://analytics.mypayindia.com/script.js',
+            'data-website-id': 'd4251bd6-18ba-4558-a11d-6440a3cd1ab6'
+          },
+          injectTo: 'head'
+        }
+      ];
+    }
+  };
+}
+
 export default defineConfig({
   plugins: [
     react(),
+    umami(),
     VitePWA({
       registerType: 'prompt',
       manifestFilename: 'mypayindia.webmanifest',
