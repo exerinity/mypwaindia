@@ -1,43 +1,123 @@
-import { useParams, Link } from 'react-router-dom';
+import { useState, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
-import { usePageTitle } from '../hooks/page_title.js';
 import { getTransaction } from '../api/transactions.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { formatDate } from '../utils/dates.js';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
-import { ArrowLeftIcon } from '../components/icons.tsx';
+import { Modal } from '../components/modal.tsx';
+import { CopyIcon } from '../components/icons.tsx';
 
+type TxDetail = {
+  transaction_id: string;
+  id: number;
+  status: string;
+  amount: number;
+  created: string;
+  note?: string;
+  sender?: { username: string; id: number };
+  recipient?: { username: string; id: number };
+};
 
-export default function TransactionPage() {
-  usePageTitle('Transaction');
-  const { id } = useParams();
+function CopyButton({ value }: { value: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(value).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }, [value]);
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      style={{
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '0 0 0 6px',
+        color: copied ? 'var(--success)' : 'var(--muted)',
+        fontSize: '0.75rem',
+        verticalAlign: 'middle',
+        lineHeight: 1,
+      }}
+      aria-label="Copy"
+    >
+      {copied ? 'OK' : <CopyIcon />}
+    </button>
+  );
+}
+
+function Field({ label, value, display, style, showCopy = false }: { label: string; value: string; display?: React.ReactNode; style?: React.CSSProperties; showCopy?: boolean }) {
+  return (
+    <div style={style}>
+      <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>{label}</div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
+        <span>{display ?? value}</span>
+        {showCopy && <CopyButton value={value} />}
+      </div>
+    </div>
+  );
+}
+
+export default function TransactionModal() {
   const { active } = useAuth();
   const format = useCurrency();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const id = location.pathname.split('/').pop();
 
-  type TxDetail = { transaction_id: string; id: number; status: string; amount: number; created: string; note?: string; sender?: { username: string; id: number }; recipient?: { username: string; id: number } };
   const { data, loading, error } = useApiCall<TxDetail>(
     () => getTransaction(active!, id!) as Promise<TxDetail>,
     [active?.token, id]
   );
 
-  return (
-    <>
-      <h1 className="mt-0">Transaction</h1>
-      <p className="mt-0 mb-0">
-        <Link to="/account/history" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><ArrowLeftIcon /> Back to history</Link>
-      </p>
+  const bgLoc = (location.state as any)?.backgroundLocation;
 
+  function handleClose() {
+    if (bgLoc) {
+      navigate(-1);
+    } else {
+      navigate('/dash');
+    }
+  }
+
+  function otherUsername() {
+    if (!data || !active) return '';
+    return outgoing ? data.recipient?.username ?? '' : data.sender?.username ?? '';
+  }
+
+  function handleNewTransfer() {
+    const to = otherUsername();
+    navigate(`/account/transfer?to=${encodeURIComponent(to)}`);
+  }
+
+  function handleReturn() {
+    const to = otherUsername();
+    const amountRu = (data?.amount ?? 0) / 100;
+    const message = `Return of #${data?.id ?? ''}`;
+    const qs = new URLSearchParams({ to, amount: String(amountRu), message }).toString();
+    navigate(`/account/transfer?${qs}`);
+  }
+
+  const outgoing = data && active ? data.sender?.id === active.id : false;
+  const deeplink = data ? `https://mypayindia.com/accountservices/trans?id=${data.id}` : '';
+
+  return (
+    <Modal
+      open
+      onClose={handleClose}
+      title={data ? (outgoing ? `Transaction to @${data.recipient?.username ?? '?'}` : `Transaction from @${data.sender?.username ?? '?'}`) : 'Transaction'}
+      className="slide"
+    >
       {loading && !data ? (
-        <div className="card">
-          <div className="row spread" style={{ marginBottom: 12 }}>
-            <Skeleton width={220} height={18} />
-            <Skeleton width={64} height={18} radius={999} />
-          </div>
-          <Skeleton width={160} height={38} style={{ marginBottom: 16 }} />
-          <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '16px 0' }} />
-          <div className="grid cols-2">
-            {Array.from({ length: 4 }).map((_, i) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <Skeleton width={160} height={48} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            {Array.from({ length: 5 }).map((_, i) => (
               <div key={i}>
                 <Skeleton width={40} height={11} style={{ marginBottom: 6 }} />
                 <Skeleton width={`${80 + (i % 3) * 24}px`} height={15} />
@@ -45,44 +125,49 @@ export default function TransactionPage() {
             ))}
           </div>
         </div>
-      ) :
-       error ? <ErrorBox error={error} /> :
-       data && (
-        <div className="card">
-          <div className="row spread">
-            <h3 className="mt-0 mono">{data.transaction_id}</h3>
-            <span className={`link-status ${data.status}`}>{data.status}</span>
-          </div>
-          <div className="balance-display" style={{ color: data.sender?.id === active?.id ? 'var(--alert-error)' : 'var(--success)' }}>
-            {data.sender?.id === active?.id ? '-' : '+'}{format(data.amount)}
-          </div>
-          <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '16px 0' }} />
-          <div className="grid cols-2">
-            <div>
-              <div className="muted" style={{ fontSize: '0.8rem' }}>From</div>
-              <div><strong>{data.sender?.username}</strong> <span className="muted">#{data.sender?.id}</span></div>
-            </div>
-            <div>
-              <div className="muted" style={{ fontSize: '0.8rem' }}>To</div>
-              <div><strong>{data.recipient?.username}</strong> <span className="muted">#{data.recipient?.id}</span></div>
-            </div>
-            <div>
-              <div className="muted" style={{ fontSize: '0.8rem' }}>When</div>
-              <div>{formatDate(data.created)}</div>
-            </div>
-            <div>
-              <div className="muted" style={{ fontSize: '0.8rem' }}>ID</div>
-              <div className="mono">#{data.id}</div>
+      ) : error ? (
+        <ErrorBox error={error} />
+      ) : data && (
+        <>
+          <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>Amount</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: 20 }}>
+            <div
+              className="balance-display"
+              style={{ color: outgoing ? 'var(--alert-error)' : 'var(--success)', marginBottom: 0 }}
+            >
+              {outgoing ? '-' : '+'}{format(data.amount)}
             </div>
           </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 24px' }}>
+            <Field label="From" value={`@${data.sender?.username}`} display={<strong>@{data.sender?.username}</strong>} showCopy />
+            <Field label="When" value={formatDate(data.created)} />
+            <Field label="To" value={`@${data.recipient?.username}`} display={<strong>@{data.recipient?.username}</strong>} showCopy />
+            <Field label="ID" value={`#${data.id}`} display={<span className="mono">#{data.id}</span>} showCopy />
+            <Field label="Deeplink" value={deeplink} display={<a href={deeplink} className="mono" style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>{deeplink}</a>} style={{ gridColumn: '1' }} showCopy />
+            <Field label="Transaction ID" value={data.transaction_id} display={<span className="mono">{data.transaction_id}</span>} style={{ gridColumn: '2' }} showCopy />
+          </div>
+
           {data.note && (
-            <>
-              <div className="muted mt-2" style={{ fontSize: '0.8rem' }}>Note</div>
-              <p>{data.note}</p>
-            </>
+            <div style={{ marginTop: 16 }}>
+              <Field label="Note" value={data.note} showCopy />
+            </div>
           )}
-        </div>
+          <div style={{ marginTop: 18, display: 'flex', gap: 8 }}>
+            <button type="button" className="secondary" onClick={handleNewTransfer}>
+              New transfer to them
+            </button>
+            {!outgoing && (
+              <button type="button" className="secondary" onClick={handleReturn}>
+                Return it
+              </button>
+            )}
+            <button type="button" onClick={handleClose}>
+              OK
+            </button>
+          </div>
+        </>
       )}
-    </>
+    </Modal>
   );
 }
