@@ -14,6 +14,14 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '15a',
+    date: '16 Jun 2026',
+    notes: [
+      <>Transaction detail viewer overhauled: it is now a modal with action buttons rather than a full page<br></br>(the old one is still available at <strong>/i/flow/transaction:old/:ID</strong>)</>,
+      { 'h3': <><Link to="/account/history">Try it out</Link></>}
+    ]
+  },
+  {
     version: '15',
     date: '13 Jun 2026',
     notes: [
