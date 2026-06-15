@@ -1,26 +1,36 @@
-import { useState } from 'react';
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Modal } from '../components/modal.tsx';
 
-function goHome() { window.location.replace('/'); }
+export default function FlowNotFound() {
+  const nav = useNavigate();
+  const location = useLocation();
 
-export default function FlowNotFoundPage() {
-  const [open, setOpen] = useState(true);
+  const od = !location.state || !('backgroundLocation' in (location.state as any));
 
-  return (
-    <>
-      <Modal open={open} fullscreen title="">{null}</Modal>
-      <Modal
-        open={open}
-        title="Error"
-        onClose={() => { setOpen(false); goHome(); }}
-      >
-        <p className="mt-0 mb-0">Oops, something went wrong. Please try again later.</p>
-        <div className="modal-actions">
-          <button onClick={goHome}>OK</button>
-        </div>
-      </Modal>
-    </>
+  const content = (
+    <p className="mt-0 mb-0">Oops, something went wrong. Please try again later.</p>
   );
+
+  if (od) {
+    return (
+      <>
+        <Modal open fullscreen title="">{null}</Modal>
+        <Modal
+          open
+          title="Error"
+          onClose={() => { nav('/'); }}
+        >
+          <p className="mt-0 mb-0">Oops, something went wrong. Please try again later.</p>
+          <div className="modal-actions">
+            <button onClick={() => { window.location.replace('/'); }}>OK</button>
+          </div>
+        </Modal>
+      </>
+    );
+  }
+
+  return content;
 }
 
-// i am trying so hard to larp as the twitter web app
+// the twitter web app larp never ends
