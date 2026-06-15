@@ -10,7 +10,7 @@ export interface Transaction {
   recipient?: { id: number; username: string };
   note?: string;
 }
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { formatDate } from '../utils/dates.js';
 
@@ -38,6 +38,7 @@ const COL_SORTS: Record<SortCol, [string, string]> = {
 
 export function TransactionTable({ transactions, currentUserId, hideLimitControl }: TransactionTableProps) {
   const format = useCurrency();
+  const location = useLocation();
   const [sort, setSort] = useState('date_desc');
   const [limit, setLimit] = useState<number | 'all'>(25);
 
@@ -120,7 +121,7 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
               return (
                 <tr key={tx.id}>
                   <td>
-                    <Link to={`/i/flow/transaction/${tx.transaction_id}`} className="mono">
+                    <Link to={`/i/flow/transaction/${tx.transaction_id}`} state={{ backgroundLocation: location }} className="mono">
                       {tx.transaction_id}
                     </Link>
                   </td>
