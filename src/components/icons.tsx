@@ -282,6 +282,15 @@ export function BulbIcon({ size = 18 }: { size?: number }) {
   );
 }
 
+export function CopyIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="9" y="9" width="11" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M15 9V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function MastercardIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={Math.round(size * 1.5)} height={size} viewBox="0 0 42 28" aria-hidden="true">
