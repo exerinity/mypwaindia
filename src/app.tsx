@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet, useLocation, useParams, type Location } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { AppLayout } from './components/app_layout.tsx';
 import { RequireAuth } from './components/require_auth.tsx';
@@ -16,6 +16,7 @@ const BulkTransferPage = lazy(() => import('./pages/bulk_transfer.tsx'));
 const HistoryPage = lazy(() => import('./pages/history.tsx'));
 const StatementsPage = lazy(() => import('./pages/statements.tsx'));
 const TransactionPage = lazy(() => import('./pages/transaction.tsx'));
+const OldTransactionPage = lazy(() => import('./pages/old_transaction.tsx'));
 const LinksPage = lazy(() => import('./pages/links.tsx'));
 const ClaimLinkPage = lazy(() => import('./pages/claim_link.tsx'));
 const LeaderboardPage = lazy(() => import('./pages/leaderboard.tsx'));
@@ -75,10 +76,14 @@ function MerchantRedirect() {
 
 export default function App() {
   const location = useLocation();
+  const bgLoc = (location.state as { backgroundLocation?: Location })?.backgroundLocation;
+  const istr = location.pathname.startsWith('/i/flow/transaction/');
+
   useEffect(() => { setCanonical(location.pathname); }, [location.pathname]);
 
   return (
-    <Routes>
+    <>
+    {(!istr || bgLoc) && <Routes location={bgLoc || location}>
       <Route path="/pay/link" element={<PayLinkRedirect />} />
 
       <Route path="/login" element={<LoginRedirect />} />
@@ -140,15 +145,21 @@ export default function App() {
           <Route path="/links/claim/:token" element={<ClaimLinkPage />} />
           <Route path="/dash/statements" element={<StatementsPage />} />
           <Route path="/dash/cards" element={<CardsPage />} />
-          <Route path="/i/flow/transaction/:id" element={<TransactionPage />} />
           <Route path="/i/flow/button" element={<Navigate to="/iotm/button" replace />} />
           <Route path="/iotm/button" element={<IotmButtonPage />} />
           <Route path="/iotm" element={<IOTMPage />} />
+          <Route path="/i/flow/transaction:old/:id" element={<OldTransactionPage />} />
         </Route>
 
         <Route path="/i/flow/*" element={<FlowNotFoundPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
-    </Routes>
+    </Routes>}
+    {istr && (
+      <Suspense fallback={null}>
+        <TransactionPage />
+      </Suspense>
+    )}
+    </>
   );
 }
