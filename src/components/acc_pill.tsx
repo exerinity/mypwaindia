@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import type { Account } from '../context/auth_ctx.tsx';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { getDisplayName } from '../utils/display.js';
-import { ChevronDown, CloseIcon, PlusIcon, ExternalIcon } from './icons.tsx';
+import { ChevronDown, CloseIcon, PlusIcon, ExternalIcon, LogoutIcon } from './icons.tsx';
 import { ConfirmModal } from './confirm_modal.tsx';
 import { formatINR } from '../utils/money.js';
 
@@ -17,6 +17,7 @@ export function AccountPill() {
   const { active, accounts, switchAccount, removeAccount, maxAccounts } = useAuth();
   const { settings } = useSettings();
   const navigate = useNavigate();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const [switching, setSwitching] = useState(false);
@@ -39,7 +40,7 @@ export function AccountPill() {
   if (!active) {
     return (
       <>
-        <Link to="/i/flow/login" className="pill clickable" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link to="/i/flow/login" state={{ backgroundLocation: location }} className="pill clickable" style={{ textDecoration: 'none', color: 'inherit' }}>
           <span className="pill-label">Not logged in - log in here</span>
         </Link>
         <a href="/signup" target="_blank" rel="noopener noreferrer"
@@ -110,14 +111,17 @@ export function AccountPill() {
             </div>
             <div className="acct-footer">
               {canAdd ? (
-                <button className="acct-add-btn" onClick={() => { closeDropdown(); navigate('/i/flow/login'); }}>
-                  <PlusIcon size={13} /> Add another account
+                <button className="acct-add-btn" onClick={() => { closeDropdown(); navigate('/i/flow/login', { state: { backgroundLocation: location } }); }}>
+                  <PlusIcon size={13} /> Add an account
                 </button>
               ) : (
                 <span className="acct-add-btn" style={{ color: 'var(--muted)', cursor: 'default' }}>
                   Account limit at capacity ({maxAccounts})
                 </span>
               )}
+              <button className="acct-add-btn" onClick={() => { closeDropdown(); navigate('/i/flow/logout', { state: { backgroundLocation: location } }); }}>
+                Log out <LogoutIcon size={13} />
+              </button>
             </div>
           </div>
         )}
