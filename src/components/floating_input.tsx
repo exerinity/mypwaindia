@@ -2,14 +2,16 @@ import React from 'react';
 
 interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  trailing?: React.ReactNode;
 }
 
-export function FloatingInput({ label, id, ...props }: FloatingInputProps) {
+export function FloatingInput({ label, id, trailing, ...props }: FloatingInputProps) {
   const inputId = id ?? label.toLowerCase().replace(/\s+/g, '-');
   return (
-    <div className="mpi-float">
+    <div className={`mpi-float${trailing ? ' has-trailing' : ''}`}>
       <input id={inputId} placeholder=" " {...props} />
       <label htmlFor={inputId}>{label}</label>
+      {trailing && <span className="mpi-float-trailing">{trailing}</span>}
     </div>
   );
 }
