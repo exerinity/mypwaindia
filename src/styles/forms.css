@@ -63,6 +63,34 @@ label {
   padding-bottom: 8px;
 }
 
+.mpi-float.has-trailing > input {
+  padding-right: 44px;
+}
+
+.mpi-float-trailing {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.mpi-float-trailing button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  border-radius: 6px;
+}
+
+.mpi-float-trailing button:hover {
+  color: var(--fg);
+}
+
 .mpi-float > label {
   position: absolute;
   left: 14px;
