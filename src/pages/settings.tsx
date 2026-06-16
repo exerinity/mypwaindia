@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import type { Account } from '../context/auth_ctx.tsx';
 import type { Settings } from '../context/settings_ctx.tsx';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
 import { AppFooter } from '../components/app_footer.tsx';
 import { RELEASES } from './release_notes.tsx';
 import { useSettings, CUSTOM_VAR_KEYS, HOME_PAGE_OPTIONS, DEFAULT_DASHBOARD_BUTTONS } from '../context/settings_ctx.tsx';
@@ -176,6 +176,7 @@ export default function SettingsPage() {
   const { settings, update, reset } = useSettings();
   const { accounts, removeAccount, active, updateAccountInfo } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useToast();
 
   const [addAccountOpen, setAddAccountOpen] = useState(false);
@@ -285,6 +286,16 @@ export default function SettingsPage() {
     setReinitStage('sleeping');
     await new Promise<void>((r) => setTimeout(r, 1000));
     await performReinitLogin();
+  }
+
+  async function doServerLogout() {
+    const currentSession = sessionsQ.data?.sessions.find((s) => s.current);
+    if (currentSession) {
+      try { await invalidateSession(active!, currentSession.id); } catch (_) { }
+    }
+    try { await apiLogout(); } catch (_) { }
+    toast.success('OK');
+    sessionsQ.refetch();
   }
 
   async function submitReinit2fa() {
@@ -624,7 +635,7 @@ export default function SettingsPage() {
                 {!active && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
                     <InfoIcon />
-                    <span>To use this setting, <Link to="/i/flow/login">please log in</Link></span>
+                    <span>To use this setting, <Link to="/i/flow/login" state={{ backgroundLocation: location }}>please log in</Link></span>
                   </div>
                 )}
               </>
@@ -1030,7 +1041,7 @@ export default function SettingsPage() {
             {!active && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
                 <InfoIcon />
-                <span>To use scambait mode, <Link to="/i/flow/login">please log in</Link></span>
+                <span>To use scambait mode, <Link to="/i/flow/login" state={{ backgroundLocation: location }}>please log in</Link></span>
               </div>
             )}
 
@@ -1101,7 +1112,7 @@ export default function SettingsPage() {
             {!active && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
                 <InfoIcon />
-                <span>To view sessions, <Link to="/i/flow/login">please log in</Link></span>
+                <span>To view sessions, <Link to="/i/flow/login" state={{ backgroundLocation: location }}>please log in</Link></span>
               </div>
             )}
             {active && (
@@ -1128,6 +1139,10 @@ export default function SettingsPage() {
                   )}
                 </div>
                 <hr style={{ margin: '0 0 20px', borderColor: 'var(--border)' }} />
+                <h3 className="mt-0">Server logout</h3>
+                <p style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>This will tell the server to log you out, but it leaves the app alone. For debugging purposes only - this will break the app. You shouldn't do this. But you can.</p>
+                <button className="compact danger" onClick={doServerLogout}>Kill me</button>
+                <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
               </>
             )}
 
