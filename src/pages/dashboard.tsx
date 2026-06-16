@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useCachedQuery } from '../hooks/cached_query.js';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
@@ -20,6 +20,7 @@ const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeri
 
 export default function DashboardPage() {
   usePageTitle('Dashboard');
+  const location = useLocation();
   const { active } = useAuth();
   const { settings } = useSettings();
   const format = useCurrency();
@@ -68,7 +69,7 @@ export default function DashboardPage() {
       <>
         <h1 className="mt-0">Welcome to the MyPayIndia PWA</h1>
         <p className="mt-0 mb-0">You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
-        You can navigate most of the app logged out, but to actually do everything, please <Link to="/i/flow/login">log in</Link>. 
+        You can navigate most of the app logged out, but to actually do everything, please <Link to="/i/flow/login" state={{ backgroundLocation: location }}>log in</Link>.
         If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
         <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <BulbIcon /><span>If you are looking for the legacy app, you can find it here: <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">https://legacy.app.mypayindia.com</a></span>
