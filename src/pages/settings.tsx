@@ -1108,7 +1108,9 @@ export default function SettingsPage() {
               <>
                 <h3 className="mt-0">Reinitialize session</h3>
                 <p style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
-                  If something feels stuck or out of sync, you can tell bastion to log you out and back in using your saved credentials.
+                  {(sessionsQ.error as { code?: unknown })?.code === 1001
+                    ? 'Your session has expired. Pressing Reinitialize session will tell the server to log you back in using the app saved credentials.'
+                    : 'If something feels stuck or out of sync, you can tell bastion to log you out and back in using your saved credentials.'}
                 </p>
                 <div className="row spread" style={{ alignItems: 'center', marginBottom: 20 }}>
                   <button
@@ -1456,7 +1458,7 @@ export default function SettingsPage() {
       >
         <form onSubmit={(e) => { e.preventDefault(); submitReinit2fa(); }}>
           <p className="mt-0" style={{ color: 'var(--muted)' }}>
-            Enter the two-factor code for <strong>{active?.username}</strong> to finish reinitializing the session
+            Enter the two-factor code for <strong>{active?.username}</strong> to finish...
           </p>
           <FloatingInput
             label="Two-factor code"

@@ -1,4 +1,5 @@
 import type { ReactNode, CSSProperties } from 'react';
+import { Link } from 'react-router-dom';
 import { ErrorIcon } from './icons.tsx';
 
 export function LoadingRow({ children = 'Retrieving data...' }: { children?: ReactNode }) {
@@ -34,7 +35,9 @@ export function ErrorBox({ error }: { error: unknown }) {
     <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <ErrorIcon />
       <span>
-        {e.message || String(error)}
+        {e.message === 'Unauthorized.'
+          ? <>Your session is no longer valid. <Link to="/settings/sessions" className="link">Would you like to restart it?</Link></>
+          : (e.message || String(error))}
         {parts.length > 0 && <span className="muted" style={{ marginLeft: 8, fontSize: '0.85em' }}>({parts.join(' - ')})</span>}
       </span>
     </div>

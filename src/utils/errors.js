@@ -25,5 +25,6 @@ export const ERROR_MESSAGES = {
 export function describeError(err) {
   if (!err) return 'Unknown error';
   if (err.code && ERROR_MESSAGES[err.code]) return ERROR_MESSAGES[err.code];
+  if (err.message === 'Unauthorized.') return 'Your session is no longer valid.';
   return err.message || 'Something went wrong...';
 }

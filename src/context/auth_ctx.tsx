@@ -190,21 +190,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshActive = useCallback(async () => {
     if (!active) return null;
-    try {
-      const info = await getUserInfo(active) as { balance: number; first_name: string; last_name: string };
-      updateAccountInfo(active.id, {
-        lastBalance: info.balance,
-        firstName: info.first_name,
-        lastName: info.last_name,
-      });
-      return info;
-    } catch (e) {
-      if ((e as { code?: number })?.code === 1001) {
-        removeAccount(active.id);
-      }
-      throw e;
-    }
-  }, [active, updateAccountInfo, removeAccount]);
+    const info = await getUserInfo(active) as { balance: number; first_name: string; last_name: string };
+    updateAccountInfo(active.id, {
+      lastBalance: info.balance,
+      firstName: info.first_name,
+      lastName: info.last_name,
+    });
+    return info;
+  }, [active, updateAccountInfo]);
 
   const value = useMemo<AuthContextValue>(() => ({
     accounts,
