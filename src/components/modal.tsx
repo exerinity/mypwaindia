@@ -2,9 +2,10 @@ import { useEffect, useCallback, useState } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { CloseIcon } from './icons.tsx';
+import { Logo } from './logo.tsx';
 
 
-interface ModalProps { open: boolean; onClose?: () => void; title: string; fullscreen?: boolean; className?: string; children: ReactNode }
+interface ModalProps { open: boolean; onClose?: () => void; title?: string; fullscreen?: boolean; className?: string; children: ReactNode }
 export function Modal({ open, onClose, title, fullscreen = false, className, children }: ModalProps) {
   const [closing, setClosing] = useState(false);
 
@@ -34,7 +35,7 @@ export function Modal({ open, onClose, title, fullscreen = false, className, chi
       className={`modal-root ${fullscreen ? 'fullscreen' : ''}${closing ? ' closing' : ''}${className ? ` ${className}` : ''}`}
       role="dialog"
       aria-modal="true"
-      aria-label={title}
+      aria-label={title || 'MyPayIndia'}
     >
       {!fullscreen && (
         <div className="modal-backdrop" onClick={handleClose} aria-hidden="true" />
@@ -52,7 +53,7 @@ export function Modal({ open, onClose, title, fullscreen = false, className, chi
           >
             <CloseIcon />
           </button>
-          <h2 className="modal-title">{title}</h2>
+          {title ? <h2 className="modal-title">{title}</h2> : <Logo height={28} className="modal-title-logo" />}
           <div className="modal-header-spacer" />
         </header>
         <div className="modal-body">

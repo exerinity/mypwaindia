@@ -49,8 +49,7 @@ export function InstallPill() {
       </button>
 
       <Modal open={showModal} onClose={() => setShowModal(false)} title="Install the MyPayIndia PWA">
-        <p>The MyPayIndia PWA works best when installed as an app. Of course, you don't need to, but here are some general instructions on how depending on your browser/device:</p>
-        <small className="muted">(or, create a shortcut)</small>
+        <p className="mt-0 mb-0">The MyPayIndia PWA works best when installed as an app. Of course, you don't need to, but here are some general instructions on how depending on your browser/device:</p>
 
         <details style={{ marginTop: '1rem' }}>
           <summary><strong>Chrome Desktop</strong> (and most derivatives)</summary>
@@ -118,8 +117,9 @@ export function InstallPill() {
         <p>
           There are also mobile apps for iOS and Android available for download: <a href="https://mypayindia.com/app/" target="_blank" rel="noopener noreferrer">mypayindia.com/app <ExternalIcon /></a>
         </p>
+        <h3>Already installed / don't care?</h3>
         <p>
-          <button className="secondary compact" onClick={hide}>Hide this button permanently</button>
+          <button className="secondary" onClick={hide}>Hide this button</button>
         </p>
       </Modal>
     </>

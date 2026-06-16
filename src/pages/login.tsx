@@ -80,7 +80,7 @@ export default function LoginPage() {
   }
 
   return (
-    <Modal open onClose={handleClose} title="Log in" className="slide">
+    <Modal open onClose={handleClose} className="slide">
         {atCapacity && (
           <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <WarningIcon /><span>Account limit at capacity</span>

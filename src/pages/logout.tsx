@@ -39,14 +39,16 @@ export default function LogoutPage() {
   }
 
   return (
-    <Modal open onClose={handleClose} title="Log out of MyPWAIndia" className="slide">
-      <p className="mt-0">
-        Are you sure you want to log out of <strong>{active?.username || 'this account'}</strong> on this device?
-      </p>
-      {nextName && (
-        <small className="muted">
-          You have other accounts saved - you'll be switched to <strong>{nextName}</strong>
-        </small>
+    <Modal open onClose={handleClose} className="slide">
+      <h2 className="mt-0">Log out of @<strong>{active?.username || 'this account'}</strong>?</h2>
+      {nextName ? (
+        <p>
+          This will only apply to this account, and you'll still be logged in to your other accounts. You'll be switched to <strong>@{nextName}</strong>.
+        </p>
+      ) : (
+        <p className="mt-0 mb-0">
+          You can always log back in at any time. If you just want to switch accounts, you can do that by adding an existing account.
+        </p>
       )}
       <div className="modal-actions">
         <button className="secondary" onClick={handleClose} disabled={isSubmitting}>
