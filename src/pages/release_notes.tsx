@@ -18,7 +18,8 @@ export const RELEASES: Release[] = [
     date: '16 Jun 2026',
     notes: [
       <>Transaction detail viewer overhauled: it is now a modal with action buttons rather than a full page<br></br>(the old one is still available at <strong>/i/flow/transaction:old/:ID</strong>)</>,
-      { 'h3': <><Link to="/account/history">Try it out</Link></>}
+      { 'h3': <><Link to="/account/history">Try it out</Link></>},
+      'The login and logout views are now modals'
     ]
   },
   {
