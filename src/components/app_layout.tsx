@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Header } from './header.tsx';
 import { Sidebar } from './sidebar.tsx';
 import { VerificationBanner } from './verify_banner.tsx';
@@ -9,7 +9,7 @@ import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useGlobalData } from '../context/global_data_ctx.tsx';
-import { WarningIcon } from './icons.tsx';
+import { LoginIcon, WarningIcon } from './icons.tsx';
 import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
 import { RELEASES } from '../pages/release_notes.tsx';
 import { getRestrictionInfo } from '../utils/restrictions.js';
@@ -30,6 +30,7 @@ export function AppLayout() {
   const { active } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { restrictions, restrictionsError } = useGlobalData();
   const restrictionList = Object.entries(restrictions?.restrictions || {}).filter(([, v]) => v?.active);
@@ -155,7 +156,7 @@ export function AppLayout() {
           )}
           {sessionExpired && (
             <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <WarningIcon /> Your session has expired. <Link to="/settings/sessions" className="link">Reinitialize the session...</Link>
+              <LoginIcon /> Your session has expired. <Link to="/settings/sessions" className="link">Reinitialize the session...</Link> <Link to="/i/flow/logout" state={{ backgroundLocation: location }}>Log out of the app...</Link>
             </div>
           )}
           {fetchFailed && (
