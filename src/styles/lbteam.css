@@ -58,6 +58,8 @@
   border-radius: 50%;
   object-fit: cover;
   background: var(--bg-elev);
+  user-select: none;
+  cursor: pointer;
 }
 
 .team-name {

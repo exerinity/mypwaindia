@@ -5,6 +5,7 @@ import { getTeam } from '../api/flow.js';
 import { formatDateShort, calcAge } from '../utils/dates.js';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
 import { ExternalIcon } from '../components/icons.tsx';
+import { Modal } from '../components/modal.tsx';
 
 interface Age { years: number; months: number; weeks: number; days: number }
 interface TeamMember { name: string; role: string; avatar: string; joined: string; socials?: Record<string, string> }
@@ -46,11 +47,23 @@ function AgeTag({ age }: { age: Age }) {
 
 export default function TeamPage() {
   usePageTitle('Meet the team');
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const { data, loading, error } = useCachedQuery<{ team: TeamMember[] }>('team', () => getTeam() as Promise<{ team: TeamMember[] }>, []);
   const team = data?.team || [];
 
   return (
     <>
+      <Modal className="slide" open={!!selectedMember} onClose={() => setSelectedMember(null)} title={selectedMember?.name ?? ''}>
+        {selectedMember && (
+          <a href={selectedMember.avatar} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+            <img
+              src={selectedMember.avatar}
+              alt={selectedMember.name}
+              style={{ maxWidth: '100%', borderRadius: 8, display: 'block', margin: '0 auto' }}
+            />
+          </a>
+        )}
+      </Modal>
       <h1 className="mt-0">Meet the team</h1>
       <p className="mt-0 mb-0">Get to know the people behind MyPayIndia, the future of online banking!</p>
       <p className="mt-0 mb-0 muted"><i>Currently our team consists of <strong>{team.length || (
@@ -80,6 +93,7 @@ export default function TeamPage() {
                 alt={m.name}
                 width={96}
                 height={96}
+                onClick={() => setSelectedMember(m)}
                 onError={(e) => { e.currentTarget.style.opacity = '0.4'; }}
               />
               <div className="team-name">{m.name}</div>
