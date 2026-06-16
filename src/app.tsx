@@ -160,6 +160,16 @@ export default function App() {
         <TransactionPage />
       </Suspense>
     )}
+    {bgLoc && location.pathname === '/i/flow/logout' && (
+      <Suspense fallback={null}>
+        <LogoutPage />
+      </Suspense>
+    )}
+    {bgLoc && location.pathname === '/i/flow/login' && (
+      <Suspense fallback={null}>
+        <LoginPage />
+      </Suspense>
+    )}
     </>
   );
 }
