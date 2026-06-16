@@ -104,7 +104,8 @@ export default function TransactionModal() {
   }
 
   const outgoing = data && active ? data.sender?.id === active.id : false;
-  const deeplink = data ? `https://mypayindia.com/accountservices/trans?id=${data.id}` : '';
+  const deeplinkOfficial = data ? `https://mypayindia.com/accountservices/trans?id=${data.id}` : '';
+  const deeplinkAlt = data ? `https://mypayindia.sbs/i/flow/transaction/${data.transaction_id}` : '';
 
   return (
     <Modal
@@ -144,7 +145,11 @@ export default function TransactionModal() {
             <Field label="When" value={formatDate(data.created)} />
             <Field label="To" value={`@${data.recipient?.username}`} display={<strong>@{data.recipient?.username}</strong>} showCopy />
             <Field label="ID" value={`#${data.id}`} display={<span className="mono">#{data.id}</span>} showCopy />
-            <Field label="Deeplink" value={deeplink} display={<a href={deeplink} className="mono" style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>{deeplink}</a>} style={{ gridColumn: '1' }} showCopy />
+            <div style={{ gridColumn: '1' }}>
+              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>Deeplinks</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}><a href={deeplinkOfficial} target="_blank" rel="noopener noreferrer">MyPayIndia</a><CopyButton value={deeplinkOfficial} /></div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}><a href={deeplinkAlt} target="_blank" rel="noopener noreferrer">MyPWAIndia</a><CopyButton value={deeplinkAlt} /></div>
+            </div>
             <Field label="Transaction ID" value={data.transaction_id} display={<span className="mono">{data.transaction_id}</span>} style={{ gridColumn: '2' }} showCopy />
           </div>
 
