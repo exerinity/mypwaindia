@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Modal } from './modal.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
@@ -15,11 +15,12 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
   const { accounts, active, maxAccounts, saveCredentials } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (open && !active?.token) {
       onClose();
-      navigate('/i/flow/login');
+      navigate('/i/flow/login', { state: { backgroundLocation: location } });
     }
   }, [open]);
 
@@ -79,7 +80,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
               <ExternalIcon />
             </button>
           ) : (
-            <Link to="/i/flow/login" className="option" onClick={handleClose} style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Link to="/i/flow/login" state={{ backgroundLocation: location }} className="option" onClick={handleClose} style={{ flexDirection: 'row', alignItems: 'center' }}>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <span className="option-label">Log in</span>
                 <span className="option-desc">through the full login flow</span>
