@@ -6,9 +6,9 @@ import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { describeError } from '../utils/errors.js';
 import { storageGet, KEYS } from '../utils/storage.ts';
-import { Logo } from '../components/logo.tsx';
-import { ArrowLeftIcon, ExternalIcon, WarningIcon, ErrorIcon } from '../components/icons.tsx';
+import { ArrowLeftIcon, ExternalIcon, WarningIcon, ErrorIcon, EyeIcon, EyeOffIcon } from '../components/icons.tsx';
 import { FloatingInput } from '../components/floating_input.tsx';
+import { Modal } from '../components/modal.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 
 export default function LoginPage() {
@@ -19,11 +19,12 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const toast = useToast();
-  const [leaving, setLeaving] = useState(false);
   const [username, setUsername] = useState(searchParams.get('username') ?? '');
   const [password, setPassword] = useState(searchParams.get('password') ?? '');
   const [totp, setTotp] = useState('');
   const [needs2fa, setNeeds2fa] = useState(false);
+  const [prefill2fa, setPrefill2fa] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [stagingLogin, setStagingLogin] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
@@ -31,6 +32,13 @@ export default function LoginPage() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const atCapacity = accounts.length >= maxAccounts;
+
+  const bgLoc = (location.state as { backgroundLocation?: unknown } | null)?.backgroundLocation;
+
+  function handleClose() {
+    if (bgLoc) navigate(-1);
+    else navigate('/dash');
+  }
 
   useEffect(() => {
     if (searchParams.get('username') && searchParams.get('password') && !searchParams.has('nologin')) {
@@ -72,15 +80,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={leaving ? 'page-slide-out' : 'page-slide-in'} onAnimationEnd={() => { if (leaving) { if ((window.history.state?.idx ?? 0) > 0) navigate(-1); else navigate('/dash'); } }} style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-      <div className="card" style={{ maxWidth: 400, width: '100%' }}>
-        <h2 className="mt-0">Log in to MyPayIndia</h2>
-
+    <Modal open onClose={handleClose} title="Log in" className="slide">
         {atCapacity && (
           <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <WarningIcon /><span>Account limit at capacity</span>
           </div>
         )}
+
+        <h2 className="mt-0">Log in to MyPayIndia</h2>
 
         <form
           ref={formRef}
@@ -105,14 +112,24 @@ export default function LoginPage() {
           />
           <FloatingInput
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             disabled={busy}
+            trailing={
+              <button
+                type="button"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+              </button>
+            }
           />
-          {needs2fa && (
+          {(needs2fa || prefill2fa) && (
             <FloatingInput
               label="Two-factor code"
               type="text"
@@ -124,6 +141,23 @@ export default function LoginPage() {
               disabled={busy}
             />
           )}
+          <details className="login-advanced" style={{ marginTop: '12px' }}>
+            <summary style={{ cursor: 'pointer', color: 'var(--muted)' }}>Advanced</summary>
+            <div className="row spread" style={{ alignItems: 'center', marginTop: '12px' }}>
+              <div>
+                <strong>Enter 2FA code prematurely</strong>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={prefill2fa}
+                  onChange={(e) => setPrefill2fa(e.target.checked)}
+                  disabled={busy}
+                />
+                <span className="toggle-track" />
+              </label>
+            </div>
+          </details>
           {error && <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><ErrorIcon /><span>{error.message}</span></div>}
           <button
             type="submit"
@@ -152,11 +186,10 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-2 center">
-          <button className="muted" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'inherit', font: 'inherit', padding: 0 }} onClick={() => setLeaving(true)}>
+          <button className="muted" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'inherit', font: 'inherit', padding: 0 }} onClick={handleClose}>
             <ArrowLeftIcon /> {accounts.length >= maxAccounts ? 'Go back and remove an account' : 'Nevermind, go back'}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 }
