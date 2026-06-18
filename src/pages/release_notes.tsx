@@ -14,6 +14,13 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '15b',
+    date: '18 Jun 2026',
+    notes: [
+      <><Link to="/iotm/button">The Button</Link> autoclicker can now be activated for free if you correctly answer 5 math equations</>
+    ]
+  },
+  {
     version: '15a',
     date: '16 Jun 2026',
     notes: [

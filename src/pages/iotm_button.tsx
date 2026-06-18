@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useApiCall } from '../hooks/api_call.js';
 import { API_BASE } from '../api/config.js';
 import { checkSubscription, createSubscribeSession } from '../api/subscribe.js';
-import { ArrowLeftIcon, ExternalIcon } from '../components/icons.tsx';
+import { ArrowLeftIcon, ExternalIcon, ChevronRight, ErrorIcon } from '../components/icons.tsx';
 import { ErrorBox, Skeleton } from '../components/status.tsx';
 import { Modal } from '../components/modal.tsx';
+import { ConfirmModal } from '../components/confirm_modal.tsx';
+import { FloatingInput } from '../components/floating_input.tsx';
 import { formatPaisa } from '../utils/money.js';
 import { describeError } from '../utils/errors.js';
 import { hideGet, hideSet } from '../utils/storage.ts';
@@ -102,10 +104,264 @@ function parseLeaderboardHtml(html: string): { globalClicks: string; entries: Le
   return { globalClicks, entries };
 }
 
+interface MathQuestion { display: string; answer: bigint }
+
+function randInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function makeQuestions(): MathQuestion[] {
+  const a = BigInt(randInt(10000, 99999));
+  const b = BigInt(randInt(10000, 99999));
+  const c = BigInt(randInt(100000, 999999));
+  const d = BigInt(randInt(2000, 9999));
+  const base = BigInt(randInt(43, 97));
+  const exp = randInt(7, 9);
+  const e = BigInt(randInt(1000, 9999));
+  const f = BigInt(randInt(1000, 9999));
+  const g = BigInt(randInt(1000, 9999));
+  const h = BigInt(randInt(1000, 9999));
+  const i = BigInt(randInt(100, 999));
+  const j = BigInt(randInt(100, 999));
+  const k = BigInt(randInt(100, 999));
+  return [
+    { display: `${a} × ${b}`, answer: a * b },
+    { display: `${c} × ${d}`, answer: c * d },
+    { display: `${base}^${exp}`, answer: base ** BigInt(exp) },
+    { display: `${e} × ${f} + ${g} × ${h}`, answer: e * f + g * h },
+    { display: `${i} × ${j} × ${k}`, answer: i * j * k },
+  ];
+}
+
+const QUESTION_SECONDS = 45;
+
+const NO_SELECT: React.CSSProperties = { userSelect: 'none', WebkitUserSelect: 'none', MozUserSelect: 'none' };
+
+function UnlockModal({ open, onClose, onUnlock, onSubscribe, subscribing }: {
+  open: boolean;
+  onClose: () => void;
+  onUnlock: () => void;
+  onSubscribe: () => void;
+  subscribing: boolean;
+}) {
+  const toast = useToast();
+  const [step, setStep] = useState<'choice' | 'math'>('choice');
+  const [questions, setQuestions] = useState<MathQuestion[]>([]);
+  const [current, setCurrent] = useState(0);
+  const [answer, setAnswer] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [deadline, setDeadline] = useState<number | null>(null);
+  const [now, setNow] = useState(() => Date.now());
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  const timeLeft = deadline === null ? QUESTION_SECONDS : Math.max(0, Math.ceil((deadline - now) / 1000));
+
+  useEffect(() => {
+    if (step !== 'math' || !open || deadline === null) return;
+    const id = setInterval(() => setNow(Date.now()), 250);
+    return () => clearInterval(id);
+  }, [step, open, deadline]);
+
+  function reset() {
+    setStep('choice');
+    setQuestions([]);
+    setCurrent(0);
+    setAnswer('');
+    setError(null);
+    setDeadline(null);
+  }
+
+  function handleClose() {
+    reset();
+    onClose();
+  }
+
+  function failAndRestart(msg: string) {
+    setQuestions(makeQuestions());
+    setCurrent(0);
+    setAnswer('');
+    setError(msg);
+    setDeadline(null);
+    setNow(Date.now());
+  }
+
+  function beginQuestion() {
+    setDeadline(Date.now() + QUESTION_SECONDS * 1000);
+    setNow(Date.now());
+  }
+
+  useEffect(() => {
+    if (step === 'math' && open && deadline !== null && timeLeft <= 0) {
+      failAndRestart('Out of time! Back to question 1.');
+    }
+  }, [timeLeft, step, open, deadline]);
+
+  useEffect(() => {
+    if (step !== 'math' || !open || deadline === null) return;
+    function onBlur() {
+      setDeadline((d) => (d === null ? d : d - 15000));
+      setNow(Date.now());
+      toast.warning('Focus has been lost, shaving off 15 seconds');
+    }
+    window.addEventListener('blur', onBlur);
+    return () => window.removeEventListener('blur', onBlur);
+  }, [step, open, deadline]);
+
+  function selectionTampered() {
+    const box = boxRef.current;
+    if (!box) return false;
+    try {
+      const cs = getComputedStyle(box);
+      const us = cs.userSelect || (cs as unknown as Record<string, string>).webkitUserSelect;
+      return !!us && us !== 'none';
+    } catch {
+      return false;
+    }
+  }
+
+  useEffect(() => {
+    if (step !== 'math' || !open) return;
+    const id = setInterval(() => {
+      const start = performance.now();
+      debugger;
+      if (performance.now() - start > 120) {
+        failAndRestart('You opened DevTools, back to question 1!');
+        return;
+      }
+      if (selectionTampered()) {
+        failAndRestart('Tampering detected, back to question 1!');
+      }
+    }, 150);
+    return () => clearInterval(id);
+  }, [step, open]);
+
+  useEffect(() => {
+    if (step !== 'math' || !open) return;
+    const box = boxRef.current;
+    if (!box || typeof MutationObserver === 'undefined') return;
+    const obs = new MutationObserver(() => {
+      if (selectionTampered()) {
+        failAndRestart('Tampering detected, back to question 1!');
+      }
+    });
+    obs.observe(box, { attributes: true, attributeFilter: ['style', 'class'] });
+    return () => obs.disconnect();
+  }, [step, open]);
+
+  function startMath() {
+    setQuestions(makeQuestions());
+    setCurrent(0);
+    setAnswer('');
+    setError(null);
+    setDeadline(null);
+    setNow(Date.now());
+    setStep('math');
+  }
+
+  function submitAnswer(ev: React.FormEvent) {
+    ev.preventDefault();
+    const q = questions[current];
+    let correct = false;
+    try { correct = BigInt(answer.replace(/[\s,]/g, '')) === q.answer; } catch { correct = false; }
+    if (!correct) {
+      failAndRestart('Wrong. Back to question 1!');
+      return;
+    }
+    if (current >= questions.length - 1) {
+      onUnlock();
+      handleClose();
+      return;
+    }
+    setCurrent(current + 1);
+    setAnswer('');
+    setError(null);
+    setDeadline(null);
+    setNow(Date.now());
+  }
+
+  return (
+    <Modal open={open} onClose={handleClose} className="slide">
+      {step === 'choice' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <button className="option" onClick={startMath} style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <span className="option-label">Answer 5 math questions</span>
+              <span className="option-desc">for this session only</span>
+            </div>
+            <ChevronRight />
+          </button>
+          <button className="option" onClick={onSubscribe} disabled={subscribing} style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <span className="option-label">Subscribe for 50 INR a week</span>
+              <span className="option-desc">{subscribing ? 'Taking you to MyPayIndia...' : 'through MyPayIndia'}</span>
+            </div>
+            <ExternalIcon />
+          </button>
+        </div>
+      ) : (
+        <div>
+          <p className="muted" style={{ marginTop: 0, fontSize: '0.875rem' }}>
+            Solve all 5 questions to unlock the autoclicker. You get {QUESTION_SECONDS} seconds per question, and a single wrong answer (or running out of time) restarts everything. If you try cheating, you also restart. You cannot open DevTools or select the equation with this modal open. If the page loses focus (e.g., opening a calculator), 15 seconds are shaved off. Oh, and if you leave the button, you have to do this again. Have fun!
+          </p>
+          <div className="row spread" style={{ alignItems: 'center', marginBottom: 8 }}>
+            <span style={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--muted)' }}>
+              Question {current + 1} of {questions.length}
+            </span>
+            <span style={{ fontSize: '0.9rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: timeLeft <= 10 ? 'var(--error, #ef4444)' : 'var(--muted)' }}>
+              {timeLeft}s
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: 5, marginBottom: 12 }}>
+            {questions.map((_, i) => (
+              <span key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: i < current ? 'var(--success, #22c55e)' : i === current ? 'var(--brand)' : 'var(--border)' }} />
+            ))}
+          </div>
+          <form onSubmit={submitAnswer}>
+            <div
+              ref={boxRef}
+              onClick={() => { if (deadline === null) beginQuestion(); }}
+              style={{ ...NO_SELECT, background: 'var(--card-soft)', border: '1px solid var(--border)', borderRadius: 8, padding: '20px 16px', fontSize: '1.45rem', fontWeight: 700, textAlign: 'center', fontVariantNumeric: 'tabular-nums', marginBottom: 14, wordBreak: 'break-word', cursor: deadline === null ? 'pointer' : 'default' }}
+              onContextMenu={(e) => e.preventDefault()}
+            >
+              {deadline === null ? 'Click to begin' : `${questions[current]?.display} = ?`}
+            </div>
+            <FloatingInput
+              label="Your answer"
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              disabled={deadline === null}
+              autoFocus
+              required
+            />
+            {error && (
+              <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <ErrorIcon /><span>{error}</span>
+              </div>
+            )}
+            <div className="btn-row">
+              <button type="button" className="secondary" onClick={reset}>
+                Go back and subscribe
+              </button>
+              <button type="submit" disabled={deadline === null}>
+                {current >= questions.length - 1 ? 'Finish' : 'Submit answer'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+    </Modal>
+  );
+}
+
 export default function IotmButtonPage() {
   usePageTitle('Button');
   const { active, updateBalance } = useAuth();
   const toast = useToast();
+  const navigate = useNavigate();
+  const [pendingNav, setPendingNav] = useState<string | null>(null);
 
   const [state, setState] = useState<ButtonState | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -302,7 +558,9 @@ export default function IotmButtonPage() {
     [active?.token],
     { skip: !active?.token }
   );
-  const hasAccess = !!subQ.data?.subscribed;
+  const [mathUnlocked, setMathUnlocked] = useState(false);
+  const [unlockModalOpen, setUnlockModalOpen] = useState(false);
+  const hasAccess = !!subQ.data?.subscribed || mathUnlocked;
   const hasAccessRef = useRef(hasAccess);
   useEffect(() => { hasAccessRef.current = hasAccess; }, [hasAccess]);
   const [subscribing, setSubscribing] = useState(false);
@@ -313,6 +571,43 @@ export default function IotmButtonPage() {
       setAutoClickStatus('none');
     }
   }, [hasAccess, autoClicking]);
+
+  useEffect(() => {
+    if (!autoClicking) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [autoClicking]);
+
+  useEffect(() => {
+    if (!autoClicking) return;
+    function onClickCapture(e: MouseEvent) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const anchor = (e.target as HTMLElement | null)?.closest?.('a');
+      if (!anchor) return;
+      const targetAttr = anchor.getAttribute('target');
+      if (!anchor.getAttribute('href') || (targetAttr && targetAttr !== '_self') || anchor.hasAttribute('download')) return;
+      let url: URL;
+      try { url = new URL(anchor.href, window.location.origin); } catch { return; }
+      if (url.origin !== window.location.origin || url.pathname === window.location.pathname) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setPendingNav(url.pathname + url.search + url.hash);
+    }
+    document.addEventListener('click', onClickCapture, true);
+    return () => document.removeEventListener('click', onClickCapture, true);
+  }, [autoClicking]);
+
+  function confirmLeave() {
+    const to = pendingNav;
+    setPendingNav(null);
+    setAutoClicking(false);
+    setAutoClickStatus('none');
+    if (to) navigate(to);
+  }
 
   function toggleAutoclicker() {
     if (!hasAccessRef.current) return;
@@ -440,10 +735,10 @@ export default function IotmButtonPage() {
                 if (!hasAccess) {
                   return (
                     <span
-                      style={{ ...indicatorStyle, cursor: subscribing ? 'default' : 'pointer', textDecoration: 'underline' }}
-                      onClick={(e) => { e.stopPropagation(); if (!subscribing) startSubscribe(); }}
+                      style={{ ...indicatorStyle, cursor: 'pointer', textDecoration: 'underline' }}
+                      onClick={(e) => { e.stopPropagation(); setUnlockModalOpen(true); }}
                     >
-                      {subscribing ? 'Taking you to MyPayIndia...' : 'Unlock access to autoclicker'}
+                      Unlock access to autoclicker
                     </span>
                   );
                 }
@@ -705,6 +1000,43 @@ export default function IotmButtonPage() {
         </div>
       )}
 
+      <UnlockModal
+        open={unlockModalOpen}
+        onClose={() => setUnlockModalOpen(false)}
+        onUnlock={() => {
+          setMathUnlocked(true);
+          pendingAutoResume.current = false;
+          setAutoClicking(true);
+          setAutoClickStatus('active');
+          toast.success('Autoclicker unlocked and started. To stop, double click BALANCE again or interrupt it');
+        }}
+        onSubscribe={startSubscribe}
+        subscribing={subscribing}
+      />
+
+      <ConfirmModal
+        open={pendingNav !== null}
+        onClose={() => setPendingNav(null)}
+        onConfirm={confirmLeave}
+        title="Leave the button?"
+        message={subQ.data?.subscribed
+          ? 'The autoclicker is currently active! It does not run in the background.'
+          : (
+            <p className="mt-0">
+              The autoclicker is currently active! Your access will be forfeited, and you'll have to do all the math equations again.{' '}
+              <span
+                style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                onClick={(e) => { e.stopPropagation(); setAutoClicking(false); setAutoClickStatus('none'); startSubscribe(); }}
+              >
+                Or subscribe
+              </span>.
+            </p>
+          )}
+        confirmLabel="Leave"
+        cancelLabel="Stay"
+        danger={!subQ.data?.subscribed}
+      />
+
       <Modal
         open={showWelcomeModal}
         onClose={() => { hideSet('iotm_welcome'); setShowWelcomeModal(false); }}
@@ -714,7 +1046,7 @@ export default function IotmButtonPage() {
         <ul>
           <li>This is based on the same logic and players as the original</li>
           <li>All calculations, like time to surpass, active clickers, and distance are completely estimated - the server may differ</li>
-          <li>An autoclicker is available to subscribers</li>
+          <li>An autoclicker is available to subscribers, or by solving 5 math equations</li>
         </ul>
         <p className="mb-0">Happy clicking!</p>
         <div className="btn-row" style={{ marginTop: 16 }}>
