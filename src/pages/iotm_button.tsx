@@ -110,26 +110,66 @@ function randInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function makeQuestions(): MathQuestion[] {
+function pick<T>(arr: T[]): T {
+  return arr[randInt(0, arr.length - 1)];
+}
+
+function addSub(min: number, max: number): MathQuestion {
+  const op = pick(['+', '−']);
+  let x = randInt(min, max);
+  let y = randInt(min, max);
+  if (op === '−' && y > x) { const t = x; x = y; y = t; }
+  return { display: `${x} ${op} ${y}`, answer: BigInt(op === '+' ? x + y : x - y) };
+}
+
+function divExact(maxDivisor: number, maxQuotient: number): MathQuestion {
+  const d = randInt(2, maxDivisor);
+  const q = randInt(2, maxQuotient);
+  return { display: `${d * q} ÷ ${d}`, answer: BigInt(q) };
+}
+
+function mult(aMin: number, aMax: number, bMin: number, bMax: number): MathQuestion {
+  const a = randInt(aMin, aMax);
+  const b = randInt(bMin, bMax);
+  return { display: `${a} × ${b}`, answer: BigInt(a * b) };
+}
+
+function prodCombo(min: number, max: number, cMax: number): MathQuestion {
+  const a = randInt(min, max);
+  const b = randInt(min, max);
+  const op = pick(['+', '−']);
+  const c = randInt(2, cMax);
+  return { display: `${a} × ${b} ${op} ${c}`, answer: BigInt(op === '+' ? a * b + c : a * b - c) };
+}
+
+function twoProducts(min: number, max: number): MathQuestion {
+  let a = randInt(min, max), b = randInt(min, max), c = randInt(min, max), d = randInt(min, max);
+  const op = pick(['+', '−']);
+  let p1 = a * b, p2 = c * d;
+  if (op === '−' && p2 > p1) { [a, b, c, d] = [c, d, a, b]; [p1, p2] = [p2, p1]; }
+  return { display: `${a} × ${b} ${op} ${c} × ${d}`, answer: BigInt(op === '+' ? p1 + p2 : p1 - p2) };
+}
+
+function brutal(): MathQuestion {
   const a = BigInt(randInt(10000, 99999));
   const b = BigInt(randInt(10000, 99999));
-  const c = BigInt(randInt(100000, 999999));
-  const d = BigInt(randInt(2000, 9999));
-  const base = BigInt(randInt(43, 97));
-  const exp = randInt(7, 9);
-  const e = BigInt(randInt(1000, 9999));
-  const f = BigInt(randInt(1000, 9999));
-  const g = BigInt(randInt(1000, 9999));
-  const h = BigInt(randInt(1000, 9999));
-  const i = BigInt(randInt(100, 999));
-  const j = BigInt(randInt(100, 999));
-  const k = BigInt(randInt(100, 999));
+  const base = BigInt(randInt(40, 99));
+  const exp = BigInt(randInt(7, 9));
+  const power = base ** exp;
+  const prod = a * b;
+  if (pick(['+', '−']) === '+') {
+    return { display: `${a} × ${b} + ${base}^${exp}`, answer: prod + power };
+  }
+  return { display: `${base}^${exp} − ${a} × ${b}`, answer: power - prod };
+}
+
+function makeQuestions(): MathQuestion[] {
   return [
-    { display: `${a} × ${b}`, answer: a * b },
-    { display: `${c} × ${d}`, answer: c * d },
-    { display: `${base}^${exp}`, answer: base ** BigInt(exp) },
-    { display: `${e} × ${f} + ${g} × ${h}`, answer: e * f + g * h },
-    { display: `${i} × ${j} × ${k}`, answer: i * j * k },
+    addSub(2, 9),
+    pick([() => addSub(10, 99), () => divExact(9, 12)])(),
+    pick([() => mult(12, 99, 12, 99), () => prodCombo(12, 99, 99), () => divExact(15, 80)])(),
+    pick([() => mult(101, 999, 101, 999), () => twoProducts(101, 999), () => prodCombo(101, 999, 999)])(),
+    brutal(),
   ];
 }
 
@@ -275,7 +315,7 @@ function UnlockModal({ open, onClose, onUnlock, onSubscribe, subscribing }: {
     setCurrent(current + 1);
     setAnswer('');
     setError(null);
-    setDeadline(null);
+    setDeadline(Date.now() + QUESTION_SECONDS * 1000);
     setNow(Date.now());
   }
 
