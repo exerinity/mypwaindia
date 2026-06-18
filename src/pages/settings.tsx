@@ -4,7 +4,8 @@ import type { Settings } from '../context/settings_ctx.tsx';
 import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
 import { AppFooter } from '../components/app_footer.tsx';
 import { RELEASES } from './release_notes.tsx';
-import { useSettings, CUSTOM_VAR_KEYS, HOME_PAGE_OPTIONS, DEFAULT_DASHBOARD_BUTTONS } from '../context/settings_ctx.tsx';
+import { useSettings, CUSTOM_VAR_KEYS, HOME_PAGE_OPTIONS, DEFAULT_DASHBOARD_BUTTONS, DASHBOARD_BUTTON_STYLES } from '../context/settings_ctx.tsx';
+import type { DashboardButtonStyle } from '../context/settings_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { login as apiLogin, logout as apiLogout } from '../api/auth.js';
 import { useToast } from '../context/toast_ctx.tsx';
@@ -695,18 +696,32 @@ export default function SettingsPage() {
             <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
               Customize the action buttons shown on your dashboard (up to 5)
             </p>
-            {settings.dashboardButtons.map((route, i) => (
+            {settings.dashboardButtons.map((btn, i) => (
               <div key={i} className="row gap-sm" style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
                 <select
-                  value={route}
+                  value={btn.route}
                   style={{ flex: 1, minWidth: 0 }}
                   onChange={(e) => {
                     const next = [...settings.dashboardButtons];
-                    next[i] = e.target.value;
+                    next[i] = { ...next[i], route: e.target.value };
                     update({ dashboardButtons: next });
                   }}
                 >
                   {HOME_PAGE_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+                <select
+                  value={btn.style}
+                  style={{ width: 130, flexShrink: 0 }}
+                  aria-label="Button style"
+                  onChange={(e) => {
+                    const next = [...settings.dashboardButtons];
+                    next[i] = { ...next[i], style: e.target.value as DashboardButtonStyle };
+                    update({ dashboardButtons: next });
+                  }}
+                >
+                  {DASHBOARD_BUTTON_STYLES.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
@@ -724,7 +739,7 @@ export default function SettingsPage() {
               {settings.dashboardButtons.length < 5 && (
                 <button
                   className="btn secondary row gap-sm"
-                  onClick={() => update({ dashboardButtons: [...settings.dashboardButtons, HOME_PAGE_OPTIONS[0].value] })}
+                  onClick={() => update({ dashboardButtons: [...settings.dashboardButtons, { route: HOME_PAGE_OPTIONS[0].value, style: 'secondary' }] })}
                 >
                   <PlusIcon size={16} /> Add button
                 </button>

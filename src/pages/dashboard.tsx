@@ -120,10 +120,10 @@ export default function DashboardPage() {
             <Link to="/dash/statements" className="btn ghost">Full statements</Link>
           </>
         ) : (
-          settings.dashboardButtons.map((route, i) => {
+          settings.dashboardButtons.map(({ route, style }, i) => {
             const opt = HOME_PAGE_OPTIONS.find((o) => o.value === route);
             return (
-              <Link key={`${route}:${i}`} to={route} className="btn secondary">
+              <Link key={`${route}:${i}`} to={route} className={style === 'primary' ? 'btn' : `btn ${style}`}>
                 {opt ? opt.label : route}
               </Link>
             );

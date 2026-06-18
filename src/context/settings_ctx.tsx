@@ -34,12 +34,40 @@ export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/iotm/button', label: 'The Button' },
 ];
 
-export const DEFAULT_DASHBOARD_BUTTONS = [
-  '/account/transfer',
-  '/links',
-  '/links/claim',
-  '/account/history',
+export type DashboardButtonStyle = 'primary' | 'secondary' | 'danger';
+
+export interface DashboardButton {
+  route: string;
+  style: DashboardButtonStyle;
+}
+
+export const DASHBOARD_BUTTON_STYLES: { value: DashboardButtonStyle; label: string }[] = [
+  { value: 'primary', label: 'Primary' },
+  { value: 'secondary', label: 'Secondary' },
+  { value: 'danger', label: 'Danger' },
 ];
+
+export const DEFAULT_DASHBOARD_BUTTONS: DashboardButton[] = [
+  { route: '/account/transfer', style: 'primary' },
+  { route: '/links', style: 'secondary' },
+  { route: '/links/claim', style: 'secondary' },
+  { route: '/account/history', style: 'secondary' },
+];
+
+const VALID_STYLES = new Set(DASHBOARD_BUTTON_STYLES.map((s) => s.value));
+
+export function normalizeDashboardButtons(value: unknown): DashboardButton[] {
+  if (!Array.isArray(value)) return [...DEFAULT_DASHBOARD_BUTTONS];
+  return value.map((entry): DashboardButton => {
+    if (typeof entry === 'string') return { route: entry, style: 'secondary' };
+    if (entry && typeof entry === 'object') {
+      const route = String((entry as DashboardButton).route ?? '');
+      const style = (entry as DashboardButton).style;
+      return { route, style: VALID_STYLES.has(style) ? style : 'secondary' };
+    }
+    return { route: '', style: 'secondary' };
+  }).filter((b) => b.route);
+}
 
 export interface Settings {
   theme: 'light' | 'dim' | 'dark' | 'custom';
@@ -50,7 +78,7 @@ export interface Settings {
   displayName: 'username' | 'first_name' | 'full_name';
   scambait: boolean;
   homePage: string;
-  dashboardButtons: string[];
+  dashboardButtons: DashboardButton[];
   customTheme: Record<string, string>;
   swEnabled: boolean;
 }
@@ -78,10 +106,10 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettings] = useState<Settings>(() => ({
-    ...DEFAULT_SETTINGS,
-    ...storageGet(KEYS.SETTINGS, {} as Partial<Settings>),
-  }));
+  const [settings, setSettings] = useState<Settings>(() => {
+    const merged = { ...DEFAULT_SETTINGS, ...storageGet(KEYS.SETTINGS, {} as Partial<Settings>) };
+    return { ...merged, dashboardButtons: normalizeDashboardButtons(merged.dashboardButtons) };
+  });
 
   useEffect(() => {
     storageSet(KEYS.SETTINGS, settings);

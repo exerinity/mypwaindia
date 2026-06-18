@@ -1,5 +1,5 @@
 import { storageGet, storageSet, KEYS } from './storage.ts';
-import { DEFAULT_SETTINGS, HOME_PAGE_OPTIONS } from '../context/settings_ctx.tsx';
+import { DEFAULT_SETTINGS, HOME_PAGE_OPTIONS, normalizeDashboardButtons } from '../context/settings_ctx.tsx';
 import type { Settings } from '../context/settings_ctx.tsx';
 
 export interface SettingsExport {
@@ -48,7 +48,8 @@ export function describeSettingValue(key: keyof Settings, value: unknown): strin
   if (typeof value === 'boolean') return value ? 'Yes' : 'No';
   if (key === 'homePage' && typeof value === 'string') return pageLabel(value);
   if (key === 'dashboardButtons' && Array.isArray(value)) {
-    return value.length ? value.map((v) => pageLabel(v)).join(', ') : '(none)';
+    const btns = normalizeDashboardButtons(value);
+    return btns.length ? btns.map((b) => `${pageLabel(b.route)} (${b.style})`).join(', ') : '(none)';
   }
   if (Array.isArray(value)) return value.length ? value.join(', ') : '(none)';
   if (value && typeof value === 'object') {
@@ -66,7 +67,7 @@ export function sanitizeSettings(raw: unknown): Partial<Settings> {
     if (!(key in obj)) continue;
     const val = obj[key];
     if (Array.isArray(def)) {
-      if (Array.isArray(val)) out[key] = val;
+      if (Array.isArray(val)) out[key] = key === 'dashboardButtons' ? normalizeDashboardButtons(val) : val;
     } else if (def !== null && typeof def === 'object') {
       if (val && typeof val === 'object' && !Array.isArray(val)) out[key] = val;
     } else if (typeof val === typeof def) {
@@ -111,7 +112,7 @@ export function settingsToSearchParams(payload: SettingsExport): string {
   const s = payload.settings;
   for (const k of STRING_KEYS) if (s[k] !== undefined) p.set(k, String(s[k]));
   for (const k of BOOL_KEYS) if (s[k] !== undefined) p.set(k, s[k] ? 'true' : 'false');
-  if (s.dashboardButtons) p.set('dashboardButtons', s.dashboardButtons.join(','));
+  if (s.dashboardButtons) p.set('dashboardButtons', s.dashboardButtons.map((b) => `${b.style}:${b.route}`).join(','));
   if (s.customTheme) {
     for (const [k, v] of Object.entries(s.customTheme)) if (v) p.set(`ct.${k}`, v);
   }
@@ -127,7 +128,14 @@ export function searchParamsToExport(search: string): SettingsExport | null {
   for (const k of STRING_KEYS) { const v = p.get(k); if (v !== null) raw[k] = v; }
   for (const k of BOOL_KEYS) { const v = p.get(k); if (v !== null) raw[k] = v === 'true'; }
   const db = p.get('dashboardButtons');
-  if (db !== null) raw.dashboardButtons = db ? db.split(',') : [];
+  if (db !== null) {
+    raw.dashboardButtons = db
+      ? db.split(',').map((part) => {
+          const idx = part.indexOf(':');
+          return idx === -1 ? part : { style: part.slice(0, idx), route: part.slice(idx + 1) };
+        })
+      : [];
+  }
   const ct: Record<string, string> = {};
   for (const [k, v] of p.entries()) if (k.startsWith('ct.')) ct[k.slice(3)] = v;
   if (Object.keys(ct).length) raw.customTheme = ct;
