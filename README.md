@@ -37,21 +37,26 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/links/claim** - claim/inspect a link
 - **/links/claim/:token** - claim a link by token
 
-### Internal
+### Internal/information (hence the /i)
 - **/i/leaderboard** - top 10 richest accounts
 - **/i/team** - list of team members
 - **/i/release_notes** - app release notes
 - **/i/acknowledgements** - thanks and acknowledgements
-- **/i/flow/transaction/:id** - transaction detail viewer
 
-### Internal flow
+### Internal flow (hence the /i/flow)
 - **/i/flow/login** - log in
 - **/i/flow/logout** - log out
 - **/i/flow/onboarding** - onboarding disclaimer screen
-- **/i/flow/button** - IOTM button
 - **/i/flow/connection** - stupid connection checker
 - **/i/flow/mci** - MyCLiIndia, a fake Unix-like command line
 - **/i/flow/mci/focus** - MyCLiIndia, fullscreen
+- **/i/flow/transaction/:id** - transaction detail viewer
+
+### Investment Opportunities™
+- **/iotm** - home
+- **/iotm/button** - the button, reinterpreted, with more calculations and an onboard autoclicker
+
+(I couldn't port any other games, so they just link externally)
 
 ### Scambait
 - **/dash/cards** - 3 fake randomly generated credit cards: everyday, savings & business, complete with CVV and numbers
@@ -60,6 +65,10 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 ### Control
 - **/settings** - app settings
 - **/settings/:category** - settings by category
+
+I have no idea what they mean inside Twitter, but **i** means both internal and information, **i/flow** means internal flow and control
+
+Read [app.tsx](src/app.tsx) for a full map
 
 # License
 [MIT](LICENSE)

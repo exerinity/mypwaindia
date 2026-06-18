@@ -113,7 +113,6 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomeRedirect />} />
 
-        {/* public */}
         <Route path="/dash" element={<DashboardPage />} />
         <Route path="/i/leaderboard" element={<LeaderboardPage />} />
         <Route path="/i/team" element={<TeamPage />} />
@@ -132,7 +131,6 @@ export default function App() {
         <Route path="/i/flow/mci/focus" element={<CLIPage />} />
         <Route path="/i/flow/mpti" element={<MPTIPage />} />
 
-        {/* login */}
         <Route element={<RequireAuth />}>
           <Route path="/account" element={<AccountPage />} />
           <Route path="/account/restrictions" element={<RestrictionsPage />} />
