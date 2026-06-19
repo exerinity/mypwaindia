@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useSettings } from '../context/settings_ctx.tsx';
+import { useAuth } from '../context/auth_ctx.tsx';
 import { Logo } from './logo.tsx';
 import {
   CloseIcon,
@@ -20,33 +21,35 @@ import {
   TerminalIcon,
 } from './icons.tsx';
 
-interface NavItem { to?: string; href?: string; label: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; hideInScambait?: boolean; scambaitOnly?: boolean }
-interface NavGroup { title: string; items: NavItem[]; hideInScambait?: boolean; scambaitTitle?: string; defaultTitle?: string }
+interface NavItem { to?: string; href?: string; label: string; loggedOutLabel?: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; hideInScambait?: boolean; scambaitOnly?: boolean; requireAuth?: boolean }
+interface NavGroup { title: string; items: NavItem[]; hideInScambait?: boolean; scambaitTitle?: string; defaultTitle?: string; loggedOutTitle?: string }
 
 const NAV_GROUPS: NavGroup[] = [
   {
     title: 'Your account',
+    loggedOutTitle: 'Welcome',
     items: [
-      { to: '/dash', label: 'Dashboard', end: true, icon: DashboardIcon },
-      { to: '/account', label: 'Account', icon: UserIcon },
-      { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon },
-      { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true },
-      { to: '/i/flow/subscriptions', label: 'Subscriptions', icon: StoreIcon, hideInScambait: true },
-      { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true },
-      { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true },
-      { to: '/iotm', label: 'Investment Opportunities™', icon: TrophyIcon, hideInScambait: true },
+      { to: '/dash', label: 'Dashboard', loggedOutLabel: 'MyPWAIndia', end: true, icon: DashboardIcon },
+      { to: '/account', label: 'Account', icon: UserIcon, requireAuth: true },
+      { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon, requireAuth: true },
+      { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true, requireAuth: true },
+      { to: '/i/flow/subscriptions', label: 'Subscriptions', icon: StoreIcon, hideInScambait: true, requireAuth: true },
+      { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true, requireAuth: true },
+      { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true, requireAuth: true },
+      { to: '/iotm', label: 'Investment Opportunities™', icon: TrophyIcon, hideInScambait: true, requireAuth: true },
     ],
   },
   {
     title: 'Payment links',
     hideInScambait: true,
     items: [
-      { to: '/links', label: 'My links', icon: LinkIcon },
-      { to: '/links/claim', label: 'Claim a link', icon: ClaimIcon },
+      { to: '/links', label: 'My links', icon: LinkIcon, requireAuth: true },
+      { to: '/links/claim', label: 'Claim a link', icon: ClaimIcon, requireAuth: true },
     ],
   },
   {
     title: 'Meta',
+    loggedOutTitle: 'MyPayIndia',
     hideInScambait: true,
     items: [
       { to: '/i/leaderboard', label: 'Leaderboard', icon: TrophyIcon },
@@ -63,12 +66,14 @@ const NAV_GROUPS: NavGroup[] = [
     ],
     scambaitTitle: 'Control',
     defaultTitle: 'MyPWAIndia',
+    loggedOutTitle: 'Control',
   },
 ];
 
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const location = useLocation();
   const { settings } = useSettings();
+  const { active } = useAuth();
   const scambait = settings.scambait;
 
   return (
@@ -89,6 +94,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           if (scambait && group.hideInScambait) return null;
 
           const visibleItems = group.items.filter((item) => {
+            if (item.requireAuth && !active) return false;
             if (scambait && item.hideInScambait) return false;
             if (!scambait && item.scambaitOnly) return false;
             return true;
@@ -98,10 +104,11 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
 
           return (
             <div key={group.title}>
-              <h4>{scambait && group.scambaitTitle ? group.scambaitTitle : (group.defaultTitle ?? group.title)}</h4>
+              <h4>{!active && group.loggedOutTitle ? group.loggedOutTitle : scambait && group.scambaitTitle ? group.scambaitTitle : (group.defaultTitle ?? group.title)}</h4>
               <div className="links">
                 {visibleItems.map((item) => {
                   const Icon = item.icon;
+                  const label = !active && item.loggedOutLabel ? item.loggedOutLabel : item.label;
                   if (item.external) {
                     return (
                       <a
@@ -112,7 +119,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                         onClick={onClose}
                       >
                         {Icon && <Icon />}
-                        <span>{item.label}</span>
+                        <span>{label}</span>
                         <ExternalIcon />
                       </a>
                     );
@@ -129,7 +136,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                       }}
                     >
                       {Icon && <Icon />}
-                      <span>{item.label}</span>
+                      <span>{label}</span>
                     </NavLink>
                   );
                 })}

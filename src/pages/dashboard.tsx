@@ -15,6 +15,8 @@ import { TransactionTable } from '../components/tx_table.tsx';
 import { RefreshStatus } from '../components/refresh_status.tsx';
 import { generateStatements } from '../utils/fake_statements.js';
 import { hideGet, hideSet } from '../utils/storage.ts';
+import { AppFooter } from '../components/app_footer.tsx';
+import { RELEASES } from './release_notes.tsx';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
@@ -69,11 +71,15 @@ export default function DashboardPage() {
       <>
         <h1 className="mt-0">Welcome to the MyPayIndia PWA</h1>
         <p className="mt-0 mb-0">You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
-          You can navigate most of the app logged out, but to actually do everything, please <Link to="/i/flow/login" state={{ backgroundLocation: location }}>log in</Link>.
+          You can navigate the app logged out, but to actually do anything, please <Link to="/i/flow/login" state={{ backgroundLocation: location }}>log in</Link>.
           If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
-        <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <BulbIcon /><span>If you are looking for the legacy app, you can find it here: <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">https://legacy.app.mypayindia.com</a></span>
+        <div className="alert alert-info mb-2" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+          <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><BulbIcon /></span>
+          <span style={{ flex: 1 }}>
+            <strong className="stat-label">Tip</strong><br></br>MyPWAIndia understands (most) MyPayIndia.com URL paths - so coming from <strong>mypayindia.com/accountservices/transhist</strong> and replacing <strong>.com</strong> with <strong>.sbs</strong> will automatically take you to the right page!
+          </span>
         </div>
+        <AppFooter version={RELEASES[0].version} />
       </>
     );
   }
