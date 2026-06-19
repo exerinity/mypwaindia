@@ -60,8 +60,9 @@ export default function LoginPage() {
     setBusy(true);
     setError(null);
     try {
+      const goto = searchParams.get('goto');
       const from = (location.state as { from?: { pathname?: string; search?: string; hash?: string } })?.from;
-      const dest = from ? (from.pathname ?? '/dash') + (from.search ?? '') + (from.hash ?? '') : '/dash';
+      const dest = goto ?? (from ? (from.pathname ?? '/dash') + (from.search ?? '') + (from.hash ?? '') : '/dash');
       const onboarded = storageGet<number>(KEYS.ONBOARD, 0) === 1;
       await login({ username, password, totp_code: totp || undefined, env }, onboarded || isScambait ? dest : '/i/flow/onboarding');
     } catch (e) {

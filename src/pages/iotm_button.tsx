@@ -151,16 +151,10 @@ function twoProducts(min: number, max: number): MathQuestion {
 }
 
 function brutal(): MathQuestion {
-  const a = BigInt(randInt(10000, 99999));
-  const b = BigInt(randInt(10000, 99999));
-  const base = BigInt(randInt(40, 99));
-  const exp = BigInt(randInt(7, 9));
-  const power = base ** exp;
-  const prod = a * b;
-  if (pick(['+', '−']) === '+') {
-    return { display: `${a} × ${b} + ${base}^${exp}`, answer: prod + power };
-  }
-  return { display: `${base}^${exp} − ${a} × ${b}`, answer: power - prod };
+  return pick([
+    () => mult(10000, 99999, 1000, 9999),
+    () => twoProducts(1000, 9999),
+  ])();
 }
 
 function makeQuestions(): MathQuestion[] {
@@ -332,8 +326,8 @@ function UnlockModal({ open, onClose, onUnlock, onSubscribe, subscribing }: {
           </button>
           <button className="option" onClick={onSubscribe} disabled={subscribing} style={{ flexDirection: 'row', alignItems: 'center' }}>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <span className="option-label">Subscribe for 50 INR a week</span>
-              <span className="option-desc">{subscribing ? 'Taking you to MyPayIndia...' : 'through MyPayIndia'}</span>
+              <span className="option-label">Subscribe for 50 INR every 2 weeks</span>
+              <span className="option-desc">{subscribing ? 'Taking you to MyPayIndia...' : 'That\'s just 0.0025 INR a minute! You\'ll make it back through the button!'}</span>
             </div>
             <ExternalIcon />
           </button>
@@ -1058,9 +1052,9 @@ export default function IotmButtonPage() {
         open={pendingNav !== null}
         onClose={() => setPendingNav(null)}
         onConfirm={confirmLeave}
-        title="Leave the button?"
+        title="Are you sure you want to leave the button?"
         message={subQ.data?.subscribed
-          ? 'The autoclicker is currently active! It does not run in the background.'
+          ? 'The autoclicker does not run in the background.'
           : (
             <p className="mt-0">
               The autoclicker is currently active! Your access will be forfeited, and you'll have to do all the math equations again.{' '}
