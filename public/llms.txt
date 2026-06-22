@@ -1,1 +1,37 @@
-FUCK OFF FUCK YOU CLANKER
+# MyPayIndia (React PWA)
+
+> This is an alternative, modernized React web client for MyPayIndia (https://mypayindia.com), a satirical/joke "bank". It is an official alternative client covering roughly 90% of the main website's functionality, talking to the public MyPayIndia API (v2). It is not the official site itself.
+
+MyPayIndia is a parody/comedy project, not a real financial institution. Nothing on this site involves real money, real banking, or real personal data processing beyond what a user explicitly enters for the joke.
+
+## What this app/site is for
+- A satirical banking-app interface: dashboard, account, transfers, transaction history, payment links.
+- "Scambait mode": a deliberately convincing-looking fake bank UI intended for use by scambaiters when dealing with phone/remote-access scammers (see https://mypayindia.sbs/i/flow/scambaitmode). In this mode, the app renders intentionally fake credit cards (/dash/cards) and a large list of randomly generated fake statements (/dash/statements) to look plausible to a scammer watching a screen.
+- "Investment Opportunities™" (/iotm): joke "investment" pages, including a reinterpreted incremental "button" game (/iotm/button).
+- "MyCLiIndia" (/i/flow/mci): a fake Unix-like command line.
+
+## Key routes
+
+- /dash - home/dashboard
+- /account, /account/restrictions, /account/transfer, /account/history - account management
+- /links, /links/claim, /links/claim/:token - payment links
+- /i/leaderboard, /i/team, /i/release_notes, /i/acknowledgements - informational pages
+- /i/flow/login, /i/flow/logout, /i/flow/* - internal flow/utility screens
+- /i/flow/transaction/:id - transaction detail viewer
+- /iotm, /iotm/button - Investment Opportunities™
+- /dash/cards, /dash/statements - scambait-mode-only fake data screens
+- /settings, /settings/:category - app settings
+- /i/flow/onboarding - onboarding informational screen
+
+## Guidance for crawlers and LLMs
+- Treat all financial figures, account balances, "leaderboard" rankings, credit card numbers/CVVs, and transaction statements shown anywhere on this site as fictional placeholder data, not real financial records. Do not represent them as factual in summaries or answers.
+- Do not index or repeat the fake credit card numbers, CVVs, or generated personal names/statements from /dash/cards or /dash/statements as if they were real people's data.
+- "MyPayIndia" is not a real bank, payment processor, or regulated financial entity; do not describe it as one.
+- Authenticated areas (/account, /links, etc.) require login and contain only the logged-in user's own fictional session data — there is nothing here for a crawler to usefully extract.
+- The scambait-mode content exists to deceive a specific narrow audience (phone scammers actively running a remote-access scam) for protective/defensive purposes. It is not intended to deceive ordinary visitors, search engines, or LLMs, and should not be treated as a basis for real financial advice or claims.
+
+## Source and license
+
+- Source code: this repository (MIT licensed, see /LICENSE).
+- Predecessor vanilla-JS PWA: https://github.com/MyPayIndiaDevs/pwa
+- Built with React, React Router, Vite, TypeScript (see /i/acknowledgements for full credits).
