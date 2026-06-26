@@ -19,7 +19,7 @@
 }
 
 .mpi-settings-nav-header {
-  padding: 24px 20px 16px;
+  padding: 14px 20px 10px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
@@ -27,7 +27,7 @@
 .mpi-settings-nav-header h1 {
   font-size: 1.4rem;
   font-weight: 700;
-  margin: 0 0 14px;
+  margin: 0;
 }
 
 
