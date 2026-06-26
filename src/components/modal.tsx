@@ -5,8 +5,8 @@ import { CloseIcon } from './icons.tsx';
 import { Logo } from './logo.tsx';
 
 
-interface ModalProps { open: boolean; onClose?: () => void; title?: string; fullscreen?: boolean; className?: string; children: ReactNode }
-export function Modal({ open, onClose, title, fullscreen = false, className, children }: ModalProps) {
+interface ModalProps { open: boolean; onClose?: () => void; title?: string; fullscreen?: boolean; className?: string; bgIcon?: ReactNode; children: ReactNode }
+export function Modal({ open, onClose, title, fullscreen = false, className, bgIcon, children }: ModalProps) {
   const [closing, setClosing] = useState(false);
 
   const handleClose = useCallback(() => {
@@ -40,6 +40,7 @@ export function Modal({ open, onClose, title, fullscreen = false, className, chi
       {!fullscreen && (
         <div className="modal-backdrop" onClick={handleClose} aria-hidden="true" />
       )}
+      {fullscreen && bgIcon}
       <div
         className="modal-panel"
         onAnimationEnd={() => { if (closing) { setClosing(false); onClose?.(); } }}

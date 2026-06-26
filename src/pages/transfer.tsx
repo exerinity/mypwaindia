@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
@@ -8,11 +9,12 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { transfer, listTransactions } from '../api/transactions.js';
 import { getUserInfo } from '../api/user.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
-import { describeError } from '../utils/errors.js';
-import { HoldButton } from '../components/hold_btn.tsx';
 import { InfoIcon, WarningIcon } from '../components/icons.tsx';
-import { FloatingInput, FloatingTextarea } from '../components/floating_input.tsx';
 import { Modal } from '../components/modal.tsx';
+
+const HoldButton = lazy(() => import('../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
+const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const FloatingTextarea = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingTextarea })));
 import { Skeleton } from '../components/status.tsx';
 import type { Transaction } from '../components/tx_table.tsx';
 
@@ -111,6 +113,7 @@ export default function TransferPage() {
       } catch { }
       navigate(`/i/flow/transaction/${res.transaction_id}`);
     } catch (err) {
+      const { describeError } = await import('../utils/errors.js');
       toast.error(describeError(err));
     } finally {
       setBusy(false);
@@ -118,7 +121,7 @@ export default function TransferPage() {
   }
 
   return (
-    <>
+    <Suspense fallback={<ContentSkeleton />}>
       <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭">
         <img src="https://cologne.exerinity.com/son.png" alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
@@ -219,6 +222,6 @@ export default function TransferPage() {
           )}
         </div>
       </div>
-    </>
+    </Suspense>
   );
 }

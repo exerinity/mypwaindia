@@ -1,10 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useCurrency, useSettings } from '../context/settings_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { Modal } from '../components/modal.tsx';
-import { generateStatements } from '../utils/fake_statements.js';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
@@ -26,7 +25,12 @@ export default function StatementsPage() {
   const [sort, setSort] = useState('date_desc');
   const [limit, setLimit] = useState<number | 'all'>(25);
 
-  const statements = useMemo(() => generateStatements(1000, active?.id ?? null), [active?.id]);
+  const [statements, setStatements] = useState<{ id: number; description: string; amount: number; date: Date }[]>([]);
+  useEffect(() => {
+    import('../utils/fake_statements.js').then(({ generateStatements }) => {
+      setStatements(generateStatements(1000, active?.id ?? null));
+    });
+  }, [active?.id]);
 
   const sorted = useMemo(() => {
     const arr = [...statements];

@@ -1,10 +1,10 @@
 import { Routes, Route, Navigate, Outlet, useLocation, useParams, type Location } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
-import { AppLayout } from './components/app_layout.tsx';
-import { RequireAuth } from './components/require_auth.tsx';
 import { useSettings } from './context/settings_ctx.tsx';
-import { setCanonical } from './utils/canonical.ts';
+import { CardSkeleton } from './components/app_skeleton.tsx';
 
+const AppLayout = lazy(() => import('./components/app_layout.tsx').then((m) => ({ default: m.AppLayout })));
+const RequireAuth = lazy(() => import('./components/require_auth.tsx').then((m) => ({ default: m.RequireAuth })));
 const LoginPage = lazy(() => import('./pages/login.tsx'));
 const LogoutPage = lazy(() => import('./pages/logout.tsx'));
 const OnboardingPage = lazy(() => import('./pages/onboarding.tsx'));
@@ -80,7 +80,7 @@ export default function App() {
   const bgLoc = (location.state as { backgroundLocation?: Location })?.backgroundLocation;
   const istr = location.pathname.startsWith('/i/flow/transaction/');
 
-  useEffect(() => { setCanonical(location.pathname); }, [location.pathname]);
+  useEffect(() => { import('./utils/canonical.ts').then(({ setCanonical }) => setCanonical(location.pathname)); }, [location.pathname]);
 
   return (
     <>
@@ -105,7 +105,7 @@ export default function App() {
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
 
-      <Route element={<Suspense fallback={null}><Outlet /></Suspense>}>
+      <Route element={<Suspense fallback={<CardSkeleton />}><Outlet /></Suspense>}>
         <Route path="/i/flow/login" element={<LoginPage />} />
         <Route path="/i/flow/logout" element={<LogoutPage />} />
         <Route path="/i/flow/onboarding" element={<OnboardingPage />} />
@@ -156,22 +156,22 @@ export default function App() {
       </Route>
     </Routes>}
     {istr && (
-      <Suspense fallback={null}>
+      <Suspense fallback={<CardSkeleton />}>
         <TransactionPage />
       </Suspense>
     )}
     {bgLoc && location.pathname === '/i/flow/logout' && (
-      <Suspense fallback={null}>
+      <Suspense fallback={<CardSkeleton />}>
         <LogoutPage />
       </Suspense>
     )}
     {bgLoc && location.pathname === '/i/flow/login' && (
-      <Suspense fallback={null}>
+      <Suspense fallback={<CardSkeleton />}>
         <LoginPage />
       </Suspense>
     )}
     {bgLoc && location.pathname === '/i/flow/onboarding/wizard' && (
-      <Suspense fallback={null}>
+      <Suspense fallback={<CardSkeleton />}>
         <FinetunePage />
       </Suspense>
     )}

@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useApiCall } from '../hooks/api_call.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { getLeaderboard } from '../api/flow.ts';
-import { formatINR } from '../utils/money.js';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 
 const REFRESH_INTERVAL = 10;
 
@@ -46,6 +46,8 @@ export default function LeaderboardPage() {
   const [paused, setPaused] = useState(false);
   const [countdown, setCountdown] = useState(REFRESH_INTERVAL);
   const countdownRef = useRef(REFRESH_INTERVAL);
+  const moneyMod = useLazyModule(() => import('../utils/money.js'));
+  const formatINR = (n: number) => moneyMod ? moneyMod.formatINR(n) : '...';
 
   useEffect(() => {
     if (paused) return;

@@ -12,7 +12,7 @@ export interface Transaction {
 }
 import { Link, useLocation } from 'react-router-dom';
 import { useCurrency } from '../context/settings_ctx.tsx';
-import { formatDate } from '../utils/dates.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 
 const RESULT_OPTIONS = [10, 25, 50, 100, 'all'];
 
@@ -41,6 +41,8 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
   const location = useLocation();
   const [sort, setSort] = useState('date_desc');
   const [limit, setLimit] = useState<number | 'all'>(25);
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
 
   function toggleCol(col: SortCol) {
     const [asc, desc] = COL_SORTS[col];

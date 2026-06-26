@@ -1,9 +1,11 @@
+import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import { Logo } from './logo.tsx';
 import { HamburgerIcon } from './icons.tsx';
-import { AccountPill } from './acc_pill.tsx';
-import { BalancePill } from './bal_pill.tsx';
-import { InstallPill } from './install_pill.tsx';
+
+const Logo = lazy(() => import('./logo.tsx').then((m) => ({ default: m.Logo })));
+const AccountPill = lazy(() => import('./acc_pill.tsx').then((m) => ({ default: m.AccountPill })));
+const BalancePill = lazy(() => import('./bal_pill.tsx').then((m) => ({ default: m.BalancePill })));
+const InstallPill = lazy(() => import('./install_pill.tsx').then((m) => ({ default: m.InstallPill })));
 
 export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   return (
@@ -16,13 +18,15 @@ export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
         >
           <HamburgerIcon />
         </button>
-        <Link to="/dash" aria-label="Go to dashboard"><Logo /></Link>
+        <Link to="/dash" aria-label="Go to dashboard"><Suspense fallback={null}><Logo /></Suspense></Link>
         <div className="mpi-header-spacer" />
       </div>
       <div className="mpi-pills" role="status" aria-live="polite">
-        <AccountPill />
-        <BalancePill />
-        <InstallPill />
+        <Suspense fallback={null}>
+          <AccountPill />
+          <BalancePill />
+          <InstallPill />
+        </Suspense>
       </div>
     </header>
   );

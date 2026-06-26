@@ -1,36 +1,33 @@
-import React, { useState, useMemo, useRef } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import React, { useState, useMemo, useRef, lazy, Suspense } from 'react';
 import type { Account } from '../context/auth_ctx.tsx';
 import type { Settings } from '../context/settings_ctx.tsx';
 import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
-import { AppFooter } from '../components/app_footer.tsx';
 import { RELEASES } from './release_notes.tsx';
 import { useSettings, CUSTOM_VAR_KEYS, HOME_PAGE_OPTIONS, DEFAULT_DASHBOARD_BUTTONS, DASHBOARD_BUTTON_STYLES } from '../context/settings_ctx.tsx';
 import type { DashboardButtonStyle } from '../context/settings_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { login as apiLogin, logout as apiLogout } from '../api/auth.js';
 import { useToast } from '../context/toast_ctx.tsx';
-import { normalizeHex } from '../utils/colors.js';
-import { ConfirmModal } from '../components/confirm_modal.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon, ArrowLeftIcon, ChevronRight, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon, BulbIcon, PlusIcon, CloseIcon } from '../components/icons.tsx';
-import { FloatingInput } from '../components/floating_input.tsx';
+import { ExternalIcon, ArrowLeftIcon, ChevronRight, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon, BulbIcon, PlusIcon, CloseIcon, LockIcon } from '../components/icons.tsx';
+import { getAppLockConfig, setAppLock, disableAppLock, verifyAppLock, minLength } from '../utils/app_lock.ts';
+import type { AppLockMethod } from '../utils/app_lock.ts';
+import { AppLockInput } from '../components/app_lock_input.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useCachedQuery } from '../hooks/cached_query.js';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { listSessions, invalidateSession } from '../api/user.js';
-import { formatDate } from '../utils/dates.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
-import { RefreshStatus } from '../components/refresh_status.tsx';
-import { describeError } from '../utils/errors.js';
-import { AddAccountModal } from '../components/add_acc_modal.tsx';
-import { HoldButton } from '../components/hold_btn.tsx';
+
+const AppFooter = lazy(() => import('../components/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
+const ConfirmModal = lazy(() => import('../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const AddAccountModal = lazy(() => import('../components/add_acc_modal.tsx').then((m) => ({ default: m.AddAccountModal })));
+const HoldButton = lazy(() => import('../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
 import { hideGet, hideSetValue } from '../utils/storage.ts';
-import {
-  collectSettingsExport,
-  parseSettingsExport,
-  applySettingsImport,
-  settingsToSearchParams,
-} from '../utils/settings_io.ts';
 import FlowNotFoundPage from './flow_not_found.tsx';
 
 
@@ -44,7 +41,7 @@ const SESSION_COL_SORTS: Record<SessionSortCol, [string, string]> = {
   status: ['status_active', 'status_invalidated'],
 };
 
-function SessionRow({ s, onTerminate }: { s: Session; onTerminate: (s: Session) => void }) {
+function SessionRow({ s, onTerminate, formatDate }: { s: Session; onTerminate: (s: Session) => void; formatDate: (d: string) => string }) {
   const [revealed, setRevealed] = useState(false);
   return (
     <tr key={s.id}>
@@ -139,7 +136,8 @@ type CategoryId =
   | 'sw'
   | 'account'
   | 'scambait'
-  | 'sessions';
+  | 'sessions'
+  | 'lock';
 
 interface Category {
   id: string;
@@ -155,6 +153,7 @@ const CATEGORIES: Category[] = [
   { id: 'appearance', label: 'Appearance', desc: 'Theme and accent color' },
   { id: 'home', label: 'Home screen', desc: 'Page shown when opening the app', hideWhenScambait: true },
   { id: 'data', label: 'Data control', desc: 'Edit saved accounts, API settings, and other small settings' },
+  { id: 'lock', label: 'App lock', desc: 'Require a PIN, pattern, or password to open the app' },
   { id: 'port', label: 'Share settings', desc: 'Move your settings in or out', hideWhenScambait: true },
   { id: 'sw', label: 'Service worker', desc: 'Manage the service worker', hideWhenScambait: true },
   { id: 'scambait', label: 'Scambait mode', desc: '67', hideWhenScambait: true },
@@ -179,6 +178,10 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
+  const colorsMod = useLazyModule(() => import('../utils/colors.js'));
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const normalizeHex = (hex: string) => colorsMod ? colorsMod.normalizeHex(hex) : null;
+  const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
 
   const [addAccountOpen, setAddAccountOpen] = useState(false);
   const [accentInput, setAccentInput] = useState(settings.accent);
@@ -212,6 +215,73 @@ export default function SettingsPage() {
   const terminateStopRef = useRef(false);
 
   const [importJson, setImportJson] = useState('');
+
+  const [appLockConfig, setAppLockConfig] = useState(() => getAppLockConfig());
+  const [appLockSetupOpen, setAppLockSetupOpen] = useState(false);
+  const [appLockIntent, setAppLockIntent] = useState<'change' | 'disable'>('change');
+  const [appLockMethod, setAppLockMethod] = useState<AppLockMethod>('pin');
+  const [appLockStep, setAppLockStep] = useState<'verify' | 'method' | 'enter' | 'confirm'>('method');
+  const [appLockValue, setAppLockValue] = useState('');
+  const [appLockConfirmValue, setAppLockConfirmValue] = useState('');
+  const [appLockVerifyValue, setAppLockVerifyValue] = useState('');
+  const [appLockVerifying, setAppLockVerifying] = useState(false);
+
+  function openAppLockSetup() {
+    setAppLockIntent('change');
+    setAppLockMethod('pin');
+    setAppLockValue('');
+    setAppLockConfirmValue('');
+    setAppLockVerifyValue('');
+    setAppLockStep(appLockConfig?.enabled ? 'verify' : 'method');
+    setAppLockSetupOpen(true);
+  }
+
+  function openAppLockDisable() {
+    setAppLockIntent('disable');
+    setAppLockVerifyValue('');
+    setAppLockStep('verify');
+    setAppLockSetupOpen(true);
+  }
+
+  async function appLockContinueFromVerify() {
+    if (!appLockVerifyValue || appLockVerifying) return;
+    setAppLockVerifying(true);
+    const ok = await verifyAppLock(appLockVerifyValue);
+    setAppLockVerifying(false);
+    if (!ok) {
+      toast.error("Incorrect");
+      setAppLockVerifyValue('');
+      return;
+    }
+    if (appLockIntent === 'disable') {
+      disableAppLock();
+      setAppLockConfig(null);
+      setAppLockSetupOpen(false);
+      toast.success('App lock turned off');
+      return;
+    }
+    setAppLockStep('method');
+  }
+
+  function appLockContinueFromEnter() {
+    if (appLockValue.length < minLength(appLockMethod)) {
+      toast.error(`Too short - use at least ${minLength(appLockMethod)} ${appLockMethod === 'pattern' ? 'points' : 'characters'}`);
+      return;
+    }
+    setAppLockStep('confirm');
+  }
+
+  async function appLockFinishConfirm() {
+    if (appLockConfirmValue !== appLockValue) {
+      toast.error("That didn't match. Try confirming again.");
+      setAppLockConfirmValue('');
+      return;
+    }
+    await setAppLock(appLockMethod, appLockValue);
+    setAppLockConfig(getAppLockConfig());
+    setAppLockSetupOpen(false);
+    toast.success('App lock on');
+  }
 
   const sessionsQ = useCachedQuery<{ sessions: Session[] }>(
     active ? `sessions:${active.id}` : null,
@@ -272,6 +342,7 @@ export default function SettingsPage() {
         setReinit2faError('Incorrect 2FA code, try again.');
         setReinit2faOpen(true);
       } else {
+        const { describeError } = await import('../utils/errors.js');
         toast.error(describeError(e));
         setReinit2faOpen(false);
       }
@@ -309,6 +380,7 @@ export default function SettingsPage() {
       toast.success('Session terminated');
       sessionsQ.refetch();
     } catch (e) {
+      const { describeError } = await import('../utils/errors.js');
       toast.error(describeError(e));
     }
   }
@@ -327,6 +399,7 @@ export default function SettingsPage() {
         await invalidateSession(active!, targets[i].id);
         terminated++;
       } catch (e) {
+        const { describeError } = await import('../utils/errors.js');
         toast.error(describeError(e));
       }
       if (i < targets.length - 1 && !terminateStopRef.current) {
@@ -756,7 +829,8 @@ export default function SettingsPage() {
       }
 
       case 'port': {
-        const applyJson = (raw: string) => {
+        const applyJson = async (raw: string) => {
+          const { parseSettingsExport, applySettingsImport } = await import('../utils/settings_io.ts');
           const parsed = parseSettingsExport(raw);
           if (!parsed) { toast.error('That is not correct JSON'); return; }
           applySettingsImport(parsed, update);
@@ -771,7 +845,8 @@ export default function SettingsPage() {
 
             <h3 className="mt-0">Copy &amp; paste</h3>
             <div className="btn-row" style={{ marginTop: 4 }}>
-              <button className="secondary compact" onClick={() => {
+              <button className="secondary compact" onClick={async () => {
+                const { collectSettingsExport } = await import('../utils/settings_io.ts');
                 const json = JSON.stringify(collectSettingsExport(settings), null, 2);
                 navigator.clipboard.writeText(json).then(
                   () => toast.success('Settings JSON copied to clipboard'),
@@ -798,7 +873,8 @@ export default function SettingsPage() {
             <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
             <h3 className="mt-0">JSON file</h3>
             <div className="btn-row" style={{ marginTop: 4 }}>
-              <button className="secondary compact" onClick={() => {
+              <button className="secondary compact" onClick={async () => {
+                const { collectSettingsExport } = await import('../utils/settings_io.ts');
                 const json = JSON.stringify(collectSettingsExport(settings), null, 2);
                 const blob = new Blob([json], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -833,7 +909,8 @@ export default function SettingsPage() {
               With this, you are able to choose what incoming settings are applied before accepting
             </p>
             <div className="btn-row" style={{ marginTop: 4 }}>
-              <button className="secondary compact" onClick={() => {
+              <button className="secondary compact" onClick={async () => {
+                const { collectSettingsExport, settingsToSearchParams } = await import('../utils/settings_io.ts');
                 const url = `https://mypayindia.sbs/i/flow/settings?${settingsToSearchParams(collectSettingsExport(settings))}`;
                 navigator.clipboard.writeText(url).then(
                   () => toast.success('Settings link copied to clipboard!'),
@@ -988,6 +1065,44 @@ export default function SettingsPage() {
                 Delete all storage
               </button>
             </div>
+          </>
+        );
+
+      case 'lock':
+        return (
+          <>
+            <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+              Require a PIN, pattern, or password before the app opens
+            </p>
+
+            <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+              <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><StopIcon /></span>
+              <span>
+                <strong>This is a novelty, not real security.</strong> This only hides the app's content behind a
+                local screen - it does not encrypt anything, protect your MyPayIndia account, or stop anyone determined.
+                It's easily bypassable by clearing the site storage.
+              </span>
+            </div>
+
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+
+            {appLockConfig?.enabled ? (
+              <>
+                <div className="row spread" style={{ alignItems: 'center' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <LockIcon /> App lock is on ({appLockConfig.method})
+                  </span>
+                </div>
+                <div className="btn-row" style={{ marginTop: 14 }}>
+                  <button className="secondary" onClick={openAppLockSetup}>Change method</button>
+                  <button className="secondary danger" onClick={openAppLockDisable}>Turn off app lock</button>
+                </div>
+              </>
+            ) : (
+              <div className="btn-row">
+                <button onClick={openAppLockSetup}>Set up app lock</button>
+              </div>
+            )}
           </>
         );
 
@@ -1203,7 +1318,7 @@ export default function SettingsPage() {
                     </thead>
                     <tbody>
                       {sortedSessions.map((s) => (
-                        <SessionRow key={s.id} s={s} onTerminate={setKillTarget} />
+                        <SessionRow key={s.id} s={s} onTerminate={setKillTarget} formatDate={formatDate} />
                       ))}
                     </tbody>
                   </table>
@@ -1229,7 +1344,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <>
+    <Suspense fallback={<ContentSkeleton />}>
       <div className="mpi-settings-layout">
 
         <div className={`mpi-settings-nav${mobileShowDetail ? ' mpi-settings-nav--hidden' : ''}`}>
@@ -1533,6 +1648,93 @@ export default function SettingsPage() {
           <button className="secondary" onClick={() => setDeleteStorageDoneOpen(false)}>No</button>
         </div>
       </Modal>
-    </>
+
+      <Modal
+        fullscreen
+        className="slide"
+        open={appLockSetupOpen}
+        onClose={() => setAppLockSetupOpen(false)}
+        bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
+        title={
+          appLockStep === 'verify'
+            ? 'Confirmation required'
+            : appLockStep === 'method'
+              ? 'Set up app lock'
+              : appLockStep === 'enter'
+                ? `Choose your ${appLockMethod}`
+                : `Confirm your ${appLockMethod}`
+        }
+      >
+        {appLockStep === 'verify' && (
+          <>
+            <p className="mt-0 muted" style={{ fontSize: '0.9rem' }}>
+              Enter your current {appLockConfig?.method} to {appLockIntent === 'disable' ? 'turn off app lock' : 'change app lock'}
+            </p>
+            <AppLockInput
+              method={appLockConfig?.method ?? 'pin'}
+              value={appLockVerifyValue}
+              onChange={setAppLockVerifyValue}
+              autoFocus
+            />
+            <div className="modal-actions">
+              <button type="button" className="secondary" onClick={() => setAppLockSetupOpen(false)}>Cancel</button>
+              <button
+                type="button"
+                className={appLockIntent === 'disable' ? 'danger' : undefined}
+                onClick={appLockContinueFromVerify}
+                disabled={!appLockVerifyValue || appLockVerifying}
+              >
+                {appLockVerifying ? 'Checking...' : appLockIntent === 'disable' ? 'Turn off' : 'Continue'}
+              </button>
+            </div>
+          </>
+        )}
+
+        {appLockStep === 'method' && (
+          <>
+            <p className="mt-0 muted" style={{ fontSize: '0.9rem' }}>How do you want to unlock the app?</p>
+            <div className="btn-row" style={{ flexWrap: 'wrap' }}>
+              {(['pin', 'pattern', 'password'] as const).map((m) => (
+                <button
+                  key={m}
+                  className={appLockMethod === m ? '' : 'secondary'}
+                  onClick={() => setAppLockMethod(m)}
+                >
+                  {m === 'pin' ? 'PIN' : m === 'pattern' ? 'Pattern' : 'Password'}
+                </button>
+              ))}
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="secondary" onClick={() => setAppLockSetupOpen(false)}>Cancel</button>
+              <button type="button" onClick={() => setAppLockStep('enter')}>Continue</button>
+            </div>
+          </>
+        )}
+
+        {appLockStep === 'enter' && (
+          <>
+            <p className="mt-0 muted" style={{ fontSize: '0.9rem' }}>
+              Enter your new {appLockMethod} (at least {minLength(appLockMethod)} {appLockMethod === 'pattern' ? 'points' : 'characters'})
+            </p>
+            <AppLockInput method={appLockMethod} value={appLockValue} onChange={setAppLockValue} autoFocus />
+            <div className="modal-actions">
+              <button type="button" className="secondary" onClick={() => setAppLockStep('method')}>Back</button>
+              <button type="button" onClick={appLockContinueFromEnter} disabled={!appLockValue}>Continue</button>
+            </div>
+          </>
+        )}
+
+        {appLockStep === 'confirm' && (
+          <>
+            <p className="mt-0 muted" style={{ fontSize: '0.9rem' }}>Re-enter to confirm</p>
+            <AppLockInput method={appLockMethod} value={appLockConfirmValue} onChange={setAppLockConfirmValue} autoFocus />
+            <div className="modal-actions">
+              <button type="button" className="secondary" onClick={() => { setAppLockStep('enter'); setAppLockConfirmValue(''); }}>Back</button>
+              <button type="button" onClick={appLockFinishConfirm} disabled={!appLockConfirmValue}>Save</button>
+            </div>
+          </>
+        )}
+      </Modal>
+    </Suspense>
   );
 }

@@ -8,7 +8,7 @@ import {
   DASHBOARD_BUTTON_STYLES,
 } from '../context/settings_ctx.tsx';
 import type { Settings, DashboardButtonStyle } from '../context/settings_ctx.tsx';
-import { normalizeHex } from '../utils/colors.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 import { usePageTitle } from '../hooks/page_title.js';
 import { PlusIcon, CloseIcon, SuccessIcon, ArrowLeftIcon, ChevronRight } from '../components/icons.tsx';
 
@@ -26,6 +26,8 @@ export default function FinetunePage() {
   const { settings, update } = useSettings();
   const [step, setStep] = useState(0);
   const [accentInput, setAccentInput] = useState(settings.accent);
+  const colorsMod = useLazyModule(() => import('../utils/colors.js'));
+  const normalizeHex = (hex: string) => colorsMod ? colorsMod.normalizeHex(hex) : null;
 
   const totalSteps = STEP_LABELS.length;
   const done = step >= totalSteps;

@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useCachedQuery } from '../hooks/cached_query.js';
@@ -7,14 +8,13 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { listLinks, createLink, cancelLink } from '../api/links.js';
-import { formatINR, rupeesToPaisa } from '../utils/money.js';
-import { formatDate } from '../utils/dates.js';
-import { describeError } from '../utils/errors.js';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
-import { RefreshStatus } from '../components/refresh_status.tsx';
 import { WarningIcon } from '../components/icons.tsx';
-import { FloatingInput } from '../components/floating_input.tsx';
-import { ConfirmModal } from '../components/confirm_modal.tsx';
+import { useLazyModule } from '../hooks/lazy_module.ts';
+
+const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const ConfirmModal = lazy(() => import('../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const PRESETS_PAISA = [
   100,    // 1 INR
   500,    // 5 INR
@@ -31,6 +31,10 @@ export default function LinksPage() {
   const { settings } = useSettings();
   const { userInfo, refetchUserInfo } = useGlobalData();
   const toast = useToast();
+  const moneyMod = useLazyModule(() => import('../utils/money.js'));
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const formatINR = (n: number) => moneyMod ? moneyMod.formatINR(n) : '...';
+  const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
   const [stackPaisa, setStackPaisa] = useState(0);
   const [note, setNote] = useState('');
   const [creating, setCreating] = useState(false);
@@ -102,6 +106,7 @@ export default function LinksPage() {
       linksQ.refetch();
       refetchUserInfo();
     } catch (e) {
+      const { describeError } = await import('../utils/errors.js');
       toast.error(describeError(e));
     } finally {
       setCreating(false);
@@ -117,6 +122,7 @@ export default function LinksPage() {
         await cancelLink(active!, links[i].token);
         cancelled++;
       } catch (e) {
+        const { describeError } = await import('../utils/errors.js');
         toast.error(`failed to cancel ${links[i].token}: ${describeError(e)}`);
       }
       setCancelAllProgress({ done: i + 1, total: links.length });
@@ -135,6 +141,7 @@ export default function LinksPage() {
       linksQ.refetch();
       refetchUserInfo();
     } catch (e) {
+      const { describeError } = await import('../utils/errors.js');
       toast.error(describeError(e));
     }
   }
@@ -148,7 +155,7 @@ export default function LinksPage() {
   }
 
   return (
-    <>
+    <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Payment links</h1>
 
       <div className="card mb-2">
@@ -292,6 +299,6 @@ export default function LinksPage() {
         message={cancelTarget ? `Cancel this ${cancelTarget.note ? `"${cancelTarget.note}" ` : ''}link? The amount will be refunded to your balance.` : ''}
         confirmLabel="Cancel link"
       />
-    </>
+    </Suspense>
   );
 }

@@ -31,6 +31,7 @@ export const KEYS = {
   ONBOARD: 'accepted_onboard',
   HIDE: 'mpi_hide',
   LAST_VERSION: 'mpi_last_version',
+  APP_LOCK: 'mpi_app_lock',
 };
 
 type HideKey = 'install' | 'sbshint' | 'clickers' | 'iotm_welcome';

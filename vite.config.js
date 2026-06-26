@@ -1,6 +1,39 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import JavaScriptObfuscator from 'javascript-obfuscator';
+
+function obfuscate() {
+  return {
+    name: 'obfuscate',
+    apply: 'build',
+    enforce: 'post',
+    generateBundle(_options, bundle) {
+      for (const file of Object.values(bundle)) {
+        if (file.type !== 'chunk') continue;
+        const result = JavaScriptObfuscator.obfuscate(file.code, {
+          compact: true,
+          simplify: true,
+          controlFlowFlattening: true,
+          controlFlowFlatteningThreshold: 0.08,
+          deadCodeInjection: true,
+          deadCodeInjectionThreshold: 1,
+          identifierNamesGenerator: 'hexadecimal',
+          renameGlobals: false,
+          stringArray: true,
+          stringArrayEncoding: ['base64'],
+          stringArrayThreshold: 1,
+          transformObjectKeys: true,
+          selfDefending: true,
+          debugProtection: false,
+          disableConsoleOutput: false,
+        });
+        file.code = result.getObfuscatedCode();
+        file.map = null;
+      }
+    },
+  };
+}
 
 function umami() {
   return {
@@ -26,6 +59,7 @@ export default defineConfig({
   plugins: [
     react(),
     umami(),
+    obfuscate(),
     VitePWA({
       registerType: 'prompt',
       manifestFilename: 'mypayindia.webmanifest',
@@ -74,15 +108,8 @@ export default defineConfig({
           if (id.match(/pages\/(account|dashboard)/)) return 'client';
           if (id.match(/pages\/cards/)) return 'scambait';
           if (id.match(/pages\/subscriptions/)) return 'subs';
-          if (id.match(/\/api\//)) return 'gateway';
-          if (id.match(/\/(hooks|utils)\//)) return 'helpers';
-          if (id.match(/components\/(boundary_err|status|refresh_status|require_auth|verify_banner)/)) return 'stability';
-          if (id.match(/components\/(acc_pill|add_acc_modal|logout_modal|bal_pill|install_pill)/)) return 'tandem';
-          if (id.match(/components\/(modal|confirm_modal|floating_input|hold_btn)/)) return 'widgets';
-          if (id.match(/components\/(icons|logo)/)) return 'brand';
-          if (id.match(/components\/tx_table/)) return 'history';
+          if (id.match(/components\/status/)) return 'stability';
           if (id.match(/context\//)) return 'bastion';
-          if (id.match(/components\/(app_layout|sidebar|header|app_footer)/)) return 'commander';
         }
       }
     }

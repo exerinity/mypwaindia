@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { createPortal } from 'react-dom';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ConfirmModal } from '../components/confirm_modal.tsx';
-import { HoldButton } from '../components/hold_btn.tsx';
 import { WarningIcon } from '../components/icons.tsx';
+
+const ConfirmModal = lazy(() => import('../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const HoldButton = lazy(() => import('../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
 import { Link } from 'react-router-dom';
 import { storageSet, KEYS } from '../utils/storage.ts';
 
@@ -73,6 +75,7 @@ export default function MPTIPage() {
 
   return (
     <div className="mpi-mpti">
+      <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Toys</h1>
       <p className="mt-0 mb-0">Poke around with various UI components here. Nothing here actually does anything, but you can test interactive components like modals, toasts and buttons. Have fun!</p>
 
@@ -202,6 +205,7 @@ export default function MPTIPage() {
         confirmLabel={confirmHold ? 'Confirm (hold)' : 'Confirm'}
         holdConfirm={confirmHold}
       />
+      </Suspense>
     </div>
   );
 }

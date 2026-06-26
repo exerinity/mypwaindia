@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Modal } from './modal.tsx';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { ExternalIcon } from './icons.tsx';
 import { hideGet, hideSet } from '../utils/storage.ts';
+
+const Modal = lazy(() => import('./modal.tsx').then((m) => ({ default: m.Modal })));
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -48,6 +49,7 @@ export function InstallPill() {
         <span className="pill-label">Install app</span>
       </button>
 
+      <Suspense fallback={null}>
       <Modal open={showModal} onClose={() => setShowModal(false)} title="Install the MyPayIndia PWA">
         <p className="mt-0 mb-0">The MyPayIndia PWA works best when installed as an app. Of course, you don't need to, but here are some general instructions on how depending on your browser/device:</p>
 
@@ -122,6 +124,7 @@ export function InstallPill() {
           <button className="secondary" onClick={hide}>Hide this button</button>
         </p>
       </Modal>
+      </Suspense>
     </>
   );
 }

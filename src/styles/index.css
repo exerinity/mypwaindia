@@ -25,6 +25,7 @@
 @import "cli.css";
 @import "settings.css";
 @import "iotm_button.css";
+@import "app_lock.css";
 
 @font-face {
   font-family: "Inter";

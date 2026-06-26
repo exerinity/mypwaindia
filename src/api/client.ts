@@ -1,5 +1,3 @@
-import { API_BASE, REMOTE_BASE } from './config.js';
-
 export type Env = 'production' | 'staging';
 
 export interface AuthOpts {
@@ -38,6 +36,7 @@ export async function apiFetch<T = unknown>(
   path: string,
   { method = 'GET', body, token, query, env = 'production' }: ApiFetchOptions = {}
 ): Promise<T> {
+  const { API_BASE, REMOTE_BASE } = await import('./config.js');
   const base = env === 'staging' ? REMOTE_BASE : API_BASE;
   const prefix = env === 'staging' ? '/staging' : '';
   let url = `${base}${prefix}${path}`;

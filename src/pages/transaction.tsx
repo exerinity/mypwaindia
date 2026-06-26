@@ -4,7 +4,7 @@ import { useAuth } from '../context/auth_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
 import { getTransaction } from '../api/transactions.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
-import { formatDate } from '../utils/dates.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { Modal } from '../components/modal.tsx';
 import { CopyIcon } from '../components/icons.tsx';
@@ -69,6 +69,8 @@ export default function TransactionModal() {
   const navigate = useNavigate();
   const location = useLocation();
   const id = location.pathname.split('/').pop();
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
 
   const { data, loading, error } = useApiCall<TxDetail>(
     () => getTransaction(active!, id!) as Promise<TxDetail>,

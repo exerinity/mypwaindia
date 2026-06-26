@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import { useState, useMemo, lazy, Suspense } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useCachedQuery } from '../hooks/cached_query.js';
@@ -6,12 +7,11 @@ import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { listSubscriptions, cancelSubscription, resumeSubscription } from '../api/subscriptions.js';
-import { formatINR } from '../utils/money.js';
-import { formatDateShort } from '../utils/dates.js';
-import { describeError } from '../utils/errors.js';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
-import { RefreshStatus } from '../components/refresh_status.tsx';
-import { ConfirmModal } from '../components/confirm_modal.tsx';
+import { useLazyModule } from '../hooks/lazy_module.ts';
+
+const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const ConfirmModal = lazy(() => import('../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 
 interface Subscription {
   subscription_id: string;
@@ -51,6 +51,10 @@ export default function SubscriptionsPage() {
   const [filter, setFilter] = useState('');
   const [cancelTarget, setCancelTarget] = useState<Subscription | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const moneyMod = useLazyModule(() => import('../utils/money.js'));
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const formatINR = (n: number) => moneyMod ? moneyMod.formatINR(n) : '...';
+  const formatDateShort = (d: string) => datesMod ? datesMod.formatDateShort(d) : '...';
 
   const subsQ = useCachedQuery<{ subscriptions: Subscription[] }>(
     active ? `subs:${active.id}:${filter || 'all'}` : null,
@@ -73,6 +77,7 @@ export default function SubscriptionsPage() {
       toast.success(`OK, ${sub.plan_name} will end on ${formatDateShort(sub.current_period_end)}.`);
       subsQ.refetch();
     } catch (e) {
+      const { describeError } = await import('../utils/errors.js');
       toast.error(describeError(e));
     } finally {
       setBusy(null);
@@ -86,6 +91,7 @@ export default function SubscriptionsPage() {
       toast.success(`OK, ${sub.plan_name} will keep renewing.`);
       subsQ.refetch();
     } catch (e) {
+      const { describeError } = await import('../utils/errors.js');
       toast.error(describeError(e));
     } finally {
       setBusy(null);
@@ -93,7 +99,7 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <>
+    <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Subscriptions</h1>
 
       <div className="sub-filters mb-2">
@@ -182,6 +188,6 @@ export default function SubscriptionsPage() {
           ? <>Cancel <strong>{cancelTarget.plan_name}</strong>? It stays active until {formatDateShort(cancelTarget.current_period_end)}, then won't renew. You can restore it at any time before then.</>
           : ''}
       />
-    </>
+    </Suspense>
   );
 }

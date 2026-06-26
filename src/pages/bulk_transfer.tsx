@@ -1,4 +1,5 @@
-import React, { useState, useId, useMemo } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import React, { useState, useId, useMemo, lazy, Suspense } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
@@ -8,11 +9,12 @@ import { transfer, listTransactions } from '../api/transactions.js';
 import { getUserInfo } from '../api/user.js';
 import type { Transaction } from '../components/tx_table.tsx';
 import { useCurrency } from '../context/settings_ctx.tsx';
-import { describeError } from '../utils/errors.js';
-import { HoldButton } from '../components/hold_btn.tsx';
 import { InfoIcon, WarningIcon, CloseIcon } from '../components/icons.tsx';
-import { FloatingInput, FloatingTextarea } from '../components/floating_input.tsx';
 import { Modal } from '../components/modal.tsx';
+
+const HoldButton = lazy(() => import('../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
+const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const FloatingTextarea = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingTextarea })));
 import { Skeleton } from '../components/status.tsx';
 import { Link } from 'react-router-dom';
 
@@ -150,6 +152,7 @@ export default function BulkTransferPage() {
         doneCount++;
       } catch (err) {
         setStatus(item.id, 'error');
+        const { describeError } = await import('../utils/errors.js');
         toast.error(`${item.recipient}: ${describeError(err)}`);
       }
     }
@@ -168,7 +171,7 @@ export default function BulkTransferPage() {
   const canSend = queue.length > 0 && !sending && !allDone;
 
   return (
-    <>
+    <Suspense fallback={<ContentSkeleton />}>
       <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭">
         <img src="https://cologne.exerinity.com/son.png" alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
@@ -334,6 +337,6 @@ export default function BulkTransferPage() {
           </div>
         </div>
       )}
-    </>
+    </Suspense>
   );
 }

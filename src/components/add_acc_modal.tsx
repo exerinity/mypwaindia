@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Modal } from './modal.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
-import { describeError } from '../utils/errors.js';
-import { FloatingInput } from './floating_input.tsx';
 import { WarningIcon, ErrorIcon, ChevronRight, ExternalIcon } from './icons.tsx';
+
+const FloatingInput = lazy(() => import('./floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 
 interface AddAccountModalProps { open: boolean; onClose: () => void }
 
@@ -43,7 +43,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
     onClose();
   }
 
-  function handleSaveCreds(e: React.FormEvent) {
+  async function handleSaveCreds(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     try {
@@ -51,12 +51,14 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
       toast.success(`Credentials saved for ${username.trim()}`);
       handleClose();
     } catch (err) {
+      const { describeError } = await import('../utils/errors.js');
       setError(describeError(err));
     }
   }
 
   return (
     <Modal open={open} onClose={handleClose} title="Add account" className="slide">
+      <Suspense fallback={null}>
       {step === 'choice' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {atCapacity && (
@@ -125,6 +127,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
           </div>
         </form>
       )}
+      </Suspense>
     </Modal>
   );
 }

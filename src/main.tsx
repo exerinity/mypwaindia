@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './app.tsx';
@@ -7,8 +7,22 @@ import { SettingsProvider } from './context/settings_ctx.tsx';
 import { ToastProvider } from './context/toast_ctx.tsx';
 import { GlobalDataProvider } from './context/global_data_ctx.tsx';
 import { DataCacheProvider } from './context/data_cache_ctx.tsx';
-import { ChunkErrorBoundary } from './components/boundary_err.tsx';
+import { AppShellSkeleton } from './components/app_skeleton.tsx';
+import { AppLockScreen } from './components/app_lock_screen.tsx';
+import { getAppLockConfig } from './utils/app_lock.ts';
 import './styles/index.css';
+
+const ChunkErrorBoundary = lazy(() => import('./components/boundary_err.tsx').then((m) => ({ default: m.ChunkErrorBoundary })));
+
+function AppGate() {
+  const [config] = useState(() => getAppLockConfig());
+  const [unlocked, setUnlocked] = useState(() => !config?.enabled);
+
+  if (!unlocked && config) {
+    return <AppLockScreen method={config.method} onUnlock={() => setUnlocked(true)} />;
+  }
+  return <App />;
+}
 
 function Root() {
   useEffect(() => {
@@ -23,19 +37,21 @@ function Root() {
 
   return (
     <BrowserRouter>
-      <ChunkErrorBoundary>
-        <SettingsProvider>
-          <AuthProvider>
-            <ToastProvider>
-              <DataCacheProvider>
-                <GlobalDataProvider>
-                  <App />
-                </GlobalDataProvider>
-              </DataCacheProvider>
-            </ToastProvider>
-          </AuthProvider>
-        </SettingsProvider>
-      </ChunkErrorBoundary>
+      <Suspense fallback={<AppShellSkeleton />}>
+        <ChunkErrorBoundary>
+          <SettingsProvider>
+            <AuthProvider>
+              <ToastProvider>
+                <DataCacheProvider>
+                  <GlobalDataProvider>
+                    <AppGate />
+                  </GlobalDataProvider>
+                </DataCacheProvider>
+              </ToastProvider>
+            </AuthProvider>
+          </SettingsProvider>
+        </ChunkErrorBoundary>
+      </Suspense>
     </BrowserRouter>
   );
 }

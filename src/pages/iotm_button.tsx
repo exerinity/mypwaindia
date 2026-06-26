@@ -9,11 +9,13 @@ import { checkSubscription, createSubscribeSession } from '../api/subscribe.js';
 import { ArrowLeftIcon, ExternalIcon, ChevronRight, ErrorIcon } from '../components/icons.tsx';
 import { ErrorBox, Skeleton } from '../components/status.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ConfirmModal } from '../components/confirm_modal.tsx';
-import { FloatingInput } from '../components/floating_input.tsx';
-import { formatPaisa } from '../utils/money.js';
-import { describeError } from '../utils/errors.js';
+
+const ConfirmModal = lazy(() => import('../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+import { lazy, Suspense } from 'react';
+
+const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 import { hideGet, hideSet } from '../utils/storage.ts';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 
 const MIN_CLICK_DELAY_MS = 100;
 const CLICK_BATCH_SIZE = 10;
@@ -359,17 +361,19 @@ function UnlockModal({ open, onClose, onUnlock, onSubscribe, subscribing }: {
             >
               {deadline === null ? 'Click to begin' : `${questions[current]?.display} = ?`}
             </div>
-            <FloatingInput
-              label="Your answer"
-              type="text"
-              inputMode="numeric"
-              autoComplete="off"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              disabled={deadline === null}
-              autoFocus
-              required
-            />
+            <Suspense fallback={null}>
+              <FloatingInput
+                label="Your answer"
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                disabled={deadline === null}
+                autoFocus
+                required
+              />
+            </Suspense>
             {error && (
               <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <ErrorIcon /><span>{error}</span>
@@ -396,6 +400,8 @@ export default function IotmButtonPage() {
   const toast = useToast();
   const navigate = useNavigate();
   const [pendingNav, setPendingNav] = useState<string | null>(null);
+  const moneyMod = useLazyModule(() => import('../utils/money.js'));
+  const formatPaisa = (n: number) => moneyMod ? moneyMod.formatPaisa(n) : '...';
 
   const [state, setState] = useState<ButtonState | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -672,6 +678,7 @@ export default function IotmButtonPage() {
       const { checkout_url } = await createSubscribeSession(active.token);
       window.location.href = checkout_url;
     } catch (e) {
+      const { describeError } = await import('../utils/errors.js');
       toast.error(describeError(e));
       setSubscribing(false);
     }
@@ -1048,28 +1055,30 @@ export default function IotmButtonPage() {
         subscribing={subscribing}
       />
 
-      <ConfirmModal
-        open={pendingNav !== null}
-        onClose={() => setPendingNav(null)}
-        onConfirm={confirmLeave}
-        title="Are you sure you want to leave the button?"
-        message={subQ.data?.subscribed
-          ? 'The autoclicker does not run in the background.'
-          : (
-            <p className="mt-0">
-              The autoclicker is currently active! Your access will be forfeited, and you'll have to do all the math equations again.{' '}
-              <span
-                style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                onClick={(e) => { e.stopPropagation(); setAutoClicking(false); setAutoClickStatus('none'); startSubscribe(); }}
-              >
-                Or subscribe
-              </span>.
-            </p>
-          )}
-        confirmLabel="Leave"
-        cancelLabel="Stay"
-        danger={!subQ.data?.subscribed}
-      />
+      <Suspense fallback={null}>
+        <ConfirmModal
+          open={pendingNav !== null}
+          onClose={() => setPendingNav(null)}
+          onConfirm={confirmLeave}
+          title="Are you sure you want to leave the button?"
+          message={subQ.data?.subscribed
+            ? 'The autoclicker does not run in the background.'
+            : (
+              <p className="mt-0">
+                The autoclicker is currently active! Your access will be forfeited, and you'll have to do all the math equations again.{' '}
+                <span
+                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                  onClick={(e) => { e.stopPropagation(); setAutoClicking(false); setAutoClickStatus('none'); startSubscribe(); }}
+                >
+                  Or subscribe
+                </span>.
+              </p>
+            )}
+          confirmLabel="Leave"
+          cancelLabel="Stay"
+          danger={!subQ.data?.subscribed}
+        />
+      </Suspense>
 
       <Modal
         open={showWelcomeModal}

@@ -1,16 +1,21 @@
-import { useState, useEffect } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { getLink, claimLink } from '../api/links.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { getUserInfo } from '../api/user.js';
-import { formatINR } from '../utils/money.js';
-import { formatDate } from '../utils/dates.js';
-import { describeError } from '../utils/errors.js';
 import { ErrorIcon } from '../components/icons.tsx';
 import { Skeleton } from '../components/status.tsx';
-import { FloatingInput } from '../components/floating_input.tsx';
+import { useLazyModule } from '../hooks/lazy_module.ts';
+
+const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+
+function PreviewError({ err }: { err: unknown }) {
+  const errorsMod = useLazyModule(() => import('../utils/errors.js'));
+  return <span>{errorsMod ? errorsMod.describeError(err) : '...'}</span>;
+}
 
 type LinkPreview = { creator?: { username: string }; amount: number; note?: string; created: string; status: string };
 
@@ -20,6 +25,10 @@ export default function ClaimLinkPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const { token: routeToken } = useParams<{ token: string }>();
+  const moneyMod = useLazyModule(() => import('../utils/money.js'));
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const formatINR = (n: number) => moneyMod ? moneyMod.formatINR(n) : '...';
+  const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
   const [token, setToken] = useState(routeToken || '');
   const [preview, setPreview] = useState<LinkPreview | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
@@ -68,6 +77,7 @@ export default function ClaimLinkPage() {
       } catch { /* non-critical */ }
       navigate(`/i/flow/transaction/${res.transaction_id}`);
     } catch (e) {
+      const { describeError } = await import('../utils/errors.js');
       toast.error(describeError(e));
     } finally {
       setClaiming(false);
@@ -75,7 +85,7 @@ export default function ClaimLinkPage() {
   }
 
   return (
-    <>
+    <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Claim a payment link</h1>
 
       <div className="card mb-2" style={{ maxWidth: 520 }}>
@@ -103,7 +113,7 @@ export default function ClaimLinkPage() {
         <div className="card mb-2" style={{ maxWidth: 520 }}>
           <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
             <ErrorIcon />
-            <span>{describeError(previewError)}</span>
+            <PreviewError err={previewError} />
           </div>
         </div>
       )}
@@ -177,6 +187,6 @@ export default function ClaimLinkPage() {
         </div>
       )}
 
-    </>
+    </Suspense>
   );
 }

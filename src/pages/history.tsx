@@ -1,13 +1,15 @@
-import { useMemo } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import { useMemo, lazy, Suspense } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useCachedQuery } from '../hooks/cached_query.js';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
 import { listTransactions } from '../api/transactions.js';
-import { TransactionTable } from '../components/tx_table.tsx';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
-import { RefreshStatus } from '../components/refresh_status.tsx';
+
+const TransactionTable = lazy(() => import('../components/tx_table.tsx').then((m) => ({ default: m.TransactionTable })));
+const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 
 export default function HistoryPage() {
   usePageTitle('Transaction history');
@@ -48,7 +50,7 @@ export default function HistoryPage() {
   }, [data, active?.id]);
 
   return (
-    <>
+    <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Transaction history</h1>
 
       {!settings.scambait && stats && (
@@ -101,6 +103,6 @@ export default function HistoryPage() {
          />}
       </div>
       <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} />
-    </>
+    </Suspense>
   );
 }

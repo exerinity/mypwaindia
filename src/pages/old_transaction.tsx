@@ -4,7 +4,7 @@ import { useApiCall } from '../hooks/api_call.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { getTransaction } from '../api/transactions.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
-import { formatDate } from '../utils/dates.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { ArrowLeftIcon } from '../components/icons.tsx';
 
@@ -14,6 +14,8 @@ export default function TransactionPage() {
   const { id } = useParams();
   const { active } = useAuth();
   const format = useCurrency();
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
 
   type TxDetail = { transaction_id: string; id: number; status: string; amount: number; created: string; note?: string; sender?: { username: string; id: number }; recipient?: { username: string; id: number } };
   const { data, loading, error } = useApiCall<TxDetail>(

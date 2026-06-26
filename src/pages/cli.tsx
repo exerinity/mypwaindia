@@ -7,9 +7,6 @@ import { transfer, listTransactions, getTransaction } from '../api/transactions.
 import { createLink, listLinks, cancelLink, claimLink, getLink } from '../api/links.js';
 import { getUserInfo, getRestrictions, listSessions, invalidateSession, verifyEmail } from '../api/user.js';
 import { getLeaderboard, getTeam } from '../api/flow.js';
-import { rupeesToPaisa, formatINR } from '../utils/money.js';
-import { formatDate, formatRelative } from '../utils/dates.js';
-import { describeError } from '../utils/errors.js';
 import { storageGet, storageSet, storageRemove, KEYS } from '../utils/storage.ts';
 import { useSettings } from '../context/settings_ctx.tsx';
 import '../styles/cli.css';
@@ -311,6 +308,8 @@ export default function CLIPage() {
     if (!tokens.length) return;
     const [cmd, ...args] = tokens;
     const c = cmd.toLowerCase();
+    const { rupeesToPaisa, formatINR } = await import('../utils/money.js');
+    const { formatDate, formatRelative } = await import('../utils/dates.js');
 
     switch (c) {
 
@@ -838,6 +837,7 @@ export default function CLIPage() {
         try {
           await runCmd(cmd);
         } catch (err) {
+          const { describeError } = await import('../utils/errors.js');
           push(L.err(describeError(err)));
           break;
         }

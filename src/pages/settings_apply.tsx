@@ -5,25 +5,20 @@ import { useSettings } from '../context/settings_ctx.tsx';
 import type { Settings } from '../context/settings_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
-import {
-  searchParamsToExport,
-  describeSettingValue,
-  describeHide,
-  applySettingsImport,
-  SETTINGS_FIELD_LABELS,
-} from '../utils/settings_io.ts';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 
 export default function SettingsApplyPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { update } = useSettings();
   const toast = useToast();
+  const settingsIo = useLazyModule(() => import('../utils/settings_io.ts'));
 
-  const payload = useMemo(() => searchParamsToExport(location.search), [location.search]);
+  const payload = useMemo(() => settingsIo ? settingsIo.searchParamsToExport(location.search) : null, [settingsIo, location.search]);
 
   const fields = useMemo(
-    () => (payload ? SETTINGS_FIELD_LABELS.filter((f) => f.key in payload.settings) : []),
-    [payload],
+    () => (payload && settingsIo ? settingsIo.SETTINGS_FIELD_LABELS.filter((f) => f.key in payload.settings) : []),
+    [payload, settingsIo],
   );
 
   const [included, setIncluded] = useState<Record<string, boolean>>({});
@@ -36,6 +31,7 @@ export default function SettingsApplyPage() {
     return { ...base, ...included };
   }, [fields, hasHide, included]);
 
+  if (!settingsIo) return null;
   if (!payload) return <FlowNotFoundPage />;
   usePageTitle('Apply settings');
 
@@ -48,7 +44,7 @@ export default function SettingsApplyPage() {
       toast.warning('Select something');
       return;
     }
-    applySettingsImport(payload!, update, {
+    settingsIo!.applySettingsImport(payload!, update, {
       keys,
       includeHide: !!includeState['__hide'],
       includeOnboard: !!includeState['__hide'],
@@ -86,7 +82,7 @@ export default function SettingsApplyPage() {
                 <span>{f.label}</span>
               </div>
               <span className="mono" style={{ fontSize: '0.78rem', color: 'var(--muted)', textAlign: 'right', wordBreak: 'break-word', maxWidth: '55%' }}>
-                {describeSettingValue(f.key, payload.settings[f.key])}
+                {settingsIo.describeSettingValue(f.key, payload.settings[f.key])}
               </span>
             </label>
           ))}
@@ -102,7 +98,7 @@ export default function SettingsApplyPage() {
                 <span>Elements</span>
               </div>
               <span className="mono" style={{ fontSize: '0.78rem', color: 'var(--muted)', textAlign: 'right', wordBreak: 'break-word', maxWidth: '55%' }}>
-                {describeHide(payload)}
+                {settingsIo.describeHide(payload)}
               </span>
             </label>
           )}

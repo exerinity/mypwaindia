@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { AppFooter } from '../components/app_footer.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
 import { usePageTitle } from '../hooks/page_title.js';
 import { RELEASES } from './release_notes.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { ExternalIcon } from '../components/icons.tsx';
-import { ConfirmModal } from '../components/confirm_modal.tsx';
+
+const AppFooter = lazy(() => import('../components/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
+const ConfirmModal = lazy(() => import('../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 
 export default function OnboardingPage() {
   usePageTitle('Welcome to the MyPayIndia PWA');
@@ -24,17 +25,19 @@ export default function OnboardingPage() {
 
   if (alreadyAccepted && !showAnyway) {
     return (
-      <ConfirmModal
-        open={confirmOpen}
-        fullscreen
-        title="Just making sure..."
-        message="You've already accepted the onboarding message. Would you like to see it again anyway?"
-        confirmLabel="Yeah gimme"
-        cancelLabel="Nah"
-        danger={false}
-        onClose={() => { setConfirmOpen(false); navigate(-1); }}
-        onConfirm={() => setShowAnyway(true)}
-      />
+      <Suspense fallback={null}>
+        <ConfirmModal
+          open={confirmOpen}
+          fullscreen
+          title="Just making sure..."
+          message="You've already accepted the onboarding message. Would you like to see it again anyway?"
+          confirmLabel="Yeah gimme"
+          cancelLabel="Nah"
+          danger={false}
+          onClose={() => { setConfirmOpen(false); navigate(-1); }}
+          onConfirm={() => setShowAnyway(true)}
+        />
+      </Suspense>
     );
   }
 
@@ -89,7 +92,7 @@ export default function OnboardingPage() {
           Continue
         </button>
         <p className="muted" style={{ fontSize: '0.8rem', marginTop: 24, marginBottom: 4 }}>After clicking continue, a setup wizard will begin. You can skip it by pressing the X on the modal or skip any step within it</p>
-        <AppFooter version={RELEASES[0].version} style={{ marginTop: 4 }} />
+        <Suspense fallback={null}><AppFooter version={RELEASES[0].version} style={{ marginTop: 4 }} /></Suspense>
       </div>
     </div>
   );

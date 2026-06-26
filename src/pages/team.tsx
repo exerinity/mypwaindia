@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useCachedQuery } from '../hooks/cached_query.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { getTeam } from '../api/flow.js';
-import { formatDateShort, calcAge } from '../utils/dates.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
 import { ExternalIcon } from '../components/icons.tsx';
 import { Modal } from '../components/modal.tsx';
@@ -50,6 +50,9 @@ export default function TeamPage() {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const { data, loading, error } = useCachedQuery<{ team: TeamMember[] }>('team', () => getTeam() as Promise<{ team: TeamMember[] }>, []);
   const team = data?.team || [];
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const formatDateShort = (d: string) => datesMod ? datesMod.formatDateShort(d) : '...';
+  const calcAge = (d: string) => datesMod ? datesMod.calcAge(d) : null;
 
   return (
     <>

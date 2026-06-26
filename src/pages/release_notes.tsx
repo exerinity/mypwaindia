@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import React, { useState, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import { AppFooter } from '../components/app_footer.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
-import { InfoIcon, StopIcon, WarningIcon } from '../components/icons.tsx';
+import { InfoIcon } from '../components/icons.tsx';
+
+const AppFooter = lazy(() => import('../components/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
 
 type Release = {
   version: string;
@@ -17,7 +19,8 @@ export const RELEASES: Release[] = [
     version: '16',
     date: '26 Jun 2026',
     notes: [
-      <>Added a <Link to="/i/flow/onboarding/wizard">setup wizard</Link> that begins after <Link to="/i/flow/onboarding">onboarding</Link></>
+      <>Added a <Link to="/i/flow/onboarding/wizard">setup wizard</Link> that begins after <Link to="/i/flow/onboarding">onboarding</Link></>,
+      <>Added an <Link to="/settings/lock">app locker</Link></>
     ]
   },
   {
@@ -403,7 +406,7 @@ export default function ReleaseNotesPage() {
   }
 
   return (
-    <>
+    <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Release notes</h1>
       <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
       </p>
@@ -431,6 +434,6 @@ export default function ReleaseNotesPage() {
         })}
       </div>
       <AppFooter version={RELEASES[0].version} />
-    </>
+    </Suspense>
   );
 }

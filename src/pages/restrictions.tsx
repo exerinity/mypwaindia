@@ -1,14 +1,16 @@
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
 import { Link } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
-import { formatDate } from '../utils/dates.js';
-import { getRestrictionInfo } from '../utils/restrictions.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
-import { RefreshStatus } from '../components/refresh_status.tsx';
 import { WarningIcon, ArrowLeftIcon, SuccessIcon } from '../components/icons.tsx';
+
+const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 
 export default function RestrictionsPage() {
   usePageTitle('Account restrictions');
@@ -17,13 +19,16 @@ export default function RestrictionsPage() {
 
   const { restrictions: data, restrictionsLoading: loading, restrictionsError: error, refetchRestrictions } = useGlobalData();
   const { secondsLeft, refreshNow } = useRefreshTimer([refetchRestrictions], { enabled: settings.autoRefresh && !!active });
+  const restrictionsMod = useLazyModule(() => import('../utils/restrictions.js'));
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
 
   const restrictionList = data
     ? Object.entries(data.restrictions).filter(([, v]) => v?.active)
     : [];
 
   return (
-    <>
+    <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">{data && restrictionList.length === 0 ? 'No restrictions' : 'Restrictions'}</h1>
       <p className="mt-0 mb-0" style={{ marginBottom: 20 }}>
         <Link to="/account" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
@@ -52,7 +57,7 @@ export default function RestrictionsPage() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {restrictionList.map(([key, val]) => {
-            const info = getRestrictionInfo(key);
+            const info = restrictionsMod ? restrictionsMod.getRestrictionInfo(key) : { title: key, description: '', longDescription: null };
             return (
               <div key={key} className="card">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, color: 'var(--alert-error)' }}>
@@ -89,6 +94,6 @@ export default function RestrictionsPage() {
         </div>
       )}
       <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} />
-    </>
+    </Suspense>
   );
 }

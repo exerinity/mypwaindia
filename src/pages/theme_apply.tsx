@@ -4,7 +4,6 @@ import FlowNotFoundPage from './flow_not_found.tsx';
 import { useSettings, CUSTOM_VAR_KEYS } from '../context/settings_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
-import { darken, isLight } from '../utils/colors.js';
 
 const COLOR_VAR_KEYS = CUSTOM_VAR_KEYS.filter((k) => k !== '--shadow');
 
@@ -54,22 +53,28 @@ export default function ThemeApplyPage() {
 
   useEffect(() => {
     if (!previewing || !parsed) return;
-    const root = document.documentElement;
-    const prev: Record<string, string> = {};
-    const set = (k: string, v: string) => {
-      prev[k] = root.style.getPropertyValue(k);
-      root.style.setProperty(k, v);
-    };
-    Object.entries(parsed.customTheme).forEach(([k, v]) => set(k, v));
-    set('--brand', parsed.accent);
-    set('--brand-dark', darken(parsed.accent, 0.15));
-    set('--brand-text', isLight(parsed.accent) ? '#000' : '#fff');
-    return () => {
-      Object.entries(prev).forEach(([k, v]) => {
-        if (v) root.style.setProperty(k, v);
-        else root.style.removeProperty(k);
-      });
-    };
+    let cleanup: (() => void) | undefined;
+    let cancelled = false;
+    import('../utils/colors.js').then(({ darken, isLight }) => {
+      if (cancelled) return;
+      const root = document.documentElement;
+      const prev: Record<string, string> = {};
+      const set = (k: string, v: string) => {
+        prev[k] = root.style.getPropertyValue(k);
+        root.style.setProperty(k, v);
+      };
+      Object.entries(parsed.customTheme).forEach(([k, v]) => set(k, v));
+      set('--brand', parsed.accent);
+      set('--brand-dark', darken(parsed.accent, 0.15));
+      set('--brand-text', isLight(parsed.accent) ? '#000' : '#fff');
+      cleanup = () => {
+        Object.entries(prev).forEach(([k, v]) => {
+          if (v) root.style.setProperty(k, v);
+          else root.style.removeProperty(k);
+        });
+      };
+    });
+    return () => { cancelled = true; cleanup?.(); };
   }, [previewing, parsed]);
 
   function handleApply() {

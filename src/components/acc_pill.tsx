@@ -3,19 +3,22 @@ import type { Account } from '../context/auth_ctx.tsx';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
-import { getDisplayName } from '../utils/display.js';
 import { ChevronDown, CloseIcon, PlusIcon, ExternalIcon, LogoutIcon } from './icons.tsx';
-import { ConfirmModal } from './confirm_modal.tsx';
-import { formatINR } from '../utils/money.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
+import { lazy, Suspense } from 'react';
 
-function formatBalance(n: number | undefined) {
-  if (n === undefined || n === null) return null;
-  return formatINR(n);
+const ConfirmModal = lazy(() => import('./confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+
+function DisplayName({ account, mode }: { account: Account | null; mode: string }) {
+  const displayMod = useLazyModule(() => import('../utils/display.js'));
+  return <>{displayMod ? displayMod.getDisplayName(account, mode) : ''}</>;
 }
 
 export function AccountPill() {
   const { active, accounts, switchAccount, removeAccount, maxAccounts } = useAuth();
   const { settings } = useSettings();
+  const moneyMod = useLazyModule(() => import('../utils/money.js'));
+  const formatBalance = (n: number | undefined) => (n === undefined || n === null || !moneyMod) ? null : moneyMod.formatINR(n);
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -62,7 +65,7 @@ export function AccountPill() {
       <div className="acct-dropdown" ref={ref}>
         <button className="pill clickable" onClick={() => open ? closeDropdown() : setOpen(true)} aria-haspopup="menu" aria-expanded={open}>
           <span className="pill-label">Logged in as</span>
-          <strong>{getDisplayName(active, settings.displayName)}</strong>
+          <strong><DisplayName account={active} mode={settings.displayName} /></strong>
           <ChevronDown />
         </button>
 
@@ -127,14 +130,16 @@ export function AccountPill() {
         )}
       </div>
 
-      <ConfirmModal
-        open={!!removeTarget}
-        onClose={() => setRemoveTarget(null)}
-        onConfirm={() => { if (removeTarget) removeAccount(removeTarget.id); setRemoveTarget(null); }}
-        title="Remove account"
-        message={`Remove ${removeTarget?.username || ''}?`}
-        confirmLabel="Remove"
-      />
+      <Suspense fallback={null}>
+        <ConfirmModal
+          open={!!removeTarget}
+          onClose={() => setRemoveTarget(null)}
+          onConfirm={() => { if (removeTarget) removeAccount(removeTarget.id); setRemoveTarget(null); }}
+          title="Remove account"
+          message={`Remove ${removeTarget?.username || ''}?`}
+          confirmLabel="Remove"
+        />
+      </Suspense>
     </>
   );
 }

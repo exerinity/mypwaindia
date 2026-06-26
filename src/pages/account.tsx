@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings, useCurrency } from '../context/settings_ctx.tsx';
@@ -7,18 +7,21 @@ import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
 import { verifyEmail } from '../api/user.js';
-import { formatDate, calcAge } from '../utils/dates.js';
-import { describeError } from '../utils/errors.js';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
-import { RefreshStatus } from '../components/refresh_status.tsx';
 import { WarningIcon } from '../components/icons.tsx';
-import { getRestrictionInfo } from '../utils/restrictions.js';
+
+const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Modal } from '../components/modal.tsx';
 
 export default function AccountPage() {
   usePageTitle('Account');
   const { active } = useAuth();
   const { settings } = useSettings();
+  const restrictionsMod = useLazyModule(() => import('../utils/restrictions.js'));
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
+  const calcAge = (d: string) => datesMod ? datesMod.calcAge(d) : null;
   const formatBalance = useCurrency();
   const toast = useToast();
   const [sendingVerify, setSendingVerify] = useState(false);
@@ -42,6 +45,7 @@ export default function AccountPage() {
       await verifyEmail(active!);
       toast.success('Verification email dispatched!');
     } catch (e) {
+      const { describeError } = await import('../utils/errors.js');
       toast.error(describeError(e));
     } finally {
       setSendingVerify(false);
@@ -176,7 +180,7 @@ export default function AccountPage() {
                     <Link to="/account/restrictions" className="muted" style={{ fontSize: '0.85rem' }}>View details</Link>
                   </div>
                   {restrictionList.map(([key, val]) => {
-                    const info = getRestrictionInfo(key);
+                    const info = restrictionsMod ? restrictionsMod.getRestrictionInfo(key) : { title: key, description: '', longDescription: null };
                     return (
                       <div key={key} className="alert alert-warning">
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><WarningIcon /><strong>{info.title}</strong></div>
@@ -214,7 +218,7 @@ export default function AccountPage() {
                 </div>
               </div>
 
-              <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} />
+              <Suspense fallback={null}><RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} /></Suspense>
 
               <div className="btn-row mt-2">
                 <Link to="/account/transfer" className="btn">Transfer funds</Link>

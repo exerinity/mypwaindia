@@ -1,8 +1,8 @@
 import type { ComponentType } from 'react';
+import { lazy, Suspense } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
-import { Logo } from './logo.tsx';
 import {
   CloseIcon,
   CreditCardIcon,
@@ -20,6 +20,8 @@ import {
   ExternalIcon,
   TerminalIcon,
 } from './icons.tsx';
+
+const Logo = lazy(() => import('./logo.tsx').then((m) => ({ default: m.Logo })));
 
 interface NavItem { to?: string; href?: string; label: string; loggedOutLabel?: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; hideInScambait?: boolean; scambaitOnly?: boolean; requireAuth?: boolean }
 interface NavGroup { title: string; items: NavItem[]; hideInScambait?: boolean; scambaitTitle?: string; defaultTitle?: string; loggedOutTitle?: string }
@@ -85,7 +87,9 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
       />
       <aside className={`mpi-sidebar ${open ? 'open' : ''}`} aria-label="Main navigation">
         <div className="mpi-sidebarmobile-header">
-          <Logo height={32} className="mpi-sidebarlogo" />
+          <Suspense fallback={null}>
+            <Logo height={32} className="mpi-sidebarlogo" />
+          </Suspense>
           <button className="mpi-sidebarclose-btn" onClick={onClose} aria-label="Close menu">
             <CloseIcon />
           </button>

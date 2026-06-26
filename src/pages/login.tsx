@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import type { Env } from '../api/client.js';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
-import { describeError } from '../utils/errors.js';
 import { storageGet, KEYS } from '../utils/storage.ts';
 import { ArrowLeftIcon, ExternalIcon, WarningIcon, ErrorIcon, EyeIcon, EyeOffIcon } from '../components/icons.tsx';
-import { FloatingInput } from '../components/floating_input.tsx';
 import { Modal } from '../components/modal.tsx';
+
+const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 import { usePageTitle } from '../hooks/page_title.js';
 
 export default function LoginPage() {
@@ -73,6 +73,7 @@ export default function LoginPage() {
       } else if (err.code === 1010) {
         setError({ message: 'Incorrect 2FA code, try again.' });
       } else {
+        const { describeError } = await import('../utils/errors.js');
         setError({ message: describeError(e) });
       }
     } finally {
@@ -82,6 +83,7 @@ export default function LoginPage() {
 
   return (
     <Modal open onClose={handleClose} className="slide">
+      <Suspense fallback={null}>
         {atCapacity && (
           <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <WarningIcon /><span>Account limit at capacity</span>
@@ -191,6 +193,7 @@ export default function LoginPage() {
             <ArrowLeftIcon /> {accounts.length >= maxAccounts ? 'Go back and remove an account' : 'Nevermind, go back'}
           </button>
         </div>
+      </Suspense>
     </Modal>
   );
 }

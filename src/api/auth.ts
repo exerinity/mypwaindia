@@ -1,4 +1,3 @@
-import { apiFetch } from './client.js';
 import type { Env } from './client.js';
 
 interface LoginParams {
@@ -8,7 +7,8 @@ interface LoginParams {
   env?: Env;
 }
 
-export function login({ username, password, totp_code, env }: LoginParams) {
+export async function login({ username, password, totp_code, env }: LoginParams) {
+  const { apiFetch } = await import('./client.js');
   return apiFetch('/api/v2/auth/login', {
     method: 'POST',
     body: { username, password, ...(totp_code ? { totp_code } : {}) },
@@ -16,7 +16,8 @@ export function login({ username, password, totp_code, env }: LoginParams) {
   });
 }
 
-export function logout() {
+export async function logout() {
+  const { apiFetch } = await import('./client.js');
   return apiFetch('/api/logout', {
     method: 'POST',
   });

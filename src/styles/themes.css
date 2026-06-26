@@ -1,6 +1,25 @@
 /* =====================================================================
    THEMES
    ===================================================================== */
+:root {
+  --bg: #121212;
+  --bg-elev: #1d1d1d;
+  --fg: #eaeaea;
+  --muted: #aaa;
+  --border: #333;
+  --card: #1d1d1d;
+  --card-soft: #1e1e1e;
+  --pill-bg: #232323;
+  --success: #4de68f;
+  --error: #ff6b6b;
+  --alert-success: #3bd43f;
+  --alert-error: #e63232;
+  --alert-info: #2f8ffc;
+  --alert-warning: #ffc300;
+  --table-row-alt: #181818;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
 :root[data-theme='light'] {
   --bg: #ffffff;
   --bg-elev: #f7f7f7;

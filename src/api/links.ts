@@ -1,4 +1,3 @@
-import { apiFetch } from './client.js';
 import type { AuthOpts } from './client.js';
 
 interface CreateLinkBody {
@@ -6,7 +5,8 @@ interface CreateLinkBody {
   note?: string;
 }
 
-export function createLink({ token, env }: AuthOpts, { amount, note }: CreateLinkBody) {
+export async function createLink({ token, env }: AuthOpts, { amount, note }: CreateLinkBody) {
+  const { apiFetch } = await import('./client.js');
   return apiFetch('/api/v2/payment-link/create', {
     method: 'POST',
     token,
@@ -15,15 +15,18 @@ export function createLink({ token, env }: AuthOpts, { amount, note }: CreateLin
   });
 }
 
-export function listLinks({ token, env }: AuthOpts) {
+export async function listLinks({ token, env }: AuthOpts) {
+  const { apiFetch } = await import('./client.js');
   return apiFetch('/api/v2/payment-link/list', { token, env });
 }
 
-export function getLink(tokenStr: string) {
+export async function getLink(tokenStr: string) {
+  const { apiFetch } = await import('./client.js');
   return apiFetch('/api/v2/payment-link/get', { query: { token: tokenStr } });
 }
 
-export function claimLink({ token, env }: AuthOpts, tokenStr: string) {
+export async function claimLink({ token, env }: AuthOpts, tokenStr: string) {
+  const { apiFetch } = await import('./client.js');
   return apiFetch('/api/v2/payment-link/claim', {
     method: 'POST',
     token,
@@ -32,7 +35,8 @@ export function claimLink({ token, env }: AuthOpts, tokenStr: string) {
   });
 }
 
-export function cancelLink({ token, env }: AuthOpts, tokenStr: string) {
+export async function cancelLink({ token, env }: AuthOpts, tokenStr: string) {
+  const { apiFetch } = await import('./client.js');
   return apiFetch('/api/v2/payment-link/cancel', {
     method: 'POST',
     token,

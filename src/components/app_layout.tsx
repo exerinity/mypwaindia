@@ -1,10 +1,6 @@
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Header } from './header.tsx';
-import { Sidebar } from './sidebar.tsx';
-import { VerificationBanner } from './verify_banner.tsx';
-import { ConfirmModal } from './confirm_modal.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
@@ -12,9 +8,16 @@ import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { LoginIcon, WarningIcon } from './icons.tsx';
 import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
 import { RELEASES } from '../pages/release_notes.tsx';
-import { getRestrictionInfo } from '../utils/restrictions.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
+import { HeaderSkeleton, SidebarSkeleton } from './app_skeleton.tsx';
+
+const Header = lazy(() => import('./header.tsx').then((m) => ({ default: m.Header })));
+const Sidebar = lazy(() => import('./sidebar.tsx').then((m) => ({ default: m.Sidebar })));
+const VerificationBanner = lazy(() => import('./verify_banner.tsx').then((m) => ({ default: m.VerificationBanner })));
+const ConfirmModal = lazy(() => import('./confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 
 export function AppLayout() {
+  const restrictionsMod = useLazyModule(() => import('../utils/restrictions.js'));
   const [open, setOpen] = useState(false);
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -139,13 +142,14 @@ export function AppLayout() {
   return (
     <div className="mpi-shell">
       <div className="mpi-sticky-top">
+        <Suspense fallback={<HeaderSkeleton />}>
         <Header onToggleSidebar={() => setOpen((o) => !o)} />
         <div className="verification-banner-stack">
           <VerificationBanner />
           {restrictionList.length > 0 && (
             <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <WarningIcon />Your account has some active restrictions:{' '}
-              {restrictionList.map(([k]) => getRestrictionInfo(k).title).join(', ')}.
+              {restrictionsMod ? restrictionList.map(([k]) => restrictionsMod.getRestrictionInfo(k).title).join(', ') : ''}.
               {' '}<Link to="/account/restrictions" className="link">More...</Link>
             </div>
           )}
@@ -171,9 +175,12 @@ export function AppLayout() {
           )}
           <div id="mpi-toy-banners" />
         </div>
+        </Suspense>
       </div>
       <div className="mpi-body">
+        <Suspense fallback={<SidebarSkeleton />}>
         <Sidebar open={open} onClose={() => setOpen(false)} />
+        </Suspense>
         <main className="mpi-main">
           <div className="mpi-wrap">
             <Suspense fallback={
@@ -188,6 +195,7 @@ export function AppLayout() {
         </main>
       </div>
 
+      <Suspense fallback={null}>
       <ConfirmModal
         open={scambaitConfirmOpen}
         onClose={() => setScambaitConfirmOpen(false)}
@@ -206,6 +214,7 @@ export function AppLayout() {
           </p>
         }
       />
+      </Suspense>
     </div>
   );
 }

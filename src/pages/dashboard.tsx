@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { ContentSkeleton } from '../components/app_skeleton.tsx';
+import { useMemo, useState, useEffect, lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useCachedQuery } from '../hooks/cached_query.js';
@@ -8,17 +9,23 @@ import { useSettings, useCurrency, HOME_PAGE_OPTIONS } from '../context/settings
 import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { listTransactions } from '../api/transactions.js';
 import { listLinks } from '../api/links.js';
-import { getDisplayName } from '../utils/display.js';
 import { InfoIcon, CloseIcon, BulbIcon } from '../components/icons.tsx';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
-import { TransactionTable } from '../components/tx_table.tsx';
-import { RefreshStatus } from '../components/refresh_status.tsx';
-import { generateStatements } from '../utils/fake_statements.js';
-import { hideGet, hideSet } from '../utils/storage.ts';
-import { AppFooter } from '../components/app_footer.tsx';
 import { RELEASES } from './release_notes.tsx';
+import { useLazyModule } from '../hooks/lazy_module.ts';
+import { hideGet, hideSet } from '../utils/storage.ts';
+import type { Account } from '../context/auth_ctx.tsx';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+const TransactionTable = lazy(() => import('../components/tx_table.tsx').then((m) => ({ default: m.TransactionTable })));
+const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const AppFooter = lazy(() => import('../components/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
+
+function DisplayName({ account, mode }: { account: Account | null; mode: string }) {
+  const displayMod = useLazyModule(() => import('../utils/display.js'));
+  return <>{displayMod ? displayMod.getDisplayName(account, mode) : ''}</>;
+}
 
 export default function DashboardPage() {
   const location = useLocation();
@@ -53,7 +60,13 @@ export default function DashboardPage() {
 
   const [hdHidden, setHdHidden] = useState(() => hideGet('sbshint'));
 
-  const fakeStatements = useMemo(() => scambait ? generateStatements(1000, active?.id ?? null).slice(0, 10) : [], [scambait, active?.id]);
+  const [fakeStatements, setFakeStatements] = useState<{ id: number; description: string; amount: number; date: Date }[]>([]);
+  useEffect(() => {
+    if (!scambait) { setFakeStatements([]); return; }
+    import('../utils/fake_statements.js').then(({ generateStatements }) => {
+      setFakeStatements(generateStatements(1000, active?.id ?? null).slice(0, 10));
+    });
+  }, [scambait, active?.id]);
 
   const uniqueUserCount = useMemo(() => {
     const ids = new Set<number>();
@@ -68,7 +81,7 @@ export default function DashboardPage() {
   if (!active) {
     usePageTitle('Welcome')
     return (
-      <>
+      <Suspense fallback={<ContentSkeleton />}>
         <h1 className="mt-0">Welcome to the MyPayIndia PWA</h1>
         <p className="mt-0 mb-0">You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
           You can navigate the app logged out, but to actually do anything, please <Link to="/i/flow/login" state={{ backgroundLocation: location }}>log in</Link>.
@@ -80,7 +93,7 @@ export default function DashboardPage() {
           </span>
         </div>
         <AppFooter version={RELEASES[0].version} />
-      </>
+      </Suspense>
     );
   }
 
@@ -90,8 +103,8 @@ export default function DashboardPage() {
   const links = linksQ.data?.links || [];
   const activeLinks = links.filter((l) => l.status === 'active');
   return (
-    <>
-      <h1 className="mt-0">{scambait ? 'Hello' : 'Welcome back'}, {getDisplayName(active, settings.displayName)}{scambait ? '' : '!'}</h1>
+    <Suspense fallback={<ContentSkeleton />}>
+      <h1 className="mt-0">{scambait ? 'Hello' : 'Welcome back'}, <DisplayName account={active} mode={settings.displayName} />{scambait ? '' : '!'}</h1>
 
       <div className="grid cols-3 mb-2">
         <div className="card stat-card">
@@ -99,7 +112,7 @@ export default function DashboardPage() {
           <span className="stat-value">
             {format(userInfo?.balance ?? active?.lastBalance ?? 0)}
           </span>
-          <span className="stat-sub">{getDisplayName(active, settings.displayName)}</span>
+          <span className="stat-sub"><DisplayName account={active} mode={settings.displayName} /></span>
         </div>
 
         <div className="card stat-card">
@@ -210,6 +223,6 @@ export default function DashboardPage() {
         </div>
       </div>
       <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={refresh} />
-    </>
+    </Suspense>
   );
 }
