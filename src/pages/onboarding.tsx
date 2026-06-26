@@ -44,7 +44,13 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className={leaving ? 'page-slide-out' : 'page-slide-in'} onAnimationEnd={() => { if (leaving) navigate('/dash', { replace: true }); }} style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div className={leaving ? 'page-slide-out' : 'page-slide-in'} onAnimationEnd={() => {
+      if (!leaving) return;
+      navigate('/i/flow/onboarding/wizard', {
+        replace: true,
+        state: { backgroundLocation: { pathname: '/dash', search: '', hash: '', state: null, key: 'finetune-bg' } },
+      });
+    }} style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div className="card" style={{ maxWidth: 520, width: '100%' }}>
         <h1 style={{ marginTop: 0 }}>Welcome to MyPWAIndia!</h1>
         <p>
@@ -80,9 +86,10 @@ export default function OnboardingPage() {
           </a>
         </p>
         <button onClick={accept} style={{ width: '100%', marginTop: '8px' }}>
-          I understand, let me in!
+          Continue
         </button>
-        <AppFooter version={RELEASES[0].version} />
+        <p className="muted" style={{ fontSize: '0.8rem', marginTop: 24, marginBottom: 4 }}>After clicking continue, a setup wizard will begin. You can skip it by pressing the X on the modal or skip any step within it</p>
+        <AppFooter version={RELEASES[0].version} style={{ marginTop: 4 }} />
       </div>
     </div>
   );
