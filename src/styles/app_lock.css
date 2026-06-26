@@ -14,6 +14,8 @@
   padding-top: max(24px, env(safe-area-inset-top));
   padding-bottom: max(24px, env(safe-area-inset-bottom));
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .app-lock-bg-icon {

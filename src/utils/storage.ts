@@ -32,6 +32,7 @@ export const KEYS = {
   HIDE: 'mpi_hide',
   LAST_VERSION: 'mpi_last_version',
   APP_LOCK: 'mpi_app_lock',
+  APP_LOCK_LAST_UNLOCK: 'mpi_app_lock_last_unlock',
 };
 
 type HideKey = 'install' | 'sbshint' | 'clickers' | 'iotm_welcome';

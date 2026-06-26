@@ -11,7 +11,7 @@ import { login as apiLogin, logout as apiLogout } from '../api/auth.js';
 import { useToast } from '../context/toast_ctx.tsx';
 import { Modal } from '../components/modal.tsx';
 import { ExternalIcon, ArrowLeftIcon, ChevronRight, InfoIcon, StopIcon, SuccessIcon, WarningIcon, ErrorIcon, BulbIcon, PlusIcon, CloseIcon, LockIcon } from '../components/icons.tsx';
-import { getAppLockConfig, setAppLock, disableAppLock, verifyAppLock, minLength } from '../utils/app_lock.ts';
+import { getAppLockConfig, setAppLock, disableAppLock, verifyAppLock, minLength, setAppLockRequireAfter, REQUIRE_AFTER_OPTIONS } from '../utils/app_lock.ts';
 import type { AppLockMethod } from '../utils/app_lock.ts';
 import { AppLockInput } from '../components/app_lock_input.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
@@ -218,13 +218,14 @@ export default function SettingsPage() {
 
   const [appLockConfig, setAppLockConfig] = useState(() => getAppLockConfig());
   const [appLockSetupOpen, setAppLockSetupOpen] = useState(false);
-  const [appLockIntent, setAppLockIntent] = useState<'change' | 'disable'>('change');
+  const [appLockIntent, setAppLockIntent] = useState<'change' | 'disable' | 'requireAfter'>('change');
   const [appLockMethod, setAppLockMethod] = useState<AppLockMethod>('pin');
   const [appLockStep, setAppLockStep] = useState<'verify' | 'method' | 'enter' | 'confirm'>('method');
   const [appLockValue, setAppLockValue] = useState('');
   const [appLockConfirmValue, setAppLockConfirmValue] = useState('');
   const [appLockVerifyValue, setAppLockVerifyValue] = useState('');
   const [appLockVerifying, setAppLockVerifying] = useState(false);
+  const [appLockPendingRequireAfter, setAppLockPendingRequireAfter] = useState(0);
 
   function openAppLockSetup() {
     setAppLockIntent('change');
@@ -238,6 +239,14 @@ export default function SettingsPage() {
 
   function openAppLockDisable() {
     setAppLockIntent('disable');
+    setAppLockVerifyValue('');
+    setAppLockStep('verify');
+    setAppLockSetupOpen(true);
+  }
+
+  function openAppLockRequireAfterVerify(ms: number) {
+    setAppLockIntent('requireAfter');
+    setAppLockPendingRequireAfter(ms);
     setAppLockVerifyValue('');
     setAppLockStep('verify');
     setAppLockSetupOpen(true);
@@ -258,6 +267,13 @@ export default function SettingsPage() {
       setAppLockConfig(null);
       setAppLockSetupOpen(false);
       toast.success('App lock turned off');
+      return;
+    }
+    if (appLockIntent === 'requireAfter') {
+      setAppLockRequireAfter(appLockPendingRequireAfter);
+      setAppLockConfig(getAppLockConfig());
+      setAppLockSetupOpen(false);
+      toast.success('Updated');
       return;
     }
     setAppLockStep('method');
@@ -1093,6 +1109,20 @@ export default function SettingsPage() {
                     <LockIcon /> App lock is on ({appLockConfig.method})
                   </span>
                 </div>
+
+                <label htmlFor="app-lock-require-after" style={{ display: 'block', marginTop: 16 }}>Require after</label>
+                <div className="row gap-sm" style={{ marginTop: 6 }}>
+                  <select
+                    id="app-lock-require-after"
+                    value={appLockConfig.requireAfterMs}
+                    onChange={(e) => openAppLockRequireAfterVerify(Number(e.target.value))}
+                  >
+                    {REQUIRE_AFTER_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="btn-row" style={{ marginTop: 14 }}>
                   <button className="secondary" onClick={openAppLockSetup}>Change method</button>
                   <button className="secondary danger" onClick={openAppLockDisable}>Turn off app lock</button>
@@ -1444,6 +1474,8 @@ export default function SettingsPage() {
         onClose={() => setScambaitAlreadyOpen(false)}
         title="This mode is already enabled"
         fullscreen
+        className="slide"
+        bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
       >
         <div className="center">
           You already enabled this. Press <kbd>Ctrl+Alt+B</kbd> to disable it
@@ -1547,6 +1579,9 @@ export default function SettingsPage() {
       />
 
       <Modal
+        fullscreen
+        className="slide"
+        bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
         open={terminateAllOpen}
         onClose={() => setTerminateAllOpen(false)}
         title={`Terminate all ${sortedSessions.filter((s) => !s.invalidated && !s.current).length} sessions`}
@@ -1581,6 +1616,9 @@ export default function SettingsPage() {
       </Modal>
 
       <Modal
+        fullscreen
+        className="slide"
+        bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
         open={!!terminatingProgress}
         onClose={() => { terminateStopRef.current = true; }}
         title="Terminating sessions..."
@@ -1597,6 +1635,9 @@ export default function SettingsPage() {
       </Modal>
 
       <Modal
+        fullscreen
+        className="slide"
+        bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
         open={reinit2faOpen}
         onClose={() => { setReinit2faOpen(false); setReinit2faCode(''); setReinit2faError(null); }}
         title="You need a 2FA code"
@@ -1668,7 +1709,8 @@ export default function SettingsPage() {
         {appLockStep === 'verify' && (
           <>
             <p className="mt-0 muted" style={{ fontSize: '0.9rem' }}>
-              Enter your current {appLockConfig?.method} to {appLockIntent === 'disable' ? 'turn off app lock' : 'change app lock'}
+              Enter your current {appLockConfig?.method} to{' '}
+              {appLockIntent === 'disable' ? 'turn off app lock' : appLockIntent === 'requireAfter' ? 'change this setting' : 'change app lock'}
             </p>
             <AppLockInput
               method={appLockConfig?.method ?? 'pin'}
