@@ -8,6 +8,7 @@ import { setCanonical } from './utils/canonical.ts';
 const LoginPage = lazy(() => import('./pages/login.tsx'));
 const LogoutPage = lazy(() => import('./pages/logout.tsx'));
 const OnboardingPage = lazy(() => import('./pages/onboarding.tsx'));
+const FinetunePage = lazy(() => import('./pages/finetune.tsx'));
 const DashboardPage = lazy(() => import('./pages/dashboard.tsx'));
 const AccountPage = lazy(() => import('./pages/account.tsx'));
 const CardsPage = lazy(() => import('./pages/cards.tsx'));
@@ -108,6 +109,7 @@ export default function App() {
         <Route path="/i/flow/login" element={<LoginPage />} />
         <Route path="/i/flow/logout" element={<LogoutPage />} />
         <Route path="/i/flow/onboarding" element={<OnboardingPage />} />
+        <Route path="/i/flow/onboarding/wizard" element={<FinetunePage />} />
       </Route>
 
       <Route element={<AppLayout />}>
@@ -166,6 +168,11 @@ export default function App() {
     {bgLoc && location.pathname === '/i/flow/login' && (
       <Suspense fallback={null}>
         <LoginPage />
+      </Suspense>
+    )}
+    {bgLoc && location.pathname === '/i/flow/onboarding/wizard' && (
+      <Suspense fallback={null}>
+        <FinetunePage />
       </Suspense>
     )}
     </>
