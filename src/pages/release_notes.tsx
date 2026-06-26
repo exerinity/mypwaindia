@@ -14,6 +14,13 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '16',
+    date: '26 Jun 2026',
+    notes: [
+      <>Added a <Link to="/i/flow/onboarding/wizard">setup wizard</Link> that begins after <Link to="/i/flow/onboarding">onboarding</Link></>
+    ]
+  },
+  {
     version: '15b',
     date: '18 Jun 2026',
     notes: [
