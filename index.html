@@ -1,8 +1,12 @@
 <!doctype html>
 <html lang="en">
+<!--
+    https://github.com/exerinity/mypwaindia
+-->
+
 <head>
   <script>
-    window.__t0 = performance.now();
+    window.__t0 = performance.now(); // tracking the load times
   </script>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="/src/logo/mygayindia.png" />
@@ -24,47 +28,179 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MyPayIndia" />
   <style>
-    :root{--brand:#d03505;--brand-dark:#b22d04;--brand-text:#fff;--radius:10px;--border:#333;--fg:#eaeaea;--bg-elev:#1a1a1a;--pill-bg:#232323}
-    #splash{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#121212;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-    #splash img.splash-logo{height:52px;animation:sli .5s ease .1s both,pulse 2s ease-in-out .6s infinite}
-    #splash.out{animation:slo .55s ease forwards;pointer-events:none}
-    #mpi-meow{opacity:0;transition:opacity .55s ease .1s}
-    #mpi-meow.in{opacity:1}
-    @keyframes sli{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
-    @keyframes slo{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(1.05)}}
-    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(.97)}}
-    #splash-hint,#splash-hint a{color:#666}
-    #splash-hint{position:absolute;bottom:24px;left:0;right:0;text-align:center;font-family:system-ui,-apple-system,sans-serif;font-size:0.8rem;opacity:0;animation:SH 2s linear forwards,SHw .4s ease 10s forwards,SHb .4s ease 15s forwards}
-    @keyframes SH{0%{opacity:0}75%{opacity:.03;animation-timing-function:cubic-bezier(.85,0,1,1)}100%{opacity:1}}
-    @keyframes SHw{to{color:#fff}}
-    @keyframes SHb{to{font-size:1.2rem}}
+    :root {
+      --brand: #d03505;
+      --brand-dark: #b22d04;
+      --brand-text: #fff;
+      --radius: 10px;
+      --border: #333;
+      --fg: #eaeaea;
+      --bg-elev: #1a1a1a;
+      --pill-bg: #232323
+    }
+
+    /* all this styling for something that only shows for 20 nanoseconds */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #121212;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom)
+    }
+
+    #splash img.splash-logo {
+      height: 52px;
+      animation: sli .5s ease .1s both, pulse 2s ease-in-out .6s infinite
+    }
+
+    #splash.out {
+      animation: slo .55s ease forwards;
+      pointer-events: none
+    }
+
+    #mpi-meow {
+      opacity: 0;
+      transition: opacity .55s ease .1s
+    }
+
+    #mpi-meow.in {
+      opacity: 1
+    }
+
+    @keyframes sli {
+      from {
+        opacity: 0;
+        transform: scale(.88)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1)
+      }
+    }
+
+    @keyframes slo {
+      from {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      to {
+        opacity: 0;
+        transform: scale(1.05)
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .7;
+        transform: scale(.97)
+      }
+    }
+
+    #splash-hint,
+    #splash-hint a {
+      color: #666
+    }
+
+    #splash-hint {
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 0.8rem;
+      opacity: 0;
+      animation: SH 2s linear forwards, SHw .4s ease 10s forwards, SHb .4s ease 15s forwards
+    }
+
+    @keyframes SH {
+      0% {
+        opacity: 0
+      }
+
+      75% {
+        opacity: .03;
+        animation-timing-function: cubic-bezier(.85, 0, 1, 1)
+      }
+
+      100% {
+        opacity: 1
+      }
+    }
+
+    @keyframes SHw {
+      to {
+        color: #fff
+      }
+    }
+
+    @keyframes SHb {
+      to {
+        font-size: 1.2rem
+      }
+    }
   </style>
-  <noscript><style>#splash{display:none}</style></noscript>
-</head>
-<body>
   <noscript>
-    <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:#121212;font-family:system-ui,-apple-system,sans-serif;">
-      <div style="background:#171717;border:1px solid #333;border-radius:10px;padding:32px;width:100%;max-width:420px;box-shadow:0 2px 8px rgba(0,0,0,0.6);text-align:center;color:#eaeaea;">
-        <img src="/src/logo/mygayindia-full.webp" alt="MyPayIndia" width="135" height="50" style="margin-bottom:20px;" />
+    <style>
+      #splash {
+        display: none
+      }
+    </style>
+  </noscript>
+</head>
+
+<body>
+  <noscript> <!-- even more styling and detail for something nobody will see -->
+    <div
+      style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:#121212;font-family:system-ui,-apple-system,sans-serif;">
+      <div
+        style="background:#171717;border:1px solid #333;border-radius:10px;padding:32px;width:100%;max-width:420px;box-shadow:0 2px 8px rgba(0,0,0,0.6);text-align:center;color:#eaeaea;">
+        <img src="/src/logo/mygayindia-full.webp" alt="MyPayIndia" width="135" height="50"
+          style="margin-bottom:20px;" />
         <h2 style="margin:0 0 8px;font-size:1.2rem;">JavaScript is not available / disabled</h2>
-        <p style="color:#aaa;font-size:0.9rem;margin:0 0 20px;">This app requires JavaScript to function. Please enable it or switch to a supported browser to continue.</p>
+        <p style="color:#aaa;font-size:0.9rem;margin:0 0 20px;">This app requires JavaScript to function. Please enable
+          it or switch to a supported browser to continue.</p>
         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-          <a href="https://www.enablejavascript.io/" target="_blank" style="display:inline-flex;align-items:center;padding:9px 16px;border-radius:8px;background:#d03505;color:#fff;font-size:0.875rem;font-weight:500;text-decoration:none;">How to enable JavaScript</a>
-          <a href="https://mypayindia.com" target="_blank" style="display:inline-flex;align-items:center;padding:9px 16px;border-radius:8px;background:#d03505;color:#fff;font-size:0.875rem;font-weight:500;text-decoration:none;">Go to MyPayIndia.com</a>
+          <a href="https://www.enablejavascript.io/" target="_blank"
+            style="display:inline-flex;align-items:center;padding:9px 16px;border-radius:8px;background:#d03505;color:#fff;font-size:0.875rem;font-weight:500;text-decoration:none;">How
+            to enable JavaScript</a>
+          <a href="https://mypayindia.com" target="_blank"
+            style="display:inline-flex;align-items:center;padding:9px 16px;border-radius:8px;background:#d03505;color:#fff;font-size:0.875rem;font-weight:500;text-decoration:none;">Go
+            to MyPayIndia.com</a>
         </div>
         <hr style="border:none;border-top:1px solid #2a2a2a;margin:20px 0 16px;" />
-        <p style="color:#aaa;font-size:0.78rem;margin:0 0 10px;">If you can't, or won't enable JavaScript, <a href="https://mypayindia.com/fuckingbasic" target="_blank" style="color:#aaa;text-decoration:underline;">try this</a></p>
+        <p style="color:#aaa;font-size:0.78rem;margin:0 0 10px;">If you can't, or won't enable JavaScript, <a
+            href="https://mypayindia.com/fuckingbasic" target="_blank" style="color:#aaa;text-decoration:underline;">try
+            this</a></p>
         <div style="margin-top:16px;">
-          <a href="" style="display:inline-flex;align-items:center;padding:7px 14px;border-radius:8px;border:1px solid #555;color:#ccc;font-size:0.78rem;text-decoration:none;">Enabled JavaScript? Refresh!</a>
+          <a href=""
+            style="display:inline-flex;align-items:center;padding:7px 14px;border-radius:8px;border:1px solid #555;color:#ccc;font-size:0.78rem;text-decoration:none;">Enabled
+            JavaScript? Refresh!</a>
         </div>
       </div>
     </div>
   </noscript>
-  <div id="mpi-meow"></div>
+  <div id="mpi-meow"></div> <!-- for those curious what the fuck "meow" could be, its the element where react renders :333 -->
   <div id="splash">
     <img class="splash-logo" src="/i/mygayindia-full.webp" alt="MyPayIndia" width="141" height="52" draggable="false" />
-    <p id="splash-hint">Stuck loading?<br><a href="">Reload app</a> (<a href="?cachebust=676767">cachebust</a>) - <a href="https://discord.com/invite/A4ZKY4JGCy">Discord</a> - <a href="https://mypayindia.com">Go to MyPayIndia.com</a></p>
+    <p id="splash-hint">Stuck loading?<br><a href="">Reload app</a> (<a href="?cachebust=676767">cachebust</a>) - <a
+        href="https://discord.com/invite/A4ZKY4JGCy">Discord</a> - <a href="https://mypayindia.com">Go to
+        MyPayIndia.com</a></p>
   </div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
+
 </html>

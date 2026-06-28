@@ -1,39 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
-import JavaScriptObfuscator from 'javascript-obfuscator';
-
-function obfuscate() {
-  return {
-    name: 'obfuscate',
-    apply: 'build',
-    enforce: 'post',
-    generateBundle(_options, bundle) {
-      for (const file of Object.values(bundle)) {
-        if (file.type !== 'chunk') continue;
-        const result = JavaScriptObfuscator.obfuscate(file.code, {
-          compact: true,
-          simplify: true,
-          controlFlowFlattening: true,
-          controlFlowFlatteningThreshold: 0.08,
-          deadCodeInjection: true,
-          deadCodeInjectionThreshold: 1,
-          identifierNamesGenerator: 'hexadecimal',
-          renameGlobals: false,
-          stringArray: true,
-          stringArrayEncoding: ['base64'],
-          stringArrayThreshold: 1,
-          transformObjectKeys: true,
-          selfDefending: true,
-          debugProtection: false,
-          disableConsoleOutput: false,
-        });
-        file.code = result.getObfuscatedCode();
-        file.map = null;
-      }
-    },
-  };
-}
 
 function umami() {
   return {
@@ -59,7 +26,6 @@ export default defineConfig({
   plugins: [
     react(),
     umami(),
-    obfuscate(),
     VitePWA({
       registerType: 'prompt',
       manifestFilename: 'mypayindia.webmanifest',
@@ -85,7 +51,7 @@ export default defineConfig({
   ],
   build: {
     modulePreload: false,
-    minify: 'esbuild',
+    minify: false,
     sourcemap: false,
     target: 'esnext',
     rollupOptions: {
@@ -94,8 +60,8 @@ export default defineConfig({
         chunkFileNames: 'i/scripts/mpi_[name]-[hash].js',
         assetFileNames: '[name]-[hash].[ext]',
         manualChunks(id) {
-          if (id.includes('node_modules')) return 'vendor';
-          if (id.match(/pages\/(login|logout|onboarding)/)) return 'auth';
+          if (id.includes('node_modules')) return 'node_modules';
+          if (id.match(/pages\/(login|logout|onboarding)/)) return 'flow';
           if (id.match(/pages\/(transfer|bulk_transfer)/)) return 'transfers';
           if (id.match(/pages\/(history|statements|old_transaction|transaction)/)) return 'history';
           if (id.match(/pages\/(links|claim_link)/)) return 'links';

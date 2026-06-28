@@ -1,8 +1,11 @@
 {
-  "name": "mypayindia-pwa",
-  "private": true,
-  "version": "6.9.0",
+  "name": "mypwaindia-react",
+  "private": false,
+  "version": "6.9.67",
   "type": "module",
+  "author": "exerinity <me@exerinity.com>",
+  "license": "MIT",
+  "description": "MyPayIndia responsive web app",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -18,7 +21,6 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.4.0",
-    "javascript-obfuscator": "^5.4.3",
     "typescript": "^6.0.3",
     "vite": "^6.0.0",
     "vite-plugin-pwa": "^0.21.0",
