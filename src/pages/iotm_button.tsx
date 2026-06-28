@@ -445,7 +445,7 @@ export default function IotmButtonPage() {
       .then((html) => {
         if (cancelled) return;
         const doc = new DOMParser().parseFromString(html, 'text/html');
-        const balance = doc.querySelector('#balance')?.textContent?.trim() ?? '0';
+        const balance = doc.querySelector('#balance-amount')?.textContent?.trim() ?? '0';
         const clicks = parseInt(doc.querySelector('#click_counter')?.textContent?.trim() ?? '0', 10);
         const payout_in = parseInt(doc.querySelector('#payout_counter')?.textContent?.trim() ?? '0', 10);
         const leaderboard = doc.querySelector('#click_leaderboard')?.innerHTML ?? '';
