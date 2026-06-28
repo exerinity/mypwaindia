@@ -4,7 +4,7 @@ import { usePageTitle } from '../hooks/page_title.js';
 
 const DEVELOPERS = [
   {
-    name: 'exerinity',
+    name: 'exerinity.com',
     url: 'https://exerinity.com'
   },
 ];
@@ -13,7 +13,7 @@ const THX = [
   {
     name: 'Razelz',
     url: 'https://razelz.gay',
-    idea: 'The "Personal details" code modal under scambait mode',
+    idea: 'Idea: the "Personal details" OTP modal under scambait mode',
   },
   {
     name: 'Mystically',
@@ -23,12 +23,16 @@ const THX = [
   {
     name: 'tiago',
     url: 'https://tiago.zip',
-    idea: 'Helping out with the original PWA (redesigning it), and the splash screen & account switcher'
+    idea: 'Helping out with the original PWA (redesigning it), and the splash screen & account switcher (on the original)'
   },
   {
     name: 'IBM_PC',
     url: 'https://ibmpc.gr',
-    idea: <>CSS for <Link to="/iotm/button">the button</Link></>
+    idea: <>Wrote the CSS for <Link to="/iotm/button">the button</Link> on <a href="https://mypayindia.com/accountservices/iotm/button/" target="_blank">the main site</a> that I borrowed</>
+  },
+  {
+    name: 'you!',
+    idea: 'for giving MyPWAIndia a try'
   }
 ];
 
@@ -114,11 +118,11 @@ export default function AcknowledgementsPage() {
     <>
       <h1 className="mt-0">Acknowledgements</h1>
 
-      <p className="mt-0 mb-0">The second incarnation of the MyPayIndia PWA is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (sans <Link to="/iotm/button">the button</Link>). <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>The first incarnation <ExternalIcon size={12} /></a> was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 went live.</p>
+      <p className="mt-0 mb-0">The second incarnation of the MyPayIndia PWA is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (excl <Link to="/iotm/button">the button</Link>). <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>The first incarnation <ExternalIcon size={12} /></a> was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 debuted.</p>
 
-      <p className="mt-0 mb-0">This page is a list of everything and everybody who made it possible:</p>
+      <p className="mt-0 mb-0">This is a list of everything and everybody who made it possible:</p>
 
-      <h2>This app is developed by...</h2>
+      <h2>This app is programmed, authored & designed by...</h2>
       <div className="card mb-2" style={{ padding: 0 }}>
         {DEVELOPERS.map((dev, i) => (
           <div
@@ -157,7 +161,7 @@ export default function AcknowledgementsPage() {
         ))}
       </div>
 
-      <h2>with inspirations from...</h2>
+      <h2>taking inspiration from...</h2>
       <div className="card mb-2" style={{ padding: 0 }}>
         {INSPIRATIONS.map((person, i) => (
           <div
