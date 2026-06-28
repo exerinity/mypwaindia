@@ -1091,12 +1091,10 @@ export default function SettingsPage() {
               Require a PIN, pattern, or password before the app opens
             </p>
 
-            <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-              <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><StopIcon /></span>
+            <div className="alert alert-error" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+              <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><WarningIcon /></span>
               <span>
-                <strong>This is a novelty, not real security.</strong> This only hides the app's content behind a
-                local screen - it does not encrypt anything, protect your MyPayIndia account, or stop anyone determined.
-                It's easily bypassable by clearing the site storage.
+                <strong>This is a local app lock</strong>, not extra account authentication. This is entirely client sided and can be disabled just by deleting the storage key.
               </span>
             </div>
 
