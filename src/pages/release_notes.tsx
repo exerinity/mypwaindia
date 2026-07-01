@@ -408,9 +408,8 @@ export default function ReleaseNotesPage() {
   return (
     <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Release notes</h1>
-      <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
+      <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work! Please note, that the below release notes are for this PWA only, and not for MyPayIndia.com. Furthermore, not every change is documented here. The app may receive minor changes without documentation.
       </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info"><InfoIcon /><span>Not every change is documented here. The app may receive minor changes without documentation.</span></div>
       <div className="card">
         <div className="row spread" style={{ marginBottom: 12 }}>
           <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
