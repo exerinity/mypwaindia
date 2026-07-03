@@ -8,7 +8,7 @@ import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
-import { WarningIcon, ArrowLeftIcon, SuccessIcon } from '../components/icons.tsx';
+import { WarningIcon, ArrowLeftIcon, InfoIcon } from '../components/icons.tsx';
 
 const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 
@@ -29,7 +29,7 @@ export default function RestrictionsPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <h1 className="mt-0">{data && restrictionList.length === 0 ? 'No restrictions' : 'Restrictions'}</h1>
+      <h1 className="mt-0">Account restrictions</h1>
       <p className="mt-0 mb-0" style={{ marginBottom: 20 }}>
         <Link to="/account" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
           <ArrowLeftIcon /> Back
@@ -53,7 +53,7 @@ export default function RestrictionsPage() {
       ) : error ? (
         <ErrorBox error={error} />
       ) : restrictionList.length === 0 ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-success"><SuccessIcon /><span>You don't have any active restrictions on your account.</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-info"><InfoIcon /><span>This account does not have any active restrictions.</span></div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {restrictionList.map(([key, val]) => {

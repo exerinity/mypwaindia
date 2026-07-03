@@ -4,7 +4,7 @@ import { usePageTitle } from '../hooks/page_title.js';
 
 const DEVELOPERS = [
   {
-    name: 'exerinity.com',
+    name: 'exerinity',
     url: 'https://exerinity.com'
   },
 ];
@@ -28,7 +28,7 @@ const THX = [
   {
     name: 'IBM_PC',
     url: 'https://ibmpc.gr',
-    idea: <>Wrote the CSS for <Link to="/iotm/button">the button</Link> on <a href="https://mypayindia.com/accountservices/iotm/button/" target="_blank">the main site</a> that I borrowed</>
+    idea: <>Wrote the CSS for <Link to="/iotm/button">the button</Link> on <a href="https://mypayindia.com/accountservices/iotm/button/" target="_blank">the main site</a> that I "borrowed"</>
   },
   {
     name: 'you!',
@@ -116,13 +116,13 @@ export default function AcknowledgementsPage() {
   usePageTitle('Acknowledgements');
   return (
     <>
-      <h1 className="mt-0">Acknowledgements</h1>
+      <h1 className="mt-0">Acknowledgements, about and credits</h1>
 
-      <p className="mt-0 mb-0">The second incarnation of the MyPayIndia PWA is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (excl <Link to="/iotm/button">the button</Link>). <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>The first incarnation <ExternalIcon size={12} /></a> was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 debuted.</p>
+      <p className="mt-0 mb-0">The second incarnation of the MyPayIndia PWA ("MyPWAIndia", "MyReactPWAIndia") is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (excl <Link to="/iotm/button">the button</Link>). <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>The first incarnation <ExternalIcon size={12} /></a> was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 debuted. <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>View the source for this app <ExternalIcon size={12} /></a></p>
 
       <p className="mt-0 mb-0">This is a list of everything and everybody who made it possible:</p>
 
-      <h2>This app is programmed, authored & designed by...</h2>
+      <h2>This app is programmed by...</h2>
       <div className="card mb-2" style={{ padding: 0 }}>
         {DEVELOPERS.map((dev, i) => (
           <div
@@ -188,6 +188,7 @@ export default function AcknowledgementsPage() {
           <PackageList packages={group.packages} />
         </div>
       ))}
+      <p className="mt-0 mb-0"><a href="https://github.com/exerinity/mypwaindia/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>MyPWAIndia is open-source under the MIT license <ExternalIcon size={12} /></a></p>
     </>
   );
 }
