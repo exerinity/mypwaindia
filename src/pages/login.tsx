@@ -46,7 +46,7 @@ export default function LoginPage() {
     }
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (atCapacity) {
       toast.error(`You have too many accounts logged in! (${maxAccounts} max)`);
@@ -69,7 +69,7 @@ export default function LoginPage() {
       const err = e as { code?: number };
       if (err.code === 1002) {
         setNeeds2fa(true);
-        setError({ message: 'Enter your 2FA code.' });
+        setError({ message: 'Please enter the 2FA code from your authenticator app' });
       } else if (err.code === 1010) {
         setError({ message: 'Incorrect 2FA code, try again.' });
       } else {
@@ -86,7 +86,7 @@ export default function LoginPage() {
       <Suspense fallback={null}>
         {atCapacity && (
           <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <WarningIcon /><span>Account limit at capacity</span>
+            <WarningIcon /><span>Account limit at capacity. Remove one first</span>
           </div>
         )}
 
