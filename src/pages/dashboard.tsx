@@ -34,7 +34,7 @@ export default function DashboardPage() {
   const format = useCurrency();
   const scambait = settings.scambait;
   const refresh = settings.autoRefresh;
-  const { userInfo, refetchUserInfo } = useGlobalData();
+  const { userInfo, userInfoLoading, refetchUserInfo } = useGlobalData();
 
   type TxList = { transactions: import('../components/tx_table.tsx').Transaction[] };
   type LinkList = { links: { id: number; status: string }[] };
@@ -82,7 +82,7 @@ export default function DashboardPage() {
     usePageTitle('Welcome')
     return (
       <Suspense fallback={<ContentSkeleton />}>
-        <h1 className="mt-0">Welcome to the MyPayIndia PWA</h1>
+        <h1 className="mt-0">Welcome to the MyPayIndia PWA<i>!</i></h1>
         <p className="mt-0 mb-0">You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
           You can navigate the app logged out, but to actually do anything, please <Link to="/i/flow/login" state={{ backgroundLocation: location }}>log in</Link>.
           If you don't have an account, you can <a href="https://mypayindia.com/accountservices/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
@@ -102,6 +102,10 @@ export default function DashboardPage() {
   const transactions = txQ.data?.transactions || [];
   const links = linksQ.data?.links || [];
   const activeLinks = links.filter((l) => l.status === 'active');
+  const balanceValue = userInfo?.balance ?? (typeof active?.lastBalance === 'number' ? active.lastBalance : null);
+  const balanceLoading = balanceValue === null && userInfoLoading;
+  const txLoading = txQ.loading && !txQ.data;
+  const linksLoading = linksQ.loading && !linksQ.data;
   return (
     <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">{scambait ? 'Hello' : 'Welcome back'}, <DisplayName account={active} mode={settings.displayName} />{scambait ? '' : '!'}</h1>
@@ -110,7 +114,9 @@ export default function DashboardPage() {
         <div className="card stat-card">
           <span className="stat-label">Balance</span>
           <span className="stat-value">
-            {format(userInfo?.balance ?? active?.lastBalance ?? 0)}
+            {balanceLoading
+              ? <Skeleton width={100} height={26} radius={6} style={{ display: 'inline-block' }} />
+              : format(balanceValue ?? 0)}
           </span>
           <span className="stat-sub"><DisplayName account={active} mode={settings.displayName} /></span>
         </div>
@@ -118,7 +124,11 @@ export default function DashboardPage() {
         <div className="card stat-card">
           <span className="stat-label">Transactions</span>
           <span className="stat-value">
-            {scambait ? 150 + ((Number(active?.id) * 31 + 127) % 850) : transactions.length}
+            {scambait
+              ? 150 + ((Number(active?.id) * 31 + 127) % 850)
+              : txLoading
+                ? <Skeleton width={64} height={26} radius={6} style={{ display: 'inline-block' }} />
+                : transactions.length}
           </span>
           <span className="stat-sub">{scambait ? 'since 2017' : `with ${uniqueUserCount} different users`}</span>
         </div>
@@ -126,7 +136,11 @@ export default function DashboardPage() {
         <div className="card stat-card">
           <span className="stat-label">{scambait ? 'Pending' : 'Active links'}</span>
           <span className="stat-value">
-            {scambait ? (Number(active?.id) * 13 + 3) % 6 : activeLinks.length}
+            {scambait
+              ? (Number(active?.id) * 13 + 3) % 6
+              : linksLoading
+                ? <Skeleton width={48} height={26} radius={6} style={{ display: 'inline-block' }} />
+                : activeLinks.length}
           </span>
           <span className="stat-sub">{scambait ? 'awaiting clearance' : `${links.length} total created`}</span>
         </div>
