@@ -81,6 +81,7 @@ export interface Settings {
   dashboardButtons: DashboardButton[];
   customTheme: Record<string, string>;
   swEnabled: boolean;
+  rememberInfo: boolean;
 }
 
 interface SettingsContextValue {
@@ -103,6 +104,7 @@ export const DEFAULT_SETTINGS: Settings = {
   dashboardButtons: DEFAULT_DASHBOARD_BUTTONS,
   customTheme: {},
   swEnabled: true,
+  rememberInfo: true,
 };
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
