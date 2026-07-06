@@ -34,6 +34,10 @@ function AppGate() {
 
 function Root() {
   useEffect(() => {
+    import('./utils/twemoji.ts').then(({ initTwemoji }) => initTwemoji());
+  }, []);
+
+  useEffect(() => {
     console.log(`loaded in ${(performance.now() - (window as any).__t0).toFixed(1)}ms`);
     const el = document.getElementById('splash');
     if (!el) return;
