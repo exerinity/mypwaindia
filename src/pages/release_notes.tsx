@@ -2,8 +2,6 @@ import { ContentSkeleton } from '../components/app_skeleton.tsx';
 import React, { useState, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '../hooks/page_title.js';
-import { InfoIcon } from '../components/icons.tsx';
-
 const AppFooter = lazy(() => import('../components/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
 
 type Release = {
@@ -15,6 +13,20 @@ type Release = {
 };
 
 export const RELEASES: Release[] = [
+  {
+    version: '16a',
+    date: '6 Jul 2026',
+    notes: [
+      'MyPWAIndia now uses Twemoji. Everywhere. I don\'t know who\'ll notice, but twemoji is sigma',
+      { h2: '🎬🦄🌵🍕🚀🔮🦊🎈🥞🌊🤖🥑🧗‍♀️🎭🥥🪁🦖🎳🍦🎪🛸🥑🦩🧩'},
+      'Added a new setting: Keep information in storage. It doesn\'t do much, it only eliminates saving your balance (and other) info in storage, so every load freshly loads numbers'
+      
+    ],
+    subnotes: [
+      'Various adjustments to phrases and wording throughout the app',
+      'Various adjustments to the app'
+    ],
+  },
   {
     version: '16',
     date: '26 Jun 2026',
@@ -35,7 +47,7 @@ export const RELEASES: Release[] = [
     date: '16 Jun 2026',
     notes: [
       <>Transaction detail viewer overhauled: it is now a modal with action buttons rather than a full page<br></br>(the old one is still available at <strong>/i/flow/transaction:old/:ID</strong>)</>,
-      { 'h3': <><Link to="/account/history">Try it out</Link></>},
+      { 'h3': <><Link to="/account/history">Try it out</Link></> },
       'The login and logout views are now modals'
     ]
   },
