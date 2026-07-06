@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
+import { useSettings } from './settings_ctx.tsx';
 import { login as apiLogin, logout as apiLogout } from '../api/auth.js';
 import { getUserInfo } from '../api/user.js';
 import type { Env } from '../api/client.js';
@@ -51,11 +52,33 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function rememberInfoEnabled(): boolean {
+  return storageGet<{ rememberInfo?: boolean }>(KEYS.SETTINGS, {}).rememberInfo ?? true;
+}
+
+function persistAccounts(next: Account[], remember: boolean = rememberInfoEnabled()) {
+  if (remember) {
+    storageSet(KEYS.ACCOUNTS, next);
+    return;
+  }
+  storageSet(KEYS.ACCOUNTS, next.map((a) => ({
+    id: a.id,
+    username: a.username,
+    role: '',
+    token: a.token,
+    env: a.env,
+    addedAt: a.addedAt,
+    password: a.password,
+    credentialOnly: a.credentialOnly,
+  })));
+}
+
 function setAccs(next: Account[]) {
-  storageSet(KEYS.ACCOUNTS, next);
+  persistAccounts(next);
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { settings } = useSettings();
   const [accounts, setAccounts] = useState<Account[]>(() => storageGet(KEYS.ACCOUNTS, []));
   const [activeId, setActiveId] = useState<number | null>(() => storageGet(KEYS.ACTIVE_ACCOUNT, null));
 
@@ -63,6 +86,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => accounts.find((a) => a.id === activeId) || null,
     [accounts, activeId]
   );
+
+  const accountsRef = useRef(accounts);
+  accountsRef.current = accounts;
+
+  useEffect(() => {
+    persistAccounts(accountsRef.current, settings.rememberInfo);
+  }, [settings.rememberInfo]);
 
   const addOrReplaceAccount = useCallback((acc: Account) => {
     setAccounts((prev) => {
@@ -118,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const next = idx >= 0
       ? snapshot.map((a, i) => (i === idx ? { ...a, ...acc } : a))
       : [...snapshot, acc];
-    storageSet(KEYS.ACCOUNTS, next);
+    persistAccounts(next);
     storageSet(KEYS.ACTIVE_ACCOUNT, acc.id);
     window.location.replace(redirectTo ?? window.location.href);
     return acc;
@@ -137,11 +167,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // If a real account with this server ID already exists, activate that and drop the stub
         const existingReal = current.find((a) => a.id === realId && a.id !== id);
         if (existingReal) {
-          storageSet(KEYS.ACCOUNTS, current
+          persistAccounts(current
             .filter((a) => a.id !== id)
             .map((a) => a.id === realId ? { ...a, token: data.session_id } : a));
         } else {
-          storageSet(KEYS.ACCOUNTS, current.map((a) => a.id === id ? {
+          persistAccounts(current.map((a) => a.id === id ? {
             ...a,
             id: realId,
             token: data.session_id,
@@ -161,7 +191,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const all: Account[] = storageGet(KEYS.ACCOUNTS, []);
     const remaining = all.filter((a) => a.id !== id);
     const nextId = remaining.length > 0 ? remaining[remaining.length - 1].id : null;
-    storageSet(KEYS.ACCOUNTS, remaining);
+    persistAccounts(remaining);
     storageSet(KEYS.ACTIVE_ACCOUNT, nextId);
     window.location.reload();
   }, []);
@@ -171,7 +201,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await apiLogout();
     const remaining: Account[] = storageGet(KEYS.ACCOUNTS, []).filter((a: Account) => a.id !== id);
     const nextId = remaining.length > 0 ? remaining[remaining.length - 1].id : null;
-    storageSet(KEYS.ACCOUNTS, remaining);
+    persistAccounts(remaining);
     storageSet(KEYS.ACTIVE_ACCOUNT, nextId);
     window.location.replace('/i/flow/login');
   }, [activeId]);
@@ -190,11 +220,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshActive = useCallback(async () => {
     if (!active) return null;
-    const info = await getUserInfo(active) as { balance: number; first_name: string; last_name: string };
+    const info = await getUserInfo(active) as { balance: number; first_name: string; last_name: string; role: string };
     updateAccountInfo(active.id, {
       lastBalance: info.balance,
       firstName: info.first_name,
       lastName: info.last_name,
+      role: info.role,
     });
     return info;
   }, [active, updateAccountInfo]);
