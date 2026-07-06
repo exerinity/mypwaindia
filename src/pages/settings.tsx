@@ -981,6 +981,17 @@ export default function SettingsPage() {
                 Automatically update the app when a new version is available
               </label>
             </div>
+            <div className="checkbox-row" style={{ marginTop: '0.5rem' }}>
+              <input
+                type="checkbox"
+                id="remember-info"
+                checked={settings.rememberInfo}
+                onChange={(e) => update({ rememberInfo: e.target.checked })}
+              />
+              <label htmlFor="remember-info" style={{ margin: 0 }}>
+                Keep information (i.e. balance) in storage
+              </label>
+            </div>
 
             <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
             <h3 className="mt-0">Hide stuff</h3>
