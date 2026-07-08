@@ -145,9 +145,6 @@ export function AppLayout() {
         <Suspense fallback={<HeaderSkeleton />}>
           <Header onToggleSidebar={() => setOpen((o) => !o)} />
           <div className="verification-banner-stack">
-            <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <WarningIcon /> MyPayIndia is currently unavailable. MyPWAIndia will be mostly unusable. <a href="https://x.com/mypayindia" target="_blank">Follow us on Twitter for updates...</a> <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank">Join our Discord server...</a>
-            </div>
             <VerificationBanner />
             {restrictionList.length > 0 && (
               <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
