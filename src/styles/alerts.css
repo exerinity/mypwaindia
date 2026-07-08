@@ -66,6 +66,12 @@
 
 .verification-banner.banner-error {
   background: var(--alert-error);
+  color: white;
+}
+
+.verification-banner.banner-error a {
+  background: var(--alert-error);
+  color: white;
 }
 
 .verification-banner.banner-error button {

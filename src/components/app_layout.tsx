@@ -143,43 +143,46 @@ export function AppLayout() {
     <div className="mpi-shell">
       <div className="mpi-sticky-top">
         <Suspense fallback={<HeaderSkeleton />}>
-        <Header onToggleSidebar={() => setOpen((o) => !o)} />
-        <div className="verification-banner-stack">
-          <VerificationBanner />
-          {restrictionList.length > 0 && (
+          <Header onToggleSidebar={() => setOpen((o) => !o)} />
+          <div className="verification-banner-stack">
             <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <WarningIcon />Your account has some active restrictions:{' '}
-              {restrictionsMod ? restrictionList.map(([k]) => restrictionsMod.getRestrictionInfo(k).title).join(', ') : ''}.
-              {' '}<Link to="/account/restrictions" className="link">More...</Link>
+              <WarningIcon /> MyPayIndia is currently unavailable. MyPWAIndia will be mostly unusable. <a href="https://x.com/mypayindia" target="_blank">Follow us on Twitter for updates...</a> <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank">Join our Discord server...</a>
             </div>
-          )}
-          {active && !settings.scambait && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
-            <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
-            </div>
-          )}
-          {sessionExpired && (
-            <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <LoginIcon /> Your session has expired. <Link to="/settings/sessions" className="link">Reinitialize the session...</Link> <Link to="/i/flow/logout" state={{ backgroundLocation: location }}>Log out of the app...</Link>
-            </div>
-          )}
-          {fetchFailed && (
-            <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link> <a href="https://status.mypayindia.com" target="_blank">Status page...</a>
-            </div>
-          )}
-          {!isOnline && (
-            <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/flow/connection" className="link">Diagnose...</Link>
-            </div>
-          )}
-          <div id="mpi-toy-banners" />
-        </div>
+            <VerificationBanner />
+            {restrictionList.length > 0 && (
+              <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <WarningIcon />Your account has some active restrictions:{' '}
+                {restrictionsMod ? restrictionList.map(([k]) => restrictionsMod.getRestrictionInfo(k).title).join(', ') : ''}.
+                {' '}<Link to="/account/restrictions" className="link">More...</Link>
+              </div>
+            )}
+            {active && !settings.scambait && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
+              <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
+              </div>
+            )}
+            {sessionExpired && (
+              <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <LoginIcon /> Your session has expired. <Link to="/settings/sessions" className="link">Reinitialize the session...</Link> <Link to="/i/flow/logout" state={{ backgroundLocation: location }}>Log out of the app...</Link>
+              </div>
+            )}
+            {fetchFailed && (
+              <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link> <a href="https://status.mypayindia.com" target="_blank">Status page...</a>
+              </div>
+            )}
+            {!isOnline && (
+              <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/flow/connection" className="link">Diagnose...</Link>
+              </div>
+            )}
+            <div id="mpi-toy-banners" />
+          </div>
         </Suspense>
       </div>
       <div className="mpi-body">
         <Suspense fallback={<SidebarSkeleton />}>
-        <Sidebar open={open} onClose={() => setOpen(false)} />
+          <Sidebar open={open} onClose={() => setOpen(false)} />
         </Suspense>
         <main className="mpi-main">
           <div className="mpi-wrap">
@@ -196,24 +199,24 @@ export function AppLayout() {
       </div>
 
       <Suspense fallback={null}>
-      <ConfirmModal
-        open={scambaitConfirmOpen}
-        onClose={() => setScambaitConfirmOpen(false)}
-        onConfirm={enableScambait}
-        title="Enable scambait mode?"
-        danger={false}
-        confirmLabel="Continue"
-        message={
-          <p className="mt-0">
-            You are about to enable scambait mode. Please read this properly so you know what you're walking into.<br /><br />Enabling scambait mode will transform the app into a more legitimate-looking app for... scambaiting. It hides certain unrealistic things a scammer may raise an eyebrow to and changes other things completely.
-            <br /><br />
-            If you do not intend on convincing phone scammers that you are attempting to use MyPayIndia for payments and having them connect to your computer nor are doing any scambaiting, you should leave this setting alone.
-            And obviously, <strong>do not use this to actually scam people. The scammers this is intended for are asshole vultures that prey on vulnerable elderly people, don't be one of them.</strong>
-            <br /><br />
-            Once enabled, you will immediately be navigated back to the adjusted dashboard. You can disable scambait mode by pressing <kbd>Ctrl+Alt+B</kbd>. Continue?
-          </p>
-        }
-      />
+        <ConfirmModal
+          open={scambaitConfirmOpen}
+          onClose={() => setScambaitConfirmOpen(false)}
+          onConfirm={enableScambait}
+          title="Enable scambait mode?"
+          danger={false}
+          confirmLabel="Continue"
+          message={
+            <p className="mt-0">
+              You are about to enable scambait mode. Please read this properly so you know what you're walking into.<br /><br />Enabling scambait mode will transform the app into a more legitimate-looking app for... scambaiting. It hides certain unrealistic things a scammer may raise an eyebrow to and changes other things completely.
+              <br /><br />
+              If you do not intend on convincing phone scammers that you are attempting to use MyPayIndia for payments and having them connect to your computer nor are doing any scambaiting, you should leave this setting alone.
+              And obviously, <strong>do not use this to actually scam people. The scammers this is intended for are asshole vultures that prey on vulnerable elderly people, don't be one of them.</strong>
+              <br /><br />
+              Once enabled, you will immediately be navigated back to the adjusted dashboard. You can disable scambait mode by pressing <kbd>Ctrl+Alt+B</kbd>. Continue?
+            </p>
+          }
+        />
       </Suspense>
     </div>
   );
