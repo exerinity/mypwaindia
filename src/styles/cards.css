@@ -66,3 +66,7 @@
 .grid.cols-3 {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
+
+.grid.cols-team {
+  grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+}

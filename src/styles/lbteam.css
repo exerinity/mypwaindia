@@ -49,27 +49,55 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 8px;
+  gap: 6px;
+  height: 100%;
+}
+
+.team-header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
+
+.team-header-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  min-width: 0;
 }
 
 .team-avatar {
-  width: 96px;
-  height: 96px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   object-fit: cover;
   background: var(--bg-elev);
   user-select: none;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .team-name {
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-weight: 700;
   font-size: 1.05rem;
 }
 
 .team-role {
-  color: var(--muted);
+  color: var(--brand);
+  font-weight: 500;
   font-size: 0.85rem;
+}
+
+.team-joined {
+  font-size: 0.78rem;
+  color: var(--muted);
 }
 
 .team-socials {
@@ -77,19 +105,215 @@
   gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 8px;
+  margin-top: auto;
+  padding-top: 10px;
 }
 
-.team-socials a {
-  font-size: 0.8rem;
-  padding: 4px 10px;
-  background: var(--pill-bg);
-  border: 1px solid var(--border);
-  border-radius: 999px;
+.team-contributions {
+  list-style: disc;
+  margin: 0;
+  padding-left: 18px;
+  text-align: left;
+  font-size: 0.85rem;
   color: var(--fg);
 }
 
-.team-socials a:hover {
-  background: var(--bg-elev);
-  text-decoration: none;
+.team-contributions li {
+  padding: 1px 0;
+}
+
+.team-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  padding-left: 18px;
+  text-align: left;
+}
+
+.team-timeline::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: var(--border);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 12px;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -18px;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--brand);
+  border: 2px solid var(--card);
+}
+
+.timeline-heading {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.timeline-date {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.roles-toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.roles-toggle:focus-visible ~ .roles-toggle-label {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.roles-toggle:not(:checked) ~ .team-timeline .timeline-item:nth-child(n + 3) {
+  display: none;
+}
+
+.roles-toggle:not(:checked) ~ .team-timeline .timeline-item:nth-child(2) {
+  padding-bottom: 0;
+}
+
+.roles-toggle-label {
+  display: block;
+  margin-top: 0;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--brand-contrasted, var(--brand));
+  text-align: left;
+}
+
+.roles-toggle-label:hover {
+  text-decoration: underline;
+}
+
+.roles-toggle-label .less-text {
+  display: none;
+}
+
+.roles-toggle:checked ~ .roles-toggle-label .more-text {
+  display: none;
+}
+
+.roles-toggle:checked ~ .roles-toggle-label .less-text {
+  display: inline;
+}
+
+.pride-flag {
+  display: inline-block;
+  width: 26px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.2);
+  background-size: cover;
+}
+
+.pride-flag--rainbow {
+  background: linear-gradient( to bottom, #e40303 0 16.66%, #ff8c00 16.66% 33.33%, #ffed00 33.33% 50%, #008026 50% 66.66%, #004dff 66.66% 83.33%, #750787 83.33% 100% );
+}
+
+.pride-flag--progress {
+  background: linear-gradient(to right, transparent 40%, #ffffff 40% 100%) 0 0 / 100% 25% no-repeat, linear-gradient(to right, transparent 40%, #ffafc8 40% 100%) 0 100% / 100% 25% no-repeat, linear-gradient(to right, transparent 40%, #74d7ee 40% 100%) 0 50% / 100% 25% no-repeat, linear-gradient(135deg, #000000 0 12%, #613915 12% 24%, transparent 24%), linear-gradient( to bottom, #e40303 0 16.66%, #ff8c00 16.66% 33.33%, #ffed00 33.33% 50%, #008026 50% 66.66%, #004dff 66.66% 83.33%, #750787 83.33% 100% );
+}
+
+.pride-flag--trans {
+  background: linear-gradient( to bottom, #5bcefa 0 20%, #f5a9b8 20% 40%, #ffffff 40% 60%, #f5a9b8 60% 80%, #5bcefa 80% 100% );
+}
+
+.pride-flag--bisexual {
+  background: linear-gradient( to bottom, #d60270 0 40%, #9b4f96 40% 60%, #0038a8 60% 100% );
+}
+
+.pride-flag--pansexual {
+  background: linear-gradient( to bottom, #ff218c 0 33.33%, #ffd800 33.33% 66.66%, #21b1ff 66.66% 100% );
+}
+
+.pride-flag--nonbinary {
+  background: linear-gradient( to bottom, #fcf434 0 25%, #ffffff 25% 50%, #9c59d1 50% 75%, #2c2c2c 75% 100% );
+}
+
+.pride-flag--lesbian {
+  background: linear-gradient( to bottom, #d52d00 0 20%, #ff9a56 20% 40%, #ffffff 40% 60%, #d362a4 60% 80%, #a30262 80% 100% );
+}
+
+.pride-flag--mlm {
+  background: linear-gradient( to bottom, #078d70 0 14.28%, #26ceaa 14.28% 28.57%, #98e8c1 28.57% 42.85%, #ffffff 42.85% 57.14%, #7bade2 57.14% 71.42%, #5049cc 71.42% 85.71%, #3d1a78 85.71% 100% );
+}
+
+.pride-flag--asexual {
+  background: linear-gradient( to bottom, #000000 0 25%, #a3a3a3 25% 50%, #ffffff 50% 75%, #800080 75% 100% );
+}
+
+.pride-flag--genderfluid {
+  background: linear-gradient( to bottom, #ff75a2 0 20%, #ffffff 20% 40%, #be18d6 40% 60%, #000000 60% 80%, #333ebd 80% 100% );
+}
+
+.pride-flag--aromantic {
+  background: linear-gradient( to bottom, #3da542 0 20%, #a7d379 20% 40%, #ffffff 40% 60%, #a9a9a9 60% 80%, #000000 80% 100% );
+}
+
+.pride-flag--agender {
+  background: linear-gradient( to bottom, #000000 0 14.28%, #b9b9b9 14.28% 28.57%, #ffffff 28.57% 42.85%, #b8f483 42.85% 57.14%, #ffffff 57.14% 71.42%, #b9b9b9 71.42% 85.71%, #000000 85.71% 100% );
+}
+
+.pride-flag--intersex {
+  background: #ffd800;
+  position: relative;
+}
+
+.pride-flag--intersex::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1.5px solid #7902aa;
+}
+
+.team-quote {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 4px 0;
+}
+
+.team-section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-top: 10px;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.team-card > .team-section-label,
+.team-card > .team-contributions,
+.team-card > .team-timeline,
+.team-card > .roles-toggle-label {
+  align-self: stretch;
 }
