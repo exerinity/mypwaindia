@@ -14,6 +14,13 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '17',
+    date: '12 Jul 2026',
+    notes: [
+      <>Added <Link to="/i/team/globe">team globe</Link></>
+    ]
+  },
+  {
     version: '16b',
     date: '9 Jul 2026',
     notes: [
@@ -28,9 +35,9 @@ export const RELEASES: Release[] = [
     date: '6 Jul 2026',
     notes: [
       'MyPWAIndia now uses Twemoji. Everywhere. I don\'t know who\'ll notice, but twemoji is sigma',
-      { h2: '🎬🦄🌵🍕🚀🔮🦊🎈🥞🌊🤖🥑🧗‍♀️🎭🥥🪁🦖🎳🍦🎪🛸🥑🦩🧩'},
+      { h2: '🎬🦄🌵🍕🚀🔮🦊🎈🥞🌊🤖🥑🧗‍♀️🎭🥥🪁🦖🎳🍦🎪🛸🥑🦩🧩' },
       'Added a new setting: Keep information in storage. It doesn\'t do much, it only eliminates saving your balance (and other) info in storage, so every load freshly loads numbers'
-      
+
     ],
     subnotes: [
       'Various adjustments to phrases and wording throughout the app',
@@ -430,7 +437,7 @@ export default function ReleaseNotesPage() {
   return (
     <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Release notes</h1>
-      <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
+      <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. View new changes and fixes for mypayindia.sbs, app.mypayindia.com, and MyPayIndia Lite for Android. We're constantly working to make the MyPayIndia PWA a world-class experience, if you are interested in helping us, we're hiring. We hope you enjoy reading about our work!
       </p>
       <div className="card">
         <div className="row spread" style={{ marginBottom: 12 }}>
