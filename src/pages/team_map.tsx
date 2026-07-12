@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Globe from 'react-globe.gl';
 import * as THREE from 'three';
@@ -12,6 +12,7 @@ import { TeamMemberCard, type TeamMember } from '../components/team_member_card.
 import { hexToRgb, normalizeHex } from '../utils/colors.js';
 import countries from '../data/world_countries.json';
 import centroids from '../data/country_centroids.json';
+import { InfoIcon } from '../components/icons.tsx';
 
 type Rgb = { r: number; g: number; b: number };
 function mix(a: Rgb, b: Rgb, t: number): Rgb {
@@ -22,15 +23,83 @@ function rgbToHex({ r, g, b }: Rgb) {
   return `#${h(r)}${h(g)}${h(b)}`;
 }
 
-interface Dot { lat: number; lng: number; member: TeamMember }
+interface Dot { lat: number; lng: number; member: TeamMember; radius: number }
 interface Label { lat: number; lng: number; text: string; el?: HTMLElement }
 type Centroid = { lat: number; lng: number; name: string };
 const CENTROIDS = centroids as Record<string, Centroid>;
 
-function scatter(base: Centroid, i: number, total: number): { lat: number; lng: number } {
+type Ring = number[][];
+type Poly = Ring[];
+const COUNTRY_MAIN: Record<string, Poly> = (() => {
+  const bboxArea = (ring: Ring) => {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const [x, y] of ring) { if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; }
+    return (maxX - minX) * (maxY - minY);
+  };
+  const out: Record<string, Poly> = {};
+  for (const f of (countries as any).features) {
+    const iso: string | undefined = f.properties?.iso;
+    if (!iso) continue;
+    const polys: Poly[] = f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+    let best: Poly | null = null, bestArea = -1;
+    for (const p of polys) { const a = bboxArea(p[0]); if (a > bestArea) { bestArea = a; best = p; } }
+    if (best) out[iso.toUpperCase()] = best;
+  }
+  return out;
+})();
+
+function ringHas(x: number, y: number, ring: Ring): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+    if (((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+function polyHas(x: number, y: number, poly: Poly): boolean {
+  if (!ringHas(x, y, poly[0])) return false;
+  for (let h = 1; h < poly.length; h++) if (ringHas(x, y, poly[h])) return false;
+  return true;
+}
+function segDist(px: number, py: number, ax: number, ay: number, bx: number, by: number): number {
+  const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy;
+  let t = l2 ? ((px - ax) * dx + (py - ay) * dy) / l2 : 0;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+}
+function borderDist(x: number, y: number, poly: Poly, kx: number): number {
+  let min = Infinity;
+  for (const ring of poly) {
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const d = segDist(x * kx, y, ring[j][0] * kx, ring[j][1], ring[i][0] * kx, ring[i][1]);
+      if (d < min) min = d;
+    }
+  }
+  return min;
+}
+function safeCenter(poly: Poly): { lat: number; lng: number; clr: number } {
+  const outer = poly[0];
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const [x, y] of outer) { if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; }
+  const kx = Math.cos((((minY + maxY) / 2) * Math.PI) / 180);
+  const steps = 32;
+  let best = { lat: (minY + maxY) / 2, lng: (minX + maxX) / 2, clr: 0 };
+  for (let i = 0; i < steps; i++) {
+    for (let j = 0; j < steps; j++) {
+      const x = minX + ((i + 0.5) / steps) * (maxX - minX);
+      const y = minY + ((j + 0.5) / steps) * (maxY - minY);
+      if (!polyHas(x, y, poly)) continue;
+      const clr = borderDist(x, y, poly, kx);
+      if (clr > best.clr) best = { lat: y, lng: x, clr };
+    }
+  }
+  return best;
+}
+
+function scatter(base: { lat: number; lng: number }, i: number, total: number, spread: number): { lat: number; lng: number } {
   if (total <= 1) return { lat: base.lat, lng: base.lng };
   const golden = 2.399963229728653;
-  const radius = 1.6 * Math.sqrt((i + 0.5) / total);
+  const radius = spread * Math.sqrt((i + 0.5) / total);
   const angle = (i + 1) * golden;
   const dLat = radius * Math.sin(angle);
   const dLng = (radius * Math.cos(angle)) / Math.max(0.2, Math.cos((base.lat * Math.PI) / 180));
@@ -67,6 +136,17 @@ export default function TeamMapPage() {
     };
   }, [brand, isLight]);
 
+  const countryRanks = useMemo(() => {
+    const map = new Map<string, { name: string; flag: string; count: number }>();
+    for (const m of team) {
+      const key = m.country || m.country_name || m.name;
+      const cur = map.get(key) || { name: m.country_name || m.country || 'Unknown', flag: m.country_flag || '', count: 0 };
+      cur.count += 1;
+      map.set(key, cur);
+    }
+    return Array.from(map.values()).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  }, [team]);
+
   const { dots, labels } = useMemo(() => {
     const byCountry = new Map<string, TeamMember[]>();
     for (const m of team) {
@@ -77,13 +157,31 @@ export default function TeamMapPage() {
     }
     const dots: Dot[] = [];
     const labels: Label[] = [];
-    const DOT_LIFT = 2.2;
+    const MARGIN = 0.35;
     for (const [key, members] of byCountry) {
-      const base = CENTROIDS[key] || { lat: 0, lng: 0, name: members[0].country_name || key };
-      labels.push({ lat: base.lat, lng: base.lng, text: (base.name || key).toUpperCase() });
+      const centroid = CENTROIDS[key] || { lat: 0, lng: 0, name: members[0].country_name || key };
+      const poly = COUNTRY_MAIN[key];
+      const anchor = poly ? safeCenter(poly) : { lat: centroid.lat, lng: centroid.lng, clr: 1.5 };
+      const center = anchor.clr > 0 ? { lat: anchor.lat, lng: anchor.lng } : { lat: centroid.lat, lng: centroid.lng };
+      const clr = Math.max(anchor.clr, 0.12);
+
+      const n = members.length;
+      const rSafe = Math.max(0, clr - MARGIN);
+      const disc = n === 1
+        ? Math.max(0.08, Math.min(0.7, rSafe * 0.7))
+        : Math.max(0.08, Math.min(0.7, rSafe / (1.3 * Math.sqrt(n) + 1)));
+      const spread = n === 1 ? 0 : Math.max(0, rSafe - disc);
+      labels.push({ lat: center.lat + Math.max(0.7, clr * 0.9), lng: center.lng, text: (centroid.name || key).toUpperCase() });
+
       members.forEach((m, i) => {
-        const { lat, lng } = scatter(base, i, members.length);
-        dots.push({ lat: lat + DOT_LIFT, lng, member: m });
+        let { lat, lng } = scatter(center, i, members.length, spread);
+        if (poly) {
+          const kx = Math.cos((lat * Math.PI) / 180);
+          if (!polyHas(lng, lat, poly) || borderDist(lng, lat, poly, kx) < disc + MARGIN * 0.5) {
+            lat = center.lat; lng = center.lng;
+          }
+        }
+        dots.push({ lat, lng, member: m, radius: disc });
       });
     }
     return { dots, labels };
@@ -114,8 +212,8 @@ export default function TeamMapPage() {
     c.autoRotate = true;
     c.autoRotateSpeed = 0.45;
     c.enableZoom = true;
-    c.minDistance = 180;
-    c.maxDistance = 600;
+    c.minDistance = 108;
+    c.maxDistance = 700;
     c.addEventListener('start', () => {
       clearTimeout(resumeTimer.current);
       c.autoRotate = false;
@@ -152,6 +250,34 @@ export default function TeamMapPage() {
     update();
   };
 
+  type Rank = { name: string; flag: string; count: number };
+  const full = (c: Rank) => <>{c.flag} <strong>{c.name}</strong> ({c.count})</>;
+  const plainList = (list: Rank[]) => list.map((c, i) => (
+    <Fragment key={i}>{i > 0 ? ', ' : ''}{c.flag} <strong>{c.name}</strong></Fragment>
+  ));
+
+  const ranksSentence = (() => {
+    if (countryRanks.length === 0) return null;
+    const most = countryRanks[0];
+    const maxCount = most.count;
+    const minCount = countryRanks[countryRanks.length - 1].count;
+    if (minCount === maxCount) {
+      return <>Every country is tied with {maxCount} {maxCount === 1 ? 'member' : 'members'} each: {plainList(countryRanks)}.</>;
+    }
+    const least = countryRanks.filter((c) => c.count === minCount);
+    const second = countryRanks[1];
+    return (
+      <>
+        The country with the most team members is {full(most)}
+        {second && second.count > minCount && <>. 2nd place is {full(second)}</>}
+        {least.length > 1
+          ? <>, and {plainList(least)} all have one member</>
+          : <>, and {full(least[0])} all have one member</>}
+        .
+      </>
+    );
+  })();
+
   return (
     <>
       <Modal className="slide" open={!!selected} onClose={() => setSelected(null)} title={selected?.name ?? ''}>
@@ -166,6 +292,10 @@ export default function TeamMapPage() {
         <h1 className="mt-0">Team globe</h1>
         <Link to="/i/team" className="btn secondary compact">Go back...</Link>
       </div>
+      {ranksSentence && (
+        <p className="mt-0 mb-0 muted"><i>{ranksSentence}</i></p>
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-info"><InfoIcon /><span>Dots are scattered randomly within each member's country (for better clarity and space) and don't reflect anyone's actual location. If you refresh the page, the dots will be somewhere new</span></div>
 
       {error ? <ErrorBox error={error} /> :
        (!loading && team.length === 0) ? <Empty>N</Empty> :
@@ -208,7 +338,7 @@ export default function TeamMapPage() {
              pointLng={(d: any) => d.lng}
              pointColor={() => brand}
              pointAltitude={0.02}
-             pointRadius={0.62}
+             pointRadius={(d: any) => d.radius}
              pointsMerge={false}
              pointLabel={(d: any) => `<div class="team-globe-tip">${d.member.name} ${d.member.country_flag ?? ''}<br><span>${d.member.role}</span></div>`}
              onPointClick={(d: any) => setSelected(d.member)}
