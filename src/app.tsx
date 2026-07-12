@@ -22,6 +22,7 @@ const LinksPage = lazy(() => import('./pages/links.tsx'));
 const ClaimLinkPage = lazy(() => import('./pages/claim_link.tsx'));
 const LeaderboardPage = lazy(() => import('./pages/leaderboard.tsx'));
 const TeamPage = lazy(() => import('./pages/team.tsx'));
+const TeamMapPage = lazy(() => import('./pages/team_map.tsx'));
 const SubscriptionsPage = lazy(() => import('./pages/subscriptions.tsx'));
 const SettingsPage = lazy(() => import('./pages/settings.tsx'));
 const IotmButtonPage = lazy(() => import('./pages/iotm_button.tsx'));
@@ -118,6 +119,7 @@ export default function App() {
         <Route path="/dash" element={<DashboardPage />} />
         <Route path="/i/leaderboard" element={<LeaderboardPage />} />
         <Route path="/i/team" element={<TeamPage />} />
+        <Route path="/i/team/globe" element={<TeamMapPage />} />
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
         <Route path="/settings/:category" element={<SettingsPage />} />
