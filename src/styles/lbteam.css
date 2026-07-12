@@ -317,3 +317,82 @@
 .team-card > .roles-toggle-label {
   align-self: stretch;
 }
+.team-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.team-heading-row h1 {
+  margin-bottom: 0;
+}
+
+.team-globe-wrap {
+  position: relative;
+  width: 100%;
+  height: min(68vh, 620px);
+  min-height: 380px;
+  margin-top: 14px;
+  border-radius: 14px;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--card) 0%, var(--bg) 78%);
+  border: 1px solid var(--border);
+  cursor: grab;
+}
+
+.team-globe-wrap:active {
+  cursor: grabbing;
+}
+
+.team-globe-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.team-globe-tip {
+  background: var(--surface-2, #222);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.team-globe-tip span {
+  color: var(--brand);
+  font-weight: 500;
+}
+
+.team-card--modal {
+  height: auto;
+}
+
+.globe-country-label {
+  font-size: calc(8px * var(--globe-label-scale, 1));
+  opacity: var(--globe-label-opacity, 0);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #cdd6e0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.25s ease;
+}
+
+.globe-country-label.is-hidden {
+  opacity: 0;
+}
+
+:root[data-theme="light"] .globe-country-label {
+  color: #2a3543;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.75);
+}
