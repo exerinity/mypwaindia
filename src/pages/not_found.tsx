@@ -8,8 +8,8 @@ export default function NotFoundPage() {
   return (
     <>
       <h1 className="mt-0">404</h1>
-      <p className="muted">
-        Hmm... this page doesn't exist. Try going back to the dashboard?
+      <p className="mt-0 mb-0">
+        The resource or page you're looking for no longer exists, never existed, or you may not be allowed to view it.
       </p>
       <div className="btn-row">
         <Link to="/dash" className="btn">Back to dashboard</Link>
