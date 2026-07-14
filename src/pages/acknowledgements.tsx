@@ -64,6 +64,14 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
     ],
   },
   {
+    title: 'Miscellaneous',
+    packages: [
+      { name: 'react-globe.gl', version: 2, license: 'MIT', url: 'https://github.com/vasturiano/react-globe.gl' },
+      { name: 'Three.js', version: 0.185, license: 'MIT', url: 'https://threejs.org' },
+      { name: '@twemoji/api', version: 17, license: 'MIT / CC-BY-4.0', url: 'https://github.com/jdecked/twemoji' },
+    ],
+  },
+  {
     title: 'Build tooling',
     packages: [
       { name: 'Vite', version: 6, license: 'MIT', url: 'https://vite.dev' },
