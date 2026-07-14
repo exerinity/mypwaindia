@@ -5,7 +5,7 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { getTeam } from '../api/flow.js';
 import { Skeleton, ErrorBox, Empty } from '../components/status.tsx';
 import { Modal } from '../components/modal.tsx';
-import { TeamMemberCard, type TeamMember } from '../components/team_member_card.tsx';
+import { TeamMemberCard, avatarConductor, type TeamMember } from '../components/team_member_card.tsx';
 
 export default function TeamPage() {
   usePageTitle('Meet the team');
@@ -17,9 +17,9 @@ export default function TeamPage() {
     <>
       <Modal className="slide" open={!!selectedMember} onClose={() => setSelectedMember(null)} title={selectedMember?.name ?? ''}>
         {selectedMember && (
-          <a href={selectedMember.avatar} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+          <a href={avatarConductor(selectedMember.avatar)} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
             <img
-              src={selectedMember.avatar}
+              src={avatarConductor(selectedMember.avatar)}
               alt={selectedMember.name}
               style={{ maxWidth: '100%', borderRadius: 8, display: 'block', margin: '0 auto' }}
             />

@@ -2,6 +2,14 @@ import { useState } from 'react';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { ExternalIcon } from './icons.tsx';
 
+const ASSET_HOST = 'https://mypayindia.com';
+export function avatarConductor(avatar?: string): string {
+  if (!avatar) return '';
+  if (/^https?:\/\//i.test(avatar)) return avatar;
+  if (avatar.startsWith('//')) return `https:${avatar}`;
+  return `${ASSET_HOST}/${avatar.replace(/^\/+/, '')}`;
+}
+
 export interface Age { years: number; months: number; weeks: number; days: number }
 export interface RoleHistoryEntry { role: string; start_date: string; end_date: string }
 export interface TeamMember {
@@ -105,7 +113,7 @@ export function TeamMemberCard({ m, onAvatarClick }: { m: TeamMember; onAvatarCl
       <div className="team-header">
         <img
           className="team-avatar"
-          src={m.avatar}
+          src={avatarConductor(m.avatar)}
           alt={m.name}
           width={72}
           height={72}
