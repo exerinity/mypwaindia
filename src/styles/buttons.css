@@ -13,7 +13,7 @@ a.option {
   font-size: 0.95rem;
   font-family: inherit;
   font-weight: 500;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.05s ease;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.05s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -23,9 +23,10 @@ a.option {
 
 button:hover,
 .btn:hover {
-  background: var(--brand-text);
-  color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 78%, var(--brand));
+  color: var(--brand-text);
   text-decoration: none;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--brand) 60%, transparent);
 }
 
 button:active,
@@ -52,6 +53,7 @@ button.secondary,
 button.secondary:hover,
 .btn.secondary:hover {
   background: var(--bg-elev);
+  box-shadow: none;
 }
 
 button.danger,
@@ -63,6 +65,7 @@ button.danger,
 button.danger:hover,
 .btn.danger:hover {
   background: color-mix(in srgb, var(--alert-error) 80%, black);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--alert-error) 60%, transparent);
 }
 
 button.compact,
@@ -81,6 +84,7 @@ button.ghost,
 button.ghost:hover,
 .btn.ghost:hover {
   background: var(--bg-elev);
+  box-shadow: none;
 }
 
 button.option,
@@ -104,6 +108,7 @@ a.option:hover {
   background: var(--bg-elev);
   color: var(--fg);
   text-decoration: none;
+  box-shadow: none;
 }
 
 button.option:disabled {

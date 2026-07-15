@@ -37,6 +37,7 @@ const ThemeApplyPage = lazy(() => import('./pages/theme_apply.tsx'));
 const SettingsApplyPage = lazy(() => import('./pages/settings_apply.tsx'));
 const NotFoundPage = lazy(() => import('./pages/not_found.tsx'));
 const FlowNotFoundPage = lazy(() => import('./pages/flow_not_found.tsx'));
+const ExternalRedirectPage = lazy(() => import('./pages/external_redirect.tsx'));
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -60,10 +61,6 @@ function PayLinkRedirect() {
   return <Navigate to={token ? `/links/claim/${token}` : '/links/claim'} replace />;
 }
 
-function ExternalRedirect({ to }: { to: string }) {
-  window.location.replace(to);
-  return null;
-}
 
 function ThemeRedirect() {
   const { search } = useLocation();
@@ -72,8 +69,7 @@ function ThemeRedirect() {
 
 function MerchantRedirect() {
   const { '*': splat } = useParams();
-  window.location.replace(`https://mypayindia.com/merchant/${splat ?? ''}`);
-  return null;
+  return <ExternalRedirectPage to={`https://mypayindia.com/merchant/${splat ?? ''}`} />;
 }
 
 export default function App() {
@@ -92,9 +88,9 @@ export default function App() {
 
       <Route path="/leaderboard" element={<Navigate to="/i/leaderboard" replace />} />
       <Route path="/team" element={<Navigate to="/i/team" replace />} />
-      <Route path="/docs" element={<ExternalRedirect to="https://mypayindia.com/docs" />} />
-      <Route path="/app" element={<ExternalRedirect to="https://mypayindia.com/app" />} />
-      <Route path="/signup" element={<ExternalRedirect to="https://mypayindia.com/accountservices/register" />} />
+      <Route path="/docs" element={<ExternalRedirectPage to="https://mypayindia.com/docs" />} />
+      <Route path="/app" element={<ExternalRedirectPage to="https://mypayindia.com/app" />} />
+      <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/accountservices/register" />} />
       <Route path="/accountservices/dashboard" element={<Navigate to="/dash" replace />} />
       <Route path="/accountservices/transhist" element={<Navigate to="/account/history" replace />} />
       <Route path="/accountservices/trans" element={<TransactionRedirect />} />

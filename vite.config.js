@@ -75,7 +75,7 @@ export default defineConfig({
           if (id.match(/pages\/(iotm|iotm_button)/)) return 'iotm';
           if (id.match(/pages\/(cli|toys)/)) return 'tools';
           if (id.match(/pages\/(release_notes|acknowledgements|restrictions|connection)/)) return 'info';
-          if (id.match(/pages\/(not_found|flow_not_found|theme_apply)/)) return 'misc';
+          if (id.match(/pages\/(not_found|flow_not_found|theme_apply|external_redirect)/)) return 'misc';
           if (id.match(/pages\/(account|dashboard)/)) return 'client';
           if (id.match(/pages\/cards/)) return 'scambait';
           if (id.match(/pages\/subscriptions/)) return 'subs';
