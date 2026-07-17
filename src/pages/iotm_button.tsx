@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
@@ -9,13 +9,13 @@ import { checkSubscription, createSubscribeSession } from '../api/subscribe.js';
 import { ArrowLeftIcon, ExternalIcon, ChevronRight, ErrorIcon } from '../components/icons.tsx';
 import { ErrorBox, Skeleton } from '../components/status.tsx';
 import { Modal } from '../components/modal.tsx';
-
-const ConfirmModal = lazy(() => import('../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
-import { lazy, Suspense } from 'react';
-
-const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 import { hideGet, hideSet } from '../utils/storage.ts';
 import { useLazyModule } from '../hooks/lazy_module.ts';
+
+// This shit probably doesnt work anymore but who cares
+
+const ConfirmModal = lazy(() => import('../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 
 const MIN_CLICK_DELAY_MS = 100;
 const CLICK_BATCH_SIZE = 10;
@@ -434,7 +434,7 @@ export default function IotmButtonPage() {
     setLoading(true);
     setError(null);
 
-    fetch(`${API_BASE}/accountservices/iotm/button/?minimal`, {
+    fetch(`${API_BASE}/iotm/button?minimal`, {
       headers: { Authorization: `Bearer ${active.token}` },
       credentials: 'include',
     })
@@ -479,7 +479,7 @@ export default function IotmButtonPage() {
       }
       if (now < nextRefreshAt.current) return;
       nextRefreshAt.current = now + 10000;
-      fetch(`${API_BASE}/accountservices/iotm/button/?minimal`, {
+      fetch(`${API_BASE}/iotm/button?minimal`, {
         headers: { Authorization: `Bearer ${active.token}` },
         credentials: 'include',
       })
@@ -506,7 +506,8 @@ export default function IotmButtonPage() {
     if (!active?.token) return;
     tempClicks.current = 0;
 
-    fetch(`${API_BASE}/accountservices/iotm/button/?click`, {
+    fetch(`${API_BASE}/iotm/button/click`, {
+      method: 'POST',
       headers: { Authorization: `Bearer ${active.token}`, Accept: 'application/json' },
       credentials: 'include',
     })
