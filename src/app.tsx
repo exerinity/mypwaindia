@@ -2,13 +2,11 @@ import { Routes, Route, Navigate, Outlet, useLocation, useParams, type Location 
 import { useEffect, lazy, Suspense } from 'react';
 import { useSettings } from './context/settings_ctx.tsx';
 import { CardSkeleton } from './components/app_skeleton.tsx';
+import { FlowModals, isFlowModalPath } from './flow/flow_conductor.tsx';
 
 const AppLayout = lazy(() => import('./components/app_layout.tsx').then((m) => ({ default: m.AppLayout })));
 const RequireAuth = lazy(() => import('./components/require_auth.tsx').then((m) => ({ default: m.RequireAuth })));
-const LoginPage = lazy(() => import('./pages/login.tsx'));
-const LogoutPage = lazy(() => import('./pages/logout.tsx'));
 const OnboardingPage = lazy(() => import('./pages/onboarding.tsx'));
-const FinetunePage = lazy(() => import('./pages/finetune.tsx'));
 const DashboardPage = lazy(() => import('./pages/dashboard.tsx'));
 const AccountPage = lazy(() => import('./pages/account.tsx'));
 const CardsPage = lazy(() => import('./pages/cards.tsx'));
@@ -16,9 +14,7 @@ const TransferPage = lazy(() => import('./pages/transfer.tsx'));
 const BulkTransferPage = lazy(() => import('./pages/bulk_transfer.tsx'));
 const HistoryPage = lazy(() => import('./pages/history.tsx'));
 const StatementsPage = lazy(() => import('./pages/statements.tsx'));
-const TransactionPage = lazy(() => import('./pages/transaction.tsx'));
 const OldTransactionPage = lazy(() => import('./pages/old_transaction.tsx'));
-const ClaimModal = lazy(() => import('./pages/claim.tsx'));
 const LinksPage = lazy(() => import('./pages/links.tsx'));
 const LeaderboardPage = lazy(() => import('./pages/leaderboard.tsx'));
 const TeamPage = lazy(() => import('./pages/team.tsx'));
@@ -36,7 +32,7 @@ const ConnectionPage = lazy(() => import('./pages/connection.tsx'));
 const ThemeApplyPage = lazy(() => import('./pages/theme_apply.tsx'));
 const SettingsApplyPage = lazy(() => import('./pages/settings_apply.tsx'));
 const NotFoundPage = lazy(() => import('./pages/not_found.tsx'));
-const FlowNotFoundPage = lazy(() => import('./pages/flow_not_found.tsx'));
+const Flowback = lazy(() => import('./flow/shell_fallback.tsx'));
 const ExternalRedirectPage = lazy(() => import('./pages/external_redirect.tsx'));
 
 function LoginRedirect() {
@@ -81,14 +77,13 @@ function MerchantRedirect() {
 export default function App() {
   const location = useLocation();
   const bgLoc = (location.state as { backgroundLocation?: Location })?.backgroundLocation;
-  const istr = location.pathname.startsWith('/i/flow/transaction/');
-  const iscl = location.pathname.startsWith('/i/flow/links/interim/');
+  const modalPath = isFlowModalPath(location.pathname);
 
   useEffect(() => { import('./utils/canonical.ts').then(({ setCanonical }) => setCanonical(location.pathname)); }, [location.pathname]);
 
   return (
     <>
-    {(!istr && !iscl || bgLoc) && <Routes location={bgLoc || location}>
+    {(!modalPath || bgLoc) && <Routes location={bgLoc || location}>
       <Route path="/pay/link" element={<PayLinkRedirect />} />
 
       <Route path="/login" element={<LoginRedirect />} />
@@ -108,10 +103,7 @@ export default function App() {
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
 
       <Route element={<Suspense fallback={<CardSkeleton />}><Outlet /></Suspense>}>
-        <Route path="/i/flow/login" element={<LoginPage />} />
-        <Route path="/i/flow/logout" element={<LogoutPage />} />
         <Route path="/i/flow/onboarding" element={<OnboardingPage />} />
-        <Route path="/i/flow/onboarding/wizard" element={<FinetunePage />} />
       </Route>
 
       <Route element={<AppLayout />}>
@@ -124,7 +116,7 @@ export default function App() {
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
         <Route path="/settings/:category" element={<SettingsPage />} />
-        <Route path="/settings:old" element={<FlowNotFoundPage />} />
+        <Route path="/settings:old" element={<Flowback />} />
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
         <Route path="/i/flow/scambaitmode" element={<Navigate to="/settings/scambait" replace />} />
         <Route path="/i/flow/connection" element={<ConnectionPage />} />
@@ -157,35 +149,11 @@ export default function App() {
           <Route path="/i/flow/transaction:old/:id" element={<OldTransactionPage />} />
         </Route>
 
-        <Route path="/i/flow/*" element={<FlowNotFoundPage />} />
+        <Route path="/i/flow/*" element={<Flowback />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>}
-    {istr && (
-      <Suspense fallback={<CardSkeleton />}>
-        <TransactionPage />
-      </Suspense>
-    )}
-    {iscl && (
-      <Suspense fallback={<CardSkeleton />}>
-        <ClaimModal />
-      </Suspense>
-    )}
-    {bgLoc && location.pathname === '/i/flow/logout' && (
-      <Suspense fallback={<CardSkeleton />}>
-        <LogoutPage />
-      </Suspense>
-    )}
-    {bgLoc && location.pathname === '/i/flow/login' && (
-      <Suspense fallback={<CardSkeleton />}>
-        <LoginPage />
-      </Suspense>
-    )}
-    {bgLoc && location.pathname === '/i/flow/onboarding/wizard' && (
-      <Suspense fallback={<CardSkeleton />}>
-        <FinetunePage />
-      </Suspense>
-    )}
+    <FlowModals />
     </>
   );
 }

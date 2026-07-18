@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import FlowNotFoundPage from './flow_not_found.tsx';
+import Flowback from '../flow/shell_fallback.tsx';
 import { useSettings, CUSTOM_VAR_KEYS } from '../context/settings_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
@@ -83,7 +83,7 @@ export default function ThemeApplyPage() {
     navigate('/settings/appearance');
   }
 
-  if (!parsed) return <FlowNotFoundPage />;
+  if (!parsed) return <Flowback />;
   usePageTitle('Apply theme');
 
   const entries = [

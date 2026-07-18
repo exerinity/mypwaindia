@@ -28,7 +28,7 @@ const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then
 const AddAccountModal = lazy(() => import('../components/add_acc_modal.tsx').then((m) => ({ default: m.AddAccountModal })));
 const HoldButton = lazy(() => import('../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
 import { hideGet, hideSetValue } from '../utils/storage.ts';
-import FlowNotFoundPage from './flow_not_found.tsx';
+import Flowback from '../flow/shell_fallback.tsx';
 
 
 interface Session { id: string; device_info?: string; ip?: string; created_at: string; last_active: string; current?: boolean; invalidated?: boolean }
@@ -513,7 +513,7 @@ export default function SettingsPage() {
   }
 
   function renderDetail() {
-    if (isUnknownCategory) return <FlowNotFoundPage />;
+    if (isUnknownCategory) return <Flowback />;
 
     switch (activeCategory) {
 

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import FlowNotFoundPage from './flow_not_found.tsx';
+import Flowback from '../flow/shell_fallback.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import type { Settings } from '../context/settings_ctx.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
@@ -32,7 +32,7 @@ export default function SettingsApplyPage() {
   }, [fields, hasHide, included]);
 
   if (!settingsIo) return null;
-  if (!payload) return <FlowNotFoundPage />;
+  if (!payload) return <Flowback />;
   usePageTitle('Apply settings');
 
   const toggle = (key: string) =>
