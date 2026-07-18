@@ -10,8 +10,6 @@ export function AppFooter({ version, style }: { version: string; style?: CSSProp
       {' | '}
       {window.location.hostname === 'mypayindia.sbs' ? 'production' : 'staging'}
       {' | '}
-      <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer">legacy</a>
-      {' | '}
       <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer">MyPayIndia.com</a>
       {' | '}
       <Link to="/i/acknowledgements">acknowledgements</Link>

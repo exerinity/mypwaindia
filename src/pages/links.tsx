@@ -1,5 +1,6 @@
 import { ContentSkeleton } from '../components/app_skeleton.tsx';
 import React, { useState, useMemo, lazy, Suspense } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { useCachedQuery } from '../hooks/cached_query.js';
@@ -30,6 +31,8 @@ export default function LinksPage() {
   const { active } = useAuth();
   const { settings } = useSettings();
   const { userInfo, refetchUserInfo } = useGlobalData();
+  const location = useLocation();
+  const navigate = useNavigate();
   const toast = useToast();
   const moneyMod = useLazyModule(() => import('../utils/money.js'));
   const datesMod = useLazyModule(() => import('../utils/dates.js'));
@@ -40,6 +43,7 @@ export default function LinksPage() {
   const [creating, setCreating] = useState(false);
   const [rawInput, setRawInput] = useState('');
   const [editingAmount, setEditingAmount] = useState(false);
+  const [claimInput, setClaimInput] = useState('');
   interface Link { id: number; token: string; amount: number; status: string; url: string; note?: string; created: string }
   const [cancelTarget, setCancelTarget] = useState<Link | null>(null);
   const [showCancelAll, setShowCancelAll] = useState(false);
@@ -81,6 +85,17 @@ export default function LinksPage() {
     const rupees = parseFloat(rawInput);
     if (!isNaN(rupees) && rupees > 0) setStackPaisa(Math.round(rupees * 100));
     setRawInput('');
+  }
+
+  function lookupClaim() {
+    let t = claimInput.trim();
+    if (!t) return;
+    try {
+      const url = new URL(t);
+      const fromUrl = url.searchParams.get('token');
+      if (fromUrl) t = fromUrl;
+    } catch {}
+    navigate(`/i/flow/links/interim/${encodeURIComponent(t)}`, { state: { backgroundLocation: location } });
   }
 
   async function create() {
@@ -201,6 +216,22 @@ export default function LinksPage() {
               <WarningIcon /><span>You don't have that much ({formatINR(balance)} available). The server will reject it. I'm warning you in advance...</span>
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="card mb-2">
+        <h3 className="mt-0">Claim a payment link</h3>
+        <FloatingInput
+          label="Paste a link or token"
+          type="text"
+          value={claimInput}
+          onChange={(e) => setClaimInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && lookupClaim()}
+        />
+        <div style={{ marginTop: 10 }}>
+          <button className="secondary" onClick={lookupClaim} disabled={!claimInput.trim()}>
+            Look up
+          </button>
         </div>
       </div>
 

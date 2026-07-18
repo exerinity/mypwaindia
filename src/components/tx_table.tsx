@@ -13,6 +13,7 @@ export interface Transaction {
 import { Link, useLocation } from 'react-router-dom';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
+import { SearchIcon } from './icons.tsx';
 
 const RESULT_OPTIONS = [10, 25, 50, 100, 'all'];
 
@@ -41,6 +42,7 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
   const location = useLocation();
   const [sort, setSort] = useState('date_desc');
   const [limit, setLimit] = useState<number | 'all'>(25);
+  const [search, setSearch] = useState('');
   const datesMod = useLazyModule(() => import('../utils/dates.js'));
   const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
 
@@ -56,8 +58,19 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
     return ' ↕';
   }
 
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return transactions || [];
+    return (transactions || []).filter((tx) =>
+      (tx.recipient?.username || '').toLowerCase().includes(q) ||
+      (tx.sender?.username || '').toLowerCase().includes(q) ||
+      tx.transaction_id.toLowerCase().includes(q) ||
+      String(tx.id).includes(q)
+    );
+  }, [transactions, search]);
+
   const sorted = useMemo(() => {
-    const arr = [...(transactions || [])];
+    const arr = [...filtered];
     arr.sort((a, b) => {
       switch (sort) {
         case 'date_asc':      return new Date(a.created).getTime() - new Date(b.created).getTime();
@@ -72,7 +85,7 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
       }
     });
     return arr;
-  }, [transactions, sort]);
+  }, [filtered, sort]);
 
   const sliced = limit === 'all' ? sorted : sorted.slice(0, Number(limit));
 
@@ -83,19 +96,29 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
   return (
     <>
       <div className="table-controls">
+        <div className="search-field">
+          <SearchIcon />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Filter by name, sender, or ID"
+            aria-label="Search transactions"
+          />
+        </div>
         {!hideLimitControl && (
           <label>
-            Show up to
+            Show up to...
             <select value={limit} onChange={(e) => setLimit(e.target.value === 'all' ? 'all' : Number(e.target.value))}>
               {RESULT_OPTIONS.map((n) => (
                 <option key={n} value={n}>{n === 'all' ? 'All' : `${n}`}</option>
               ))}
             </select>
-            entries
+            transactions
           </label>
         )}
         <label>
-          Sort by
+          Sort by...
           <select value={sort} onChange={(e) => setSort(e.target.value)}>
             {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
@@ -118,6 +141,9 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
             </tr>
           </thead>
           <tbody>
+            {!sliced.length && (
+              <tr><td colSpan={6} className="empty">Nope!</td></tr>
+            )}
             {sliced.map((tx) => {
               const outgoing = currentUserId != null && tx.sender?.id === currentUserId;
               return (

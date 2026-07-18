@@ -3,17 +3,17 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { ExternalIcon, ChevronRight } from '../components/icons.tsx';
 
 const SKILL_GAMES = [
-  { label: 'Intelligence Identifier', href: 'https://mypayindia.com/accountservices/iotm/intelligenceid' },
-  { label: 'Minesweeper', href: 'https://mypayindia.com/accountservices/iotm/minesweeper' },
-  { label: 'Wordle', href: 'https://mypayindia.com/accountservices/iotm/wordle' },
+  { label: 'Intelligence Identifier', href: 'https://mypayindia.com/iotm/intelligenceid' },
+  { label: 'Minesweeper', href: 'https://mypayindia.com/iotm/minesweeper' },
+  { label: 'Wordle', href: 'https://mypayindia.com/iotm/wordle' },
   { label: 'Button', to: '/iotm/button' },
 ];
 
 const LUCK_GAMES = [
-  { label: 'Coinflip', href: 'https://mypayindia.com/accountservices/iotm/coinflip' },
-  { label: 'Slots', href: 'https://mypayindia.com/accountservices/iotm/slots' },
-  { label: 'Mines', href: 'https://mypayindia.com/accountservices/iotm/mines' },
-  { label: 'Roulette', href: 'https://mypayindia.com/accountservices/iotm/roulette' },
+  { label: 'Coinflip', href: 'https://mypayindia.com/iotm/coinflip' },
+  { label: 'Slots', href: 'https://mypayindia.com/iotm/slots' },
+  { label: 'Mines', href: 'https://mypayindia.com/iotm/mines' },
+  { label: 'Roulette', href: 'https://mypayindia.com/iotm/roulette' },
 ];
 
 type GameEntry = { label: string; href: string; to?: never } | { label: string; to: string; href?: never };

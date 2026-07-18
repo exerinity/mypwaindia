@@ -74,3 +74,22 @@
   width: auto;
   min-width: 120px;
 }
+
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-field svg {
+  position: absolute;
+  left: 10px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.search-field input {
+  width: auto;
+  min-width: 200px;
+  padding-left: 32px;
+}

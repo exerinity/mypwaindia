@@ -26,7 +26,6 @@ button:hover,
   background: color-mix(in srgb, var(--brand) 78%, var(--brand));
   color: var(--brand-text);
   text-decoration: none;
-  box-shadow: 0 0 10px color-mix(in srgb, var(--brand) 60%, transparent);
 }
 
 button:active,
@@ -65,7 +64,7 @@ button.danger,
 button.danger:hover,
 .btn.danger:hover {
   background: color-mix(in srgb, var(--alert-error) 80%, black);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--alert-error) 60%, transparent);
+  box-shadow: none;
 }
 
 button.compact,

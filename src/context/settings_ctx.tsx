@@ -22,8 +22,7 @@ export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/account/restrictions', label: 'Active restrictions' },
   { value: '/dash/statements', label: 'Statements' },
   { value: '/dash/cards', label: 'Cards' },
-  { value: '/links', label: 'Create a payment link' },
-  { value: '/links/claim', label: 'Claim a payment link' },
+  { value: '/i/flow/links', label: 'Payment links' },
   { value: '/settings/appearance', label: 'Settings' },
   { value: '/i/leaderboard', label: 'Leaderboard' },
   { value: '/i/team', label: 'Meet the team' },
@@ -49,8 +48,7 @@ export const DASHBOARD_BUTTON_STYLES: { value: DashboardButtonStyle; label: stri
 
 export const DEFAULT_DASHBOARD_BUTTONS: DashboardButton[] = [
   { route: '/account/transfer', style: 'primary' },
-  { route: '/links', style: 'secondary' },
-  { route: '/links/claim', style: 'secondary' },
+  { route: '/i/flow/links', style: 'secondary' },
   { route: '/account/history', style: 'secondary' },
 ];
 

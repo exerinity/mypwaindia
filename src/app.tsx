@@ -18,8 +18,8 @@ const HistoryPage = lazy(() => import('./pages/history.tsx'));
 const StatementsPage = lazy(() => import('./pages/statements.tsx'));
 const TransactionPage = lazy(() => import('./pages/transaction.tsx'));
 const OldTransactionPage = lazy(() => import('./pages/old_transaction.tsx'));
+const ClaimModal = lazy(() => import('./pages/claim.tsx'));
 const LinksPage = lazy(() => import('./pages/links.tsx'));
-const ClaimLinkPage = lazy(() => import('./pages/claim_link.tsx'));
 const LeaderboardPage = lazy(() => import('./pages/leaderboard.tsx'));
 const TeamPage = lazy(() => import('./pages/team.tsx'));
 const TeamMapPage = lazy(() => import('./pages/team_map.tsx'));
@@ -51,14 +51,20 @@ function HomeRedirect() {
 
 function TransactionRedirect() {
   const { search } = useLocation();
-  const id = new URLSearchParams(search).get('id');
+  const { id: pathId } = useParams();
+  const id = pathId ?? new URLSearchParams(search).get('id');
   return <Navigate to={id ? `/i/flow/transaction/${id}` : '/dash'} replace />;
 }
 
 function PayLinkRedirect() {
   const { search } = useLocation();
   const token = new URLSearchParams(search).get('token');
-  return <Navigate to={token ? `/links/claim/${token}` : '/links/claim'} replace />;
+  return <Navigate to={token ? `/i/flow/links/interim/${encodeURIComponent(token)}` : '/account'} replace />;
+}
+
+function ClaimLinkRedirect() {
+  const { token } = useParams();
+  return <Navigate to={`/i/flow/links/interim/${encodeURIComponent(token ?? '')}`} replace />;
 }
 
 
@@ -76,12 +82,13 @@ export default function App() {
   const location = useLocation();
   const bgLoc = (location.state as { backgroundLocation?: Location })?.backgroundLocation;
   const istr = location.pathname.startsWith('/i/flow/transaction/');
+  const iscl = location.pathname.startsWith('/i/flow/links/interim/');
 
   useEffect(() => { import('./utils/canonical.ts').then(({ setCanonical }) => setCanonical(location.pathname)); }, [location.pathname]);
 
   return (
     <>
-    {(!istr || bgLoc) && <Routes location={bgLoc || location}>
+    {(!istr && !iscl || bgLoc) && <Routes location={bgLoc || location}>
       <Route path="/pay/link" element={<PayLinkRedirect />} />
 
       <Route path="/login" element={<LoginRedirect />} />
@@ -90,15 +97,13 @@ export default function App() {
       <Route path="/team" element={<Navigate to="/i/team" replace />} />
       <Route path="/docs" element={<ExternalRedirectPage to="https://mypayindia.com/docs" />} />
       <Route path="/app" element={<ExternalRedirectPage to="https://mypayindia.com/app" />} />
-      <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/accountservices/register" />} />
-      <Route path="/accountservices/dashboard" element={<Navigate to="/dash" replace />} />
-      <Route path="/accountservices/transhist" element={<Navigate to="/account/history" replace />} />
-      <Route path="/accountservices/trans" element={<TransactionRedirect />} />
-      <Route path="/accountservices/transfer" element={<Navigate to="/account/transfer" replace />} />
-      <Route path="/accountservices/iotm/button/" element={<Navigate to="/iotm/button" replace />} />
-      <Route path="/accountservices/iotm/button/" element={<Navigate to="/iotm/button" replace />} />
-      <Route path="/accountservices/paymentlinks" element={<Navigate to="/links" replace />} />
-      <Route path="/accountservices/logout" element={<Navigate to="/i/flow/logout" replace />} />
+      <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/auth/register" />} />
+      <Route path="/account/transfers" element={<Navigate to="/account/history" replace />} />
+      <Route path="/account/transfers/:id" element={<TransactionRedirect />} />
+      <Route path="/account/transfers/new" element={<Navigate to="/account/transfer" replace />} />
+      <Route path="/iotm/button/" element={<Navigate to="/iotm/button" replace />} />
+      <Route path="/account/payment-links" element={<Navigate to="/i/flow/links" replace />} />
+      <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
 
@@ -138,9 +143,12 @@ export default function App() {
           <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
           <Route path="/account/history" element={<HistoryPage />} />
           <Route path="/i/flow/subscriptions" element={<SubscriptionsPage />} />
-          <Route path="/links" element={<LinksPage />} />
-          <Route path="/links/claim" element={<ClaimLinkPage />} />
-          <Route path="/links/claim/:token" element={<ClaimLinkPage />} />
+          <Route path="/i/flow/links" element={<LinksPage />} />
+          <Route path="/i/flow/links/claim" element={<Navigate to="/i/flow/links" replace />} />
+          <Route path="/i/flow/links/claim/:token" element={<ClaimLinkRedirect />} />
+          <Route path="/links" element={<Navigate to="/i/flow/links" replace />} />
+          <Route path="/links/claim" element={<Navigate to="/i/flow/links" replace />} />
+          <Route path="/links/claim/:token" element={<ClaimLinkRedirect />} />
           <Route path="/dash/statements" element={<StatementsPage />} />
           <Route path="/dash/cards" element={<CardsPage />} />
           <Route path="/i/flow/button" element={<Navigate to="/iotm/button" replace />} />
@@ -156,6 +164,11 @@ export default function App() {
     {istr && (
       <Suspense fallback={<CardSkeleton />}>
         <TransactionPage />
+      </Suspense>
+    )}
+    {iscl && (
+      <Suspense fallback={<CardSkeleton />}>
+        <ClaimModal />
       </Suspense>
     )}
     {bgLoc && location.pathname === '/i/flow/logout' && (

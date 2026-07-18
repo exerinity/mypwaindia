@@ -14,6 +14,16 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '17a',
+    date: '18 Jul 2026',
+    notes: [
+      <>The payment links category has been removed and moved to a single page: <Link to="/i/flow/links">here</Link></>,
+      'Payment links are now inspected and claimed through modals',
+      'Migrated most MyPayIndia.com routes and links',
+      <>Added a search bar to <Link to="/account/history">the transaction history table</Link></>
+    ]
+  },
+  {
     version: '17',
     date: '12 Jul 2026',
     notes: [
@@ -179,7 +189,7 @@ export const RELEASES: Release[] = [
     date: '20 May 2026',
     notes: [
       <>Added a rudimental <Link to="/i/flow/connection">connection helper</Link> and offline banner</>,
-      <>Refreshed the <Link to="/links/claim">claim payment link</Link> page</>,
+      <>Refreshed the <Link to="/i/flow/links">claim payment link</Link> page</>,
       'Tables in the transaction history and account session list are now sortable by clicking on the column headers',
       'Added a Remove all button to the payment links page to nullify all active links',
       'Removed the animations from the team page'
@@ -195,7 +205,7 @@ export const RELEASES: Release[] = [
       <>Added a <Link to="/account/restrictions">discrete restrictions page</Link></>,
       'Added many redirects to mirror the main website, so for example, visiting /accountservices/dashboard (from the main website) will take you to the dashboard (backward compatibility or whateverrr)',
       'Made icons for alert boxes',
-      <>Overhauled <Link to="/account/transfer">the transfer page</Link> and the <Link to="/links">payment links page</Link></>,
+      <>Overhauled <Link to="/account/transfer">the transfer page</Link> and the <Link to="/i/flow/links">payment links page</Link></>,
       'Replaced most loading messages w/ spinners with skeleton shimmer'
     ]
   },

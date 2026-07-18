@@ -160,7 +160,7 @@ const CATEGORIES: Category[] = [
   { id: 'sessions', label: 'Sessions', desc: 'View and manage active login sessions', authRequired: true },
   { id: 'logout', label: 'Log out', desc: 'Log out of MyPWAIndia', authRequired: true, to: '/i/flow/logout' },
   { id: 'toys', label: 'Toys', desc: 'Poke around with UI components', to: '/i/flow/mpti', hideWhenScambait: true },
-  { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/accountservices/accsettings' },
+  { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/account/settings' },
   { id: 'mypayindia', label: 'MyPayIndia.com', desc: 'Visit the main website', href: 'https://mypayindia.com' },
 ];
 
@@ -1601,7 +1601,7 @@ export default function SettingsPage() {
         </div>
         <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>
           You should only use this in extreme cases,
-          like if your password has been leaked and multiple people have access to your account. In that case, you should first <a href="https://mypayindia.com/accountservices/accsettings" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>change your password <ExternalIcon size={12} /></a>
+          like if your password has been leaked and multiple people have access to your account. In that case, you should first <a href="https://mypayindia.com/account/settings" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>change your password <ExternalIcon size={12} /></a>
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
           {([0, 1, 2] as const).map((i) => (

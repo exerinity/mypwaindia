@@ -28,7 +28,7 @@ const THX = [
   {
     name: 'IBM_PC',
     url: 'https://ibmpc.gr',
-    idea: <>Wrote the CSS for <Link to="/iotm/button">the button</Link> on <a href="https://mypayindia.com/accountservices/iotm/button/" target="_blank">the main site</a> that I "borrowed"</>
+    idea: <>Wrote the CSS for <Link to="/iotm/button">the button</Link> on <a href="https://mypayindia.com/iotm/button/" target="_blank">the main site</a> that I "borrowed"</>
   },
   {
     name: 'you!',

@@ -11,7 +11,6 @@ import {
   TransferIcon,
   HistoryIcon,
   LinkIcon,
-  ClaimIcon,
   TrophyIcon,
   TeamIcon,
   NotesIcon,
@@ -31,22 +30,15 @@ const NAV_GROUPS: NavGroup[] = [
     title: 'Your account',
     loggedOutTitle: 'Welcome',
     items: [
-      { to: '/dash', label: 'Dashboard', loggedOutLabel: 'MyPWAIndia', end: true, icon: DashboardIcon },
-      { to: '/account', label: 'Account', icon: UserIcon, requireAuth: true },
+      { to: '/dash', label: 'Dashboard', loggedOutLabel: 'Welcome', end: true, icon: DashboardIcon },
+      { to: '/account', label: 'Account info', icon: UserIcon, requireAuth: true },
       { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon, requireAuth: true },
       { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true, requireAuth: true },
+      { to: '/i/flow/links', label: 'Payment links', icon: LinkIcon, hideInScambait: true, requireAuth: true },
       { to: '/i/flow/subscriptions', label: 'Subscriptions', icon: StoreIcon, hideInScambait: true, requireAuth: true },
       { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true, requireAuth: true },
       { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true, requireAuth: true },
       { to: '/iotm', label: 'Investment Opportunities™', icon: TrophyIcon, hideInScambait: true, requireAuth: true },
-    ],
-  },
-  {
-    title: 'Payment links',
-    hideInScambait: true,
-    items: [
-      { to: '/links', label: 'My links', icon: LinkIcon, requireAuth: true },
-      { to: '/links/claim', label: 'Claim a link', icon: ClaimIcon, requireAuth: true },
     ],
   },
   {
@@ -68,7 +60,7 @@ const NAV_GROUPS: NavGroup[] = [
     ],
     scambaitTitle: 'Control',
     defaultTitle: 'MyPWAIndia',
-    loggedOutTitle: 'Control',
+    loggedOutTitle: 'More',
   },
 ];
 

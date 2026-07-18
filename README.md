@@ -124,7 +124,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/settings** - app settings (takes you to /settings/appearance)
 - **/settings/:category** - settings by category
 
-There's also a pile of compatibility redirects mirroring MyPayIndia.com's own URLs (accountservices mostly + meta pages), so you can take a mypayindia.com link, swap the `.com` for `.sbs`, and get the PWA experience. The few things the PWA doesn't do bounce you back to MyPayIndia.com
+There's also a pile of compatibility redirects mirroring MyPayIndia.com's own URLs (e.g., /account/transfers/new > /account/transfer), so you can take a mypayindia.com link, swap the `.com` for `.sbs`, and get the PWA experience. The few things the PWA doesn't do bounce you back to MyPayIndia.com
 
 I have no idea what they mean inside Twitter, but **i** means both internal and information, **i/flow** means internal flow and control
 

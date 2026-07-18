@@ -178,7 +178,7 @@ export default function LoginPage() {
             {busy ? <><span className="spinner" /> {stagingLogin ? 'Logging into staging...' : 'Logging in...'}</> : <>Log in</>}
           </button>
           <a
-            href="https://mypayindia.com/accountservices/register"
+            href="https://mypayindia.com/auth/register"
             target="_blank"
             rel="noreferrer"
             className="btn secondary"

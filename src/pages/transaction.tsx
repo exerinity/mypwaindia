@@ -106,7 +106,7 @@ export default function TransactionModal() {
   }
 
   const outgoing = data && active ? data.sender?.id === active.id : false;
-  const deeplinkOfficial = data ? `https://mypayindia.com/accountservices/trans?id=${data.id}` : '';
+  const deeplinkOfficial = data ? `https://mypayindia.com/account/transfers/${data.id}` : '';
   const deeplinkAlt = data ? `https://mypayindia.sbs/i/flow/transaction/${data.transaction_id}` : '';
 
   return (
