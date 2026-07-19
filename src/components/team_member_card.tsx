@@ -131,11 +131,13 @@ export function TeamMemberCard({ m, onAvatarClick }: { m: TeamMember; onAvatarCl
             )}
             {m.pride_flags?.map((f) => <PrideFlagTag key={f} flag={f} />)}
           </div>
-          <div className="team-role">{m.role}</div>
-          <div className="team-joined">
-            joined {formatJoinDate(m.joined)}
-            {m.joined && (() => { const a = calcAge(m.joined); return a ? <> <AgeTag age={a} /></> : null; })()}
-          </div>
+          {m.role && m.role !== '-' && <div className="team-role">{m.role}</div>}
+          {m.status !== 'special_thanks' && (
+            <div className="team-joined">
+              joined {formatJoinDate(m.joined)}
+              {m.joined && (() => { const a = calcAge(m.joined); return a ? <> <AgeTag age={a} /></> : null; })()}
+            </div>
+          )}
         </div>
       </div>
       {m.quote && <p className="team-quote">"{m.quote}"</p>}
