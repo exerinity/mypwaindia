@@ -785,6 +785,17 @@ export default function SettingsPage() {
                 Automatically update the app when a new version is available
               </label>
             </div>
+            <div className="checkbox-row" style={{ marginTop: '0.5rem', marginLeft: '1.5rem' }}>
+              <input
+                type="checkbox"
+                id="suppress-update-toast"
+                checked={settings.suppressUpdateToast}
+                onChange={(e) => update({ suppressUpdateToast: e.target.checked })}
+              />
+              <label htmlFor="suppress-update-toast" style={{ margin: 0 }}>
+                Suppress "MyPWAIndia has been updated" toast
+              </label>
+            </div>
             <div className="checkbox-row" style={{ marginTop: '0.5rem' }}>
               <input
                 type="checkbox"

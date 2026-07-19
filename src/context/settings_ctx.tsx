@@ -73,6 +73,7 @@ export interface Settings {
   autoRefresh: boolean;
   autoRefreshOnlyWhenFocused: boolean;
   autoUpdate: boolean;
+  suppressUpdateToast: boolean;
   displayName: 'username' | 'first_name' | 'full_name';
   scambait: boolean;
   homePage: string;
@@ -96,6 +97,7 @@ export const DEFAULT_SETTINGS: Settings = {
   autoRefresh: true,
   autoRefreshOnlyWhenFocused: true,
   autoUpdate: false,
+  suppressUpdateToast: false,
   displayName: 'username',
   scambait: false,
   homePage: '/dash',

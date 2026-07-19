@@ -25,6 +25,7 @@ export const SETTINGS_FIELD_LABELS: { key: keyof Settings; label: string }[] = [
   { key: 'autoRefresh', label: 'Auto-refresh data' },
   { key: 'autoRefreshOnlyWhenFocused', label: 'Auto-refresh only when focused' },
   { key: 'autoUpdate', label: 'Auto-update app' },
+  { key: 'suppressUpdateToast', label: 'Suppress update notification' },
   { key: 'swEnabled', label: 'Service worker enabled' },
   { key: 'scambait', label: 'Scambait mode' },
 ];
@@ -103,7 +104,7 @@ export function parseSettingsExport(raw: string): SettingsExport | null {
 }
 
 const BOOL_KEYS: (keyof Settings)[] = [
-  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'scambait', 'swEnabled',
+  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'scambait', 'swEnabled',
 ];
 const STRING_KEYS: (keyof Settings)[] = ['theme', 'accent', 'displayName', 'homePage'];
 

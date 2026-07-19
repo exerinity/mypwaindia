@@ -62,7 +62,7 @@ export function AppLayout() {
     const latest = RELEASES[0].version;
     const stored = storageGet<string | null>(KEYS.LAST_VERSION, null);
     if (stored === latest) return;
-    if (announce && stored !== null) {
+    if (announce && stored !== null && !settings.suppressUpdateToast) {
       const id = toast.push("MyPWAIndia has been updated - would you like to read what's new?", 'success', 0, {
         label: 'Go',
         onClick: () => {
