@@ -40,12 +40,12 @@ export default defineConfig({
       manifest: {
         name: 'MyPayIndia PWA',
         short_name: 'MyPayIndia',
-        description: 'The official progressive web app for MyPayIndia',
+        description: 'MyPayIndia responsive web app',
         theme_color: '#d03505',
         background_color: '#000000',
         display: 'standalone',
         start_url: '/dash',
-        id: 'com.exerinity.mypayindia',
+        id: 'com.exerinity.mpi',
         icons: [{ src: '/i/mypayindia.png', sizes: '64x64', type: 'image/png', purpose: 'any maskable' }]
       }
     })
@@ -57,7 +57,7 @@ export default defineConfig({
     target: 'esnext',
     rollupOptions: {
       output: {
-        entryFileNames: 'i/scripts/mypwaindia.js',
+        entryFileNames: 'i/scripts/mypwaindia_index-[hash].js',
         chunkFileNames: 'i/scripts/mpi_[name]-[hash].js',
         assetFileNames: '[name]-[hash].[ext]',
         manualChunks(id) {
