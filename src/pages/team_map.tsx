@@ -116,7 +116,7 @@ export default function TeamMapPage() {
   const [selected, setSelected] = useState<TeamMember | null>(null);
 
   const { data, loading, error } = useCachedQuery<{ team: TeamMember[] }>('team', () => getTeam() as Promise<{ team: TeamMember[] }>, []);
-  const team = useMemo(() => data?.team || [], [data]);
+  const team = useMemo(() => (data?.team || []).filter((m) => (m.status ?? 'current') === 'current'), [data]);
 
   const brand = useMemo(() => normalizeHex(settings.accent) || '#d03505', [settings.accent]);
 

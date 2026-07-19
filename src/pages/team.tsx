@@ -12,6 +12,19 @@ export default function TeamPage() {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const { data, loading, error } = useCachedQuery<{ team: TeamMember[] }>('team', () => getTeam() as Promise<{ team: TeamMember[] }>, []);
   const team = data?.team || [];
+  const current = team.filter((m) => (m.status ?? 'current') === 'current');
+  const past = team.filter((m) => m.status === 'past');
+  const specialThanks = team.filter((m) => m.status === 'special_thanks');
+
+  const renderGrid = (members: TeamMember[]) => (
+    <div className="grid cols-team">
+      {members.map((m) => (
+        <div key={m.name} className="card team-card">
+          <TeamMemberCard m={m} onAvatarClick={setSelectedMember} />
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <>
@@ -31,7 +44,7 @@ export default function TeamPage() {
         <Link to="/i/team/globe" className="btn secondary compact">Open globe...</Link>
       </div>
       <p className="mt-0 mb-0">Get to know the people behind MyPayIndia, the future of online banking!</p>
-      <p className="mt-0 mb-0 muted"><i>Currently our team consists of <strong>{team.length || (
+      <p className="mt-0 mb-0 muted"><i>Currently our team consists of <strong>{current.length || (
         <span className="skeleton" style={{ display: 'inline-block', width: 24, height: '1.2em', borderRadius: 3, verticalAlign: 'middle' }} />
       )}</strong> people:</i></p>
 
@@ -53,13 +66,21 @@ export default function TeamPage() {
       ) :
        error ? <ErrorBox error={error} /> :
        team.length === 0 ? <Empty>N</Empty> :
-       <div className="grid cols-team">
-        {team.map((m) => (
-            <div key={m.name} className="card team-card">
-              <TeamMemberCard m={m} onAvatarClick={setSelectedMember} />
-            </div>
-        ))}
-       </div>
+       <>
+        {renderGrid(current)}
+        {past.length > 0 && (
+          <>
+            <h2 className="team-status-heading">Past members</h2>
+            {renderGrid(past)}
+          </>
+        )}
+        {specialThanks.length > 0 && (
+          <>
+            <h2 className="team-status-heading">Special thanks</h2>
+            {renderGrid(specialThanks)}
+          </>
+        )}
+       </>
       }
     </>
   );

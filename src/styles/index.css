@@ -1,6 +1,11 @@
 /* =====================================================================
-   MyReactPWAIndia
-   Vaguely styled after the website... I did do it after all
+   Stylesheet index for MyPWAIndia
+
+   If you're seeing this all in one huge file, 
+   you're probably looking at the bundled production stylesheet.
+
+   Stop it. Get some help. Go to
+   https://github.com/exerinity/mypwaindia/tree/main/src/styles
    ===================================================================== */
 
 @import "animations.css";

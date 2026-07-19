@@ -220,6 +220,7 @@
   display: inline;
 }
 
+/* MyWokeIndia */
 .pride-flag {
   display: inline-block;
   width: 26px;
@@ -317,6 +318,13 @@
 .team-card > .roles-toggle-label {
   align-self: stretch;
 }
+.team-status-heading {
+  margin-top: 32px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
 .team-heading-row {
   display: flex;
   align-items: center;
