@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "vite build",
     "minify": "vite build --config vite.config.minify.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "minirun": "vite preview --config vite.config.minify.js"
   },
   "dependencies": {
     "@twemoji/api": "^17.0.3",
