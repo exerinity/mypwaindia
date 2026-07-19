@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Modal } from '../components/modal.tsx';
 
@@ -23,7 +22,7 @@ export default function FlowNotFound() {
         >
           <p className="mt-0 mb-0">Oops, something went wrong. Please try again later.</p>
           <div className="modal-actions">
-            <button onClick={() => { window.location.replace('/'); }}>OK</button>
+            <button onClick={() => { nav('/dash'); }}>OK</button>
           </div>
         </Modal>
       </>

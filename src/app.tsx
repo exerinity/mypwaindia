@@ -21,6 +21,7 @@ const TeamPage = lazy(() => import('./pages/team.tsx'));
 const TeamMapPage = lazy(() => import('./pages/team_map.tsx'));
 const SubscriptionsPage = lazy(() => import('./pages/subscriptions.tsx'));
 const SettingsPage = lazy(() => import('./pages/settings.tsx'));
+const SessionsPage = lazy(() => import('./pages/sessions.tsx'));
 const IotmButtonPage = lazy(() => import('./pages/iotm_button.tsx'));
 const IOTMPage = lazy(() => import('./pages/iotm.tsx'));
 const CLIPage = lazy(() => import('./pages/cli.tsx'));
@@ -115,6 +116,7 @@ export default function App() {
         <Route path="/i/team/globe" element={<TeamMapPage />} />
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
+        <Route path="/settings/sessions" element={<Navigate to="/i/flow/sessions" replace />} />
         <Route path="/settings/:category" element={<SettingsPage />} />
         <Route path="/settings:old" element={<Flowback />} />
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
@@ -134,6 +136,7 @@ export default function App() {
           <Route path="/account/transfer" element={<TransferPage />} />
           <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
           <Route path="/account/history" element={<HistoryPage />} />
+          <Route path="/i/flow/sessions" element={<SessionsPage />} />
           <Route path="/i/flow/subscriptions" element={<SubscriptionsPage />} />
           <Route path="/i/flow/links" element={<LinksPage />} />
           <Route path="/i/flow/links/claim" element={<Navigate to="/i/flow/links" replace />} />

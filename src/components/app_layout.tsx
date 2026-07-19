@@ -160,7 +160,7 @@ export function AppLayout() {
             )}
             {sessionExpired && (
               <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <LoginIcon /> Your session has expired. <Link to="/settings/sessions" className="link">Reinitialize the session...</Link> <Link to="/i/flow/logout" state={{ backgroundLocation: location }}>Log out of the app...</Link>
+                <LoginIcon /> Your session has expired. <Link to="/i/flow/sessions" className="link">Reinitialize the session...</Link> <Link to="/i/flow/logout" state={{ backgroundLocation: location }}>Log out of the app...</Link>
               </div>
             )}
             {fetchFailed && (

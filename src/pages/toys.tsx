@@ -94,7 +94,7 @@ export default function MPTIPage() {
           )}
           {showSessionExpiredBanner && (
             <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
-              <WarningIcon /> Your session has expired. <Link to="/settings/sessions" className="link">Reinitialize the session...</Link>
+              <WarningIcon /> Your session has expired. <Link to="/i/flow/sessions" className="link">Reinitialize the session...</Link>
             </div>
           )}
           {showFetchFailedBanner && (

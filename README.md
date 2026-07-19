@@ -83,9 +83,10 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/account/history** - transaction history
 
 ### Payment links
-- **/links** - links home, list & create & revoke
-- **/links/claim** - claim/inspect a link
-- **/links/claim/:token** - claim a link by token
+- **/i/flow/links** - links home, list & create & revoke
+- **/i/flow/links/interim/:token** - claim/inspect a link by token
+
+(**/links**, **/links/claim** and **/links/claim/:token** still work as compatibility redirects)
 
 ### Internal/information (hence the /i)
 - **/i/leaderboard** - top 10 richest accounts
@@ -104,6 +105,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/flow/mci/focus** - MyCLiIndia, fullscreen
 - **/i/flow/mpti** - MyPWAToysIndia, fuck with shit, basically a debug page
 - **/i/flow/subscriptions** - manage subscriptions
+- **/i/flow/sessions** - view and manage active login sessions
 - **/i/flow/transaction/:id** - transaction detail viewer
 - **/i/flow/transaction:old/:id** - the old transaction viewer
 - **/i/flow/theme** - apply a theme from a shared link

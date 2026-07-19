@@ -211,10 +211,9 @@ export default function AccountPage() {
               <div className="card mb-2">
                 <div className="row spread" style={{ alignItems: 'center' }}>
                   <div>
-                    <h3 className="mt-0" style={{ margin: 0 }}>Sessions</h3>
-                    <p className="muted" style={{ margin: '4px 0 0', fontSize: '0.875rem' }}>The list of sessions has moved to settings.</p>
+                    <h3 className="mt-0" style={{ margin: 0 }}>List of sessions</h3>
                   </div>
-                  <Link to="/settings/sessions" className="btn secondary">Go</Link>
+                  <Link to="/i/flow/sessions" className="btn secondary">Open</Link>
                 </div>
               </div>
 
