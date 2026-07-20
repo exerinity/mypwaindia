@@ -13,6 +13,7 @@ import { ExternalIcon, ArrowLeftIcon, ChevronRight, InfoIcon, StopIcon, SuccessI
 import { getAppLockConfig, setAppLock, disableAppLock, verifyAppLock, minLength, setAppLockRequireAfter, REQUIRE_AFTER_OPTIONS } from '../utils/app_lock.ts';
 import type { AppLockMethod } from '../utils/app_lock.ts';
 import { AppLockInput } from '../components/app_lock_input.tsx';
+import { formatRelative } from '../utils/dates.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 
@@ -147,6 +148,8 @@ export default function SettingsPage() {
   const [mobileShowDetail, setMobileShowDetail] = useState(false);
 
   const [importJson, setImportJson] = useState('');
+  const [syncBusy, setSyncBusy] = useState<'save' | 'load' | 'clear' | null>(null);
+  const [remoteSavedAt, setRemoteSavedAt] = useState<string | null>(null);
 
   const [appLockConfig, setAppLockConfig] = useState(() => getAppLockConfig());
   const [appLockSetupOpen, setAppLockSetupOpen] = useState(false);
@@ -657,12 +660,88 @@ export default function SettingsPage() {
           toast.success('Settings imported');
           setImportJson('');
         };
+        const saveToAccount = async () => {
+          if (!active) return;
+          setSyncBusy('save');
+          try {
+            const { collectSettingsExport } = await import('../utils/settings_io.ts');
+            const { putRemoteSettings } = await import('../api/settings_sync.ts');
+            const res = await putRemoteSettings(active, collectSettingsExport(settings));
+            setRemoteSavedAt(res.savedAt);
+            toast.success('Settings saved to your account');
+          } catch (e) {
+            toast.error(e instanceof Error ? e.message : 'Failed');
+          } finally {
+            setSyncBusy(null);
+          }
+        };
+
+        const loadFromAccount = async () => {
+          if (!active) return;
+          setSyncBusy('load');
+          try {
+            const { getRemoteSettings } = await import('../api/settings_sync.ts');
+            const { settingsToSearchParams } = await import('../utils/settings_io.ts');
+            const res = await getRemoteSettings(active);
+            if (!res.payload) {
+              toast.warning("Couldn't find any settings saved for this account");
+              return;
+            }
+            setRemoteSavedAt(res.savedAt);
+            navigate(`/i/flow/settings?${settingsToSearchParams(res.payload)}`);
+          } catch (e) {
+            toast.error(e instanceof Error ? e.message : 'Failed');
+          } finally {
+            setSyncBusy(null);
+          }
+        };
+
+        const clearFromAccount = async () => {
+          if (!active) return;
+          setSyncBusy('clear');
+          try {
+            const { deleteRemoteSettings } = await import('../api/settings_sync.ts');
+            await deleteRemoteSettings(active);
+            setRemoteSavedAt(null);
+            toast.success('Deleted saved settings');
+          } catch (e) {
+            toast.error(e instanceof Error ? e.message : 'Could not remove settings');
+          } finally {
+            setSyncBusy(null);
+          }
+        };
+
         return (
           <>
             <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
-              Export or import your settings. This can be done in 3 methods; the third is recommended. This is useful for having consistency across devices or showing someone else <i>exactly</i> how your app is configured
+              Export, import and share your settings. This can be done in 4 methods; the first and third are the easiest.
             </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-warning"><WarningIcon /><span>These are for the app settings, they have nothing to do with your MyPayIndia account. <a href="https://mypayindia.com/account/settings" target="_blank">Log in here to change those</a></span></div>
 
+            <h3 className="mt-0">Your account</h3>
+            <p className="muted" style={{ fontSize: '0.85rem', marginTop: 0, marginBottom: 8 }}>
+              {active
+                ? 'Your settings are stored against your MyPayIndia account, so any device you log in on can pull them back'
+                : 'Log in to save your settings against your MyPayIndia account'}
+            </p>
+            {remoteSavedAt && (
+              <p className="muted" style={{ fontSize: '0.8rem', marginTop: 0, marginBottom: 8 }}>
+                Last saved {formatRelative(remoteSavedAt)}
+              </p>
+            )}
+            <div className="btn-row" style={{ marginTop: 4 }}>
+              <button className="secondary compact" disabled={!active || syncBusy !== null} onClick={saveToAccount}>
+                {syncBusy === 'save' ? 'Saving data...' : 'Save to account'}
+              </button>
+              <button className="secondary compact" disabled={!active || syncBusy !== null} onClick={loadFromAccount}>
+                {syncBusy === 'load' ? 'Retrieving data...' : 'Load from account'}
+              </button>
+              <button className="ghost compact" disabled={!active || syncBusy !== null} onClick={clearFromAccount}>
+                {syncBusy === 'clear' ? 'Deleting...' : 'Disassociate from account'}
+              </button>
+            </div>
+
+            <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
             <h3 className="mt-0">Copy &amp; paste</h3>
             <div className="btn-row" style={{ marginTop: 4 }}>
               <button className="secondary compact" onClick={async () => {
@@ -676,7 +755,7 @@ export default function SettingsPage() {
                 Copy settings in JSON
               </button>
             </div>
-            <label htmlFor="settings-import-json" className="mt-2">Paste JSON to import</label>
+            <label htmlFor="settings-import-json" className="mt-2">Paste that JSON here:</label>
             <textarea
               id="settings-import-json"
               value={importJson}

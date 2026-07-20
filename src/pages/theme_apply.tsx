@@ -83,8 +83,9 @@ export default function ThemeApplyPage() {
     navigate('/settings/appearance');
   }
 
-  if (!parsed) return <Flowback />;
   usePageTitle('Apply theme');
+
+  if (!parsed) return <Flowback />;
 
   const entries = [
     ...Object.entries(parsed.customTheme),

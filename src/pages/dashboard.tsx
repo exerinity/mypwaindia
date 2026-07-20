@@ -78,8 +78,9 @@ export default function DashboardPage() {
     return ids.size;
   }, [txQ.data, active?.id]);
 
+  usePageTitle(active ? 'Dashboard' : 'Welcome');
+
   if (!active) {
-    usePageTitle('Welcome')
     return (
       <Suspense fallback={<ContentSkeleton />}>
         <h1 className="mt-0">Welcome to the MyPayIndia PWA</h1>
@@ -96,8 +97,6 @@ export default function DashboardPage() {
       </Suspense>
     );
   }
-
-  usePageTitle('Dashboard');
 
   const transactions = txQ.data?.transactions || [];
   const links = linksQ.data?.links || [];

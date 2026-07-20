@@ -31,9 +31,10 @@ export default function SettingsApplyPage() {
     return { ...base, ...included };
   }, [fields, hasHide, included]);
 
+  usePageTitle('Apply settings');
+
   if (!settingsIo) return null;
   if (!payload) return <Flowback />;
-  usePageTitle('Apply settings');
 
   const toggle = (key: string) =>
     setIncluded((s) => ({ ...s, [key]: !(includeState[key]) }));
@@ -65,9 +66,6 @@ export default function SettingsApplyPage() {
   return (
     <div className="mpi-themeap">
       <h1 className="mt-0">Apply these settings?</h1>
-      <p className="mt-0 mb-0">
-        You can pick exactly what gets applied before accepting.
-      </p>
       <div className="card" style={{ maxWidth: 520 }}>
         <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', marginBottom: 20 }}>
           {fields.map((f, i) => (
