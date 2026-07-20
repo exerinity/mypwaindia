@@ -113,7 +113,7 @@ export default function LinksPage() {
         amount: stackPaisa,
         note: note.trim() || undefined,
       }) as Link;
-      toast.success(`Link created for ${formatINR(stackPaisa)}; copied to clipboard`);
+      toast.success(`Link created for ${formatINR(stackPaisa)}, copied to clipboard`);
       try {
         await navigator.clipboard.writeText(link.url);
       } catch {}
@@ -144,7 +144,7 @@ export default function LinksPage() {
       if (i < links.length - 1) await new Promise((r) => setTimeout(r, 500));
     }
     setCancelAllProgress(null);
-    toast.success(`OK, all of your payment links were cancelled. (${cancelled} link${cancelled !== 1 ? 's' : ''} cancelled)`);
+    toast.success(`OK, all ${cancelled} of your payment links were cancelled.`);
     linksQ.refetch();
     refetchUserInfo();
   }
@@ -160,6 +160,10 @@ export default function LinksPage() {
       toast.error(describeError(e));
     }
   }
+  function inspectLink(token: string) {
+    navigate(`/i/flow/links/interim/${encodeURIComponent(token)}`, { state: { backgroundLocation: location } });
+  }
+
   async function copyUrl(url: string) {
     try {
       await navigator.clipboard.writeText(url);
@@ -263,6 +267,7 @@ export default function LinksPage() {
               </div>
               <div className="row gap-sm">
                 <Skeleton width={82} height={30} radius={6} />
+                <Skeleton width={70} height={30} radius={6} />
                 <Skeleton width={62} height={30} radius={6} />
               </div>
             </div>
@@ -284,7 +289,8 @@ export default function LinksPage() {
                     <div className="muted" style={{ fontSize: '0.78rem' }}>{formatDate(l.created)}</div>
                   </div>
                   <div className="row gap-sm">
-                    <button className="copy-btn" onClick={() => copyUrl(l.url)}>Copy URL</button>
+                    <button className="secondary copy-btn" onClick={() => copyUrl(l.url)}>Copy URL</button>
+                    <button className="secondary compact" onClick={() => inspectLink(l.token)}>Inspect</button>
                     <button className="compact danger" onClick={() => setCancelTarget(l)}>Cancel</button>
                   </div>
                 </div>

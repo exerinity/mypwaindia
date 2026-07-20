@@ -97,7 +97,6 @@ export default function App() {
       <Route path="/account/transfers" element={<Navigate to="/account/history" replace />} />
       <Route path="/account/transfers/:id" element={<TransactionRedirect />} />
       <Route path="/account/transfers/new" element={<Navigate to="/account/transfer" replace />} />
-      <Route path="/iotm/button/" element={<Navigate to="/iotm/button" replace />} />
       <Route path="/account/payment-links" element={<Navigate to="/i/flow/links" replace />} />
       <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
@@ -137,7 +136,7 @@ export default function App() {
           <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
           <Route path="/account/history" element={<HistoryPage />} />
           <Route path="/i/flow/sessions" element={<SessionsPage />} />
-          <Route path="/i/flow/subscriptions" element={<SubscriptionsPage />} />
+          <Route path="/subscriptions" element={<SubscriptionsPage />} />
           <Route path="/i/flow/links" element={<LinksPage />} />
           <Route path="/i/flow/links/claim" element={<Navigate to="/i/flow/links" replace />} />
           <Route path="/i/flow/links/claim/:token" element={<ClaimLinkRedirect />} />

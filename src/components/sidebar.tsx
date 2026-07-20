@@ -35,7 +35,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon, requireAuth: true },
       { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true, requireAuth: true },
       { to: '/i/flow/links', label: 'Payment links', icon: LinkIcon, hideInScambait: true, requireAuth: true },
-      { to: '/i/flow/subscriptions', label: 'Subscriptions', icon: StoreIcon, hideInScambait: true, requireAuth: true },
+      { to: '/subscriptions', label: 'Subscriptions', icon: StoreIcon, hideInScambait: true, requireAuth: true },
       { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true, requireAuth: true },
       { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true, requireAuth: true },
       { to: '/iotm', label: 'Investment Opportunities™', icon: TrophyIcon, hideInScambait: true, requireAuth: true },

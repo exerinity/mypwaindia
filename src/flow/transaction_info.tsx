@@ -7,7 +7,7 @@ import { useCurrency } from '../context/settings_ctx.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { Modal } from '../components/modal.tsx';
-import { CopyIcon } from '../components/icons.tsx';
+import { CopyIcon, ArrowDownLeftIcon, ArrowUpRightIcon } from '../components/icons.tsx';
 
 type TxDetail = {
   transaction_id: string;
@@ -133,12 +133,33 @@ export default function TransactionModal() {
       ) : data && (
         <>
           <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>Amount</div>
-          <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
             <div
               className="balance-display"
               style={{ color: outgoing ? 'var(--alert-error)' : 'var(--success)', marginBottom: 0 }}
             >
               {outgoing ? '-' : '+'}{format(data.amount)}
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 44,
+                height: 44,
+                flexShrink: 0,
+                borderRadius: 12,
+                color: 'var(--fg)',
+                background: outgoing
+                  ? 'color-mix(in srgb, var(--alert-error) 12%, transparent)'
+                  : 'color-mix(in srgb, var(--success) 12%, transparent)',
+                border: `1px solid ${outgoing
+                  ? 'color-mix(in srgb, var(--alert-error) 30%, transparent)'
+                  : 'color-mix(in srgb, var(--success) 30%, transparent)'}`,
+              }}
+              aria-label={outgoing ? 'Outgoing' : 'Incoming'}
+            >
+              {outgoing ? <ArrowUpRightIcon size={24} /> : <ArrowDownLeftIcon size={24} />}
             </div>
           </div>
 

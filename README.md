@@ -81,6 +81,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/account/transfer** - transfer funds screen
 - **/account/transfer/bulk** - bulk transfers, enqueue people and amount then send them all at once
 - **/account/history** - transaction history
+- **/subscriptions** - manage subscriptions
 
 ### Payment links
 - **/i/flow/links** - links home, list & create & revoke
@@ -104,7 +105,6 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/flow/mci** - MyCLiIndia, a fake Unix-like command line
 - **/i/flow/mci/focus** - MyCLiIndia, fullscreen
 - **/i/flow/mpti** - MyPWAToysIndia, fuck with shit, basically a debug page
-- **/i/flow/subscriptions** - manage subscriptions
 - **/i/flow/sessions** - view and manage active login sessions
 - **/i/flow/transaction/:id** - transaction detail viewer
 - **/i/flow/transaction:old/:id** - the old transaction viewer

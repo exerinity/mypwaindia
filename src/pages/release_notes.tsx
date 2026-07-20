@@ -92,7 +92,7 @@ export const RELEASES: Release[] = [
       { h3: 'Miscellaneous' },
       'All settings pages now take up the whole container',
       'Compiled scripts have been split up per category and now load lazily',
-      <>Added a <Link to="/i/flow/subscriptions">subscriptions page</Link></>,
+      <>Added a <Link to="/subscriptions">subscriptions page</Link></>,
       { h3: 'Auto-refresh overhaul' },
       'The dashboard, account, history, payment links, restrictions, and sessions pages now share a single 30-second refresh cycle, cutting down on duplicate/unnecessary network requests',
       'Leaving a page and coming back now shows your last-loaded data instantly instead, while a fresh copy loads in the background',
