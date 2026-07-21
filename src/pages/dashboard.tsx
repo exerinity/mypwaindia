@@ -24,7 +24,9 @@ const AppFooter = lazy(() => import('../components/app_footer.tsx').then((m) => 
 
 function DisplayName({ account, mode }: { account: Account | null; mode: string }) {
   const displayMod = useLazyModule(() => import('../utils/display.js'));
-  return <>{displayMod ? displayMod.getDisplayName(account, mode) : ''}</>;
+  return displayMod
+    ? <>{displayMod.getDisplayName(account, mode)}</>
+    : <span className="spinner" style={{ verticalAlign: 'middle' }} />;
 }
 
 export default function DashboardPage() {

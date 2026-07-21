@@ -5,6 +5,7 @@ import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
 import { Modal } from '../components/modal.tsx';
 import { WarningIcon } from '../components/icons.tsx';
+import { Skeleton } from '../components/status.tsx';
 
 const ConfirmModal = lazy(() => import('../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const HoldButton = lazy(() => import('../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
@@ -27,6 +28,10 @@ export default function MPTIPage() {
   const [confirmHold, setConfirmHold] = useState(false);
 
   const [holdCount, setHoldCount] = useState(0);
+
+  const [skelWidth, setSkelWidth] = useState(120);
+  const [skelHeight, setSkelHeight] = useState(14);
+  const [skelRadius, setSkelRadius] = useState(4);
 
   const [toastMessage, setToastMessage] = useState('Ding dong');
   const [toastKind, setToastKind] = useState<ToastKind>('info');
@@ -146,6 +151,34 @@ export default function MPTIPage() {
       </div>
 
       <div className="card mb-2">
+        <h2 className="mt-0">Skeleton</h2>
+        <label>Width (px)</label>
+        <input
+          type="number"
+          value={skelWidth}
+          onChange={(e) => setSkelWidth(Number(e.target.value) || 0)}
+          style={{ maxWidth: 120 }}
+        />
+        <label>Height (px)</label>
+        <input
+          type="number"
+          value={skelHeight}
+          onChange={(e) => setSkelHeight(Number(e.target.value) || 0)}
+          style={{ maxWidth: 120 }}
+        />
+        <label>Radius (px)</label>
+        <input
+          type="number"
+          value={skelRadius}
+          onChange={(e) => setSkelRadius(Number(e.target.value) || 0)}
+          style={{ maxWidth: 120 }}
+        />
+        <div className="btn-row">
+          <Skeleton width={skelWidth} height={skelHeight} radius={skelRadius} style={{ display: 'inline-block' }} />
+        </div>
+      </div>
+
+      <div className="card mb-2">
         <h2 className="mt-0">Simulate update</h2>
         <div className="btn-row">
           <button onClick={simulateUpdater}>Go</button>
@@ -154,7 +187,7 @@ export default function MPTIPage() {
 
       <div className="card mb-2">
         <h2 className="mt-0">Show banners</h2>
-        <p className="mt-0">Toggle the various warning banners that can appear at the top of the app layout to preview their look.</p>
+         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-warning"><WarningIcon /><span>If you enable them all and have a small screen, you may just not see the app anymore</span></div>
         {BANNER_TOGGLES.map(({ id, label, checked, onChange }) => (
           <div className="checkbox-row" key={id}>
             <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
@@ -185,6 +218,11 @@ export default function MPTIPage() {
         <div className="btn-row">
           <button onClick={fireToast}>Go</button>
         </div>
+      </div>
+
+      <div className="card mt-2" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span className="spinner lg" />
+        <span>Spinner that does nothing</span>
       </div>
 
       <Modal

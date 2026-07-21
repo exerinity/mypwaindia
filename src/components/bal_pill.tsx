@@ -1,7 +1,6 @@
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { useGlobalData } from '../context/global_data_ctx.tsx';
-import { Skeleton } from './status.tsx';
 
 export function BalancePill() {
   const { active } = useAuth();
@@ -14,7 +13,7 @@ export function BalancePill() {
       <span className="pill-label">Balance</span>
       <span className="pill-value">
         {bal === null
-          ? (userInfoLoading ? <Skeleton width={52} height={14} radius={4} style={{ display: 'inline-block' }} /> : '0')
+          ? (userInfoLoading ? <span className="spinner" style={{ verticalAlign: 'middle' }} /> : '0')
           : format(bal)}
       </span>
     </div>
