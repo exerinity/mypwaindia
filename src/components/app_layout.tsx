@@ -16,6 +16,41 @@ const Sidebar = lazy(() => import('./sidebar.tsx').then((m) => ({ default: m.Sid
 const VerificationBanner = lazy(() => import('./verify_banner.tsx').then((m) => ({ default: m.VerificationBanner })));
 const ConfirmModal = lazy(() => import('./confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 
+function ServiceWorkerUpdater({ autoUpdate, toast, syncLastVersion }: {
+  autoUpdate: boolean;
+  toast: ReturnType<typeof useToast>;
+  syncLastVersion: (announce: boolean) => void;
+}) {
+  const updateToastShown = useRef(false);
+  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW({});
+
+  function performUpdate() {
+    toast.info('Updating, one moment...');
+    syncLastVersion(false);
+    navigator.serviceWorker.addEventListener('controllerchange', () => window.location.reload(), { once: true });
+    updateServiceWorker(true);
+  }
+
+  useEffect(() => {
+    if (needRefresh && !updateToastShown.current) {
+      updateToastShown.current = true;
+      if (autoUpdate) {
+        performUpdate();
+      } else {
+        const id = toast.push('A new version is available, would you like to reload?', 'info', 0, {
+          label: 'Go',
+          onClick: () => {
+            toast.remove(id);
+            performUpdate();
+          },
+        });
+      }
+    }
+  }, [needRefresh, toast, autoUpdate]);
+
+  return null;
+}
+
 export function AppLayout() {
   const restrictionsMod = useLazyModule(() => import('../utils/restrictions.js'));
   const [open, setOpen] = useState(false);
@@ -42,21 +77,6 @@ export function AppLayout() {
   const bastionDown = [502, 503, 504, 523].includes(fetchFailedError?.status ?? 0);
   const fetchFailed = fetchFailedCode === -1 || fetchFailedCode === -2 || bastionDown;
   const sessionExpired = fetchFailedCode === 1001;
-
-  const updateToastShown = useRef(false);
-  const swRegistrationRef = useRef<ServiceWorkerRegistration | undefined>(undefined);
-  const swEnabledRef = useRef(settings.swEnabled);
-  swEnabledRef.current = settings.swEnabled;
-  const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW({
-    onRegisteredSW(_url, registration) {
-      swRegistrationRef.current = registration;
-      if (!swEnabledRef.current) registration?.unregister();
-    },
-  });
-
-  useEffect(() => {
-    if (!settings.swEnabled) swRegistrationRef.current?.unregister();
-  }, [settings.swEnabled]);
 
   function syncLastVersion(announce: boolean) {
     const latest = RELEASES[0].version;
@@ -86,30 +106,6 @@ export function AppLayout() {
   useEffect(() => {
     syncLastVersion(true);
   }, []);
-
-  function performUpdate() {
-    toast.info('Updating, one moment...');
-    syncLastVersion(false);
-    navigator.serviceWorker.addEventListener('controllerchange', () => window.location.reload(), { once: true });
-    updateServiceWorker(true);
-  }
-
-  useEffect(() => {
-    if (needRefresh && !updateToastShown.current) {
-      updateToastShown.current = true;
-      if (settings.autoUpdate) {
-        performUpdate();
-      } else {
-        const id = toast.push('A new version is available, would you like to reload?', 'info', 0, {
-          label: 'Go',
-          onClick: () => {
-            toast.remove(id);
-            performUpdate();
-          },
-        });
-      }
-    }
-  }, [needRefresh, toast, settings.autoUpdate]);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -141,6 +137,9 @@ export function AppLayout() {
 
   return (
     <div className="mpi-shell">
+      {settings.swEnabled && (
+        <ServiceWorkerUpdater autoUpdate={settings.autoUpdate} toast={toast} syncLastVersion={syncLastVersion} />
+      )}
       <div className="mpi-sticky-top">
         <Suspense fallback={<HeaderSkeleton />}>
           <Header onToggleSidebar={() => setOpen((o) => !o)} />

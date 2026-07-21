@@ -13,7 +13,7 @@ export const CUSTOM_VAR_KEYS = [
   '--table-row-alt', '--shadow',
 ] as const;
 
-/** shared list of pages */
+/** this list is used for /settings/home */
 export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/dash', label: 'Dashboard' },
   { value: '/account', label: 'Account' },
@@ -103,7 +103,7 @@ export const DEFAULT_SETTINGS: Settings = {
   homePage: '/dash',
   dashboardButtons: DEFAULT_DASHBOARD_BUTTONS,
   customTheme: {},
-  swEnabled: true,
+  swEnabled: false,
   rememberInfo: true,
 };
 
