@@ -102,14 +102,11 @@
   height: 6px;
 }
 
-.cli-input-row {
+.cli-input-line {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px 12px;
-  border-top: 2px solid #ffffff;
-  background: #000000;
-  flex-shrink: 0;
+  gap: 1ch;
+  padding-top: 10px;
 }
 
 .cli-prompt {
@@ -121,6 +118,16 @@
   flex-shrink: 0;
 }
 
+.cli-input-field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #000000;
+}
+
 .cli-input {
   flex: 1;
   background: transparent;
@@ -129,65 +136,50 @@
   color: #ffffff;
   font-family: inherit;
   font-size: inherit;
-  caret-color: #ffffff;
+  caret-color: transparent;
   padding: 0;
   min-width: 0;
-}
-
-.cli-input::placeholder {
-  color: #666666;
 }
 
 .cli-input:disabled {
   opacity: 0.5;
 }
 
-.cli-send-btn {
-  background: #000000;
-  border: 2px solid #00ff66;
-  border-radius: 4px;
-  color: #00ff66;
-  font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  padding: 0 12px;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s, color 0.12s;
+.cli-cursor {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1ch;
+  height: 1.15em;
+  background: #ffffff;
+  mix-blend-mode: difference;
+  pointer-events: none;
 }
 
-.cli-send-btn:hover:not(:disabled) {
-  background: #00ff66;
-  border-color: #00ff66;
-  color: #000000;
-  box-shadow: 0 0 12px #00ff66;
+.cli-cursor--idle {
+  animation: cli-blink 1.05s infinite;
 }
 
-.cli-send-btn:active:not(:disabled) {
-  background: #00cc55;
-  box-shadow: 0 0 6px #00ff66;
+.cli-cursor--busy {
+  animation: cli-blink 0.26s infinite;
 }
 
-.cli-send-btn:disabled {
-  opacity: 0.3;
-  cursor: default;
+.cli-cursor--typing {
+  animation: none;
+  opacity: 1;
 }
 
-.cli-busy-dot {
-  width: 7px;
-  height: 7px;
-  background: #00ff66;
-  border-radius: 50%;
-  animation: cli-pulse 0.9s ease-in-out infinite;
-  flex-shrink: 0;
+.cli-cursor--hollow {
+  animation: none;
+  opacity: 1;
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px #ffffff;
 }
 
+@keyframes cli-blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
 
 .cli-wrap--fullscreen {
   position: fixed;

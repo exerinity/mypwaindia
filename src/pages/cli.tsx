@@ -170,6 +170,10 @@ export default function CLIPage() {
   const [histIdx, setHistIdx] = useState(-1);
   const [busy, setBusy] = useState(false);
   const [promptMode, setPromptMode] = useState<'none' | 'password' | 'text'>('none');
+  const [caretPos, setCaretPos] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [typing, setTyping] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const outputRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -178,6 +182,9 @@ export default function CLIPage() {
   const pendingPromptRef = useRef<((val: string) => void) | null>(null);
   const sudoGrantedAt = useRef<number | null>(null);
   const scambaitPending = useRef<boolean>(false);
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const loading = busy && promptMode === 'none';
 
   useEffect(() => {
     storageSet(CLI_LINES_KEY, lines.slice(-200));
@@ -207,6 +214,37 @@ export default function CLIPage() {
   const push = useCallback((...newLines: CliLine[]) => {
     setLines(prev => [...prev, ...newLines]);
   }, []);
+
+  const syncCaret = useCallback(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    requestAnimationFrame(() => {
+      setCaretPos(el.selectionStart ?? el.value.length);
+      setScrollLeft(el.scrollLeft);
+    });
+  }, []);
+
+  const caretToEnd = useCallback((val: string) => {
+    requestAnimationFrame(() => {
+      const el = inputRef.current;
+      if (!el) return;
+      el.setSelectionRange(val.length, val.length);
+      setCaretPos(val.length);
+      setScrollLeft(el.scrollLeft);
+    });
+  }, []);
+
+  const markTyping = useCallback(() => {
+    setTyping(true);
+    if (typingTimer.current) clearTimeout(typingTimer.current);
+    typingTimer.current = setTimeout(() => setTyping(false), 420);
+  }, []);
+
+  useEffect(() => {
+    if (loading) return;
+    if (window.getSelection()?.toString()) return;
+    inputRef.current?.focus();
+  }, [loading]);
 
   useEffect(() => {
     function onCtrlAltB(e: KeyboardEvent) {
@@ -808,6 +846,9 @@ export default function CLIPage() {
     setInput('');
     setHistIdx(-1);
     histBuf.current = '';
+    setCaretPos(0);
+    setScrollLeft(0);
+    setTyping(false);
 
     if (pendingPromptRef.current) {
       const isHidden = promptMode === 'password';
@@ -849,6 +890,9 @@ export default function CLIPage() {
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+      markTyping();
+    }
     if (e.key === 'ArrowUp') {
       e.preventDefault();
       if (!cmdHistory.length) return;
@@ -856,16 +900,19 @@ export default function CLIPage() {
       const newIdx = Math.min(histIdx + 1, cmdHistory.length - 1);
       setHistIdx(newIdx);
       setInput(cmdHistory[newIdx]);
+      caretToEnd(cmdHistory[newIdx]);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (histIdx === -1) return;
       if (histIdx === 0) {
         setHistIdx(-1);
         setInput(histBuf.current);
+        caretToEnd(histBuf.current);
       } else {
         const newIdx = histIdx - 1;
         setHistIdx(newIdx);
         setInput(cmdHistory[newIdx]);
+        caretToEnd(cmdHistory[newIdx]);
       }
     } else if (e.key === 'Tab') {
       e.preventDefault();
@@ -876,6 +923,7 @@ export default function CLIPage() {
         const matches = COMMANDS.filter(c => c.startsWith(partial));
         if (matches.length === 1) {
           setInput(matches[0] + ' ');
+          caretToEnd(matches[0] + ' ');
         } else if (matches.length > 1) {
           push(L.out(matches.join('   ')));
         }
@@ -903,31 +951,37 @@ export default function CLIPage() {
             ? <div key={l.id} className="cli-line cli-line-sep" />
             : <div key={l.id} className={`cli-line cli-line-${l.type}`}>{l.text}</div>
         )}
-      </div>
-
-      <form className="cli-input-row" onSubmit={handleSubmit} autoComplete="off" spellCheck={false}>
+        <form className="cli-input-line" onSubmit={handleSubmit} autoComplete="off" spellCheck={false}>
         <span className="cli-prompt">[{username}@mypayindia ~]$</span>
-        <input
-          ref={inputRef}
-          className="cli-input"
-          type={promptMode === 'password' ? 'password' : undefined}
-          value={input}
-          onChange={e => { setInput(e.target.value); setHistIdx(-1); }}
-          onKeyDown={handleKeyDown}
-          disabled={busy && promptMode === 'none'}
-          autoFocus
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="none"
-          spellCheck={false}
-          placeholder={busy && promptMode === 'none' ? '' : 'type a command...'}
-          aria-label="Command input"
-        />
-        {busy
-          ? <span className="cli-busy-dot" />
-          : <button type="submit" className="cli-send-btn" disabled={!input.trim()} aria-label="Run">GO</button>
-        }
-      </form>
+        <span className="cli-input-field">
+          <input
+            ref={inputRef}
+            className="cli-input"
+            type={promptMode === 'password' ? 'password' : undefined}
+            value={input}
+            onChange={e => { setInput(e.target.value); setHistIdx(-1); markTyping(); syncCaret(); }}
+            onKeyDown={handleKeyDown}
+            onSelect={syncCaret}
+            onScroll={syncCaret}
+            onFocus={() => { setFocused(true); syncCaret(); }}
+            onBlur={() => setFocused(false)}
+            disabled={loading}
+            autoFocus
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            enterKeyHint="go"
+            aria-label="Command input"
+          />
+          <span
+            className={`cli-cursor cli-cursor--${loading ? 'busy' : typing ? 'typing' : !focused ? 'hollow' : 'idle'}`}
+            style={{ left: `calc(${caretPos}ch - ${scrollLeft}px)` }}
+            aria-hidden="true"
+          />
+        </span>
+        </form>
+      </div>
     </div>
   );
 }

@@ -66,7 +66,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!scambait) { setFakeStatements([]); return; }
     import('../utils/fake_statements.js').then(({ generateStatements }) => {
-      setFakeStatements(generateStatements(1000, active?.id ?? null).slice(0, 10));
+      setFakeStatements(generateStatements(450, active?.id ?? null).slice(0, 10));
     });
   }, [scambait, active?.id]);
 
@@ -78,6 +78,17 @@ export default function DashboardPage() {
     }
     ids.delete(Number(active?.id));
     return ids.size;
+  }, [txQ.data, active?.id]);
+
+  const weekChange = useMemo(() => {
+    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    let net = 0;
+    for (const tx of txQ.data?.transactions || []) {
+      if (new Date(tx.created).getTime() < cutoff) continue;
+      if (tx.recipient?.id === active?.id) net += tx.amount;
+      else if (tx.sender?.id === active?.id) net -= tx.amount;
+    }
+    return net;
   }, [txQ.data, active?.id]);
 
   usePageTitle(active ? 'Dashboard' : 'Welcome');
@@ -116,10 +127,14 @@ export default function DashboardPage() {
           <span className="stat-label">Balance</span>
           <span className="stat-value">
             {balanceLoading
-              ? <Skeleton width={100} height={26} radius={6} style={{ display: 'inline-block' }} />
+              ? <span className="spinner" style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
               : format(balanceValue ?? 0)}
           </span>
-          <span className="stat-sub"><DisplayName account={active} mode={settings.displayName} /></span>
+          <span className="stat-sub" style={{ color: weekChange > 0 ? 'var(--success)' : weekChange < 0 ? 'var(--alert-error)' : undefined }}>
+            {txLoading
+              ? <span className="spinner" style={{ width: 12, height: 12, borderWidth: 2, verticalAlign: 'middle' }} />
+              : `${weekChange > 0 ? '+' : weekChange < 0 ? '-' : ''}${format(Math.abs(weekChange))} this week`}
+          </span>
         </div>
 
         <div className="card stat-card">
@@ -128,7 +143,7 @@ export default function DashboardPage() {
             {scambait
               ? 150 + ((Number(active?.id) * 31 + 127) % 850)
               : txLoading
-                ? <Skeleton width={64} height={26} radius={6} style={{ display: 'inline-block' }} />
+                ? <span className="spinner" style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
                 : transactions.length}
           </span>
           <span className="stat-sub">{scambait ? 'since 2017' : `with ${uniqueUserCount} different users`}</span>
@@ -140,7 +155,7 @@ export default function DashboardPage() {
             {scambait
               ? (Number(active?.id) * 13 + 3) % 6
               : linksLoading
-                ? <Skeleton width={48} height={26} radius={6} style={{ display: 'inline-block' }} />
+                ? <span className="spinner" style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
                 : activeLinks.length}
           </span>
           <span className="stat-sub">{scambait ? 'awaiting clearance' : `${links.length} total created`}</span>

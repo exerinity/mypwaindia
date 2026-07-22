@@ -28,7 +28,7 @@ export default function StatementsPage() {
   const [statements, setStatements] = useState<{ id: number; description: string; amount: number; date: Date }[]>([]);
   useEffect(() => {
     import('../utils/fake_statements.js').then(({ generateStatements }) => {
-      setStatements(generateStatements(1000, active?.id ?? null));
+      setStatements(generateStatements(450, active?.id ?? null));
     });
   }, [active?.id]);
 

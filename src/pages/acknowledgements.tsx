@@ -126,11 +126,11 @@ export default function AcknowledgementsPage() {
     <>
       <h1 className="mt-0">Acknowledgements, about and credits</h1>
 
-      <p className="mt-0 mb-0">The second incarnation of the MyPayIndia PWA ("MyPWAIndia", "MyReactPWAIndia") is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (excl <Link to="/iotm/button">the button</Link>). <a href="https://legacy.app.mypayindia.com" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>The first incarnation <ExternalIcon size={12} /></a> was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 debuted. <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>View the source for this app <ExternalIcon size={12} /></a></p>
+      <p className="mt-0 mb-0">The second incarnation of the MyPayIndia PWA ("MyPWAIndia", "MyReactPWAIndia") is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (excl <Link to="/iotm/button">the button</Link>). <a href="https://legacy.mpi.exerinity.gay/" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>The first incarnation <ExternalIcon size={12} /></a> was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 debuted. <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>View the source for this app <ExternalIcon size={12} /></a></p>
 
       <p className="mt-0 mb-0">This is a list of everything and everybody who made it possible:</p>
 
-      <h2>This app is programmed by...</h2>
+      <h2>This app is programmed entirely by...</h2>
       <div className="card mb-2" style={{ padding: 0 }}>
         {DEVELOPERS.map((dev, i) => (
           <div

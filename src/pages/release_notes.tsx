@@ -14,6 +14,14 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '17b',
+    date: '23 Jul 2026',
+    notes: [
+      <><Link to="/i/flow/mci">MyCLiIndia</Link> has been given a slight refresh to look more like an actual terminal</>,
+      "Scambait mode has been improved, especially the statements page"
+    ]
+  },
+  {
     version: '17a',
     date: '18 Jul 2026',
     notes: [
@@ -253,7 +261,7 @@ export const RELEASES: Release[] = [
     notes: [
       'Completely remade in React',
       'New scambait mode: a fake Cards page, Statements page, and more',
-      <><a href="https://legacy.app.mypayindia.com/" target="_blank" rel="noopener noreferrer">The old version</a> is still available!</>,
+      <><a href="https://legacy.mpi.exerinity.gay/" target="_blank" rel="noopener noreferrer">The old version</a> is still available!</>,
     ],
   },
   {

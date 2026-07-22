@@ -328,11 +328,6 @@ export default function SettingsPage() {
         return (
           <>
             <h3 className="mt-0">Theme</h3><p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>Change the theme and accent color, or make your own</p>
-            {!settings.scambait && (
-              <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <BulbIcon></BulbIcon><span>Try out the custom theme system!</span>
-              </div>
-            )}
             <label>Preset</label>
             <div className="btn-row">
               {THEME_OPTIONS.filter((opt) => !settings.scambait || opt.value !== 'custom').map((opt) => (

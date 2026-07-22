@@ -183,7 +183,7 @@ export default function SubscriptionsPage() {
           if (cancelTarget) doCancel(cancelTarget);
           setCancelTarget(null);
         }}
-        title="Are you sure you want to cancel this?"
+        title={cancelTarget?.plan_name ?? ''}
         message={cancelTarget
           ? <>Cancel <strong>{cancelTarget.plan_name}</strong>? It stays active until {formatDateShort(cancelTarget.current_period_end)}, then won't renew. You can restore it at any time before then.</>
           : ''}

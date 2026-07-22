@@ -147,7 +147,7 @@ export function AppLayout() {
             <VerificationBanner />
             {restrictionList.length > 0 && (
               <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <WarningIcon />Your account has some active restrictions:{' '}
+                <WarningIcon />Your account is currently restricted:{' '}
                 {restrictionsMod ? restrictionList.map(([k]) => restrictionsMod.getRestrictionInfo(k).title).join(', ') : ''}.
                 {' '}<Link to="/account/restrictions" className="link">More...</Link>
               </div>

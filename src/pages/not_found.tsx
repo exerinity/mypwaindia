@@ -20,7 +20,7 @@ export default function NotFoundPage() {
           rel="noreferrer"
         >Try on MyPayIndia.com <ExternalIcon size={11} /></a>
         <a
-          href={`https://legacy.app.mypayindia.com${pathname}`}
+          href={`https://legacy.mpi.exerinity.gay${pathname}`}
           className="btn secondary"
           target="_blank"
           rel="noreferrer"

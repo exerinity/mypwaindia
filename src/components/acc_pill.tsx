@@ -68,7 +68,7 @@ export function AccountPill() {
         <button className="pill clickable" onClick={() => open ? closeDropdown() : setOpen(true)} aria-haspopup="menu" aria-expanded={open}>
           <span className="pill-label">Logged in as</span>
           <strong><DisplayName account={active} mode={settings.displayName} /></strong>
-          <ChevronDown />
+          <span className={`acct-chevron${open && !closing ? ' acct-chevron-open' : ''}`}><ChevronDown /></span>
         </button>
 
         {(open || closing) && (

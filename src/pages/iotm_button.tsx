@@ -961,7 +961,7 @@ export default function IotmButtonPage() {
             <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: '0 0 12px' }}>
               Active clickers:{' '}
               {activeUsers.size === 0
-                ? <Skeleton height={13} style={{ width: 24, display: 'inline-block', verticalAlign: 'middle' }} />
+                ? <span className="spinner" style={{ width: 13, height: 13, borderWidth: 2, verticalAlign: 'middle' }} />
                 : <strong style={{ color: 'var(--fg)' }}>{activeUsers.size}</strong>
               }
             </p>
