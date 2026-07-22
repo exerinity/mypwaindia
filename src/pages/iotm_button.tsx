@@ -506,7 +506,7 @@ export default function IotmButtonPage() {
     if (!active?.token) return;
     tempClicks.current = 0;
 
-    fetch(`${API_BASE}/iotm/button/click`, {
+    fetch(`${API_BASE}/api/v0/buttonclick`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${active.token}`, Accept: 'application/json' },
       credentials: 'include',

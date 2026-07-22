@@ -1,0 +1,27 @@
+{
+	"name": "mypwaindia2",
+	"main": "src/worker/main.js",
+	"compatibility_date": "2025-02-01",
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS",
+		"not_found_handling": "single-page-application"
+	},
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true
+		}
+	},
+	"vars": {
+		"MPI_USER_BASE": "https://bastion.mypayindia.sbs",
+		"MPI_PAY_BASE": "https://mypayindia.com",
+		"RETURN_URL": "https://mypayindia.sbs/iotm/button"
+	},
+	"kv_namespaces": [
+		{
+			"binding": "MPI_KV",
+			"id": "9aedd75612ed4a0b855bb042ab1da3b2"
+		}
+	]
+}

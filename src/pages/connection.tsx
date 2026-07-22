@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePageTitle } from '../hooks/page_title.js';
 import { Link } from 'react-router-dom';
+import { API_BASE } from '../api/config.js';
 
 type CheckState = 'loading' | 'success' | 'fail' | 'down';
 
@@ -34,9 +35,9 @@ export default function ConnectionPage() {
   const [mpiReason, setMpiReason] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('https://bastion.mypayindia.sbs/int', { mode: 'no-cors' })
+    fetch(`${API_BASE}/api/v2/info/leaderboard`, { mode: 'no-cors' })
       .then(res => {
-        if (res.type === 'opaque') {
+        if (res.type === 'opaque' || res.status > 0) {
           setBastionState('success');
           setBastionReason(null);
         } else {
@@ -116,7 +117,7 @@ export default function ConnectionPage() {
       </div>
 
       <div className="card mb-2">
-        <h3 className="mt-0">bastion.mypayindia.sbs</h3>
+        <h3 className="mt-0">PWA backend/proxy</h3>
         <StatusBadge state={bastionState} label="bastion" reason={bastionReason} />
       </div>
 

@@ -50,6 +50,22 @@ export default defineConfig({
       }
     })
   ],
+  server: {
+    proxy: {
+      ...Object.fromEntries(
+        ['/i/api', '/i/iotm', '/i/accountservices', '/i/pwa', '/i/staging'].map((prefix) => [prefix, {
+          target: 'https://bastion.mypayindia.sbs',
+          changeOrigin: true,
+          rewrite: (path) => path === '/i/api/v0/buttonclick' ? '/iotm/button/click' : path.replace(/^\/i/, '')
+        }])
+      ),
+      '/i/subscribe': {
+        target: 'https://subscribe.mypayindia.sbs',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/i\/subscribe/, '') || '/'
+      }
+    }
+  },
   build: {
     modulePreload: false,
     minify: false,

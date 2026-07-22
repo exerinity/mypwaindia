@@ -1,18 +1,18 @@
 const PREVIEW_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0'];
 
-export const REMOTE_BASE = 'https://bastion.mypayindia.sbs';
-
 function isPreview(): boolean {
   const host = typeof window !== 'undefined' ? window.location.hostname : '';
   return PREVIEW_HOSTS.includes(host);
 }
 
+export const REMOTE_BASE = isPreview() ? '/i' : 'https://mypayindia.sbs/i';
+
 export function getApiBase(): string {
-  return isPreview() ? 'http://localhost:3000' : REMOTE_BASE;
+  return REMOTE_BASE;
 }
 
 export function getSubscribeBase(): string {
-  return isPreview() ? 'http://localhost:6769' : 'https://subscribe.mypayindia.sbs';
+  return isPreview() ? '/i/subscribe' : 'https://mypayindia.sbs/i/subscribe';
 }
 
 export const API_BASE = getApiBase();
