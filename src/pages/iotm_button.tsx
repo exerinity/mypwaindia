@@ -21,11 +21,24 @@ const MIN_CLICK_DELAY_MS = 100;
 const CLICK_BATCH_SIZE = 10;
 const PAYOUT_EVERY = 100;
 
+interface LeaderEntry {
+  rank: string;
+  user: string;
+  clicks: string;
+}
+
+interface Leaderboard {
+  globalClicks: string;
+  entries: LeaderEntry[];
+}
+
+const EMPTY_LEADERBOARD: Leaderboard = { globalClicks: '', entries: [] };
+
 interface ButtonState {
   balance: string;
   clicks: number;
   payout_in: number;
-  leaderboard: string;
+  leaderboard: Leaderboard;
 }
 
 interface ClickResponse {
@@ -34,15 +47,9 @@ interface ClickResponse {
     clicks: number;
     payout_in: number;
     balance: string;
-    leaderboard: string;
+    leaderboard: Leaderboard;
   };
   message?: string;
-}
-
-interface LeaderEntry {
-  rank: string;
-  user: string;
-  clicks: string;
 }
 
 function AnimatedNumber({ value, format = (n: number) => n.toLocaleString() }: { value: number; format?: (n: number) => string }) {
@@ -88,22 +95,6 @@ function SlotBalance({ value }: { value: string }) {
       })}
     </span>
   );
-}
-
-function parseLeaderboardHtml(html: string): { globalClicks: string; entries: LeaderEntry[] } {
-  const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
-  const p = doc.querySelector('p');
-  const globalClicks = p?.textContent?.replace('Global clicks:', '').trim() ?? '';
-  const rows = doc.querySelectorAll('tbody tr');
-  const entries: LeaderEntry[] = [];
-  rows.forEach((row) => {
-    const rank = row.querySelector('.rank-col')?.textContent?.trim() ?? '';
-    const userEl = row.querySelector('.user-col');
-    const user = (userEl?.firstChild?.textContent ?? userEl?.textContent ?? '').trim();
-    const clicks = row.querySelector('.balance-col')?.textContent?.trim() ?? '';
-    if (rank && user && clicks) entries.push({ rank, user, clicks });
-  });
-  return { globalClicks, entries };
 }
 
 interface MathQuestion { display: string; answer: bigint }
@@ -434,27 +425,21 @@ export default function IotmButtonPage() {
     setLoading(true);
     setError(null);
 
-    fetch(`${API_BASE}/iotm/button?minimal`, {
+    fetch(`${API_BASE}/api/v0/button/inter`, {
       headers: { Authorization: `Bearer ${active.token}` },
       credentials: 'include',
     })
       .then((r) => {
         if (!r.ok) throw new Error(`Server returned ${r.status}`);
-        return r.text();
+        return r.json() as Promise<ButtonState>;
       })
-      .then((html) => {
+      .then((data) => {
         if (cancelled) return;
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        const balance = doc.querySelector('#balance-amount')?.textContent?.trim() ?? '0';
-        const clicks = parseInt(doc.querySelector('#click_counter')?.textContent?.trim() ?? '0', 10);
-        const payout_in = parseInt(doc.querySelector('#payout_counter')?.textContent?.trim() ?? '0', 10);
-        const leaderboard = doc.querySelector('#click_leaderboard')?.innerHTML ?? '';
-
-        setState({ balance, clicks, payout_in, leaderboard });
-        localClicks.current = clicks;
-        localPayoutIn.current = payout_in;
-        setDisplayClicks(clicks);
-        setDisplayPayoutIn(payout_in);
+        setState(data);
+        localClicks.current = data.clicks;
+        localPayoutIn.current = data.payout_in;
+        setDisplayClicks(data.clicks);
+        setDisplayPayoutIn(data.payout_in);
         setLoading(false);
       })
       .catch((e: unknown) => {
@@ -479,12 +464,12 @@ export default function IotmButtonPage() {
       }
       if (now < nextRefreshAt.current) return;
       nextRefreshAt.current = now + 10000;
-      fetch(`${API_BASE}/iotm/button?minimal`, {
+      fetch(`${API_BASE}/api/v0/button/inter`, {
         headers: { Authorization: `Bearer ${active.token}` },
         credentials: 'include',
       })
-        .then((r) => r.ok ? r.text() : Promise.reject())
-        .then((html) => {
+        .then((r) => r.ok ? r.json() as Promise<ButtonState> : Promise.reject())
+        .then((data) => {
           failedRequests.current = 0;
           setConnectionLost(false);
           if (pendingAutoResume.current) {
@@ -493,9 +478,7 @@ export default function IotmButtonPage() {
             setAutoClickStatus('active');
             toast.info('Autoclicker resumed');
           }
-          const doc = new DOMParser().parseFromString(html, 'text/html');
-          const leaderboard = doc.querySelector('#click_leaderboard')?.innerHTML ?? '';
-          setState((s) => s ? { ...s, leaderboard } : s);
+          setState((s) => s ? { ...s, leaderboard: data.leaderboard } : s);
         })
         .catch(() => {});
     }, 1000);
@@ -506,7 +489,7 @@ export default function IotmButtonPage() {
     if (!active?.token) return;
     tempClicks.current = 0;
 
-    fetch(`${API_BASE}/api/v0/buttonclick`, {
+    fetch(`${API_BASE}/api/v0/button/click`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${active.token}`, Accept: 'application/json' },
       credentials: 'include',
@@ -524,7 +507,7 @@ export default function IotmButtonPage() {
         if (res.success && res.data) {
           const { clicks, payout_in, balance, leaderboard } = res.data;
           const apply = () => {
-            setState((s) => ({ ...s!, balance, clicks, payout_in, leaderboard: leaderboard ?? s?.leaderboard ?? '' }));
+            setState((s) => ({ ...s!, balance, clicks, payout_in, leaderboard: leaderboard ?? s?.leaderboard ?? EMPTY_LEADERBOARD }));
             localClicks.current = clicks;
             localPayoutIn.current = payout_in;
             setDisplayClicks(clicks);
@@ -724,7 +707,7 @@ export default function IotmButtonPage() {
 
   useEffect(() => {
     if (!state?.leaderboard) return;
-    const parsed = parseLeaderboardHtml(state.leaderboard);
+    const parsed = state.leaderboard;
     const snapshot = new Map<string, number>();
     parsed.entries.forEach((e) => snapshot.set(e.user, parseInt(e.clicks.replace(/,/g, ''), 10)));
     const history = leaderboardSnapshots.current;
@@ -746,7 +729,7 @@ export default function IotmButtonPage() {
     ? 100
     : (displayPayoutIn / PAYOUT_EVERY) * 100;
 
-  const leaderboard = state ? parseLeaderboardHtml(state.leaderboard) : null;
+  const leaderboard = state ? state.leaderboard : null;
 
   return (
     <>

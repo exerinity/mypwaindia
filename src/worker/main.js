@@ -10,10 +10,6 @@ export default {
     if (url.pathname === "/i/api") {
       return new Response(null, { status: 302, headers: { Location: "/" } });
     }
-    if (url.pathname === "/i/api/v0/buttonclick") {
-      url.pathname = "/iotm/button/click";
-      return bastion.fetch(new Request(url, req), env);
-    }
     if (url.pathname === SUBSCRIBE_PREFIX || url.pathname.startsWith(SUBSCRIBE_PREFIX + "/")) {
       url.pathname = url.pathname.slice(SUBSCRIBE_PREFIX.length) || "/";
       return subscribe.fetch(new Request(url, req), env);

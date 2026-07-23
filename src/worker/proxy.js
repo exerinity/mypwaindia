@@ -1,4 +1,23 @@
 import { SETTINGS_PATH, handleSettings } from "./settings_saver.js";
+import { parseButtonPage, parseLeaderboard } from "./button_parse.js";
+
+function jsonResponse(body, corsOrigin) {
+  const headers = { "Content-Type": "application/json" };
+  if (corsOrigin) {
+    headers["Access-Control-Allow-Origin"] = corsOrigin;
+    headers["Access-Control-Allow-Credentials"] = "true";
+  }
+  return new Response(JSON.stringify(body), { status: 200, headers });
+}
+
+function passthrough(upstream, corsOrigin) {
+  const headers = new Headers();
+  if (corsOrigin) {
+    headers.set("Access-Control-Allow-Origin", corsOrigin);
+    headers.set("Access-Control-Allow-Credentials", "true");
+  }
+  return new Response(upstream.body, { status: upstream.status, headers });
+}
 
 const APP_ORIGIN = "https://mypayindia.sbs";
 const APP_HOST = "mypayindia.sbs";
@@ -105,6 +124,34 @@ export const bastion = {
         });
       }
       req = new Request(req, { body });
+    }
+
+    if (req.method === "GET" && strippedPath === "/api/v0/button/inter") {
+      const upstream = await fetch(backendBase + "/iotm/button?minimal", {
+        method: "GET",
+        headers: req.headers,
+        redirect: "manual"
+      });
+      if (!upstream.ok) return passthrough(upstream, corsOrigin);
+      return jsonResponse(parseButtonPage(await upstream.text()), corsOrigin);
+    }
+
+    if (req.method === "POST" && strippedPath === "/api/v0/button/click") {
+      const upstream = await fetch(backendBase + "/iotm/button/click", {
+        method: "POST",
+        headers: req.headers,
+        body: req.body,
+        redirect: "manual"
+      });
+      const contentType = upstream.headers.get("content-type") || "";
+      if (!upstream.ok || !contentType.includes("application/json")) {
+        return passthrough(upstream, corsOrigin);
+      }
+      const payload = await upstream.json();
+      if (payload && payload.data && typeof payload.data.leaderboard === "string") {
+        payload.data.leaderboard = parseLeaderboard(payload.data.leaderboard);
+      }
+      return jsonResponse(payload, corsOrigin);
     }
 
     const back = backendBase + strippedPath + url.search;
