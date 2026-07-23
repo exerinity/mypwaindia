@@ -7,19 +7,21 @@ This **is not** the source code for MyPayIndia, the website.
 ## Why?
 At the start of May, this remake was born. The original PWA was becoming quite difficult to maintain as the monolithic-ness of it was becoming quite large, and I feared that, by splitting the files up I would've certainly broke something. So, I created this. The second incarnation of MyPWAIndia, in React, began at the very end of April, but was spearheaded around May 5th to 7th.
 
-MyPWAIndia (usually) achieves quad-100 scores on Lighthouse, works on anything with a modern JavaScript engine, and uses near-to-naught RAM. For, what it does, I guess...? It is hosted entirely on Cloudflare Workers (uses Pages for the frontend and Workers for the bastion backend)
+MyPWAIndia (usually) achieves quad-100 scores on Lighthouse, works on anything with a modern JavaScript engine, and uses near-to-naught RAM. For, what it does, I guess...? It is hosted entirely on Cloudflare Workers (one Worker serves both the frontend and a backend proxy)
 
-## The bastion
-[bastion.mypayindia.sbs](https://bastion.mypayindia.sbs) (named after the [Bruckell Bastion](https://beamng.fandom.com/wiki/Bruckell_Bastion)) is basically just a proxy for MyPWAIndia to talk with MyPayIndia. It's a Cloudflare Worker.
-
-Sessions are managed both within the bastion (a cookie) and on the frontend (a session token), i.e., you can delete the cookie but the app will still remember you. To fully log out, go to [/i/flow/logout](https://mypayindia.sbs/i/flow/logout) - that logs both sides out.
-
-Aside from handling data and sessions, it also handles [the button](https://mypayindia.sbs/iotm/button) and proxies clicks.
+However, *this is chunky*. Both in footprint and feel. The previous one is a lot more minimalist, lightweight, and mobile-friendly. You can still use it here: https://legacy.mpi.exerinity.gay/
 
 ## About this repo
 This repo is not intended for self-hosting or contributing; it is meant to just show how the app works. Please do not create pull requests, they will not be merged.
 
 You are, however, free to fork it and do absolutely anything you want with the code, and redistribute that code... provided you abide by the MIT license. You also must affirm your fork is... a fork and **unaffiliated** with MyPayIndia or MyPWAIndia and **you may not** use any official branding.
+
+## The bastion
+The bastion is the proxy that lets MyPWAIndia talk to MyPayIndia (named after the [Bruckell Bastion](https://beamng.fandom.com/wiki/Bruckell_Bastion)). It used to be its own Cloudflare Worker at [bastion.mypayindia.sbs](https://bastion.mypayindia.sbs), but it's now folded into the same Worker that serves this site, reachable under **/i/api**. (the standalone one stays up for old app versions and staging)
+
+Besides proxying data, it runs the session layer and handles [the button](https://mypayindia.sbs/iotm/button), proxying its clicks.
+
+**Sessions live in two places:** a cookie on the bastion side and a session token on the frontend. Deleting the cookie won't log you out (the app still remembers you via the token), so to clear both, use [/i/flow/logout](https://mypayindia.sbs/i/flow/logout).
 
 ## Bundling & loading
 The app is built with Vite. The output is deliberately **unminified** (no sourcemaps either)
