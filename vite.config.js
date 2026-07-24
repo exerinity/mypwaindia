@@ -68,7 +68,8 @@ export default defineConfig({
   },
   build: {
     modulePreload: false,
-    minify: false,
+    minify: 'esbuild',
+    cssMinify: false,
     sourcemap: false,
     target: 'esnext',
     rollupOptions: {
