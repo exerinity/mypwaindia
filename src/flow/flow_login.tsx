@@ -9,10 +9,8 @@ import { ArrowLeftIcon, ExternalIcon, WarningIcon, ErrorIcon, EyeIcon, EyeOffIco
 import { Modal } from '../components/modal.tsx';
 
 const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
-import { usePageTitle } from '../hooks/page_title.js';
 
 export default function LoginPage() {
-  usePageTitle('Log in to MyPayIndia');
   const { login, accounts, maxAccounts } = useAuth();
   const { update: updateSettings } = useSettings();
   const location = useLocation();

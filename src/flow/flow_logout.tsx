@@ -4,10 +4,8 @@ import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { LogoutIcon } from '../components/icons.tsx';
 import { Modal } from '../components/modal.tsx';
-import { usePageTitle } from '../hooks/page_title.js';
 
 export default function LogoutPage() {
-  usePageTitle('Log out');
   const { logout, active, accounts } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

@@ -9,7 +9,6 @@ import {
 } from '../context/settings_ctx.tsx';
 import type { Settings, DashboardButtonStyle } from '../context/settings_ctx.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
-import { usePageTitle } from '../hooks/page_title.js';
 import { PlusIcon, CloseIcon, SuccessIcon, ArrowLeftIcon, ChevronRight } from '../components/icons.tsx';
 
 const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
@@ -21,7 +20,6 @@ const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
 const STEP_LABELS = ['Theme', 'Speed dial', 'Default page', 'Updates', 'Syncing'];
 
 export default function FinetunePage() {
-  usePageTitle('Set up MyPWAIndia');
   const navigate = useNavigate();
   const { settings, update } = useSettings();
   const [step, setStep] = useState(0);
