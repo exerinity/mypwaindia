@@ -33,5 +33,4 @@ MyPayIndia is a parody/comedy project, not a real financial institution. Nothing
 ## Source and license
 
 - Source code: this repository (MIT licensed, see /LICENSE).
-- Predecessor vanilla-JS PWA: https://github.com/MyPayIndiaDevs/pwa
 - Built with React, React Router, Vite, TypeScript (see /i/acknowledgements for full credits).

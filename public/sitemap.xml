@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://mypayindia.sbs/</loc>
+  </url>
+  <url>
+    <loc>https://mypayindia.sbs/dash</loc>
+  </url>
+  <url>
+    <loc>https://mypayindia.sbs/i/leaderboard</loc>
+  </url>
+  <url>
+    <loc>https://mypayindia.sbs/i/team</loc>
+  </url>
+  <url>
+    <loc>https://mypayindia.sbs/i/team/globe</loc>
+  </url>
+  <url>
+    <loc>https://mypayindia.sbs/i/flow/mci</loc>
+  </url>
+  <url>
+    <loc>https://mypayindia.sbs/i/flow/mpti</loc>
+  </url>
+  <url>
+    <loc>https://mypayindia.sbs/i/release_notes</loc>
+  </url>
+  <url>
+    <loc>https://mypayindia.sbs/i/flow/connection</loc>
+  </url>
+  <url>
+    <loc>https://mypayindia.sbs/i/acknowledgements</loc>
+  </url>
+</urlset>

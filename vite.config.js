@@ -46,7 +46,7 @@ export default defineConfig({
         display: 'standalone',
         start_url: '/dash',
         id: 'com.exerinity.mpi',
-        icons: [{ src: '/i/mypayindia.png', sizes: '64x64', type: 'image/png', purpose: 'any maskable' }]
+        icons: [{ src: '/i/mypayindia-bg.png', sizes: '64x64', type: 'image/png', purpose: 'any maskable' }]
       }
     })
   ],
@@ -74,12 +74,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         entryFileNames: 'i/scripts/mypwaindia_index-[hash].js',
-        chunkFileNames: 'i/scripts/mpi_[name]-[hash].js',
+        chunkFileNames: (chunk) => chunk.name.startsWith('node/') ? 'i/scripts/[name]-[hash].js' : 'i/scripts/mpi_[name]-[hash].js',
         assetFileNames: '[name]-[hash].[ext]',
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (/[\\/]node_modules[\\/](three|three-globe|three-render-objects|three-conic-polygon-geometry|three-geojson-geometry|three-slippy-map-globe|globe\.gl|react-globe\.gl|react-kapsule|kapsule|accessor-fn|index-array-by|tinycolor2|frame-ticker|data-bind-mapper|h3-js|earcut|float-tooltip|@tweenjs[\\/]tween\.js|d3-[^\\/]+)[\\/]/.test(id)) return 'globe';
-            return 'node_modules';
+            const parts = id.slice(id.lastIndexOf('node_modules/') + 'node_modules/'.length).split('/');
+            return `node/mpi_${parts[0][0] === '@' ? `${parts[0].slice(1)}-${parts[1]}` : parts[0]}`;
           }
           if (id.match(/pages\/(login|logout|onboarding)/)) return 'flow';
           if (id.match(/pages\/(transfer|bulk_transfer)/)) return 'transfers';
@@ -88,8 +89,10 @@ export default defineConfig({
           if (id.match(/pages\/team_map/)) return 'teammap';
           if (id.match(/pages\/(leaderboard|team)/)) return 'social';
           if (id.match(/pages\/(settings|old_settings)/)) return 'settings';
-          if (id.match(/pages\/(iotm|iotm_button)/)) return 'iotm';
-          if (id.match(/pages\/(cli|toys)/)) return 'tools';
+          if (id.match(/pages\/iotm_button/)) return 'iotm_button';
+          if (id.match(/pages\/iotm/)) return 'iotm';
+          if (id.match(/pages\/cli/)) return 'cli';
+          if (id.match(/pages\/toys/)) return 'tools';
           if (id.match(/pages\/(release_notes|acknowledgements|restrictions|connection)/)) return 'info';
           if (id.match(/pages\/(not_found|flow_not_found|theme_apply|external_redirect)/)) return 'misc';
           if (id.match(/pages\/(account|dashboard)/)) return 'client';

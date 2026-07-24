@@ -9,7 +9,7 @@
     window.__t0 = performance.now(); // tracking the load times
   </script>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/src/logo/mypayindia.png" />
+  <link rel="icon" type="image/png" href="/i/mypayindia-bg.webp" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#d03505" />
   <title>MyPayIndia</title>
@@ -109,9 +109,12 @@
       }
     }
 
-    #splash-hint,
-    #splash-hint a {
+    #splash-hint {
       color: #666
+    }
+
+    #splash-hint a {
+      color: inherit
     }
 
     #splash-hint {
@@ -168,7 +171,7 @@
       style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:#121212;font-family:system-ui,-apple-system,sans-serif;">
       <div
         style="background:#171717;border:1px solid #333;border-radius:10px;padding:32px;width:100%;max-width:420px;box-shadow:0 2px 8px rgba(0,0,0,0.6);text-align:center;color:#eaeaea;">
-        <img src="/src/logo/mypayindia-full.webp" alt="MyPayIndia" width="135" height="50"
+        <img src="/i/mypayindia-full.webp" alt="MyPayIndia" width="135" height="50"
           style="margin-bottom:20px;" />
         <h2 style="margin:0 0 8px;font-size:1.2rem;">JavaScript is not available / disabled</h2>
         <p style="color:#aaa;font-size:0.9rem;margin:0 0 20px;">This app requires JavaScript to function. Please enable
@@ -193,7 +196,7 @@
       </div>
     </div>
   </noscript>
-  <div id="mpi-meow"></div> <!-- for those curious what the fuck "meow" could be, its the element where react renders :333 -->
+  <div id="mpi-meow"></div> <!-- this is the react root for anyone wondering meow meow meow meow -->
   <div id="splash">
     <img class="splash-logo" src="/i/mypayindia-full.webp" alt="MyPayIndia" width="141" height="52" draggable="false" />
     <p id="splash-hint">Stuck loading?<br><a href="">Reload app</a> (<a href="?cachebust=676767">cachebust</a>) - <a
