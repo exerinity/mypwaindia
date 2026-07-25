@@ -1,13 +1,15 @@
 import { useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
+import { useToast } from '../context/toast_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
-import { getTransaction } from '../api/transactions.js';
+import { getTransaction, transfer } from '../api/transactions.js';
+import { getUserInfo } from '../api/user.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { Modal } from '../components/modal.tsx';
-import { CopyIcon, ArrowDownLeftIcon, ArrowUpRightIcon } from '../components/icons.tsx';
+import { CopyIcon, ArrowDownLeftIcon, ArrowUpRightIcon, SuccessIcon } from '../components/icons.tsx';
 
 type TxDetail = {
   transaction_id: string;
@@ -64,9 +66,12 @@ function Field({ label, value, display, style, showCopy = false }: { label: stri
 }
 
 export default function TransactionModal() {
-  const { active } = useAuth();
+  const { active, updateBalance } = useAuth();
   const format = useCurrency();
+  const toast = useToast();
   const navigate = useNavigate();
+  const [returning, setReturning] = useState(false);
+  const [returned, setReturned] = useState(false);
   const location = useLocation();
   const id = location.pathname.split('/').pop();
   const datesMod = useLazyModule(() => import('../utils/dates.js'));
@@ -97,10 +102,32 @@ export default function TransactionModal() {
     navigate(`/account/transfer?to=${encodeURIComponent(to)}`);
   }
 
-  function handleReturn() {
+  async function handleReturn(e: React.MouseEvent<HTMLButtonElement>) {
     const to = otherUsername();
-    const amountRu = (data?.amount ?? 0) / 100;
     const message = `Return of #${data?.id ?? ''}`;
+
+    if (e.shiftKey) {
+      const amount = data?.amount ?? 0;
+      if (!to || amount <= 0) return;
+      setReturning(true);
+      try {
+        await transfer(active!, { recipient: to, amount, note: message });
+        setReturned(true);
+        toast.success(`Returned ${format(amount)} to @${to}`);
+        try {
+          const info = await getUserInfo(active!) as { balance: number };
+          updateBalance(active!.id, info.balance);
+        } catch { }
+      } catch (err) {
+        const { describeError } = await import('../utils/errors.js');
+        toast.error(describeError(err));
+      } finally {
+        setReturning(false);
+      }
+      return;
+    }
+
+    const amountRu = (data?.amount ?? 0) / 100;
     const qs = new URLSearchParams({ to, amount: String(amountRu), message }).toString();
     navigate(`/account/transfer?${qs}`);
   }
@@ -186,14 +213,28 @@ export default function TransactionModal() {
               New transfer to them
             </button>
             {!outgoing && (
-              <button type="button" className="secondary" onClick={handleReturn}>
-                Return it
+              <button
+                type="button"
+                className="secondary"
+                onClick={handleReturn}
+                disabled={returning || returned}
+              >
+                {returning ? (
+                  <><span className="spinner" /> Returning...</>
+                ) : returned ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><SuccessIcon size={15} /> Returned</span>
+                ) : 'Return it'}
               </button>
             )}
             <button type="button" onClick={handleClose}>
               OK
             </button>
           </div>
+          {!outgoing && !returned && (
+            <div className="muted" style={{ marginTop: 8, fontSize: '0.75rem' }}>
+              Tip: Hold shift while pressing Return to fast-return
+            </div>
+          )}
         </>
       )}
     </Modal>

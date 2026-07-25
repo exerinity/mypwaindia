@@ -14,11 +14,12 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
-    version: '17b',
-    date: '23 Jul 2026',
+    version: '18',
+    date: '25 Jul 2026',
     notes: [
       <><Link to="/i/flow/mci">MyCLiIndia</Link> has been given a slight refresh to look more like an actual terminal</>,
-      "Scambait mode has been improved, especially the statements page"
+      "Scambait mode has been improved, especially the statements page",
+      "Added a fast-return button to transaction info modals"
     ]
   },
   {
