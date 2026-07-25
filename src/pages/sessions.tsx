@@ -5,7 +5,7 @@ import { useAuth } from '../context/auth_ctx.tsx';
 import { login as apiLogin, logout as apiLogout } from '../api/auth.js';
 import { useToast } from '../context/toast_ctx.tsx';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon, InfoIcon, ErrorIcon, LockIcon } from '../components/icons.tsx';
+import { ExternalIcon, InfoIcon, ErrorIcon, LockIcon, ArrowLeftIcon } from '../components/icons.tsx';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useCachedQuery } from '../hooks/cached_query.js';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
@@ -19,6 +19,11 @@ const RefreshStatus = lazy(() => import('../components/refresh_status.tsx').then
 const HoldButton = lazy(() => import('../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
 
 interface Session { id: string; device_info?: string; ip?: string; created_at: string; last_active: string; current?: boolean; invalidated?: boolean }
+
+const BACK_TARGETS: Record<string, { to: string; label: string }> = {
+  settings: { to: '/settings', label: 'settings' },
+  account: { to: '/account', label: 'account info' },
+};
 
 type SessionSortCol = 'device' | 'created' | 'last_active' | 'status';
 const SESSION_COL_SORTS: Record<SessionSortCol, [string, string]> = {
@@ -70,6 +75,7 @@ export default function SessionsPage() {
   const { settings } = useSettings();
   const { active, updateAccountInfo } = useAuth();
   const location = useLocation();
+  const backTarget = BACK_TARGETS[(location.state as { from?: string } | null)?.from ?? ''];
   const toast = useToast();
   const datesMod = useLazyModule(() => import('../utils/dates.js'));
   const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
@@ -218,6 +224,13 @@ export default function SessionsPage() {
   return (
     <>
       <h1 className="mt-0">Sessions</h1>
+      {backTarget && (
+        <p className="mt-0 mb-0" style={{ marginBottom: 20 }}>
+          <Link to={backTarget.to} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+            <ArrowLeftIcon /> Back to {backTarget.label}
+          </Link>
+        </p>
+      )}
 
       {!active && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">

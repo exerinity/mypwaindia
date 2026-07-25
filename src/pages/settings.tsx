@@ -121,7 +121,7 @@ export default function SettingsPage() {
   usePageTitle(activeCat.label + ' / Settings');
 
   const { settings, update, reset } = useSettings();
-  const { accounts, removeAccount, active } = useAuth();
+  const { accounts, removeAccount, switchAccount, active } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
@@ -132,6 +132,7 @@ export default function SettingsPage() {
   const [accentInput, setAccentInput] = useState(settings.accent);
   const [removeOneTarget, setRemoveOneTarget] = useState<Account | null>(null);
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
+  const [switching, setSwitching] = useState(false);
   const [customHomeInput, setCustomHomeInput] = useState<string | null>(() =>
     HOME_PAGE_OPTIONS.some((o) => o.value === settings.homePage) ? null : settings.homePage
   );
@@ -950,10 +951,18 @@ export default function SettingsPage() {
                         <td>
                           {active?.id === acc.id
                             ? <span className="link-status active">current</span>
-                            : <span className="muted">stored</span>}
+                            : (
+                              <button
+                                className="compact secondary"
+                                disabled={switching}
+                                onClick={async () => { setSwitching(true); await switchAccount(acc.id); }}
+                              >
+                                Switch to
+                              </button>
+                            )}
                         </td>
                         <td>
-                          <button className="compact" onClick={() => setRemoveOneTarget(acc)}>
+                          <button className="compact" disabled={switching} onClick={() => setRemoveOneTarget(acc)}>
                             Remove
                           </button>
                         </td>
@@ -1201,6 +1210,7 @@ export default function SettingsPage() {
                 <Link
                   key={cat.id}
                   to={cat.to ?? `/settings/${cat.id}`}
+                  state={cat.id === 'sessions' ? { from: 'settings' } : undefined}
                   className={`mpi-settings-nav-item${!cat.to && activeCategory === cat.id ? ' active' : ''}`}
                   title={cat.desc}
                   onClick={() => setMobileShowDetail(true)}
