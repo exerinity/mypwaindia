@@ -13,6 +13,7 @@ const CardsPage = lazy(() => import('./pages/cards.tsx'));
 const TransferPage = lazy(() => import('./pages/transfer.tsx'));
 const BulkTransferPage = lazy(() => import('./pages/bulk_transfer.tsx'));
 const HistoryPage = lazy(() => import('./pages/history.tsx'));
+const SimpleHistoryPage = lazy(() => import('./pages/simple_history.tsx'));
 const StatementsPage = lazy(() => import('./pages/statements.tsx'));
 const OldTransactionPage = lazy(() => import('./pages/old_transaction.tsx'));
 const LinksPage = lazy(() => import('./pages/links.tsx'));
@@ -136,6 +137,7 @@ export default function App() {
           <Route path="/account/transfer" element={<TransferPage />} />
           <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
           <Route path="/account/history" element={<HistoryPage />} />
+          <Route path="/account/history/simple" element={<SimpleHistoryPage />} />
           <Route path="/i/flow/sessions" element={<SessionsPage />} />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
           <Route path="/i/flow/links" element={<LinksPage />} />

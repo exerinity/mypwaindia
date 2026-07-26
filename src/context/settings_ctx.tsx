@@ -19,6 +19,7 @@ export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/account', label: 'Account' },
   { value: '/account/transfer', label: 'Transfer funds' },
   { value: '/account/history', label: 'Full transaction history' },
+  { value: '/account/history/simple', label: 'Simple history' },
   { value: '/account/restrictions', label: 'Active restrictions' },
   { value: '/dash/statements', label: 'Statements' },
   { value: '/dash/cards', label: 'Cards' },
@@ -67,6 +68,31 @@ export function normalizeDashboardButtons(value: unknown): DashboardButton[] {
   }).filter((b) => b.route);
 }
 
+export const BOTTOM_NAV_MAX = 6;
+
+export const DEFAULT_BOTTOM_NAV_ITEMS: string[] = [
+  '/dash',
+  '/account',
+  '/account/transfer',
+  '/account/history',
+  '/settings',
+];
+
+export function normalizeBottomNavItems(value: unknown): string[] {
+  if (!Array.isArray(value)) return [...DEFAULT_BOTTOM_NAV_ITEMS];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const entry of value) {
+    if (typeof entry !== 'string') continue;
+    const route = entry.trim();
+    if (!route || seen.has(route)) continue;
+    seen.add(route);
+    out.push(route);
+    if (out.length === BOTTOM_NAV_MAX) break;
+  }
+  return out;
+}
+
 export interface Settings {
   theme: 'light' | 'dim' | 'dark' | 'custom';
   accent: string;
@@ -78,6 +104,9 @@ export interface Settings {
   scambait: boolean;
   homePage: string;
   dashboardButtons: DashboardButton[];
+  bottomNav: boolean;
+  bottomNavForce: boolean;
+  bottomNavItems: string[];
   customTheme: Record<string, string>;
   swEnabled: boolean;
   rememberInfo: boolean;
@@ -102,6 +131,9 @@ export const DEFAULT_SETTINGS: Settings = {
   scambait: false,
   homePage: '/dash',
   dashboardButtons: DEFAULT_DASHBOARD_BUTTONS,
+  bottomNav: true,
+  bottomNavForce: false,
+  bottomNavItems: DEFAULT_BOTTOM_NAV_ITEMS,
   customTheme: {},
   swEnabled: false,
   rememberInfo: true,
@@ -110,7 +142,11 @@ export const DEFAULT_SETTINGS: Settings = {
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(() => {
     const merged = { ...DEFAULT_SETTINGS, ...storageGet(KEYS.SETTINGS, {} as Partial<Settings>) };
-    return { ...merged, dashboardButtons: normalizeDashboardButtons(merged.dashboardButtons) };
+    return {
+      ...merged,
+      dashboardButtons: normalizeDashboardButtons(merged.dashboardButtons),
+      bottomNavItems: normalizeBottomNavItems(merged.bottomNavItems),
+    };
   });
 
   useEffect(() => {
@@ -133,6 +169,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--brand', accent);
     root.style.setProperty('--brand-dark', darken(accent, 0.15));
     root.style.setProperty('--brand-text', isLight(accent) ? '#000' : '#fff');
+
+    const surface = getComputedStyle(root).getPropertyValue('--bg').trim();
+    if (surface) {
+      document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content', surface);
+    }
   }, [settings.theme, settings.accent, settings.customTheme]);
 
   const update = (partial: Partial<Settings>) => setSettings((s) => ({ ...s, ...partial }));

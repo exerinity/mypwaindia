@@ -16,7 +16,7 @@
     top: 0;
     left: 0;
     width: 280px;
-    height: 100vh;
+    height: 100dvh;
     max-height: none;
     transform: translateX(-100%);
     transition: transform 0.28s ease;
@@ -39,7 +39,8 @@
   }
 
   .mpi-main {
-    padding: 18px 14px;
+    padding: 18px max(14px, env(safe-area-inset-right)) calc(18px + var(--mpi-bottom-nav-h)) max(14px, env(safe-area-inset-left));
+    transition: padding-bottom 280ms cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   .mpi-pills {
@@ -73,8 +74,9 @@
   .toast-container {
     left: 12px;
     right: 12px;
-    bottom: 12px;
+    bottom: calc(12px + var(--mpi-bottom-nav-h) + env(safe-area-inset-bottom));
     transform: none;
+    transition: bottom 280ms cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   .toast {

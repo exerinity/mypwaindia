@@ -41,12 +41,22 @@ export default defineConfig({
         name: 'MyPayIndia PWA',
         short_name: 'MyPayIndia',
         description: 'MyPayIndia responsive web app',
-        theme_color: '#d03505',
-        background_color: '#000000',
+        theme_color: '#121212',
+        background_color: '#121212',
         display: 'standalone',
+        display_override: ['standalone', 'minimal-ui'],
+        scope: '/',
         start_url: '/dash',
         id: 'com.exerinity.mpi',
-        icons: [{ src: '/i/mypayindia-bg.png', sizes: '64x64', type: 'image/png', purpose: 'any maskable' }]
+        icons: [
+          { src: '/i/mypayindia-bg.png', sizes: '1024x1024', type: 'image/png', purpose: 'any' },
+          { src: '/i/mypayindia-bg.png', sizes: '1024x1024', type: 'image/png', purpose: 'maskable' }
+        ],
+        shortcuts: [
+          { name: 'Transfer funds', short_name: 'Transfer', url: '/account/transfer', icons: [{ src: '/i/mypayindia-bg.png', sizes: '1024x1024', type: 'image/png' }] },
+          { name: 'Transaction history', short_name: 'History', url: '/account/history', icons: [{ src: '/i/mypayindia-bg.png', sizes: '1024x1024', type: 'image/png' }] },
+          { name: 'Payment links', short_name: 'Links', url: '/i/flow/links', icons: [{ src: '/i/mypayindia-bg.png', sizes: '1024x1024', type: 'image/png' }] }
+        ]
       }
     })
   ],
@@ -85,7 +95,7 @@ export default defineConfig({
           }
           if (id.match(/pages\/(login|logout|onboarding)/)) return 'flow';
           if (id.match(/pages\/(transfer|bulk_transfer)/)) return 'transfers';
-          if (id.match(/pages\/(history|statements|old_transaction|transaction)/)) return 'history';
+          if (id.match(/pages\/(history|simple_history|statements|old_transaction|transaction)/)) return 'history';
           if (id.match(/pages\/(links|claim_link)/)) return 'links';
           if (id.match(/pages\/team_map/)) return 'teammap';
           if (id.match(/pages\/(leaderboard|team)/)) return 'social';

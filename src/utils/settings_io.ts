@@ -1,6 +1,7 @@
 import { storageGet, storageSet, KEYS } from './storage.ts';
-import { DEFAULT_SETTINGS, HOME_PAGE_OPTIONS, normalizeDashboardButtons } from '../context/settings_ctx.tsx';
+import { DEFAULT_SETTINGS, HOME_PAGE_OPTIONS, normalizeDashboardButtons, normalizeBottomNavItems } from '../context/settings_ctx.tsx';
 import type { Settings } from '../context/settings_ctx.tsx';
+import { findDestination } from '../components/nav_catalog.tsx';
 
 export interface SettingsExport {
   v: 1;
@@ -22,6 +23,9 @@ export const SETTINGS_FIELD_LABELS: { key: keyof Settings; label: string }[] = [
   { key: 'displayName', label: 'Display name format' },
   { key: 'homePage', label: 'Home page' },
   { key: 'dashboardButtons', label: 'Dashboard action buttons' },
+  { key: 'bottomNav', label: 'Bottom navigation bar' },
+  { key: 'bottomNavForce', label: 'Bottom navigation on any screen size' },
+  { key: 'bottomNavItems', label: 'Bottom navigation items' },
   { key: 'autoRefresh', label: 'Auto-refresh data' },
   { key: 'autoRefreshOnlyWhenFocused', label: 'Auto-refresh only when focused' },
   { key: 'autoUpdate', label: 'Auto-update app' },
@@ -52,6 +56,10 @@ export function describeSettingValue(key: keyof Settings, value: unknown): strin
     const btns = normalizeDashboardButtons(value);
     return btns.length ? btns.map((b) => `${pageLabel(b.route)} (${b.style})`).join(', ') : '(none)';
   }
+  if (key === 'bottomNavItems' && Array.isArray(value)) {
+    const routes = normalizeBottomNavItems(value);
+    return routes.length ? routes.map((r) => findDestination(r)?.label ?? pageLabel(r)).join(', ') : '(none)';
+  }
   if (Array.isArray(value)) return value.length ? value.join(', ') : '(none)';
   if (value && typeof value === 'object') {
     const n = Object.keys(value).length;
@@ -68,7 +76,10 @@ export function sanitizeSettings(raw: unknown): Partial<Settings> {
     if (!(key in obj)) continue;
     const val = obj[key];
     if (Array.isArray(def)) {
-      if (Array.isArray(val)) out[key] = key === 'dashboardButtons' ? normalizeDashboardButtons(val) : val;
+      if (!Array.isArray(val)) continue;
+      if (key === 'dashboardButtons') out[key] = normalizeDashboardButtons(val);
+      else if (key === 'bottomNavItems') out[key] = normalizeBottomNavItems(val);
+      else out[key] = val;
     } else if (def !== null && typeof def === 'object') {
       if (val && typeof val === 'object' && !Array.isArray(val)) out[key] = val;
     } else if (typeof val === typeof def) {
@@ -104,7 +115,7 @@ export function parseSettingsExport(raw: string): SettingsExport | null {
 }
 
 const BOOL_KEYS: (keyof Settings)[] = [
-  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'scambait', 'swEnabled',
+  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'scambait', 'swEnabled', 'bottomNav', 'bottomNavForce',
 ];
 const STRING_KEYS: (keyof Settings)[] = ['theme', 'accent', 'displayName', 'homePage'];
 
@@ -114,6 +125,7 @@ export function settingsToSearchParams(payload: SettingsExport): string {
   for (const k of STRING_KEYS) if (s[k] !== undefined) p.set(k, String(s[k]));
   for (const k of BOOL_KEYS) if (s[k] !== undefined) p.set(k, s[k] ? 'true' : 'false');
   if (s.dashboardButtons) p.set('dashboardButtons', s.dashboardButtons.map((b) => `${b.style}:${b.route}`).join(','));
+  if (s.bottomNavItems) p.set('bottomNavItems', s.bottomNavItems.join(','));
   if (s.customTheme) {
     for (const [k, v] of Object.entries(s.customTheme)) if (v) p.set(`ct.${k}`, v);
   }
@@ -137,6 +149,8 @@ export function searchParamsToExport(search: string): SettingsExport | null {
         })
       : [];
   }
+  const bn = p.get('bottomNavItems');
+  if (bn !== null) raw.bottomNavItems = bn ? bn.split(',').filter(Boolean) : [];
   const ct: Record<string, string> = {};
   for (const [k, v] of p.entries()) if (k.startsWith('ct.')) ct[k.slice(3)] = v;
   if (Object.keys(ct).length) raw.customTheme = ct;

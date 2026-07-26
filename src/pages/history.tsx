@@ -1,5 +1,6 @@
 import { ContentSkeleton } from '../components/app_skeleton.tsx';
 import { useMemo, lazy, Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useCachedQuery } from '../hooks/cached_query.js';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
@@ -52,6 +53,9 @@ export default function HistoryPage() {
   return (
     <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Transaction history</h1>
+      <p className="muted" style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
+        <Link to="/account/history/simple">Simple history...</Link>
+      </p>
 
       {!settings.scambait && stats && (
         <div className="card" style={{ marginBottom: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px 24px' }}>

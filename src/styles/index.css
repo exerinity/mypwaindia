@@ -31,6 +31,9 @@
 @import "settings.css";
 @import "iotm_button.css";
 @import "app_lock.css";
+@import "simple_history.css";
+@import "bottom_nav.css";
+@import "mobile.css";
 
 @font-face {
   font-family: "Inter";

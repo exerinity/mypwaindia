@@ -10,8 +10,9 @@
   </script>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="/i/mypayindia-bg.webp" />
+  <link rel="apple-touch-icon" href="/i/mypayindia-bg.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#d03505" />
+  <meta name="theme-color" content="#121212" />
   <title>MyPayIndia</title>
   <meta name="description" content="MyPayIndia responsive web app" />
   <meta name="author" content="exerinity.com" />
@@ -25,8 +26,10 @@
   <meta name="twitter:title" content="MyPayIndia" />
   <meta name="twitter:description" content="MyPayIndia responsive web app" />
   <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MyPayIndia" />
+  <script>try { var d = document.documentElement, s = JSON.parse(localStorage.getItem('mpi_settings') || '{}'), t = s.theme == 'custom' ? 'dark' : s.theme || 'dim', b = t == 'light' ? '#fff' : t == 'dark' ? '#000' : '#121212'; d.dataset.theme = t; d.style.setProperty('--splash-bg', b); d.style.background = b; document.querySelector('meta[name=theme-color]').setAttribute('content', b) } catch (e) { }</script>
   <style>
     :root {
       --brand: #d03505;
@@ -47,7 +50,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #121212;
+      background: var(--splash-bg, #121212);
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom)
     }
@@ -171,8 +174,7 @@
       style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:#121212;font-family:system-ui,-apple-system,sans-serif;">
       <div
         style="background:#171717;border:1px solid #333;border-radius:10px;padding:32px;width:100%;max-width:420px;box-shadow:0 2px 8px rgba(0,0,0,0.6);text-align:center;color:#eaeaea;">
-        <img src="/i/mypayindia-full.webp" alt="MyPayIndia" width="135" height="50"
-          style="margin-bottom:20px;" />
+        <img src="/i/mypayindia-full.webp" alt="MyPayIndia" width="135" height="50" style="margin-bottom:20px;" />
         <h2 style="margin:0 0 8px;font-size:1.2rem;">JavaScript is not available / disabled</h2>
         <p style="color:#aaa;font-size:0.9rem;margin:0 0 20px;">This app requires JavaScript to function. Please enable
           it or switch to a supported browser to continue.</p>

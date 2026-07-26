@@ -10,11 +10,17 @@ interface BeforeInstallPromptEvent extends Event {
   readonly userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+function isInstalled(): boolean {
+  return ['standalone', 'fullscreen', 'minimal-ui'].some((mode) => window.matchMedia(`(display-mode: ${mode})`).matches)
+    || (navigator as Navigator & { standalone?: boolean }).standalone === true;
+}
+
 export function InstallPill() {
   const { settings } = useSettings();
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [hidden, setHidden] = useState(() => hideGet('install'));
+  const [installed] = useState(isInstalled);
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -25,7 +31,7 @@ export function InstallPill() {
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
-  if (settings.scambait || hidden) return null;
+  if (settings.scambait || hidden || installed) return null;
 
   function hide() {
     hideSet('install');

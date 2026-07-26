@@ -15,6 +15,7 @@ const Header = lazy(() => import('./header.tsx').then((m) => ({ default: m.Heade
 const Sidebar = lazy(() => import('./sidebar.tsx').then((m) => ({ default: m.Sidebar })));
 const VerificationBanner = lazy(() => import('./verify_banner.tsx').then((m) => ({ default: m.VerificationBanner })));
 const ConfirmModal = lazy(() => import('./confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const BottomNav = lazy(() => import('./bottom_nav.tsx').then((m) => ({ default: m.BottomNav })));
 
 function ServiceWorkerUpdater({ autoUpdate, toast, syncLastVersion }: {
   autoUpdate: boolean;
@@ -53,6 +54,7 @@ function ServiceWorkerUpdater({ autoUpdate, toast, syncLastVersion }: {
 
 export function AppLayout() {
   const restrictionsMod = useLazyModule(() => import('../utils/restrictions.js'));
+  const stickyTopRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -109,6 +111,19 @@ export function AppLayout() {
   }, []);
 
   useEffect(() => {
+    const el = stickyTopRef.current;
+    if (!el) return;
+    const apply = () => document.documentElement.style.setProperty('--mpi-header-h', `${el.offsetHeight}px`);
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--mpi-header-h');
+    };
+  }, []);
+
+  useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.ctrlKey && e.altKey && e.key === 'b') {
         e.preventDefault();
@@ -141,7 +156,7 @@ export function AppLayout() {
       {settings.swEnabled && (
         <ServiceWorkerUpdater autoUpdate={settings.autoUpdate} toast={toast} syncLastVersion={syncLastVersion} />
       )}
-      <div className="mpi-sticky-top">
+      <div className="mpi-sticky-top" ref={stickyTopRef}>
         <Suspense fallback={<HeaderSkeleton />}>
           <Header onToggleSidebar={() => setOpen((o) => !o)} />
           <div className="verification-banner-stack">
@@ -199,6 +214,10 @@ export function AppLayout() {
           </div>
         </main>
       </div>
+
+      <Suspense fallback={null}>
+        <BottomNav />
+      </Suspense>
 
       <Suspense fallback={null}>
         <ConfirmModal

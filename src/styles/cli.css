@@ -5,7 +5,7 @@
 .cli-wrap {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 178px);
+  height: calc(100dvh - 178px - var(--mpi-bottom-nav-h) - env(safe-area-inset-bottom));
   min-height: 320px;
   background: #000000;
   border: 2px solid #ffffff;

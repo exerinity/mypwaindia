@@ -1,0 +1,81 @@
+@media (pointer: coarse) {
+  a,
+  button,
+  .btn,
+  select,
+  summary,
+  [role='button'] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .mpi-settings-nav-item,
+  .mpi-sidebar .links a {
+    min-height: 46px;
+  }
+}
+
+@media (max-width: 900px) {
+  .mpi-header-row {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .mpi-pills {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+
+  .verification-banner {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  .mpi-settings-detail-content {
+    padding: 20px max(18px, env(safe-area-inset-right)) 28px max(18px, env(safe-area-inset-left));
+  }
+
+  .mpi-shell:has(.mpi-settings-layout) {
+    transition: height 280ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mpi-main,
+  .toast-container,
+  .mpi-shell:has(.mpi-settings-layout) {
+    transition: none;
+  }
+}
+
+@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+  html {
+    overscroll-behavior-y: none;
+  }
+
+  .mpi-header,
+  .mpi-pills,
+  .mpi-sidebar,
+  .mpi-bottom-nav,
+  .mpi-settings-nav {
+    -webkit-touch-callout: none;
+  }
+
+  .mpi-header {
+    position: relative;
+  }
+
+  :root[data-theme='light'] .mpi-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background: #000;
+  }
+
+  .mpi-sidebar {
+    overscroll-behavior: contain;
+  }
+}

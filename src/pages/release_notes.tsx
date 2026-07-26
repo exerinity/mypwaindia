@@ -14,6 +14,17 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '19',
+    date: '27 Jul 2026',
+    notes: [
+      { h3: 'Some mobile care'},
+      <>Added a <Link to="/account/history/simple">simple history</Link> page</>,
+      <>Added a new bottom navigation bar with up to 6 destinations you pick yourself <Link to="/settings/nav">here</Link> (turn it off there too)</>,
+      "The manifest and metadata has been buffed to perform better on phones",
+      "Installing the app now gives you quick shortcuts on long press and hopefully no more colour flash on launch"
+    ]
+  },
+  {
     version: '18',
     date: '25 Jul 2026',
     notes: [
