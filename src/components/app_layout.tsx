@@ -64,8 +64,9 @@ export function AppLayout() {
     window.addEventListener('offline', off);
     return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
   }, []);
+  const displayMod = useLazyModule(() => import('../utils/display.js'));
   const { settings, update } = useSettings();
-  const { active } = useAuth();
+  const { active, switchingTo } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -144,6 +145,11 @@ export function AppLayout() {
         <Suspense fallback={<HeaderSkeleton />}>
           <Header onToggleSidebar={() => setOpen((o) => !o)} />
           <div className="verification-banner-stack">
+            {switchingTo && (
+              <div className="verification-banner banner-elev" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span className="spinner" /> Switching to {displayMod ? displayMod.getDisplayName(switchingTo, settings.displayName) : switchingTo.username}, one moment...
+              </div>
+            )}
             <VerificationBanner />
             {restrictionList.length > 0 && (
               <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

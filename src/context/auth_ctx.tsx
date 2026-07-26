@@ -38,6 +38,7 @@ interface AuthContextValue {
   accounts: Account[];
   active: Account | null;
   activeId: number | null;
+  switchingTo: Account | null;
   login: (params: LoginParams, redirectTo?: string) => Promise<Account>;
   logout: () => Promise<void>;
   switchAccount: (id: number) => Promise<void>;
@@ -81,6 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { settings } = useSettings();
   const [accounts, setAccounts] = useState<Account[]>(() => storageGet(KEYS.ACCOUNTS, []));
   const [activeId, setActiveId] = useState<number | null>(() => storageGet(KEYS.ACTIVE_ACCOUNT, null));
+  const [switchingTo, setSwitchingTo] = useState<Account | null>(null);
 
   const active = useMemo(
     () => accounts.find((a) => a.id === activeId) || null,
@@ -157,6 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const switchAccount = useCallback(async (id: number) => {
     const all: Account[] = storageGet(KEYS.ACCOUNTS, []);
     const target = all.find((a) => a.id === id);
+    setSwitchingTo(target ?? null);
     try { await apiLogout(); } catch (_) {}
     let nextActiveId = id;
     if (target?.password) {
@@ -234,6 +237,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     accounts,
     active,
     activeId,
+    switchingTo,
     login,
     logout,
     switchAccount,
@@ -244,7 +248,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     updateAccountInfo,
     refreshActive,
     maxAccounts: MAX_ACCOUNTS,
-  }), [accounts, active, activeId, login, logout, switchAccount, removeAccount, addOrReplaceAccount, saveCredentials, updateBalance, updateAccountInfo, refreshActive]);
+  }), [accounts, active, activeId, switchingTo, login, logout, switchAccount, removeAccount, addOrReplaceAccount, saveCredentials, updateBalance, updateAccountInfo, refreshActive]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

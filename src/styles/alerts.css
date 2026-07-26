@@ -52,6 +52,12 @@
   text-decoration: underline;
 }
 
+.verification-banner .spinner {
+  border-color: color-mix(in srgb, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  border-right-color: currentColor;
+}
+
 .verification-banner button {
   background: black;
   color: white;
@@ -62,6 +68,16 @@
 
 .verification-banner button:hover {
   background: #333;
+}
+
+.verification-banner.banner-elev {
+  background: var(--bg-elev);
+  color: var(--fg);
+}
+
+.verification-banner.banner-elev a,
+.verification-banner.banner-elev .link {
+  color: var(--fg);
 }
 
 .verification-banner.banner-error {
