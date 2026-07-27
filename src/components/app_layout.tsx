@@ -152,6 +152,7 @@ export function AppLayout() {
   }
 
   return (
+    <>
     <div className="mpi-shell">
       {settings.swEnabled && (
         <ServiceWorkerUpdater autoUpdate={settings.autoUpdate} toast={toast} syncLastVersion={syncLastVersion} />
@@ -216,10 +217,6 @@ export function AppLayout() {
       </div>
 
       <Suspense fallback={null}>
-        <BottomNav />
-      </Suspense>
-
-      <Suspense fallback={null}>
         <ConfirmModal
           open={scambaitConfirmOpen}
           onClose={() => setScambaitConfirmOpen(false)}
@@ -240,5 +237,10 @@ export function AppLayout() {
         />
       </Suspense>
     </div>
+
+    <Suspense fallback={null}>
+      <BottomNav />
+    </Suspense>
+    </>
   );
 }

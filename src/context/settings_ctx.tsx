@@ -106,6 +106,7 @@ export interface Settings {
   dashboardButtons: DashboardButton[];
   bottomNav: boolean;
   bottomNavForce: boolean;
+  bottomNavLabels: boolean;
   bottomNavItems: string[];
   customTheme: Record<string, string>;
   swEnabled: boolean;
@@ -133,6 +134,7 @@ export const DEFAULT_SETTINGS: Settings = {
   dashboardButtons: DEFAULT_DASHBOARD_BUTTONS,
   bottomNav: true,
   bottomNavForce: false,
+  bottomNavLabels: true,
   bottomNavItems: DEFAULT_BOTTOM_NAV_ITEMS,
   customTheme: {},
   swEnabled: false,

@@ -15,16 +15,17 @@ interface ConfirmModalProps {
   danger?: boolean;
   fullscreen?: boolean;
   holdConfirm?: boolean;
+  className?: string;
 }
 
 export function ConfirmModal({
   open, onClose, onConfirm, title, message,
   confirmLabel = 'Confirm', cancelLabel = 'Cancel',
-  danger = true, fullscreen = false, holdConfirm = false,
+  danger = true, fullscreen = false, holdConfirm = false, className,
 }: ConfirmModalProps) {
   return (
     <Suspense fallback={null}>
-      <Modal open={open} onClose={onClose} title={title} fullscreen={fullscreen}>
+      <Modal open={open} onClose={onClose} title={title} fullscreen={fullscreen} className={className}>
         <div>
           {typeof message === 'string' ? <p className="mt-0">{message}</p> : message}
           <div className="modal-actions">

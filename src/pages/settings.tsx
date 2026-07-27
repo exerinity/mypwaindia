@@ -667,6 +667,7 @@ export default function SettingsPage() {
         const firstUnused = options.find((d) => !items.includes(d.route));
         const preview = resolveNavItems(items, { active: !!active, scambait: settings.scambait });
         const bottomNavLocked = !screenFitsBottomNav && !settings.bottomNavForce;
+        const bottomNavOn = settings.bottomNav && !bottomNavLocked;
         return (
           <>
             <h3 className="mt-0">Bottom navigation bar</h3>
@@ -678,7 +679,7 @@ export default function SettingsPage() {
               <label className="toggle-switch">
                 <input
                   type="checkbox"
-                  checked={settings.bottomNav && !bottomNavLocked}
+                  checked={bottomNavOn}
                   onChange={(e) => update(e.target.checked ? { bottomNav: true } : { bottomNav: false, bottomNavForce: false })}
                   onClick={(e) => {
                     if (!bottomNavLocked) return;
@@ -689,6 +690,19 @@ export default function SettingsPage() {
                 <span className="toggle-track" />
               </label>
             </div>
+            {bottomNavOn && (
+              <div className="row spread" style={{ alignItems: 'center', marginTop: 12 }}>
+                <span style={{ fontSize: '0.9rem' }}>Show labels under the icons</span>
+                <label className="toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={settings.bottomNavLabels}
+                    onChange={(e) => update({ bottomNavLabels: e.target.checked })}
+                  />
+                  <span className="toggle-track" />
+                </label>
+              </div>
+            )}
 
             <hr style={{ margin: '16px 0', borderColor: 'var(--border)' }} />
             <h3 className="mt-0">Edit navigation buttons</h3>
@@ -697,7 +711,7 @@ export default function SettingsPage() {
             </p>
             <p className="muted" style={{ fontSize: '0.8rem', fontStyle: 'italic', margin: '0 0 6px' }}>Preview</p>
             <div style={{ marginBottom: 16 }}>
-              <BottomNavPreview items={preview} />
+              <BottomNavPreview items={preview} labels={settings.bottomNavLabels} />
             </div>
             {items.map((route, i) => {
               const dest = findDestination(route);
@@ -1381,6 +1395,7 @@ export default function SettingsPage() {
       <AddAccountModal open={addAccountOpen} onClose={() => setAddAccountOpen(false)} />
 
       <ConfirmModal
+        title="Show navigation bar?"
         open={bottomNavForceOpen}
         onClose={() => setBottomNavForceOpen(false)}
         onConfirm={() => {
@@ -1388,8 +1403,8 @@ export default function SettingsPage() {
           setBottomNavForceOpen(false);
         }}
         danger={false}
-        confirmLabel="Yes show me"
-        message="Really show the bottom navigation? Your screen doesn't really need nor fit it..."
+        confirmLabel="Yes, show it"
+        message="Really show the bottom navigation bar? Your screen doesn't really need nor fit it..."
       />
 
       <ConfirmModal

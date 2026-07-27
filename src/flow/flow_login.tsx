@@ -5,6 +5,7 @@ import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { storageGet, KEYS } from '../utils/storage.ts';
+import { usePageTitle } from '../hooks/page_title.js';
 import { ArrowLeftIcon, ExternalIcon, WarningIcon, ErrorIcon, EyeIcon, EyeOffIcon } from '../components/icons.tsx';
 import { Modal } from '../components/modal.tsx';
 
@@ -32,6 +33,8 @@ export default function LoginPage() {
   const atCapacity = accounts.length >= maxAccounts;
 
   const bgLoc = (location.state as { backgroundLocation?: unknown } | null)?.backgroundLocation;
+
+  usePageTitle(bgLoc ? null : 'Log in to MyPayIndia');
 
   function handleClose() {
     if (bgLoc) navigate(-1);
@@ -82,11 +85,6 @@ export default function LoginPage() {
   return (
     <Modal open onClose={handleClose} className="slide">
       <Suspense fallback={null}>
-        {atCapacity && (
-          <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <WarningIcon /><span>Account limit at capacity. Remove one first</span>
-          </div>
-        )}
 
         <h2 className="mt-0">Log in to MyPayIndia</h2>
 
@@ -159,6 +157,11 @@ export default function LoginPage() {
               </label>
             </div>
           </details>
+          {atCapacity && (
+          <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <WarningIcon /><span>Too many accounts are logged in ({maxAccounts})</span>
+          </div>
+        )}
           {error && <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><ErrorIcon /><span>{error.message}</span></div>}
           <button
             type="submit"

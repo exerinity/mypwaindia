@@ -91,7 +91,7 @@ export default function DashboardPage() {
     return net;
   }, [txQ.data, active?.id]);
 
-  usePageTitle(active ? 'Dashboard' : 'Welcome');
+  usePageTitle(active ? 'Dashboard' : 'Welcome to the MyPayIndia PWA');
 
   if (!active) {
     return (

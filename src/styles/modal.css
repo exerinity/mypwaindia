@@ -69,6 +69,17 @@
   animation: slide-out-left 0.1s ease-in forwards;
 }
 
+.modal-root.noanim .modal-panel,
+.modal-root.noanim.closing .modal-panel,
+.modal-root.noanim.fullscreen.closing .modal-panel,
+.modal-root.noanim.slide.closing .modal-panel,
+.modal-root.noanim .modal-backdrop,
+.modal-root.noanim.closing .modal-backdrop,
+.modal-root.noanim::before,
+.modal-root.noanim.closing::before {
+  animation: modal-noop 1ms linear forwards;
+}
+
 .modal-header {
   display: grid;
   grid-template-columns: auto 1fr auto;

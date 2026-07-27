@@ -25,6 +25,7 @@ export const SETTINGS_FIELD_LABELS: { key: keyof Settings; label: string }[] = [
   { key: 'dashboardButtons', label: 'Dashboard action buttons' },
   { key: 'bottomNav', label: 'Bottom navigation bar' },
   { key: 'bottomNavForce', label: 'Bottom navigation on any screen size' },
+  { key: 'bottomNavLabels', label: 'Bottom navigation labels' },
   { key: 'bottomNavItems', label: 'Bottom navigation items' },
   { key: 'autoRefresh', label: 'Auto-refresh data' },
   { key: 'autoRefreshOnlyWhenFocused', label: 'Auto-refresh only when focused' },
@@ -115,7 +116,7 @@ export function parseSettingsExport(raw: string): SettingsExport | null {
 }
 
 const BOOL_KEYS: (keyof Settings)[] = [
-  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'scambait', 'swEnabled', 'bottomNav', 'bottomNavForce',
+  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'scambait', 'swEnabled', 'bottomNav', 'bottomNavForce', 'bottomNavLabels',
 ];
 const STRING_KEYS: (keyof Settings)[] = ['theme', 'accent', 'displayName', 'homePage'];
 

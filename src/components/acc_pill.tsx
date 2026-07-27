@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { Account } from '../context/auth_ctx.tsx';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
 import { ChevronDown, CloseIcon, PlusIcon, ExternalIcon, LogoutIcon } from './icons.tsx';
@@ -21,7 +21,6 @@ export function AccountPill() {
   const { settings } = useSettings();
   const moneyMod = useLazyModule(() => import('../utils/money.js'));
   const formatBalance = (n: number | undefined) => (n === undefined || n === null || !moneyMod) ? null : moneyMod.formatINR(n);
-  const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -116,17 +115,17 @@ export function AccountPill() {
             </div>
             <div className="acct-footer">
               {canAdd ? (
-                <button className="acct-add-btn" onClick={() => { closeDropdown(); navigate('/i/flow/login', { state: { backgroundLocation: location } }); }}>
+                <Link to="/i/flow/login" state={{ backgroundLocation: location }} className="acct-add-btn" onClick={closeDropdown}>
                   <PlusIcon size={13} /> Add an account
-                </button>
+                </Link>
               ) : (
                 <span className="acct-add-btn" style={{ color: 'var(--muted)', cursor: 'default' }}>
                   Account limit at capacity ({maxAccounts})
                 </span>
               )}
-              <button className="acct-add-btn" onClick={() => { closeDropdown(); navigate('/i/flow/logout', { state: { backgroundLocation: location } }); }}>
+              <Link to="/i/flow/logout" className="acct-add-btn" onClick={closeDropdown}>
                 Log out <LogoutIcon size={13} />
-              </button>
+              </Link>
             </div>
           </div>
         )}

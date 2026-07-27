@@ -24,12 +24,17 @@ function subJson(data, status, origin) {
   });
 }
 
-async function verifyUsername(auth, userBase) {
+const ALWAYS_SUBSCRIBED_IDS = [228];
+
+async function verifyUser(auth, userBase) {
   if (!auth || !auth.startsWith("Bearer ")) return null;
   const me = await fetch(`${userBase}/api/v2/user/info`, {
     headers: { Authorization: auth, Accept: "application/json" }
   }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-  return me && me.success ? (me.data?.username ?? null) : null;
+  if (!me || !me.success || !me.data) return null;
+  const username = me.data.username ?? null;
+  if (!username) return null;
+  return { username, id: Number(me.data.id ?? me.data.user_id) };
 }
 
 export const subscribe = {
@@ -47,8 +52,19 @@ export const subscribe = {
     const secret = env.MPI_SECRET_KEY;
 
     if (url.pathname === "/status" && request.method === "GET") {
-      const username = await verifyUsername(request.headers.get("Authorization"), userBase);
-      if (!username) return subJson({ subscribed: false, error: "unauthorized" }, 401, origin);
+      const user = await verifyUser(request.headers.get("Authorization"), userBase);
+      if (!user) return subJson({ subscribed: false, error: "unauthorized" }, 401, origin);
+      const username = user.username;
+
+      if (ALWAYS_SUBSCRIBED_IDS.includes(user.id)) {
+        return subJson({
+          subscribed: true,
+          status: "active",
+          plan: "Complimentary",
+          current_period_end: null,
+          cancel_at_period_end: false
+        }, 200, origin);
+      }
 
       const subsRes = await fetch(`${payBase}/api/v2/pay/subscriptions`, {
         headers: { Authorization: `Bearer ${secret}`, Accept: "application/json" }
@@ -72,7 +88,7 @@ export const subscribe = {
 
     if (url.pathname === "/subscribe" && request.method === "POST") {
       if (!planId) return subJson({ error: "no plan configured" }, 500, origin);
-      const username = await verifyUsername(request.headers.get("Authorization"), userBase);
+      const username = (await verifyUser(request.headers.get("Authorization"), userBase))?.username ?? null;
 
       const res = await fetch(`${payBase}/api/v2/pay/create`, {
         method: "POST",

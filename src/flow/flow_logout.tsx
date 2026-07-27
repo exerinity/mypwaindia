@@ -37,7 +37,7 @@ export default function LogoutPage() {
   }
 
   return (
-    <Modal open onClose={handleClose} className="slide">
+    <Modal open onClose={handleClose}>
       <h2 className="mt-0">Log out of @<strong>{active?.username || 'this account'}</strong>?</h2>
       {nextName ? (
         <p>

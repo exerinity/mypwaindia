@@ -33,7 +33,22 @@ html:has(.mpi-bottom-nav:not(.mpi-bottom-nav--leaving)) {
   animation: bottom-nav-out 280ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 
+.mpi-bottom-nav-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand) 16%, transparent);
+  pointer-events: none;
+  transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1), width 280ms cubic-bezier(0.32, 0.72, 0, 1), height 280ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.mpi-bottom-nav-pill--instant {
+  transition: none;
+}
+
 .mpi-bottom-nav-item {
+  position: relative;
   flex: 1 1 0;
   min-width: 0;
   display: flex;
@@ -69,15 +84,16 @@ html:has(.mpi-bottom-nav:not(.mpi-bottom-nav--leaving)) {
   max-width: 100%;
   height: 26px;
   border-radius: 999px;
-  transition: background 200ms ease, transform 140ms ease;
-}
-
-.mpi-bottom-nav-item.active .mpi-bottom-nav-icon {
-  background: color-mix(in srgb, var(--brand) 16%, transparent);
+  transition: transform 140ms ease;
 }
 
 .mpi-bottom-nav-item:active .mpi-bottom-nav-icon {
   transform: scale(0.86);
+}
+
+.mpi-bottom-nav--bare .mpi-bottom-nav-icon {
+  width: 54px;
+  height: 34px;
 }
 
 .mpi-bottom-nav-label {
@@ -101,6 +117,10 @@ html:has(.mpi-bottom-nav:not(.mpi-bottom-nav--leaving)) {
 
 .mpi-bottom-nav-preview .mpi-bottom-nav-item {
   cursor: default;
+}
+
+.mpi-bottom-nav-preview .mpi-bottom-nav-item.active .mpi-bottom-nav-icon {
+  background: color-mix(in srgb, var(--brand) 16%, transparent);
 }
 
 .mpi-bottom-nav-preview-empty {
@@ -138,7 +158,8 @@ html:has(.mpi-bottom-nav:not(.mpi-bottom-nav--leaving)) {
     animation-duration: 1ms;
   }
 
-  .mpi-bottom-nav-icon {
+  .mpi-bottom-nav-icon,
+  .mpi-bottom-nav-pill {
     transition: none;
   }
 
