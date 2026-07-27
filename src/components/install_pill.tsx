@@ -1,150 +1,25 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useSettings } from '../context/settings_ctx.tsx';
-import { useToast } from '../context/toast_ctx.tsx';
-import { ExternalIcon } from './icons.tsx';
-import { hideGet, hideSet } from '../utils/storage.ts';
-
-const Modal = lazy(() => import('./modal.tsx').then((m) => ({ default: m.Modal })));
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-  readonly userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
-
-function isInstalled(): boolean {
-  return ['standalone', 'fullscreen', 'minimal-ui'].some((mode) => window.matchMedia(`(display-mode: ${mode})`).matches)
-    || (navigator as Navigator & { standalone?: boolean }).standalone === true;
-}
+import { isInstalled } from '../hooks/install_prompt.ts';
+import { hideGet, HIDE_EVENT } from '../utils/storage.ts';
 
 export function InstallPill() {
   const { settings } = useSettings();
-  const toast = useToast();
-  const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showModal, setShowModal] = useState(false);
   const [hidden, setHidden] = useState(() => hideGet('install'));
   const [installed] = useState(isInstalled);
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setPrompt(e as BeforeInstallPromptEvent);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    const update = () => setHidden(hideGet('install'));
+    window.addEventListener(HIDE_EVENT, update);
+    return () => window.removeEventListener(HIDE_EVENT, update);
   }, []);
 
   if (settings.scambait || hidden || installed) return null;
 
-  function hide() {
-    hideSet('install');
-    setHidden(true);
-    setShowModal(false);
-  }
-
-  async function triggerPrompt(): Promise<'accepted' | 'dismissed' | null> {
-    if (!prompt) return null;
-    await prompt.prompt();
-    const { outcome } = await prompt.userChoice;
-    setPrompt(null);
-    return outcome;
-  }
-
-  async function handleClick() {
-    if (await triggerPrompt() === null) setShowModal(true);
-  }
-
-  async function handleTry() {
-    const outcome = await triggerPrompt();
-    if (outcome === 'accepted') setShowModal(false);
-    else if (outcome === 'dismissed') toast.info('The install prompt was dismissed');
-    else toast.info("Your browser didn't offer an install prompt");
-  }
-
   return (
-    <>
-      <button className="pill clickable" onClick={handleClick}>
-        <span className="pill-label">Install app</span>
-      </button>
-
-      <Suspense fallback={null}>
-      <Modal open={showModal} onClose={() => setShowModal(false)} title="Install the MyPayIndia PWA">
-        <p className="mt-0 mb-0">The MyPayIndia PWA works best when installed as an app. Of course, you don't need to, but here are some general instructions on how depending on your browser/device:</p>
-
-        <p style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
-          <button type="button" onClick={handleTry}>Try install prompt</button>
-        </p>
-        <details style={{ marginTop: '1rem' }}>
-          <summary><strong>Chrome Desktop</strong> (and most derivatives)</summary>
-          <ol>
-            <li>Click the 3-dot menu in the top-right</li>
-            <li>Navigate to <strong>Cast, save and share</strong></li>
-            <li>Click <strong>Install page as app</strong></li>
-          </ol>
-        </details>
-
-        <details>
-          <summary><strong>Chrome Android</strong></summary>
-          <ol>
-            <li>Click the 3-dot menu in the top right</li>
-            <li>Click on <strong>Add to home screen</strong></li>
-          </ol>
-        </details>
-
-        <details>
-          <summary><strong>Vivaldi Desktop</strong></summary>
-          <ol>
-            <li>Right-click on the tab</li>
-            <li>Navigate to <strong>Progressive Web Apps</strong></li>
-            <li>Click <strong>Install page as app</strong></li>
-          </ol>
-        </details>
-
-        <details>
-          <summary><strong>Safari iOS</strong></summary>
-          <ol>
-            <li>Tap the share icon</li>
-            <li>Tap <strong>Add to Home Screen</strong></li>
-          </ol>
-        </details>
-
-        <details>
-          <summary><strong>Safari Mac</strong></summary>
-          <ol>
-            <li>In the menu bar, navigate to <strong>File</strong> and click <strong>Add to Dock…</strong></li>
-          </ol>
-        </details>
-
-        <details>
-          <summary><strong>Firefox Desktop</strong></summary>
-          <ol>
-            <li>If you see it, click <strong>Add to Taskbar</strong> in the omnibox</li>
-          </ol>
-        </details>
-
-        <details>
-          <summary><strong>Firefox Android</strong></summary>
-          <ol>
-            <li>Click the 3-dot menu in the address bar</li>
-            <li>Click on <strong>Add to home screen</strong></li>
-          </ol>
-        </details>
-
-        <details>
-          <summary><strong>Anything else</strong></summary>
-          <p>
-            If your browser isn't listed here, look for options related to "Add to home screen",
-            "Install as app", "Add shortcut", or similar. At the bare minimum, you could bookmark the app.
-          </p>
-        </details>
-        <p>
-          There are also mobile apps for iOS and Android available for download: <a href="https://mypayindia.com/app/" target="_blank" rel="noopener noreferrer">mypayindia.com/app <ExternalIcon /></a>
-        </p>
-        <h3>Already installed / don't care?</h3>
-        <p>
-          <button className="secondary" onClick={hide}>Hide this button</button>
-        </p>
-      </Modal>
-      </Suspense>
-    </>
+    <Link to="/i/how_pwa" className="pill clickable" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <span className="pill-label">Install app</span>
+    </Link>
   );
 }

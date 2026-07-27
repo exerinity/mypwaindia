@@ -104,7 +104,7 @@ export default defineConfig({
           if (id.match(/pages\/iotm/)) return 'iotm';
           if (id.match(/pages\/cli/)) return 'cli';
           if (id.match(/pages\/toys/)) return 'tools';
-          if (id.match(/pages\/(release_notes|acknowledgements|restrictions|connection)/)) return 'info';
+          if (id.match(/pages\/(release_notes|acknowledgements|restrictions|connection|how_pwa)/)) return 'info';
           if (id.match(/pages\/(not_found|flow_not_found|theme_apply|external_redirect)/)) return 'misc';
           if (id.match(/pages\/(account|dashboard)/)) return 'client';
           if (id.match(/pages\/cards/)) return 'scambait';

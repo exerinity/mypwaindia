@@ -29,6 +29,7 @@ const CLIPage = lazy(() => import('./pages/cli.tsx'));
 const MPTIPage = lazy(() => import('./pages/toys.tsx'));
 const ReleaseNotesPage = lazy(() => import('./pages/release_notes.tsx'));
 const AcknowledgementsPage = lazy(() => import('./pages/acknowledgements.tsx'));
+const HowPwaPage = lazy(() => import('./pages/how_pwa.tsx'));
 const RestrictionsPage = lazy(() => import('./pages/restrictions.tsx'));
 const ConnectionPage = lazy(() => import('./pages/connection.tsx'));
 const ThemeApplyPage = lazy(() => import('./pages/theme_apply.tsx'));
@@ -121,6 +122,7 @@ export default function App() {
         <Route path="/settings/:category" element={<SettingsPage />} />
         <Route path="/settings:old" element={<Flowback />} />
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
+        <Route path="/i/how_pwa" element={<HowPwaPage />} />
         <Route path="/i/flow/scambaitmode" element={<Navigate to="/settings/scambait" replace />} />
         <Route path="/i/flow/connection" element={<ConnectionPage />} />
         <Route path="/i/flow/theme" element={<ThemeApplyPage />} />

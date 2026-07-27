@@ -42,9 +42,12 @@ export function hideGet(key: HideKey): boolean {
 }
 
 export function hideSet(key: HideKey): void {
-  storageSet(KEYS.HIDE, { ...storageGet<Partial<Record<HideKey, boolean>>>(KEYS.HIDE, {}), [key]: true });
+  hideSetValue(key, true);
 }
 
 export function hideSetValue(key: HideKey, value: boolean): void {
   storageSet(KEYS.HIDE, { ...storageGet<Partial<Record<HideKey, boolean>>>(KEYS.HIDE, {}), [key]: value });
+  window.dispatchEvent(new Event(HIDE_EVENT));
 }
+
+export const HIDE_EVENT = 'mpi-hide-change';

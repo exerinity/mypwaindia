@@ -15,7 +15,7 @@ MyPayIndia is a parody/comedy project, not a real financial institution. Nothing
 - /dash - home/dashboard
 - /account, /account/restrictions, /account/transfer, /account/history - account management
 - /links, /links/claim, /links/claim/:token - payment links
-- /i/leaderboard, /i/team, /i/release_notes, /i/acknowledgements - informational pages
+- /i/leaderboard, /i/team, /i/release_notes, /i/acknowledgements, /i/how_pwa - informational pages
 - /i/flow/login, /i/flow/logout, /i/flow/* - internal flow/utility screens
 - /i/flow/transaction/:id - transaction detail viewer
 - /iotm, /iotm/button - Investment Opportunities™
