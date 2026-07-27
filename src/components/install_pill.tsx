@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useSettings } from '../context/settings_ctx.tsx';
+import { useToast } from '../context/toast_ctx.tsx';
 import { ExternalIcon } from './icons.tsx';
 import { hideGet, hideSet } from '../utils/storage.ts';
 
@@ -17,6 +18,7 @@ function isInstalled(): boolean {
 
 export function InstallPill() {
   const { settings } = useSettings();
+  const toast = useToast();
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [hidden, setHidden] = useState(() => hideGet('install'));
@@ -39,14 +41,23 @@ export function InstallPill() {
     setShowModal(false);
   }
 
+  async function triggerPrompt(): Promise<'accepted' | 'dismissed' | null> {
+    if (!prompt) return null;
+    await prompt.prompt();
+    const { outcome } = await prompt.userChoice;
+    setPrompt(null);
+    return outcome;
+  }
+
   async function handleClick() {
-    if (prompt) {
-      await prompt.prompt();
-      const { outcome } = await prompt.userChoice;
-      if (outcome === 'accepted') setPrompt(null);
-    } else {
-      setShowModal(true);
-    }
+    if (await triggerPrompt() === null) setShowModal(true);
+  }
+
+  async function handleTry() {
+    const outcome = await triggerPrompt();
+    if (outcome === 'accepted') setShowModal(false);
+    else if (outcome === 'dismissed') toast.info('The install prompt was dismissed');
+    else toast.info("Your browser didn't offer an install prompt");
   }
 
   return (
@@ -59,6 +70,9 @@ export function InstallPill() {
       <Modal open={showModal} onClose={() => setShowModal(false)} title="Install the MyPayIndia PWA">
         <p className="mt-0 mb-0">The MyPayIndia PWA works best when installed as an app. Of course, you don't need to, but here are some general instructions on how depending on your browser/device:</p>
 
+        <p style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
+          <button type="button" onClick={handleTry}>Try install prompt</button>
+        </p>
         <details style={{ marginTop: '1rem' }}>
           <summary><strong>Chrome Desktop</strong> (and most derivatives)</summary>
           <ol>
