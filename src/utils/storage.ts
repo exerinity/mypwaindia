@@ -50,4 +50,9 @@ export function hideSetValue(key: HideKey, value: boolean): void {
   window.dispatchEvent(new Event(HIDE_EVENT));
 }
 
+export function hideClear(): void {
+  storageRemove(KEYS.HIDE);
+  window.dispatchEvent(new Event(HIDE_EVENT));
+}
+
 export const HIDE_EVENT = 'mpi-hide-change';

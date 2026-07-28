@@ -63,7 +63,7 @@ export default defineConfig({
   server: {
     proxy: {
       ...Object.fromEntries(
-        ['/i/api', '/i/iotm', '/i/accountservices', '/i/pwa', '/i/staging'].map((prefix) => [prefix, {
+        ['/i/api', '/i/iotm', '/i/accountservices', '/i/api/pwa', '/i/staging'].map((prefix) => [prefix, {
           target: 'https://bastion.mypayindia.sbs',
           changeOrigin: true,
           rewrite: (path) => path === '/i/api/v0/buttonclick' ? '/iotm/button/click' : path.replace(/^\/i/, '')

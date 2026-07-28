@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { CloseIcon } from './icons.tsx';
@@ -8,6 +8,7 @@ import { Logo } from './logo.tsx';
 interface ModalProps { open: boolean; onClose?: () => void; title?: string; fullscreen?: boolean; className?: string; bgIcon?: ReactNode; children: ReactNode }
 export function Modal({ open, onClose, title, fullscreen = false, className, bgIcon, children }: ModalProps) {
   const [closing, setClosing] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const handleClose = useCallback(() => {
     setClosing(true);
@@ -28,6 +29,20 @@ export function Modal({ open, onClose, title, fullscreen = false, className, bgI
     };
   }, [open, handleKey]);
 
+  useEffect(() => {
+    if (!closing) return;
+    let cancelled = false;
+    const finish = () => {
+      if (cancelled) return;
+      setClosing(false);
+      onClose?.();
+    };
+    const running = panelRef.current?.getAnimations() ?? [];
+    if (running.length === 0) { finish(); return; }
+    Promise.allSettled(running.map((a) => a.finished)).then(finish);
+    return () => { cancelled = true; };
+  }, [closing, onClose]);
+
   if (!open && !closing) return null;
 
   const node = (
@@ -41,10 +56,7 @@ export function Modal({ open, onClose, title, fullscreen = false, className, bgI
         <div className="modal-backdrop" onClick={handleClose} aria-hidden="true" />
       )}
       {fullscreen && bgIcon}
-      <div
-        className="modal-panel"
-        onAnimationEnd={() => { if (closing) { setClosing(false); onClose?.(); } }}
-      >
+      <div className="modal-panel" ref={panelRef}>
         <header className="modal-header">
           <button
             className="modal-close"

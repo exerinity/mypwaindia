@@ -1,6 +1,6 @@
 const MAX_SETTINGS_BYTES = 64 * 1024;
 
-export const SETTINGS_PATH = "/pwa/settings";
+export const SETTINGS_PATH = "/api/pwa/settings";
 
 function corsJson(body, status, corsOrigin) {
   return new Response(JSON.stringify(body), {

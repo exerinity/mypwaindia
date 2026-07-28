@@ -1,7 +1,7 @@
 import { bastion } from "./proxy.js";
 import { subscribe } from "./button_subscribe.js";
 
-const API_ROOTS = ["/api", "/iotm", "/accountservices", "/pwa", "/staging"];
+const API_ROOTS = ["/api", "/iotm", "/accountservices", "/api/pwa", "/staging"];
 const SUBSCRIBE_PREFIX = "/i/subscribe";
 
 export default {

@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
+import { storageGet, storageSet, storageRemove, KEYS } from '../utils/storage.ts';
 import { darken, isLight, normalizeHex } from '../utils/colors.js';
 import { formatINR, formatMoney } from '../utils/money.js';
 
@@ -151,7 +151,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     };
   });
 
+  const skipPersist = useRef(false);
+
   useEffect(() => {
+    if (skipPersist.current) { skipPersist.current = false; return; }
     storageSet(KEYS.SETTINGS, settings);
   }, [settings]);
 
@@ -179,7 +182,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   }, [settings.theme, settings.accent, settings.customTheme]);
 
   const update = (partial: Partial<Settings>) => setSettings((s) => ({ ...s, ...partial }));
-  const reset = () => setSettings(DEFAULT_SETTINGS);
+  const reset = () => {
+    skipPersist.current = true;
+    storageRemove(KEYS.SETTINGS);
+    setSettings({ ...DEFAULT_SETTINGS });
+  };
 
   const value = useMemo<SettingsContextValue>(() => ({ settings, update, reset }), [settings]);
 

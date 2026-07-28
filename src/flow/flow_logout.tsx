@@ -37,8 +37,8 @@ export default function LogoutPage() {
   }
 
   return (
-    <Modal open onClose={handleClose}>
-      <h2 className="mt-0">Log out of @<strong>{active?.username || 'this account'}</strong>?</h2>
+    <Modal open className="noanim" onClose={handleClose}>
+      <h2 className="mt-0">Log out of @{active?.username || 'this account'}?</h2>
       {nextName ? (
         <p>
           This will only apply to this account, and you'll still be logged in to your other accounts. You'll be switched to <strong>@{nextName}</strong>.

@@ -8,12 +8,12 @@ export interface RemoteSettingsRecord {
 
 export async function getRemoteSettings({ token, env }: AuthOpts) {
   const { apiFetch } = await import('./client.js');
-  return apiFetch<RemoteSettingsRecord>('/pwa/settings', { token, env });
+  return apiFetch<RemoteSettingsRecord>('/api/pwa/settings', { token, env });
 }
 
 export async function putRemoteSettings({ token, env }: AuthOpts, payload: SettingsExport) {
   const { apiFetch } = await import('./client.js');
-  return apiFetch<{ savedAt: string }>('/pwa/settings', {
+  return apiFetch<{ savedAt: string }>('/api/pwa/settings', {
     method: 'PUT',
     token,
     env,
@@ -23,5 +23,5 @@ export async function putRemoteSettings({ token, env }: AuthOpts, payload: Setti
 
 export async function deleteRemoteSettings({ token, env }: AuthOpts) {
   const { apiFetch } = await import('./client.js');
-  return apiFetch<{ deleted: boolean }>('/pwa/settings', { method: 'DELETE', token, env });
+  return apiFetch<{ deleted: boolean }>('/api/pwa/settings', { method: 'DELETE', token, env });
 }
