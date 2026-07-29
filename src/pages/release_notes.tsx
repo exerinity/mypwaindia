@@ -14,6 +14,17 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '20',
+    date: '29 July 2026',
+    notes: [
+      <>Added a drawer for MyCLiIndia, <Link to="/settings/appearance">that can be enabled here</Link></>,
+      'Added a command to MyCLiIndia, "fly", which toggles between the drawer and the main page'
+    ],
+    subnotes: [
+      "This is another idea stolen from the Twitter web app please don't kill me X Corporation of the United States of America"
+    ]
+  },
+  {
     version: '19',
     date: '27 Jul 2026',
     notes: [

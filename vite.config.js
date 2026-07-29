@@ -102,7 +102,7 @@ export default defineConfig({
           if (id.match(/pages\/(settings|old_settings)/)) return 'settings';
           if (id.match(/pages\/iotm_button/)) return 'iotm_button';
           if (id.match(/pages\/iotm/)) return 'iotm';
-          if (id.match(/pages\/cli/)) return 'cli';
+          if (id.match(/pages\/cli|components\/cli_(terminal|drawer)/)) return 'cli';
           if (id.match(/pages\/toys/)) return 'tools';
           if (id.match(/pages\/(release_notes|acknowledgements|restrictions|connection|how_pwa)/)) return 'info';
           if (id.match(/pages\/(not_found|flow_not_found|theme_apply|external_redirect)/)) return 'misc';

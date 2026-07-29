@@ -16,6 +16,7 @@ const Sidebar = lazy(() => import('./sidebar.tsx').then((m) => ({ default: m.Sid
 const VerificationBanner = lazy(() => import('./verify_banner.tsx').then((m) => ({ default: m.VerificationBanner })));
 const ConfirmModal = lazy(() => import('./confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const BottomNav = lazy(() => import('./bottom_nav.tsx').then((m) => ({ default: m.BottomNav })));
+const CliDrawer = lazy(() => import('./cli_drawer.tsx').then((m) => ({ default: m.CliDrawer })));
 
 function ServiceWorkerUpdater({ autoUpdate, toast, syncLastVersion }: {
   autoUpdate: boolean;
@@ -58,6 +59,7 @@ export function AppLayout() {
   const [open, setOpen] = useState(false);
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [cliDrawerMounted, setCliDrawerMounted] = useState(false);
 
   useEffect(() => {
     const on = () => setIsOnline(true);
@@ -109,6 +111,12 @@ export function AppLayout() {
   useEffect(() => {
     syncLastVersion(true);
   }, []);
+
+  useEffect(() => {
+    if (settings.cliDrawer) { setCliDrawerMounted(true); return; }
+    const id = setTimeout(() => setCliDrawerMounted(false), 420);
+    return () => clearTimeout(id);
+  }, [settings.cliDrawer]);
 
   useEffect(() => {
     const el = stickyTopRef.current;
@@ -241,6 +249,12 @@ export function AppLayout() {
     <Suspense fallback={null}>
       <BottomNav />
     </Suspense>
+
+    {cliDrawerMounted && !settings.scambait && (
+      <Suspense fallback={null}>
+        <CliDrawer />
+      </Suspense>
+    )}
     </>
   );
 }

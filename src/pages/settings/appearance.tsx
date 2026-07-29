@@ -231,6 +231,23 @@ export function AppearanceSettings() {
               <span>To use this setting, <Link to="/i/flow/login" state={{ backgroundLocation: location }}>please log in</Link></span>
             </div>
           )}
+
+          <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+          <h3 className="mt-0">MyCLiIndia drawer</h3>
+          <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+            MyCLiIndia is a UNIX-like command line interface for performing actions on MyPWAIndia. Enabling this will show a drawer for a small CLi window
+          </p>
+          <div className="row spread" style={{ alignItems: 'center' }}>
+            <span style={{ fontSize: '0.9rem' }}>Show the MyCLiIndia drawer</span>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={settings.cliDrawer}
+                onChange={(e) => update({ cliDrawer: e.target.checked })}
+              />
+              <span className="toggle-track" />
+            </label>
+          </div>
         </>
       )}
     </>

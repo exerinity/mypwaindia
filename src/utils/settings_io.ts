@@ -32,6 +32,7 @@ export const SETTINGS_FIELD_LABELS: { key: keyof Settings; label: string }[] = [
   { key: 'autoUpdate', label: 'Auto-update app' },
   { key: 'suppressUpdateToast', label: 'Suppress update notification' },
   { key: 'swEnabled', label: 'Service worker enabled' },
+  { key: 'cliDrawer', label: 'MyCLiIndia drawer' },
   { key: 'scambait', label: 'Scambait mode' },
 ];
 
@@ -116,7 +117,7 @@ export function parseSettingsExport(raw: string): SettingsExport | null {
 }
 
 const BOOL_KEYS: (keyof Settings)[] = [
-  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'scambait', 'swEnabled', 'bottomNav', 'bottomNavForce', 'bottomNavLabels',
+  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'scambait', 'swEnabled', 'bottomNav', 'bottomNavForce', 'bottomNavLabels', 'cliDrawer',
 ];
 const STRING_KEYS: (keyof Settings)[] = ['theme', 'accent', 'displayName', 'homePage'];
 

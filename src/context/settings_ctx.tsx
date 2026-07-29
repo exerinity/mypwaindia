@@ -111,6 +111,7 @@ export interface Settings {
   customTheme: Record<string, string>;
   swEnabled: boolean;
   rememberInfo: boolean;
+  cliDrawer: boolean;
 }
 
 interface SettingsContextValue {
@@ -139,6 +140,7 @@ export const DEFAULT_SETTINGS: Settings = {
   customTheme: {},
   swEnabled: false,
   rememberInfo: true,
+  cliDrawer: false,
 };
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
