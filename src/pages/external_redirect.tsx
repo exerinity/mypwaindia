@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../components/modal.tsx';
-import { ExternalIcon } from '../components/icons.tsx';
+import { ErrorIcon, ExternalIcon } from '../components/icons.tsx';
 
 export default function ExternalRedirectPage({ to }: { to: string }) {
   const nav = useNavigate();
@@ -21,11 +21,11 @@ export default function ExternalRedirectPage({ to }: { to: string }) {
   return (
     <Modal
       open
-      className="slide"
+      className="noanim"
       fullscreen
       title="Unsupported link"
       onClose={() => nav('/dash')}
-      bgIcon={<div className="app-lock-bg-icon"><ExternalIcon size={666} /></div>}
+      bgIcon={<div className="app-lock-bg-icon"><ErrorIcon size={666} /></div>}
     >
       {stopped ? (
         <p className="mt-0">Redirect stopped - if you still want to go there, click Go</p>
