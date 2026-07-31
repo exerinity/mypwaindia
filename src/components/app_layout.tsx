@@ -7,6 +7,7 @@ import { useAuth } from '../context/auth_ctx.tsx';
 import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { LoginIcon, WarningIcon } from './icons.tsx';
 import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
+import { THEME_PANEL_OPEN_EVENT } from '../utils/theme_panel_store.ts';
 import { RELEASES } from '../pages/release_notes.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { HeaderSkeleton, SidebarSkeleton } from './app_skeleton.tsx';
@@ -17,6 +18,7 @@ const VerificationBanner = lazy(() => import('./verify_banner.tsx').then((m) => 
 const ConfirmModal = lazy(() => import('./confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const BottomNav = lazy(() => import('./bottom_nav.tsx').then((m) => ({ default: m.BottomNav })));
 const CliDrawer = lazy(() => import('./cli_drawer.tsx').then((m) => ({ default: m.CliDrawer })));
+const ThemePanel = lazy(() => import('../pages/settings/theme_panel.tsx').then((m) => ({ default: m.ThemePanel })));
 
 function ServiceWorkerUpdater({ autoUpdate, toast, syncLastVersion }: {
   autoUpdate: boolean;
@@ -60,6 +62,13 @@ export function AppLayout() {
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [cliDrawerMounted, setCliDrawerMounted] = useState(false);
+  const [themePanelOpen, setThemePanelOpen] = useState(false);
+
+  useEffect(() => {
+    const onOpen = () => setThemePanelOpen(true);
+    window.addEventListener(THEME_PANEL_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(THEME_PANEL_OPEN_EVENT, onOpen);
+  }, []);
 
   useEffect(() => {
     const on = () => setIsOnline(true);
@@ -253,6 +262,12 @@ export function AppLayout() {
     {cliDrawerMounted && !settings.scambait && (
       <Suspense fallback={null}>
         <CliDrawer />
+      </Suspense>
+    )}
+
+    {themePanelOpen && !settings.scambait && (
+      <Suspense fallback={null}>
+        <ThemePanel onClose={() => setThemePanelOpen(false)} />
       </Suspense>
     )}
     </>

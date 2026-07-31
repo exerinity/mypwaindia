@@ -1,5 +1,6 @@
 import type { Settings } from '../../context/settings_ctx.tsx';
 import { CUSTOM_VAR_KEYS } from '../../context/settings_ctx.tsx';
+import { hexToHsl, hslToHex, normalizeHex } from '../../utils/colors.js';
 
 export const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
   { value: 'light', label: 'Light' },
@@ -33,6 +34,53 @@ export const THEME_DEFAULTS: Record<BuiltinTheme, Record<string, string>> = {
     '--table-row-alt': '#050505', '--shadow': '0 2px 8px rgba(0, 0, 0, 0.8)',
   },
 };
+
+export function effectivePalette(theme: Settings['theme'], customTheme: Record<string, string>): Record<string, string> {
+  const base = THEME_DEFAULTS[theme === 'custom' ? 'dark' : theme];
+  return theme === 'custom' ? { ...base, ...customTheme } : { ...base };
+}
+
+const TINT_STRENGTH: Record<string, number> = {
+  '--bg': 70,
+  '--bg-elev': 65,
+  '--card': 65,
+  '--card-soft': 62,
+  '--pill-bg': 60,
+  '--table-row-alt': 68,
+  '--border': 55,
+  '--muted': 18,
+  '--fg': 12,
+};
+
+const TINT_LIFT: Record<string, number> = {
+  '--bg': 7,
+  '--bg-elev': 8,
+  '--card': 8,
+  '--card-soft': 8,
+  '--pill-bg': 9,
+  '--table-row-alt': 7,
+  '--border': 6,
+};
+
+const LIGHT_LIFT_SCALE = 0.6;
+
+export const DEFAULT_INTENSITY = 0.6;
+
+export function generateTheme(hex: string, base: BuiltinTheme, intensity: number): Record<string, string> {
+  const src = THEME_DEFAULTS[base];
+  const seed = hexToHsl(normalizeHex(hex) ?? '');
+  if (!seed) return { ...src };
+  const amount = Math.max(0, Math.min(1, intensity));
+
+  return Object.fromEntries(Object.entries(src).map(([key, value]) => {
+    const strength = TINT_STRENGTH[key];
+    const cur = strength ? hexToHsl(value) : null;
+    if (!cur) return [key, value];
+    const sat = Math.min(seed.s, strength * amount);
+    const lift = (TINT_LIFT[key] ?? 0) * amount * (cur.l > 50 ? -LIGHT_LIFT_SCALE : 1);
+    return [key, hslToHex(seed.h, sat, cur.l + lift)];
+  }));
+}
 
 export const CUSTOM_THEME_VARS: { key: typeof CUSTOM_VAR_KEYS[number]; label: string; isColor: boolean }[] = [
   { key: '--bg', label: 'Background', isColor: true },

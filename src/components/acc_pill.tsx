@@ -3,7 +3,7 @@ import type { Account } from '../context/auth_ctx.tsx';
 import { useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useSettings } from '../context/settings_ctx.tsx';
-import { ChevronDown, CloseIcon, PlusIcon, ExternalIcon, LogoutIcon } from './icons.tsx';
+import { ChevronDown, CloseIcon, CheckIcon, PlusIcon, ExternalIcon, LogoutIcon } from './icons.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { lazy, Suspense } from 'react';
 
@@ -106,7 +106,7 @@ export function AccountPill() {
                       aria-label={`Remove ${acc.username}`}
                       title="Remove this account"
                     >
-                      <span className="acct-icon-check">✓</span>
+                      <span className="acct-icon-check"><CheckIcon size={13} /></span>
                       <span className="acct-icon-x"><CloseIcon size={13} /></span>
                     </button>
                   </div>

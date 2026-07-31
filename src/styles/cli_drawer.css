@@ -26,8 +26,10 @@
   box-shadow: var(--shadow);
   cursor: pointer;
   translate: 0 0;
+  margin-right: var(--mpi-tp-inset, 0px);
   transition:
     translate 320ms cubic-bezier(0.32, 0.72, 0, 1),
+    margin-right 260ms cubic-bezier(0.32, 0.72, 0, 1),
     transform 0.16s ease,
     color 0.16s,
     border-color 0.16s;
@@ -64,6 +66,8 @@
   border-radius: 16px 16px 0 0;
   box-shadow: var(--shadow);
   overflow: hidden;
+  margin-right: var(--mpi-tp-inset, 0px);
+  transition: margin-right 260ms cubic-bezier(0.32, 0.72, 0, 1);
   animation: cli-drawer-in 260ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
