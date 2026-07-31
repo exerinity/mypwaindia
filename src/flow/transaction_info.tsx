@@ -210,7 +210,7 @@ export default function TransactionModal() {
           )}
           <div style={{ marginTop: 18, display: 'flex', gap: 8 }}>
             <button type="button" className="secondary" onClick={handleNewTransfer}>
-              New transfer to them
+              New transfer to @{data.recipient?.username}
             </button>
             {!outgoing && (
               <button

@@ -26,10 +26,21 @@ const PRESETS_PAISA = [
   100000, // 1,000 INR
 ];
 
+function sbsUrl(url: string, token: string) {
+  try {
+    const u = new URL(url);
+    u.protocol = 'https:';
+    u.host = 'mypayindia.sbs';
+    return u.toString();
+  } catch {
+    return `https://mypayindia.sbs/pay/link?token=${encodeURIComponent(token)}`;
+  }
+}
+
 export default function LinksPage() {
   usePageTitle('Payment links');
   const { active } = useAuth();
-  const { settings } = useSettings();
+  const { settings, update } = useSettings();
   const { userInfo, refetchUserInfo } = useGlobalData();
   const location = useLocation();
   const navigate = useNavigate();
@@ -113,10 +124,14 @@ export default function LinksPage() {
         amount: stackPaisa,
         note: note.trim() || undefined,
       }) as Link;
-      toast.success(`Link created for ${formatINR(stackPaisa)}, copied to clipboard`);
-      try {
-        await navigator.clipboard.writeText(link.url);
-      } catch {}
+      if (settings.copyLinkOnCreate) {
+        toast.success(`Created a link for ${formatINR(stackPaisa)}. It was copied to your clipboard`);
+        try {
+          await navigator.clipboard.writeText(link.url);
+        } catch {}
+      } else {
+        toast.success(`Created a link for ${formatINR(stackPaisa)}`);
+      }
       reset();
       linksQ.refetch();
       refetchUserInfo();
@@ -167,7 +182,7 @@ export default function LinksPage() {
   async function copyUrl(url: string) {
     try {
       await navigator.clipboard.writeText(url);
-      toast.success('OK');
+      toast.success('OK, that link was copied.');
     } catch {
       toast.error('Your browser refused');
     }
@@ -215,6 +230,18 @@ export default function LinksPage() {
               {creating ? <><span className="spinner" /> Creating payment link...</> : `Go `}
             </button>
           </div>
+          <div className="row spread" style={{ alignItems: 'center' }}>
+            <span style={{ fontSize: '0.9rem' }}>Copy the link to my clipboard when it's created</span>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={settings.copyLinkOnCreate}
+                onChange={(e) => update({ copyLinkOnCreate: e.target.checked })}
+                disabled={creating}
+              />
+              <span className="toggle-track" />
+            </label>
+          </div>
           {balance !== null && stackPaisa > balance && (
             <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <WarningIcon /><span>You don't have that much ({formatINR(balance)} available). The server will reject it. I'm warning you in advance...</span>
@@ -248,7 +275,7 @@ export default function LinksPage() {
             disabled={!!cancelAllProgress}
           >
             {cancelAllProgress
-              ? `Cancelling ${cancelAllProgress.done}/${cancelAllProgress.total}...`
+              ? <><span className="spinner" /> Cancelling {cancelAllProgress.done}/{cancelAllProgress.total}...</>
               : 'Cancel all'}
           </button>
         )}
@@ -290,7 +317,8 @@ export default function LinksPage() {
                   </div>
                   <div className="row gap-sm">
                     <button className="secondary copy-btn" onClick={() => copyUrl(l.url)}>Copy URL</button>
-                    <button className="secondary compact" onClick={() => inspectLink(l.token)}>Inspect</button>
+                    <button className="secondary copy-btn" onClick={() => copyUrl(sbsUrl(l.url, l.token))}>Copy URL (PWA)</button>
+                    <button className="secondary compact" onClick={() => inspectLink(l.token)}>Open</button>
                     <button className="compact danger" onClick={() => setCancelTarget(l)}>Cancel</button>
                   </div>
                 </div>

@@ -112,6 +112,7 @@ export interface Settings {
   swEnabled: boolean;
   rememberInfo: boolean;
   cliDrawer: boolean;
+  copyLinkOnCreate: boolean;
 }
 
 interface SettingsContextValue {
@@ -141,6 +142,7 @@ export const DEFAULT_SETTINGS: Settings = {
   swEnabled: false,
   rememberInfo: true,
   cliDrawer: false,
+  copyLinkOnCreate: true,
 };
 
 export function SettingsProvider({ children }: { children: ReactNode }) {

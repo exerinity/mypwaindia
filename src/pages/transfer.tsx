@@ -6,6 +6,7 @@ import { useToast } from '../context/toast_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.js';
 import { useCachedQuery } from '../hooks/cached_query.js';
 import { usePageTitle } from '../hooks/page_title.js';
+import { useLazyModule } from '../hooks/lazy_module.ts';
 import { transfer, listTransactions } from '../api/transactions.js';
 import { getUserInfo } from '../api/user.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
@@ -28,12 +29,21 @@ const PRESETS_PAISA = [
   100000, // 1,000
 ];
 
+const TRUNCATE: React.CSSProperties = {
+  display: 'block',
+  width: '100%',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+};
+
 export default function TransferPage() {
   usePageTitle('Transfer funds');
   const { active, updateBalance } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
   const format = useCurrency();
+  const datesMod = useLazyModule(() => import('../utils/dates.js'));
   const [searchParams] = useSearchParams();
   const [recipient, setRecipient] = useState(() => searchParams.get('to') ?? '');
   const [note, setNote] = useState(() => searchParams.get('message') ?? '');
@@ -45,6 +55,8 @@ export default function TransferPage() {
   const [rawInput, setRawInput] = useState('');
   const [editingAmount, setEditingAmount] = useState(false);
   const [showSonModal, setShowSonModal] = useState(false);
+  const [showRecents, setShowRecents] = useState(false);
+  const [recentSort, setRecentSort] = useState<'recent' | 'amount'>('recent');
 
   const userQ = useApiCall<{ balance: number }>(
     async () => {
@@ -79,6 +91,31 @@ export default function TransferPage() {
     }
     return result;
   }, [txQ.data, active?.id]);
+
+  const recentTransfers = useMemo(() => {
+    const txs = txQ.data?.transactions ?? [];
+    const seen = new Set<string>();
+    const pool: Transaction[] = [];
+    for (const tx of txs) {
+      if (tx.status === 'cancelled') continue;
+      if (tx.sender?.id !== active?.id || !tx.recipient?.username || tx.amount <= 0) continue;
+      const key = `${tx.recipient.username}:${tx.amount}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      pool.push(tx);
+    }
+    pool.sort((a, b) => recentSort === 'amount'
+      ? b.amount - a.amount
+      : new Date(b.created).getTime() - new Date(a.created).getTime());
+    return pool.slice(0, 6);
+  }, [txQ.data, active?.id, recentSort]);
+
+  function reperform(tx: Transaction) {
+    setRecipient(tx.recipient?.username ?? '');
+    setStackPaisa(tx.amount);
+    setNote(tx.note?.trim() ?? '');
+    setShowRecents(false);
+  }
 
   function bump(amt: number) { setStackPaisa((s) => s + amt); }
   function reset() { setStackPaisa(0); }
@@ -125,6 +162,36 @@ export default function TransferPage() {
       <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭">
         <img src="https://cologne.exerinity.com/son.png" alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
+      <Modal open={showRecents} onClose={() => setShowRecents(false)}>
+        <div className="table-controls">
+          <label>
+            Sort by
+            <select value={recentSort} onChange={(e) => setRecentSort(e.target.value as 'recent' | 'amount')}>
+              <option value="recent">Most recent</option>
+              <option value="amount">Highest amount</option>
+            </select>
+          </label>
+        </div>
+        <div style={{ display: 'grid', gap: 8, gridTemplateColumns: 'minmax(0, 1fr)' }}>
+          {recentTransfers.map((tx) => {
+            const when = datesMod ? datesMod.formatRelative(tx.created) : '...';
+            const note = tx.note?.trim();
+            return (
+              <button
+                key={tx.id}
+                type="button"
+                className="option"
+                onClick={() => reperform(tx)}
+                disabled={busy}
+                style={{ minWidth: 0 }}
+              >
+                <span className="option-label" style={TRUNCATE}>{format(tx.amount)} to {tx.recipient!.username}</span>
+                <span className="option-desc" style={TRUNCATE}>{note ? `${note} (${when})` : when}</span>
+              </button>
+            );
+          })}
+        </div>
+      </Modal>
       <h1 className="mt-0">Transfer funds</h1>
       <p className="muted" style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
         Sending to multiple people? <Link to="/account/transfer/bulk">Bulk transfer...</Link>
@@ -157,6 +224,18 @@ export default function TransferPage() {
               Reset
             </button>
           </div>
+          {(txQ.loading || recentTransfers.length > 0) && (
+            <div className="preset-stack-row">
+              <button
+                type="button"
+                className="ghost"
+                onClick={() => setShowRecents(true)}
+                disabled={busy || txQ.loading}
+              >
+                {txQ.loading ? <><span className="spinner" /> Retrieving data...</> : 'Open recents'}
+              </button>
+            </div>
+          )}
           {overBalance && (
             <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <WarningIcon /><span>That's more than you have ({format(balance)}). The server will reject it. I'm warning you in advance...</span>

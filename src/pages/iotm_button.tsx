@@ -755,7 +755,7 @@ export default function IotmButtonPage() {
               {(() => {
                 const indicatorStyle: React.CSSProperties = { float: 'right', fontSize: '0.72rem', textTransform: 'none', letterSpacing: 'normal', fontWeight: 400 };
                 if (subQ.loading) {
-                  return <span style={indicatorStyle}>Loading...</span>;
+                  return <span style={indicatorStyle}>Retrieving data...</span>;
                 }
                 if (!hasAccess) {
                   return (
@@ -763,7 +763,7 @@ export default function IotmButtonPage() {
                       style={{ ...indicatorStyle, cursor: 'pointer', textDecoration: 'underline' }}
                       onClick={(e) => { e.stopPropagation(); setUnlockModalOpen(true); }}
                     >
-                      Unlock access to autoclicker
+                      Unlock autoclicker
                     </span>
                   );
                 }
