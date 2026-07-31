@@ -47,7 +47,7 @@ export function AccountPill() {
         <Link to="/i/flow/login" state={{ backgroundLocation: location }} className="pill clickable" style={{ textDecoration: 'none', color: 'inherit' }}>
           <span className="pill-label">Not logged in - log in here</span>
         </Link>
-        <a href="/signup" target="_blank" rel="noopener noreferrer"
+        <a href="https://mypayindia.com/auth/register" target="_blank" rel="noopener noreferrer"
           className="pill clickable" style={{ textDecoration: 'none', color: 'inherit', gap: '6px' }}>
           <span className="pill-label">Sign up</span><ExternalIcon />
         </a>
