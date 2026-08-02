@@ -36,6 +36,7 @@
 @import "simple_history.css";
 @import "bottom_nav.css";
 @import "mobile.css";
+@import "news.css";
 
 @font-face {
   font-family: "Inter";

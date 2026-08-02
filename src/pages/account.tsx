@@ -6,7 +6,6 @@ import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
 import { usePageTitle } from '../hooks/page_title.js';
 import { useToast } from '../context/toast_ctx.tsx';
-import { verifyEmail } from '../api/user.js';
 import { Skeleton, ErrorBox } from '../components/status.tsx';
 import { WarningIcon } from '../components/icons.tsx';
 
@@ -24,7 +23,6 @@ export default function AccountPage() {
   const calcAge = (d: string) => datesMod ? datesMod.calcAge(d) : null;
   const formatBalance = useCurrency();
   const toast = useToast();
-  const [sendingVerify, setSendingVerify] = useState(false);
   const [personalDetailsOpen, setPersonalDetailsOpen] = useState(false);
   const [securityCode, setSecurityCode] = useState(['', '', '', '', '']);
   interface Age { years: number; months: number; weeks: number; days: number }
@@ -38,19 +36,6 @@ export default function AccountPage() {
     [refetchUserInfo, refetchRestrictions],
     { enabled: settings.autoRefresh && !!active }
   );
-
-  async function handleVerify() {
-    setSendingVerify(true);
-    try {
-      await verifyEmail(active!);
-      toast.success('Verification email dispatched!');
-    } catch (e) {
-      const { describeError } = await import('../utils/errors.js');
-      toast.error(describeError(e));
-    } finally {
-      setSendingVerify(false);
-    }
-  }
 
   function AgeTag({ age }: { age: Age }) {
     const [hovered, setHovered] = useState(false);
@@ -200,13 +185,6 @@ export default function AccountPage() {
                   })}
                 </div>
               )}
-
-              <div className="card mb-2">
-                <h3 className="mt-0">Verification</h3>
-                <button onClick={handleVerify} disabled={sendingVerify}>
-                  {sendingVerify ? 'Sending...' : 'Send verification email'}
-                </button>
-              </div>
 
               <div className="card mb-2">
                 <div className="row spread" style={{ alignItems: 'center' }}>

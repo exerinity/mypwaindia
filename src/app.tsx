@@ -20,6 +20,8 @@ const LinksPage = lazy(() => import('./pages/links.tsx'));
 const LeaderboardPage = lazy(() => import('./pages/leaderboard.tsx'));
 const TeamPage = lazy(() => import('./pages/team.tsx'));
 const TeamMapPage = lazy(() => import('./pages/team_map.tsx'));
+const NewsPage = lazy(() => import('./pages/news.tsx'));
+const NewsItemPage = lazy(() => import('./pages/news_item.tsx'));
 const SubscriptionsPage = lazy(() => import('./pages/subscriptions.tsx'));
 const SettingsPage = lazy(() => import('./pages/settings.tsx'));
 const SessionsPage = lazy(() => import('./pages/sessions.tsx'));
@@ -116,6 +118,8 @@ export default function App() {
         <Route path="/i/leaderboard" element={<LeaderboardPage />} />
         <Route path="/i/team" element={<TeamPage />} />
         <Route path="/i/team/globe" element={<TeamMapPage />} />
+        <Route path="/i/news" element={<NewsPage />} />
+        <Route path="/i/news/:slug" element={<NewsItemPage />} />
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
         <Route path="/settings/sessions" element={<Navigate to="/i/flow/sessions" replace />} />

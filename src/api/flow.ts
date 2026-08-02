@@ -7,3 +7,8 @@ export async function getTeam() {
   const { apiFetch } = await import('./client.js');
   return apiFetch('/api/v2/info/team');
 }
+
+export async function getNews() {
+  const { apiFetch } = await import('./client.js');
+  return apiFetch('/pwa/meta/news');
+}

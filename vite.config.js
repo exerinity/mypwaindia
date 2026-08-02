@@ -73,6 +73,10 @@ export default defineConfig({
         target: 'https://subscribe.mypayindia.sbs',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/i\/subscribe/, '') || '/'
+      },
+      '/i/pwa/meta/news': {
+        target: 'https://mypayindia.sbs',
+        changeOrigin: true
       }
     }
   },

@@ -14,6 +14,7 @@ import {
   TrophyIcon,
   TeamIcon,
   NotesIcon,
+  NewspaperIcon,
   StoreIcon,
   SettingsIcon,
   ExternalIcon,
@@ -48,7 +49,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/i/leaderboard', label: 'Leaderboard', icon: TrophyIcon },
       { to: '/i/team', label: 'Meet the team', icon: TeamIcon },
-      { to: '/i/release_notes', label: 'App release notes', icon: NotesIcon },
+      { to: '/i/news', label: 'News', icon: NewspaperIcon },
       { href: 'https://mypayindia.com/', label: 'MyPayIndia.com', icon: LinkIcon, external: true },
     ],
   },

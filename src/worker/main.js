@@ -1,14 +1,19 @@
 import { bastion } from "./proxy.js";
 import { subscribe } from "./button_subscribe.js";
+import { handle_news } from "./news.js";
 
 const API_ROOTS = ["/api", "/iotm", "/accountservices", "/api/pwa", "/staging"];
 const SUBSCRIBE_PREFIX = "/i/subscribe";
+const NEWS_PATH = "/i/pwa/meta/news";
 
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
     if (url.pathname === "/i/api") {
       return new Response(null, { status: 302, headers: { Location: "/" } });
+    }
+    if (url.pathname === NEWS_PATH) {
+      return handle_news();
     }
     if (url.pathname === SUBSCRIBE_PREFIX || url.pathname.startsWith(SUBSCRIBE_PREFIX + "/")) {
       url.pathname = url.pathname.slice(SUBSCRIBE_PREFIX.length) || "/";

@@ -1,0 +1,36 @@
+.news-headline-link {
+  text-decoration: none;
+}
+
+.news-headline-link h2 {
+  color: var(--brand);
+}
+
+.news-headline-link:hover h2 {
+  text-decoration: underline;
+}
+
+.news-body {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.news-body p:first-child {
+  margin-top: 0;
+}
+
+.news-body p:last-child {
+  margin-bottom: 0;
+}
+
+.news-body img {
+  max-width: 100%;
+  border-radius: var(--radius);
+  display: block;
+  margin: 10px 0;
+}
+
+.news-body a {
+  color: var(--brand);
+}

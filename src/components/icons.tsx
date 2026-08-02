@@ -88,6 +88,16 @@ export function TeamIcon({ size = 18 }: { size?: number }) {
   );
 }
 
+export function NewspaperIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="16" rx="1.5" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M6 8h12" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M6 11.5h4.5M6 14h4.5M6 16.5h4.5M13.5 11.5h4.5M13.5 14h4.5M13.5 16.5h3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function NotesIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
