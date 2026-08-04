@@ -16,10 +16,35 @@ This repo is not intended for self-hosting or contributing; it is meant to just 
 
 You are, however, free to fork it and do absolutely anything you want with the code, and redistribute that code... provided you abide by the MIT license. You also must affirm your fork is... a fork and **unaffiliated** with MyPayIndia or MyPWAIndia and **you may not** use any official branding.
 
+### Tree
+```
+src/
+├─ app.tsx          every route in one file
+├─ main.tsx         entry point
+├─ sw.ts            service worker
+├─ pages/           account, information, iotm, pwa, scambait, settings, transfer
+├─ flow/            the modals (login, logout, wizard, link claim, transaction)
+│  └─ pages/        full pages that are still "flow": links, sessions, toys,
+│                   onboarding, subscriptions, connection, theme/settings apply
+├─ components/      shell, ui, account, cli, lock, data
+├─ context/         auth, settings, toasts, global data, the data cache
+├─ hooks/           api calls, cached queries, page titles, refresh timers
+├─ api/             one module per API surface, all going through client.ts
+├─ worker/          the Cloudflare Worker: bastion proxy, news, button subscribe
+├─ styles/          one stylesheet per area, stitched together by index.css
+└─ data/            world countries & centroids for the globe
+```
+
 ## The bastion
 The bastion is the proxy that lets MyPWAIndia talk to MyPayIndia (named after the [Bruckell Bastion](https://beamng.fandom.com/wiki/Bruckell_Bastion)). It used to be its own Cloudflare Worker at [bastion.mypayindia.sbs](https://bastion.mypayindia.sbs), but it's now folded into the same Worker that serves this site, reachable under **/i/api**. (the standalone one stays up for old app versions and staging)
 
 Besides proxying data, it runs the session layer and handles [the button](https://mypayindia.sbs/iotm/button), proxying its clicks.
+
+Everything the Worker answers for sits under `/i/`, and anything it doesn't recognise falls through to the static assets :
+
+- **/i/api**, **/i/api/pwa**, **/i/accountservices**, **/i/iotm**, **/i/staging** - proxied to the bastion with the `/i` stripped
+- **/i/subscribe/** - button autoclicker subscriptions
+- **/i/pwa/meta/news** - fetches MyPayIndia's news feed, decodes it and rewrites its links so they resolve, which is what [/i/news](https://mypayindia.sbs/i/news) renders
 
 **Sessions live in two places:** a cookie on the bastion side and a session token on the frontend. Deleting the cookie won't log you out (the app still remembers you via the token), so to clear both, use [/i/flow/logout](https://mypayindia.sbs/i/flow/logout).
 
@@ -27,22 +52,24 @@ Besides proxying data, it runs the session layer and handles [the button](https:
 The app is built with Vite. The output is deliberately **unminified** (no sourcemaps either)
 
 ### Bundling
-The entry point keeps a stable name, `/i/scripts/mypwaindia.js`, and everything else is split into named chunks (`/i/scripts/mpi_[name]-[hash].js`). Chunking is done artisanally in [vite.config.js](vite.config.js) via `manualChunks`:
+The entry point is `/i/scripts/mypwaindia_index-[hash].js` and everything else is split into named chunks (`/i/scripts/mpi_[name]-[hash].js`). Chunking is done artisanally in [vite.config.js](vite.config.js) via `manualChunks`, matching on file paths:
 
-- Pages are grouped by feature: `flow` (login/logout/onboarding), `transfers`, `history`, `links`, `social`, `settings`, `iotm`, `tools` (MyCLiIndia), `client` (dashboard/account), `scambait`, and so on
+- Pages are grouped by feature: `flow` (onboarding), `transfers`, `history` (history/statements/old transactions), `links`, `social` (leaderboard/team), `teammap`, `settings`, `iotm` & `iotm_button`, `cli` (MyCLiIndia), `tools` (MyPWAToysIndia), `client` (dashboard/account), `scambait`, `subs`, `info` and `misc`
 - `node_modules` gets its own chunk, except for the three.js/globe.gl stack which is quarantined into `globe` (c. 4.9MB & only needed by the [team globe](https://mypayindia.sbs/i/team/globe))
-- Context providers live in `bastion`, the status/connection components in `stability`
+- Context providers live in `bastion`, the status components in `stability`
+- Anything that doesn't match a rule (news, sessions, the flow modals) gets an automatic chunk named after its module
 
 ### Loading
 Every page in [app.tsx](src/app.tsx) is a `React.lazy()` import, and `modulePreload` is off, so a chunk is only fetched the first time you navigate to a route inside it. If that fails, its caught by an error boundary that offers a reload
 
-While the entry script loads, you see the splash screen, which is inlined straight into [index.html](index.html) with just CSS. Once React initializes, the splash fades out and the app fades in. Load time is also logged to the console
+While the entry script loads, you see the splash screen, which is inlined straight into [index.html](index.html) with just CSS. A tiny inline script runs before it to read your saved theme out of local storage and paint the background & theme-color to match, so there's no flash of the wrong colour. Once React initializes, the splash fades out and the app fades in. Load time is also logged to the console
 
 ### Service worker
 The PWA side uses Workbox ([sw.ts](src/sw.ts) via vite-plugin-pwa's `injectManifest`):
 
 - Everything (JS, CSS, HTML, fonts, images) is precached on install, **except** the globe chunk
 - Runtime requests for pages, scripts and styles are network-first with a 4 second timeout, then fall back to cache
+- If a navigation fails entirely, the precached `index.html` is served, so the app still boots offline
 - Updates use a prompt & the new worker waits until you confirm rather than automatic
 
 ### Side builder: a single index.html 
@@ -51,7 +78,7 @@ The PWA side uses Workbox ([sw.ts](src/sw.ts) via vite-plugin-pwa's `injectManif
 ## "Scambait" mode
 Scambait mode transforms this app into a more convincing-looking interface for use in... scambaiting. Phone scammers often instruct their targets to install remote access software and navigate a banking app - but to their dismay, that geriatric geezer on the other end is using a mysterious online bank: MyPayIndia.
 
-The mode hides things a scammer may find suspicious (e.g., the leaderboard) and exposes fabricated pages containing credit card information, fake transactions dating since 2017, and changes INR to Dollars ($).
+The mode hides things a scammer may find suspicious (the whole Meta group in the sidebar, so the leaderboard and team, plus transfers, payment links, subscriptions, IOTM and MyCLiIndia) and exposes fabricated pages containing credit card information and a bank statement history, and changes INR to Dollars ($).
 
 **Learn more & activate: https://mypayindia.sbs/i/flow/scambaitmode**
 
@@ -83,7 +110,10 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/account/transfer** - transfer funds screen
 - **/account/transfer/bulk** - bulk transfers, enqueue people and amount then send them all at once
 - **/account/history** - transaction history
+- **/account/history/simple** - a lighter, cardless history for small screens
 - **/subscriptions** - manage subscriptions
+
+(everything above except /dash sits behind an auth guard: signed out, you get a toast and a bounce to the login flow, which remembers where you were going and returns you there after signing in)
 
 ### Payment links
 - **/i/flow/links** - links home, list & create & revoke
@@ -95,8 +125,11 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/leaderboard** - top 10 richest accounts
 - **/i/team** - list of team members
 - **/i/team/globe** - team members on a 3D globe (the 4.9MB chunk)
+- **/i/news** - MyPayIndia's news feed
+- **/i/news/:slug** - a single news item
 - **/i/release_notes** - app release notes
 - **/i/acknowledgements** - thanks and acknowledgements
+- **/i/how_pwa** - how to install the app on whatever you're holding
 
 ### Internal flow (hence the /i/flow)
 - **/i/flow/login** - log in
@@ -113,6 +146,8 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/flow/theme** - apply a theme from a shared link
 - **/i/flow/settings** - apply settings from a shared link
 
+Login, logout, the setup wizard, link claiming and the transaction viewer are modals rather than pages ([flow_conductor.tsx](src/flow/flow_conductor.tsx)). Navigating to one directly renders it over the app
+
 ### Investment Opportunities™
 - **/iotm** - home
 - **/iotm/button** - the button, reinterpreted, with more calculations and an onboard autoclicker
@@ -120,13 +155,16 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 (I couldn't port any other games, so they just link externally)
 
 ### Scambait
-- **/dash/cards** - 3 fake randomly generated credit cards: everyday, savings & business, complete with CVV and numbers
-- **/dash/statements** - 1000 randomly generated fake statements with various American businesses and random people (in place of /account/history)
+- **/dash/cards** - 3 fake randomly generated credit cards: everyday, savings & business, complete with CVV, numbers, routing and SWIFT
+- **/dash/statements** - 450 generated statements with various American businesses and random people (in place of /account/history). They're seeded off the account id, so the same account always gets the same history, walking backwards from this month until it has enough (about a year and a half)
 - **/i/flow/scambaitmode** - redirects to /settings/scambait
 
 ### Control
 - **/settings** - app settings (takes you to /settings/appearance)
 - **/settings/:category** - settings by category
+- **/settings/sessions** - redirects to /i/flow/sessions
+
+The categories list ([categories.ts](src/pages/settings/categories.ts)) also carries entries that just point elsewhere (sessions, logout, toys, account management on the main site), and some hide themselves in scambait mode
 
 There's also a pile of compatibility redirects mirroring MyPayIndia.com's own URLs (e.g., /account/transfers/new > /account/transfer), so you can take a mypayindia.com link, swap the `.com` for `.sbs`, and get the PWA experience. The few things the PWA doesn't do bounce you back to MyPayIndia.com
 
