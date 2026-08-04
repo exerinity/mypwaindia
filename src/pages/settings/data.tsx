@@ -4,12 +4,12 @@ import type { Account } from '../../context/auth_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { Modal } from '../../components/modal.tsx';
-import { LockIcon, SettingsIcon } from '../../components/icons.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
+import { LockIcon, SettingsIcon } from '../../components/ui/icons.tsx';
 import { hideGet, hideSetValue, hideClear } from '../../utils/storage.ts';
 
-const ConfirmModal = lazy(() => import('../../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
-const AddAccountModal = lazy(() => import('../../components/add_acc_modal.tsx').then((m) => ({ default: m.AddAccountModal })));
+const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const AddAccountModal = lazy(() => import('../../components/account/add_acc_modal.tsx').then((m) => ({ default: m.AddAccountModal })));
 
 const HIDE_ROWS = [
   { key: 'install', label: 'Install app pill' },

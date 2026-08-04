@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Modal } from '../components/modal.tsx';
+import { Modal } from '../components/ui/modal.tsx';
 
 export default function FlowNotFound() {
   const nav = useNavigate();

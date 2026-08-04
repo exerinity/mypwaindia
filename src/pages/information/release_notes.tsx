@@ -1,8 +1,8 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import React, { useState, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
-const AppFooter = lazy(() => import('../../components/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
+const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
 
 type Release = {
   version: string;

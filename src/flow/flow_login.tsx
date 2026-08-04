@@ -6,10 +6,10 @@ import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { storageGet, KEYS } from '../utils/storage.ts';
 import { usePageTitle } from '../hooks/page_title.js';
-import { ArrowLeftIcon, ExternalIcon, WarningIcon, ErrorIcon, EyeIcon, EyeOffIcon } from '../components/icons.tsx';
-import { Modal } from '../components/modal.tsx';
+import { ArrowLeftIcon, ExternalIcon, WarningIcon, ErrorIcon, EyeIcon, EyeOffIcon } from '../components/ui/icons.tsx';
+import { Modal } from '../components/ui/modal.tsx';
 
-const FloatingInput = lazy(() => import('../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const FloatingInput = lazy(() => import('../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 
 export default function LoginPage() {
   const { login, accounts, maxAccounts } = useAuth();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import type { AppLockMethod } from '../utils/app_lock.ts';
-import { EyeIcon, EyeOffIcon } from './icons.tsx';
+import type { AppLockMethod } from '../../utils/app_lock.ts';
+import { EyeIcon, EyeOffIcon } from '../ui/icons.tsx';
 
 const PAD_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '⌫'];
 const PATTERN_DOTS = Array.from({ length: 9 }, (_, i) => i);

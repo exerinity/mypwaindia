@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { CardSkeleton } from '../components/app_skeleton.tsx';
+import { CardSkeleton } from '../components/shell/app_skeleton.tsx';
 
 const LoginModal = lazy(() => import('./flow_login.tsx'));
 const LogoutModal = lazy(() => import('./flow_logout.tsx'));

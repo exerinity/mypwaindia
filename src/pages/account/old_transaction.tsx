@@ -5,8 +5,8 @@ import { usePageTitle } from '../../hooks/page_title.js';
 import { getTransaction } from '../../api/transactions.js';
 import { useCurrency } from '../../context/settings_ctx.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
-import { Skeleton, ErrorBox } from '../../components/status.tsx';
-import { ArrowLeftIcon } from '../../components/icons.tsx';
+import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
+import { ArrowLeftIcon } from '../../components/ui/icons.tsx';
 
 
 export default function TransactionPage() {

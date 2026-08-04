@@ -1,11 +1,11 @@
 import { Routes, Route, Navigate, Outlet, useLocation, useParams, type Location } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { useSettings } from './context/settings_ctx.tsx';
-import { CardSkeleton } from './components/app_skeleton.tsx';
+import { CardSkeleton } from './components/shell/app_skeleton.tsx';
 import { FlowModals, isFlowModalPath } from './flow/flow_conductor.tsx';
 
-const AppLayout = lazy(() => import('./components/app_layout.tsx').then((m) => ({ default: m.AppLayout })));
-const RequireAuth = lazy(() => import('./components/require_auth.tsx').then((m) => ({ default: m.RequireAuth })));
+const AppLayout = lazy(() => import('./components/shell/app_layout.tsx').then((m) => ({ default: m.AppLayout })));
+const RequireAuth = lazy(() => import('./components/shell/require_auth.tsx').then((m) => ({ default: m.RequireAuth })));
 const OnboardingPage = lazy(() => import('./flow/pages/onboarding.tsx'));
 const DashboardPage = lazy(() => import('./pages/account/dashboard.tsx'));
 const AccountPage = lazy(() => import('./pages/account/account.tsx'));

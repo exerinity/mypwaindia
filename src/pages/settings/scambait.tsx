@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { InfoIcon, WarningIcon } from '../../components/icons.tsx';
+import { InfoIcon, WarningIcon } from '../../components/ui/icons.tsx';
 
 export function ScambaitSettings() {
   const { settings, update } = useSettings();

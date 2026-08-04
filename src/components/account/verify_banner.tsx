@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useAuth } from '../context/auth_ctx.tsx';
-import { useGlobalData } from '../context/global_data_ctx.tsx';
-import { verifyEmail } from '../api/user.js';
-import { useToast } from '../context/toast_ctx.tsx';
+import { useAuth } from '../../context/auth_ctx.tsx';
+import { useGlobalData } from '../../context/global_data_ctx.tsx';
+import { verifyEmail } from '../../api/user.js';
+import { useToast } from '../../context/toast_ctx.tsx';
 
 export function VerificationBanner() {
   const { active } = useAuth();
@@ -18,7 +18,7 @@ export function VerificationBanner() {
       await verifyEmail(active!);
       toast.success('Verification email sent');
     } catch (e) {
-      const { describeError } = await import('../utils/errors.js');
+      const { describeError } = await import('../../utils/errors.js');
       toast.error(describeError(e));
     } finally {
       setSending(false);

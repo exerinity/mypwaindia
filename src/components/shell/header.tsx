@@ -1,10 +1,10 @@
 import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import { HamburgerIcon } from './icons.tsx';
+import { HamburgerIcon } from '../ui/icons.tsx';
 
-const Logo = lazy(() => import('./logo.tsx').then((m) => ({ default: m.Logo })));
-const AccountPill = lazy(() => import('./acc_pill.tsx').then((m) => ({ default: m.AccountPill })));
-const BalancePill = lazy(() => import('./bal_pill.tsx').then((m) => ({ default: m.BalancePill })));
+const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
+const AccountPill = lazy(() => import('../account/acc_pill.tsx').then((m) => ({ default: m.AccountPill })));
+const BalancePill = lazy(() => import('../account/bal_pill.tsx').then((m) => ({ default: m.BalancePill })));
 const InstallPill = lazy(() => import('./install_pill.tsx').then((m) => ({ default: m.InstallPill })));
 
 export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {

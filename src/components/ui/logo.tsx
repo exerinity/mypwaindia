@@ -1,4 +1,4 @@
-import { useSettings } from '../context/settings_ctx';
+import { useSettings } from '../../context/settings_ctx';
 
 const LOGO_W = 512;
 const LOGO_H = 189;

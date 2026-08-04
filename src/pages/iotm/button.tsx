@@ -6,16 +6,16 @@ import { usePageTitle } from '../../hooks/page_title.js';
 import { useApiCall } from '../../hooks/api_call.js';
 import { API_BASE } from '../../api/config.js';
 import { checkSubscription, createSubscribeSession } from '../../api/subscribe.js';
-import { ArrowLeftIcon, ExternalIcon, ChevronRight, ErrorIcon } from '../../components/icons.tsx';
-import { ErrorBox, Skeleton } from '../../components/status.tsx';
-import { Modal } from '../../components/modal.tsx';
+import { ArrowLeftIcon, ExternalIcon, ChevronRight, ErrorIcon } from '../../components/ui/icons.tsx';
+import { ErrorBox, Skeleton } from '../../components/ui/status.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
 import { hideGet, hideSet } from '../../utils/storage.ts';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 
 // This shit probably doesnt work anymore but who cares
 
-const ConfirmModal = lazy(() => import('../../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
-const FloatingInput = lazy(() => import('../../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const FloatingInput = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 
 const MIN_CLICK_DELAY_MS = 100;
 const CLICK_BATCH_SIZE = 10;

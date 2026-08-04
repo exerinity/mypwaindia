@@ -1,19 +1,19 @@
 import React, { useState, useRef, useEffect, useCallback, useSyncExternalStore } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/auth_ctx.tsx';
-import type { Account } from '../context/auth_ctx.tsx';
-import { transfer, listTransactions, getTransaction } from '../api/transactions.js';
-import { createLink, listLinks, cancelLink, claimLink, getLink } from '../api/links.js';
-import { getUserInfo, getRestrictions, listSessions, invalidateSession, verifyEmail } from '../api/user.js';
-import { getLeaderboard, getTeam } from '../api/flow.js';
-import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
-import { useSettings } from '../context/settings_ctx.tsx';
+import { useAuth } from '../../context/auth_ctx.tsx';
+import type { Account } from '../../context/auth_ctx.tsx';
+import { transfer, listTransactions, getTransaction } from '../../api/transactions.js';
+import { createLink, listLinks, cancelLink, claimLink, getLink } from '../../api/links.js';
+import { getUserInfo, getRestrictions, listSessions, invalidateSession, verifyEmail } from '../../api/user.js';
+import { getLeaderboard, getTeam } from '../../api/flow.js';
+import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
+import { useSettings } from '../../context/settings_ctx.tsx';
 import {
   L, subscribe, getLines, getCmdHistory, pushLines, clearLines, seedWelcome, rememberCmd,
   isSudoGranted, touchSudo, requestDrawerOpen, CLI_SUDO_SEEN_KEY,
-} from '../utils/cli_store.ts';
-import type { CliLine } from '../utils/cli_store.ts';
-import '../styles/cli.css';
+} from '../../utils/cli_store.ts';
+import type { CliLine } from '../../utils/cli_store.ts';
+import '../../styles/cli.css';
 
 type ApiAny = any;
 
@@ -324,8 +324,8 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
     if (!tokens.length) return;
     const [cmd, ...args] = tokens;
     const c = cmd.toLowerCase();
-    const { rupeesToPaisa, formatINR } = await import('../utils/money.js');
-    const { formatDate, formatRelative } = await import('../utils/dates.js');
+    const { rupeesToPaisa, formatINR } = await import('../../utils/money.js');
+    const { formatDate, formatRelative } = await import('../../utils/dates.js');
 
     switch (c) {
 
@@ -888,7 +888,7 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
         try {
           await runCmd(cmd);
         } catch (err) {
-          const { describeError } = await import('../utils/errors.js');
+          const { describeError } = await import('../../utils/errors.js');
           push(L.err(describeError(err)));
           break;
         }

@@ -4,10 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useInstallPrompt, isInstalled } from '../../hooks/install_prompt.ts';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { ExternalIcon } from '../../components/icons.tsx';
+import { ExternalIcon } from '../../components/ui/icons.tsx';
 import { hideGet, hideSet } from '../../utils/storage.ts';
 
-const Modal = lazy(() => import('../../components/modal.tsx').then((m) => ({ default: m.Modal })));
+const Modal = lazy(() => import('../../components/ui/modal.tsx').then((m) => ({ default: m.Modal })));
 
 interface Guide { browser: string; note?: string; steps?: ReactNode[]; text?: ReactNode }
 

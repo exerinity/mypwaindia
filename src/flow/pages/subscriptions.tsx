@@ -1,4 +1,4 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useState, useMemo, lazy, Suspense } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
@@ -7,11 +7,11 @@ import { useRefreshTimer } from '../../hooks/refresh_timer.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { listSubscriptions, cancelSubscription, resumeSubscription } from '../../api/subscriptions.js';
-import { Skeleton, ErrorBox, Empty } from '../../components/status.tsx';
+import { Skeleton, ErrorBox, Empty } from '../../components/ui/status.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 
-const RefreshStatus = lazy(() => import('../../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
-const ConfirmModal = lazy(() => import('../../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 
 interface Subscription {
   subscription_id: string;

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useCurrency, useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
-import { Modal } from '../../components/modal.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 

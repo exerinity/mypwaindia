@@ -1,7 +1,7 @@
 import { storageGet, storageSet, KEYS } from './storage.ts';
 import { DEFAULT_SETTINGS, HOME_PAGE_OPTIONS, normalizeDashboardButtons, normalizeBottomNavItems } from '../context/settings_ctx.tsx';
 import type { Settings } from '../context/settings_ctx.tsx';
-import { findDestination } from '../components/nav_catalog.tsx';
+import { findDestination } from '../components/shell/nav_catalog.tsx';
 
 export interface SettingsExport {
   v: 1;

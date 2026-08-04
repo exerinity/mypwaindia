@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useLazyModule } from '../hooks/lazy_module.ts';
-import { ExternalIcon } from './icons.tsx';
+import { useLazyModule } from '../../hooks/lazy_module.ts';
+import { ExternalIcon } from '../ui/icons.tsx';
 
 const ASSET_HOST = 'https://mypayindia.com';
 export function avatarConductor(avatar?: string): string {
@@ -105,7 +105,7 @@ export function formatMonthYear(iso: string) {
 }
 
 export function TeamMemberCard({ m, onAvatarClick }: { m: TeamMember; onAvatarClick?: (m: TeamMember) => void }) {
-  const datesMod = useLazyModule(() => import('../utils/dates.js'));
+  const datesMod = useLazyModule(() => import('../../utils/dates.js'));
   const calcAge = (d: string) => datesMod ? datesMod.calcAge(d) : null;
 
   return (

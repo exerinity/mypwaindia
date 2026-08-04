@@ -1,4 +1,4 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { Link } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
@@ -7,10 +7,10 @@ import { useGlobalData } from '../../context/global_data_ctx.tsx';
 import { useRefreshTimer } from '../../hooks/refresh_timer.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
-import { Skeleton, ErrorBox } from '../../components/status.tsx';
-import { WarningIcon, ArrowLeftIcon, SuccessIcon } from '../../components/icons.tsx';
+import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
+import { WarningIcon, ArrowLeftIcon, SuccessIcon } from '../../components/ui/icons.tsx';
 
-const RefreshStatus = lazy(() => import('../../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 
 export default function RestrictionsPage() {
   usePageTitle('Account restrictions');

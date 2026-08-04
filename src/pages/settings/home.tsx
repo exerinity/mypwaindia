@@ -1,9 +1,9 @@
 import { useState, lazy } from 'react';
 import { useSettings, HOME_PAGE_OPTIONS, DEFAULT_DASHBOARD_BUTTONS, DASHBOARD_BUTTON_STYLES } from '../../context/settings_ctx.tsx';
 import type { DashboardButtonStyle } from '../../context/settings_ctx.tsx';
-import { InfoIcon, PlusIcon, CloseIcon } from '../../components/icons.tsx';
+import { InfoIcon, PlusIcon, CloseIcon } from '../../components/ui/icons.tsx';
 
-const FloatingInput = lazy(() => import('../../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const FloatingInput = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 
 export function HomeSettings() {
   const { settings, update } = useSettings();

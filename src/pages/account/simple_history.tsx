@@ -1,4 +1,4 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useMemo, Suspense, lazy } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
@@ -8,11 +8,11 @@ import { usePageTitle } from '../../hooks/page_title.js';
 import { useSettings, useCurrency } from '../../context/settings_ctx.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { listTransactions } from '../../api/transactions.js';
-import { Skeleton, ErrorBox } from '../../components/status.tsx';
-import { ChevronRight } from '../../components/icons.tsx';
-import type { Transaction } from '../../components/tx_table.tsx';
+import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
+import { ChevronRight } from '../../components/ui/icons.tsx';
+import type { Transaction } from '../../components/data/tx_table.tsx';
 
-const RefreshStatus = lazy(() => import('../../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 
 interface DayGroup { key: string; iso: string; items: Transaction[] }
 

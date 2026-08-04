@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 import { useCachedQuery } from '../../hooks/cached_query.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { getNews } from '../../api/flow.js';
-import { Skeleton, ErrorBox, Empty } from '../../components/status.tsx';
-import { ExternalIcon } from '../../components/icons.tsx';
-import { RichHtml } from '../../components/rich_html.tsx';
+import { Skeleton, ErrorBox, Empty } from '../../components/ui/status.tsx';
+import { ExternalIcon } from '../../components/ui/icons.tsx';
+import { RichHtml } from '../../components/ui/rich_html.tsx';
 import { slugify, formatNewsDate, type NewsFeed } from '../../utils/news.ts';
 
 export default function NewsPage() {

@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { useCachedQuery } from '../../hooks/cached_query.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { getTeam } from '../../api/flow.js';
-import { Skeleton, ErrorBox, Empty } from '../../components/status.tsx';
-import { Modal } from '../../components/modal.tsx';
-import { TeamMemberCard, avatarConductor, type TeamMember } from '../../components/team_member_card.tsx';
+import { Skeleton, ErrorBox, Empty } from '../../components/ui/status.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
+import { TeamMemberCard, avatarConductor, type TeamMember } from '../../components/data/team_member_card.tsx';
 
 export default function TeamPage() {
   usePageTitle('Meet the team');

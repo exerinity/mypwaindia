@@ -14,7 +14,7 @@ import {
   SettingsIcon,
   TerminalIcon,
   StopIcon,
-} from './icons.tsx';
+} from '../ui/icons.tsx';
 
 export interface NavDestination {
   route: string;

@@ -1,10 +1,10 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useState, useMemo, lazy, Suspense } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { RELEASES } from '../information/release_notes.tsx';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
-import { ExternalIcon, ArrowLeftIcon, ChevronRight } from '../../components/icons.tsx';
+import { ExternalIcon, ArrowLeftIcon, ChevronRight } from '../../components/ui/icons.tsx';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { CATEGORIES } from './categories.ts';
 import type { CategoryId } from './categories.ts';
@@ -18,7 +18,7 @@ import { SwSettings } from './sw.tsx';
 import { ScambaitSettings } from './scambait.tsx';
 import Flowback from '../../flow/shell_fallback.tsx';
 
-const AppFooter = lazy(() => import('../../components/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
+const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
 
 export default function SettingsPage() {
   const { category } = useParams<{ category: string }>();

@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { useSettings } from '../context/settings_ctx.tsx';
+import { useSettings } from '../../context/settings_ctx.tsx';
 
 const linkStyle: CSSProperties = {
   background: 'none',

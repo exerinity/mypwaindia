@@ -1,8 +1,8 @@
 import type { ComponentType } from 'react';
 import { lazy, Suspense } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useSettings } from '../context/settings_ctx.tsx';
-import { useAuth } from '../context/auth_ctx.tsx';
+import { useSettings } from '../../context/settings_ctx.tsx';
+import { useAuth } from '../../context/auth_ctx.tsx';
 import {
   CloseIcon,
   CreditCardIcon,
@@ -19,9 +19,9 @@ import {
   SettingsIcon,
   ExternalIcon,
   TerminalIcon,
-} from './icons.tsx';
+} from '../ui/icons.tsx';
 
-const Logo = lazy(() => import('./logo.tsx').then((m) => ({ default: m.Logo })));
+const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
 
 interface NavItem { to?: string; href?: string; label: string; loggedOutLabel?: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; hideInScambait?: boolean; scambaitOnly?: boolean; requireAuth?: boolean }
 interface NavGroup { title: string; items: NavItem[]; hideInScambait?: boolean; scambaitTitle?: string; defaultTitle?: string; loggedOutTitle?: string }

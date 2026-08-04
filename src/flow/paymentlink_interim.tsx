@@ -6,8 +6,8 @@ import { useApiCall } from '../hooks/api_call.js';
 import { getLink, claimLink } from '../api/links.js';
 import { getUserInfo } from '../api/user.js';
 import { useLazyModule } from '../hooks/lazy_module.ts';
-import { Skeleton, ErrorBox } from '../components/status.tsx';
-import { Modal } from '../components/modal.tsx';
+import { Skeleton, ErrorBox } from '../components/ui/status.tsx';
+import { Modal } from '../components/ui/modal.tsx';
 
 type LinkPreview = { creator?: { username: string }; amount: number; note?: string; created: string; status: string };
 

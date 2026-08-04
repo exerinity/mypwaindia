@@ -5,7 +5,7 @@ import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
-import { InfoIcon, ChevronRight } from '../../components/icons.tsx';
+import { InfoIcon, ChevronRight } from '../../components/ui/icons.tsx';
 import { rememberAccent } from '../../utils/recent_accents.ts';
 import { openThemePanel } from '../../utils/theme_panel_store.ts';
 import { THEME_OPTIONS, THEME_DEFAULTS } from './theme_presets.ts';

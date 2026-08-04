@@ -1,4 +1,4 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useMemo, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
@@ -7,17 +7,17 @@ import { useRefreshTimer } from '../../hooks/refresh_timer.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useSettings, useCurrency } from '../../context/settings_ctx.tsx';
 import { listTransactions } from '../../api/transactions.js';
-import { Skeleton, ErrorBox } from '../../components/status.tsx';
+import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
 
-const TransactionTable = lazy(() => import('../../components/tx_table.tsx').then((m) => ({ default: m.TransactionTable })));
-const RefreshStatus = lazy(() => import('../../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const TransactionTable = lazy(() => import('../../components/data/tx_table.tsx').then((m) => ({ default: m.TransactionTable })));
+const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 
 export default function HistoryPage() {
   usePageTitle('Transaction history');
   const { active } = useAuth();
   const { settings } = useSettings();
   const format = useCurrency();
-  type TxList = { transactions: import('../../components/tx_table.tsx').Transaction[] };
+  type TxList = { transactions: import('../../components/data/tx_table.tsx').Transaction[] };
   const { data, loading, error, refetch } = useCachedQuery<TxList>(
     active ? `history-tx:${active.id}` : null,
     () => listTransactions(active!) as Promise<TxList>,

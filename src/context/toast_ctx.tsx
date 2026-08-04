@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { CloseIcon, InfoIcon, SuccessIcon, ErrorIcon, WarningIcon } from '../components/icons.tsx';
+import { CloseIcon, InfoIcon, SuccessIcon, ErrorIcon, WarningIcon } from '../components/ui/icons.tsx';
 
 const KIND_ICON = {
   info: InfoIcon,

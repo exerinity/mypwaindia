@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
-import { ExternalIcon } from '../../components/icons.tsx';
+import { ExternalIcon } from '../../components/ui/icons.tsx';
 
 export default function NotFoundPage() {
   usePageTitle('?');

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { Modal } from '../../components/modal.tsx';
-import { WarningIcon, LockIcon } from '../../components/icons.tsx';
-import { AppLockInput } from '../../components/app_lock_input.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
+import { WarningIcon, LockIcon } from '../../components/ui/icons.tsx';
+import { AppLockInput } from '../../components/lock/app_lock_input.tsx';
 import { getAppLockConfig, setAppLock, disableAppLock, verifyAppLock, minLength, setAppLockRequireAfter, REQUIRE_AFTER_OPTIONS } from '../../utils/app_lock.ts';
 import type { AppLockMethod } from '../../utils/app_lock.ts';
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/auth_ctx.tsx';
-import { useToast } from '../context/toast_ctx.tsx';
+import { useAuth } from '../../context/auth_ctx.tsx';
+import { useToast } from '../../context/toast_ctx.tsx';
 
 export function RequireAuth() {
   const { active } = useAuth();

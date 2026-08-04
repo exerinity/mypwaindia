@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSettings } from '../context/settings_ctx.tsx';
-import { isInstalled } from '../hooks/install_prompt.ts';
-import { hideGet, HIDE_EVENT } from '../utils/storage.ts';
+import { useSettings } from '../../context/settings_ctx.tsx';
+import { isInstalled } from '../../hooks/install_prompt.ts';
+import { hideGet, HIDE_EVENT } from '../../utils/storage.ts';
 
 export function InstallPill() {
   const { settings } = useSettings();

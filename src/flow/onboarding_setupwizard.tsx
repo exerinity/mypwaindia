@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Modal } from '../components/modal.tsx';
+import { Modal } from '../components/ui/modal.tsx';
 import {
   useSettings,
   HOME_PAGE_OPTIONS,
@@ -9,7 +9,7 @@ import {
 } from '../context/settings_ctx.tsx';
 import type { Settings, DashboardButtonStyle } from '../context/settings_ctx.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
-import { PlusIcon, CloseIcon, SuccessIcon, ArrowLeftIcon, ChevronRight } from '../components/icons.tsx';
+import { PlusIcon, CloseIcon, SuccessIcon, ArrowLeftIcon, ChevronRight } from '../components/ui/icons.tsx';
 
 const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
   { value: 'light', label: 'Light' },

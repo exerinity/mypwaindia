@@ -4,19 +4,19 @@ import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { login as apiLogin, logout as apiLogout } from '../../api/auth.js';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { Modal } from '../../components/modal.tsx';
-import { ExternalIcon, InfoIcon, ErrorIcon, LockIcon, ArrowLeftIcon } from '../../components/icons.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
+import { ExternalIcon, InfoIcon, ErrorIcon, LockIcon, ArrowLeftIcon } from '../../components/ui/icons.tsx';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useCachedQuery } from '../../hooks/cached_query.js';
 import { useRefreshTimer } from '../../hooks/refresh_timer.js';
 import { listSessions, invalidateSession } from '../../api/user.js';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
-import { Skeleton, ErrorBox } from '../../components/status.tsx';
+import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
 
-const ConfirmModal = lazy(() => import('../../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
-const FloatingInput = lazy(() => import('../../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
-const RefreshStatus = lazy(() => import('../../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
-const HoldButton = lazy(() => import('../../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
+const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const FloatingInput = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const HoldButton = lazy(() => import('../../components/ui/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
 
 interface Session { id: string; device_info?: string; ip?: string; created_at: string; last_active: string; current?: boolean; invalidated?: boolean }
 

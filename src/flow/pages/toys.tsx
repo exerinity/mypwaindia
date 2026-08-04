@@ -1,14 +1,14 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { createPortal } from 'react-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { Modal } from '../../components/modal.tsx';
-import { WarningIcon } from '../../components/icons.tsx';
-import { Skeleton } from '../../components/status.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
+import { WarningIcon } from '../../components/ui/icons.tsx';
+import { Skeleton } from '../../components/ui/status.tsx';
 
-const ConfirmModal = lazy(() => import('../../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
-const HoldButton = lazy(() => import('../../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
+const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const HoldButton = lazy(() => import('../../components/ui/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
 import { Link } from 'react-router-dom';
 import { storageSet, KEYS } from '../../utils/storage.ts';
 

@@ -1,4 +1,4 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useMemo, useState, useEffect, lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
@@ -9,8 +9,8 @@ import { useSettings, useCurrency, HOME_PAGE_OPTIONS } from '../../context/setti
 import { useGlobalData } from '../../context/global_data_ctx.tsx';
 import { listTransactions } from '../../api/transactions.js';
 import { listLinks } from '../../api/links.js';
-import { InfoIcon, CloseIcon, BulbIcon } from '../../components/icons.tsx';
-import { Skeleton, ErrorBox } from '../../components/status.tsx';
+import { InfoIcon, CloseIcon, BulbIcon } from '../../components/ui/icons.tsx';
+import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
 import { RELEASES } from '../information/release_notes.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { hideGet, hideSet } from '../../utils/storage.ts';
@@ -18,9 +18,9 @@ import type { Account } from '../../context/auth_ctx.tsx';
 
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-const TransactionTable = lazy(() => import('../../components/tx_table.tsx').then((m) => ({ default: m.TransactionTable })));
-const RefreshStatus = lazy(() => import('../../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
-const AppFooter = lazy(() => import('../../components/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
+const TransactionTable = lazy(() => import('../../components/data/tx_table.tsx').then((m) => ({ default: m.TransactionTable })));
+const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
 
 function DisplayName({ account, mode }: { account: Account | null; mode: string }) {
   const displayMod = useLazyModule(() => import('../../utils/display.js'));
@@ -38,7 +38,7 @@ export default function DashboardPage() {
   const refresh = settings.autoRefresh;
   const { userInfo, userInfoLoading, refetchUserInfo } = useGlobalData();
 
-  type TxList = { transactions: import('../../components/tx_table.tsx').Transaction[] };
+  type TxList = { transactions: import('../../components/data/tx_table.tsx').Transaction[] };
   type LinkList = { links: { id: number; status: string }[] };
 
   const txQ = useCachedQuery<TxList>(

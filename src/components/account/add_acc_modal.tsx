@@ -1,11 +1,11 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Modal } from './modal.tsx';
-import { useAuth } from '../context/auth_ctx.tsx';
-import { useToast } from '../context/toast_ctx.tsx';
-import { WarningIcon, ErrorIcon, ChevronRight, ExternalIcon } from './icons.tsx';
+import { Modal } from '../ui/modal.tsx';
+import { useAuth } from '../../context/auth_ctx.tsx';
+import { useToast } from '../../context/toast_ctx.tsx';
+import { WarningIcon, ErrorIcon, ChevronRight, ExternalIcon } from '../ui/icons.tsx';
 
-const FloatingInput = lazy(() => import('./floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const FloatingInput = lazy(() => import('../ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 
 interface AddAccountModalProps { open: boolean; onClose: () => void }
 
@@ -51,7 +51,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
       toast.success(`Credentials saved for ${username.trim()}`);
       handleClose();
     } catch (err) {
-      const { describeError } = await import('../utils/errors.js');
+      const { describeError } = await import('../../utils/errors.js');
       setError(describeError(err));
     }
   }

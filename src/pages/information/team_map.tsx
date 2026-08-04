@@ -6,13 +6,13 @@ import { useCachedQuery } from '../../hooks/cached_query.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { getTeam } from '../../api/flow.js';
 import { useSettings } from '../../context/settings_ctx.tsx';
-import { Skeleton, ErrorBox, Empty } from '../../components/status.tsx';
-import { Modal } from '../../components/modal.tsx';
-import { TeamMemberCard, type TeamMember } from '../../components/team_member_card.tsx';
+import { Skeleton, ErrorBox, Empty } from '../../components/ui/status.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
+import { TeamMemberCard, type TeamMember } from '../../components/data/team_member_card.tsx';
 import { hexToRgb, normalizeHex } from '../../utils/colors.js';
 import countries from '../../data/world_countries.json';
 import centroids from '../../data/country_centroids.json';
-import { InfoIcon } from '../../components/icons.tsx';
+import { InfoIcon } from '../../components/ui/icons.tsx';
 
 type Rgb = { r: number; g: number; b: number };
 function mix(a: Rgb, b: Rgb, t: number): Rgb {

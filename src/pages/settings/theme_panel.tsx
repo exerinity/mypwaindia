@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useSettings, DEFAULT_SETTINGS } from '../../context/settings_ctx.tsx';
 import type { Settings } from '../../context/settings_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { CloseIcon, ChevronRight, CheckIcon } from '../../components/icons.tsx';
+import { CloseIcon, ChevronRight, CheckIcon } from '../../components/ui/icons.tsx';
 import { normalizeHex } from '../../utils/colors.js';
 import { getRecentAccents, rememberAccent } from '../../utils/recent_accents.ts';
 import {

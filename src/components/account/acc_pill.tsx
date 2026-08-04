@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
-import type { Account } from '../context/auth_ctx.tsx';
+import type { Account } from '../../context/auth_ctx.tsx';
 import { useLocation, Link } from 'react-router-dom';
-import { useAuth } from '../context/auth_ctx.tsx';
-import { useSettings } from '../context/settings_ctx.tsx';
-import { ChevronDown, CloseIcon, CheckIcon, PlusIcon, ExternalIcon, LogoutIcon } from './icons.tsx';
-import { useLazyModule } from '../hooks/lazy_module.ts';
+import { useAuth } from '../../context/auth_ctx.tsx';
+import { useSettings } from '../../context/settings_ctx.tsx';
+import { ChevronDown, CloseIcon, CheckIcon, PlusIcon, ExternalIcon, LogoutIcon } from '../ui/icons.tsx';
+import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { lazy, Suspense } from 'react';
 
-const ConfirmModal = lazy(() => import('./confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const ConfirmModal = lazy(() => import('../ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 
 function DisplayName({ account, mode }: { account: Account | null; mode: string }) {
-  const displayMod = useLazyModule(() => import('../utils/display.js'));
+  const displayMod = useLazyModule(() => import('../../utils/display.js'));
   return displayMod
     ? <>{displayMod.getDisplayName(account, mode)}</>
     : <span className="spinner" style={{ verticalAlign: 'middle' }} />;
@@ -19,7 +19,7 @@ function DisplayName({ account, mode }: { account: Account | null; mode: string 
 export function AccountPill() {
   const { active, accounts, switchAccount, removeAccount, maxAccounts } = useAuth();
   const { settings } = useSettings();
-  const moneyMod = useLazyModule(() => import('../utils/money.js'));
+  const moneyMod = useLazyModule(() => import('../../utils/money.js'));
   const formatBalance = (n: number | undefined) => (n === undefined || n === null || !moneyMod) ? null : moneyMod.formatINR(n);
   const location = useLocation();
   const [open, setOpen] = useState(false);

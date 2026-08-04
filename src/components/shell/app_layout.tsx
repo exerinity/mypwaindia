@@ -1,24 +1,24 @@
 import { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useSettings } from '../context/settings_ctx.tsx';
-import { useToast } from '../context/toast_ctx.tsx';
-import { useAuth } from '../context/auth_ctx.tsx';
-import { useGlobalData } from '../context/global_data_ctx.tsx';
-import { LoginIcon, WarningIcon } from './icons.tsx';
-import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
-import { THEME_PANEL_OPEN_EVENT } from '../utils/theme_panel_store.ts';
-import { RELEASES } from '../pages/information/release_notes.tsx';
-import { useLazyModule } from '../hooks/lazy_module.ts';
+import { useSettings } from '../../context/settings_ctx.tsx';
+import { useToast } from '../../context/toast_ctx.tsx';
+import { useAuth } from '../../context/auth_ctx.tsx';
+import { useGlobalData } from '../../context/global_data_ctx.tsx';
+import { LoginIcon, WarningIcon } from '../ui/icons.tsx';
+import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
+import { THEME_PANEL_OPEN_EVENT } from '../../utils/theme_panel_store.ts';
+import { RELEASES } from '../../pages/information/release_notes.tsx';
+import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { HeaderSkeleton, SidebarSkeleton } from './app_skeleton.tsx';
 
 const Header = lazy(() => import('./header.tsx').then((m) => ({ default: m.Header })));
 const Sidebar = lazy(() => import('./sidebar.tsx').then((m) => ({ default: m.Sidebar })));
-const VerificationBanner = lazy(() => import('./verify_banner.tsx').then((m) => ({ default: m.VerificationBanner })));
-const ConfirmModal = lazy(() => import('./confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const VerificationBanner = lazy(() => import('../account/verify_banner.tsx').then((m) => ({ default: m.VerificationBanner })));
+const ConfirmModal = lazy(() => import('../ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const BottomNav = lazy(() => import('./bottom_nav.tsx').then((m) => ({ default: m.BottomNav })));
-const CliDrawer = lazy(() => import('./cli_drawer.tsx').then((m) => ({ default: m.CliDrawer })));
-const ThemePanel = lazy(() => import('../pages/settings/theme_panel.tsx').then((m) => ({ default: m.ThemePanel })));
+const CliDrawer = lazy(() => import('../cli/cli_drawer.tsx').then((m) => ({ default: m.CliDrawer })));
+const ThemePanel = lazy(() => import('../../pages/settings/theme_panel.tsx').then((m) => ({ default: m.ThemePanel })));
 
 function ServiceWorkerUpdater({ autoUpdate, toast, syncLastVersion }: {
   autoUpdate: boolean;
@@ -56,7 +56,7 @@ function ServiceWorkerUpdater({ autoUpdate, toast, syncLastVersion }: {
 }
 
 export function AppLayout() {
-  const restrictionsMod = useLazyModule(() => import('../utils/restrictions.js'));
+  const restrictionsMod = useLazyModule(() => import('../../utils/restrictions.js'));
   const stickyTopRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
@@ -77,7 +77,7 @@ export function AppLayout() {
     window.addEventListener('offline', off);
     return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
   }, []);
-  const displayMod = useLazyModule(() => import('../utils/display.js'));
+  const displayMod = useLazyModule(() => import('../../utils/display.js'));
   const { settings, update } = useSettings();
   const { active, switchingTo } = useAuth();
   const toast = useToast();

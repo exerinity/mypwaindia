@@ -6,12 +6,12 @@ import { useGlobalData } from '../../context/global_data_ctx.tsx';
 import { useRefreshTimer } from '../../hooks/refresh_timer.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { Skeleton, ErrorBox } from '../../components/status.tsx';
-import { WarningIcon } from '../../components/icons.tsx';
+import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
+import { WarningIcon } from '../../components/ui/icons.tsx';
 
-const RefreshStatus = lazy(() => import('../../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 import { useLazyModule } from '../../hooks/lazy_module.ts';
-import { Modal } from '../../components/modal.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
 
 export default function AccountPage() {
   usePageTitle('Account');

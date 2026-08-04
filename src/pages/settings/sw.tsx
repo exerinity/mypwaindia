@@ -1,7 +1,7 @@
 import type { ChangeEvent } from 'react';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { InfoIcon } from '../../components/icons.tsx';
+import { InfoIcon } from '../../components/ui/icons.tsx';
 
 export function SwSettings() {
   const { settings, update } = useSettings();

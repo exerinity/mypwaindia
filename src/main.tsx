@@ -7,12 +7,12 @@ import { SettingsProvider } from './context/settings_ctx.tsx';
 import { ToastProvider } from './context/toast_ctx.tsx';
 import { GlobalDataProvider } from './context/global_data_ctx.tsx';
 import { DataCacheProvider } from './context/data_cache_ctx.tsx';
-import { AppShellSkeleton } from './components/app_skeleton.tsx';
-import { AppLockScreen } from './components/app_lock_screen.tsx';
+import { AppShellSkeleton } from './components/shell/app_skeleton.tsx';
+import { AppLockScreen } from './components/lock/app_lock_screen.tsx';
 import { getAppLockConfig, shouldShowAppLock, recordAppLockUnlock } from './utils/app_lock.ts';
 import './styles/index.css';
 
-const ChunkErrorBoundary = lazy(() => import('./components/boundary_err.tsx').then((m) => ({ default: m.ChunkErrorBoundary })));
+const ChunkErrorBoundary = lazy(() => import('./components/shell/boundary_err.tsx').then((m) => ({ default: m.ChunkErrorBoundary })));
 
 function AppGate() {
   const [config] = useState(() => getAppLockConfig());

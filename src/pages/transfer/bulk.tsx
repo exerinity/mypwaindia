@@ -1,4 +1,4 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import React, { useState, useId, useMemo, lazy, Suspense } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
@@ -7,15 +7,15 @@ import { useApiCall } from '../../hooks/api_call.js';
 import { useCachedQuery } from '../../hooks/cached_query.js';
 import { transfer, listTransactions } from '../../api/transactions.js';
 import { getUserInfo } from '../../api/user.js';
-import type { Transaction } from '../../components/tx_table.tsx';
+import type { Transaction } from '../../components/data/tx_table.tsx';
 import { useCurrency } from '../../context/settings_ctx.tsx';
-import { InfoIcon, WarningIcon, CloseIcon } from '../../components/icons.tsx';
-import { Modal } from '../../components/modal.tsx';
+import { InfoIcon, WarningIcon, CloseIcon } from '../../components/ui/icons.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
 
-const HoldButton = lazy(() => import('../../components/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
-const FloatingInput = lazy(() => import('../../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
-const FloatingTextarea = lazy(() => import('../../components/floating_input.tsx').then((m) => ({ default: m.FloatingTextarea })));
-import { Skeleton } from '../../components/status.tsx';
+const HoldButton = lazy(() => import('../../components/ui/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
+const FloatingInput = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const FloatingTextarea = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingTextarea })));
+import { Skeleton } from '../../components/ui/status.tsx';
 import { Link } from 'react-router-dom';
 
 const PRESETS_PAISA = [

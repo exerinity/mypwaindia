@@ -98,22 +98,22 @@ export default defineConfig({
             return `node/mpi_${parts[0][0] === '@' ? `${parts[0].slice(1)}-${parts[1]}` : parts[0]}`;
           }
           if (id.match(/pages\/(login|logout|onboarding)/)) return 'flow';
-          if (id.match(/pages\/(transfer|bulk_transfer)/)) return 'transfers';
-          if (id.match(/pages\/(history|simple_history|statements|old_transaction|transaction)/)) return 'history';
+          if (id.match(/pages\/transfer\//)) return 'transfers';
+          if (id.match(/pages\/account\/(history|simple_history|old_transaction)|pages\/scambait\/statements/)) return 'history';
           if (id.match(/pages\/(links|claim_link)/)) return 'links';
-          if (id.match(/pages\/team_map/)) return 'teammap';
-          if (id.match(/pages\/(leaderboard|team)/)) return 'social';
+          if (id.match(/pages\/information\/team_map/)) return 'teammap';
+          if (id.match(/pages\/information\/(leaderboard|team)/)) return 'social';
           if (id.match(/pages\/(settings|old_settings)/)) return 'settings';
-          if (id.match(/pages\/iotm_button/)) return 'iotm_button';
-          if (id.match(/pages\/iotm/)) return 'iotm';
-          if (id.match(/pages\/cli|components\/cli_(terminal|drawer)/)) return 'cli';
+          if (id.match(/pages\/iotm\/button/)) return 'iotm_button';
+          if (id.match(/pages\/iotm\//)) return 'iotm';
+          if (id.match(/pages\/pwa\/cli|components\/cli\//)) return 'cli';
           if (id.match(/pages\/toys/)) return 'tools';
-          if (id.match(/pages\/(release_notes|acknowledgements|restrictions|connection|how_pwa)/)) return 'info';
-          if (id.match(/pages\/(not_found|flow_not_found|theme_apply|external_redirect)/)) return 'misc';
-          if (id.match(/pages\/(account|dashboard)/)) return 'client';
-          if (id.match(/pages\/cards/)) return 'scambait';
+          if (id.match(/pages\/information\/(release_notes|acknowledgements|how_pwa)|pages\/account\/restrictions|pages\/connection/)) return 'info';
+          if (id.match(/pages\/pwa\/(not_found|external_redirect)|pages\/theme_apply/)) return 'misc';
+          if (id.match(/pages\/account\/(account|dashboard)/)) return 'client';
+          if (id.match(/pages\/scambait\/cards/)) return 'scambait';
           if (id.match(/pages\/subscriptions/)) return 'subs';
-          if (id.match(/components\/status/)) return 'stability';
+          if (id.match(/components\/ui\/status/)) return 'stability';
           if (id.match(/context\//)) return 'bastion';
         }
       }

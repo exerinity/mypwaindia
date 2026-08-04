@@ -5,10 +5,10 @@ import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { RELEASES } from '../../pages/information/release_notes.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { ExternalIcon } from '../../components/icons.tsx';
+import { ExternalIcon } from '../../components/ui/icons.tsx';
 
-const AppFooter = lazy(() => import('../../components/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
-const ConfirmModal = lazy(() => import('../../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
+const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 
 export default function OnboardingPage() {
   usePageTitle('Welcome to the MyPayIndia PWA');

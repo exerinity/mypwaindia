@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
-import { ExternalIcon, ChevronRight } from '../../components/icons.tsx';
+import { ExternalIcon, ChevronRight } from '../../components/ui/icons.tsx';
 
 const SKILL_GAMES = [
   { label: 'Intelligence Identifier', href: 'https://mypayindia.com/iotm/intelligenceid' },

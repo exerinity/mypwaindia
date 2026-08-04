@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useApiCall } from '../../hooks/api_call.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { getLeaderboard } from '../../api/flow.ts';
-import { Skeleton, ErrorBox, Empty } from '../../components/status.tsx';
+import { Skeleton, ErrorBox, Empty } from '../../components/ui/status.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 
 const REFRESH_INTERVAL = 10;

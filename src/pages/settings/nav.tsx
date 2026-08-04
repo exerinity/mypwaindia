@@ -3,11 +3,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { useSettings, BOTTOM_NAV_MAX, DEFAULT_BOTTOM_NAV_ITEMS, normalizeBottomNavItems } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useMediaQuery } from '../../hooks/media_query.ts';
-import { pickableDestinations, findDestination, resolveNavItems } from '../../components/nav_catalog.tsx';
-import { BottomNavPreview, BOTTOM_NAV_QUERY } from '../../components/bottom_nav.tsx';
-import { InfoIcon, ChevronDown, PlusIcon, CloseIcon } from '../../components/icons.tsx';
+import { pickableDestinations, findDestination, resolveNavItems } from '../../components/shell/nav_catalog.tsx';
+import { BottomNavPreview, BOTTOM_NAV_QUERY } from '../../components/shell/bottom_nav.tsx';
+import { InfoIcon, ChevronDown, PlusIcon, CloseIcon } from '../../components/ui/icons.tsx';
 
-const ConfirmModal = lazy(() => import('../../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 
 export function NavSettings() {
   const { settings, update } = useSettings();

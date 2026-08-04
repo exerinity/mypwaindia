@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useSettings } from '../context/settings_ctx.tsx';
+import { useSettings } from '../../context/settings_ctx.tsx';
 import { CliTerminal } from './cli_terminal.tsx';
-import { TerminalIcon, ChevronDown, CloseIcon, ExternalIcon } from './icons.tsx';
-import { clearLines, consumeDrawerOpenRequest, CLI_DRAWER_OPEN_EVENT } from '../utils/cli_store.ts';
-import '../styles/cli_drawer.css';
+import { TerminalIcon, ChevronDown, CloseIcon, ExternalIcon } from '../ui/icons.tsx';
+import { clearLines, consumeDrawerOpenRequest, CLI_DRAWER_OPEN_EVENT } from '../../utils/cli_store.ts';
+import '../../styles/cli_drawer.css';
 
 const CLOSE_MS = 200;
 

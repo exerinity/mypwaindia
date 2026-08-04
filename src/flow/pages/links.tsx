@@ -1,4 +1,4 @@
-import { ContentSkeleton } from '../../components/app_skeleton.tsx';
+import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
@@ -9,13 +9,13 @@ import { usePageTitle } from '../../hooks/page_title.js';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useGlobalData } from '../../context/global_data_ctx.tsx';
 import { listLinks, createLink, cancelLink } from '../../api/links.js';
-import { Skeleton, ErrorBox, Empty } from '../../components/status.tsx';
-import { WarningIcon } from '../../components/icons.tsx';
+import { Skeleton, ErrorBox, Empty } from '../../components/ui/status.tsx';
+import { WarningIcon } from '../../components/ui/icons.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 
-const RefreshStatus = lazy(() => import('../../components/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
-const FloatingInput = lazy(() => import('../../components/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
-const ConfirmModal = lazy(() => import('../../components/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
+const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
+const FloatingInput = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const PRESETS_PAISA = [
   100,    // 1 INR
   500,    // 5 INR

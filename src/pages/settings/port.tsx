@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
-import { WarningIcon } from '../../components/icons.tsx';
+import { WarningIcon } from '../../components/ui/icons.tsx';
 import { formatRelative } from '../../utils/dates.js';
 
 export function PortSettings() {

@@ -1,10 +1,10 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useSettings } from '../context/settings_ctx.tsx';
-import { useAuth } from '../context/auth_ctx.tsx';
+import { useSettings } from '../../context/settings_ctx.tsx';
+import { useAuth } from '../../context/auth_ctx.tsx';
 import { resolveNavItems, activeNavRoute } from './nav_catalog.tsx';
 import type { NavDestination } from './nav_catalog.tsx';
-import { useMediaQuery } from '../hooks/media_query.ts';
+import { useMediaQuery } from '../../hooks/media_query.ts';
 
 export const BOTTOM_NAV_QUERY = '(max-width: 900px)';
 

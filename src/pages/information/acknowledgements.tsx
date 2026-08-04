@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ExternalIcon } from '../../components/icons.js';
+import { ExternalIcon } from '../../components/ui/icons.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 
 const DEVELOPERS = [

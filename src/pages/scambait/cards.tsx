@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useSettings } from '../../context/settings_ctx.tsx';
-import { Modal } from '../../components/modal.tsx';
-import { VisaIcon, MastercardIcon } from '../../components/icons.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
+import { VisaIcon, MastercardIcon } from '../../components/ui/icons.tsx';
 
 interface Card { number: string; name: string; exp: string; cvv: string; type: string; bg: string; network: 'visa' | 'mastercard'; routing: string; account: string; swift: string }
 

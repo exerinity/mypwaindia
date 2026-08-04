@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Modal } from '../../components/modal.tsx';
-import { ErrorIcon, ExternalIcon } from '../../components/icons.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
+import { ErrorIcon, ExternalIcon } from '../../components/ui/icons.tsx';
 
 export default function ExternalRedirectPage({ to, schnell }: { to: string; schnell?: boolean }) {
   const nav = useNavigate();

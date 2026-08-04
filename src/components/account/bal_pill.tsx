@@ -1,6 +1,6 @@
-import { useAuth } from '../context/auth_ctx.tsx';
-import { useCurrency } from '../context/settings_ctx.tsx';
-import { useGlobalData } from '../context/global_data_ctx.tsx';
+import { useAuth } from '../../context/auth_ctx.tsx';
+import { useCurrency } from '../../context/settings_ctx.tsx';
+import { useGlobalData } from '../../context/global_data_ctx.tsx';
 
 export function BalancePill() {
   const { active } = useAuth();

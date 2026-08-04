@@ -1,11 +1,11 @@
 import { lazy, Suspense, useState } from 'react';
-import { verifyAppLock, setAppLock, disableAppLock, recordAppLockUnlock, minLength, type AppLockMethod } from '../utils/app_lock.ts';
+import { verifyAppLock, setAppLock, disableAppLock, recordAppLockUnlock, minLength, type AppLockMethod } from '../../utils/app_lock.ts';
 import { AppLockInput } from './app_lock_input.tsx';
-import { LockIcon, EyeIcon, EyeOffIcon } from './icons.tsx';
-import { useAuth } from '../context/auth_ctx.tsx';
-import { useToast } from '../context/toast_ctx.tsx';
+import { LockIcon, EyeIcon, EyeOffIcon } from '../ui/icons.tsx';
+import { useAuth } from '../../context/auth_ctx.tsx';
+import { useToast } from '../../context/toast_ctx.tsx';
 
-const FloatingInput = lazy(() => import('./floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
+const FloatingInput = lazy(() => import('../ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 
 const METHOD_LABEL: Record<AppLockMethod, string> = {
   pin: 'PIN',

@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import type { ReactNode } from 'react';
-import { ExternalIcon } from './icons.tsx';
+import { ExternalIcon } from '../ui/icons.tsx';
 
 const CHUNK_ERROR = /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed/i;
 

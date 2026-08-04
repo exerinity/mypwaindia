@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
-import { LogoutIcon } from '../components/icons.tsx';
-import { Modal } from '../components/modal.tsx';
+import { LogoutIcon } from '../components/ui/icons.tsx';
+import { Modal } from '../components/ui/modal.tsx';
 
 export default function LogoutPage() {
   const { logout, active, accounts } = useAuth();

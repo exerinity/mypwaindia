@@ -7,9 +7,9 @@ import { getTransaction, transfer } from '../api/transactions.js';
 import { getUserInfo } from '../api/user.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
-import { Skeleton, ErrorBox } from '../components/status.tsx';
-import { Modal } from '../components/modal.tsx';
-import { CopyIcon, ArrowDownLeftIcon, ArrowUpRightIcon, SuccessIcon } from '../components/icons.tsx';
+import { Skeleton, ErrorBox } from '../components/ui/status.tsx';
+import { Modal } from '../components/ui/modal.tsx';
+import { CopyIcon, ArrowDownLeftIcon, ArrowUpRightIcon, SuccessIcon } from '../components/ui/icons.tsx';
 
 type TxDetail = {
   transaction_id: string;
