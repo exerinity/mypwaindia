@@ -6,39 +6,39 @@ import { FlowModals, isFlowModalPath } from './flow/flow_conductor.tsx';
 
 const AppLayout = lazy(() => import('./components/app_layout.tsx').then((m) => ({ default: m.AppLayout })));
 const RequireAuth = lazy(() => import('./components/require_auth.tsx').then((m) => ({ default: m.RequireAuth })));
-const OnboardingPage = lazy(() => import('./pages/onboarding.tsx'));
-const DashboardPage = lazy(() => import('./pages/dashboard.tsx'));
-const AccountPage = lazy(() => import('./pages/account.tsx'));
-const CardsPage = lazy(() => import('./pages/cards.tsx'));
-const TransferPage = lazy(() => import('./pages/transfer.tsx'));
-const BulkTransferPage = lazy(() => import('./pages/bulk_transfer.tsx'));
-const HistoryPage = lazy(() => import('./pages/history.tsx'));
-const SimpleHistoryPage = lazy(() => import('./pages/simple_history.tsx'));
-const StatementsPage = lazy(() => import('./pages/statements.tsx'));
-const OldTransactionPage = lazy(() => import('./pages/old_transaction.tsx'));
-const LinksPage = lazy(() => import('./pages/links.tsx'));
-const LeaderboardPage = lazy(() => import('./pages/leaderboard.tsx'));
-const TeamPage = lazy(() => import('./pages/team.tsx'));
-const TeamMapPage = lazy(() => import('./pages/team_map.tsx'));
-const NewsPage = lazy(() => import('./pages/news.tsx'));
-const NewsItemPage = lazy(() => import('./pages/news_item.tsx'));
-const SubscriptionsPage = lazy(() => import('./pages/subscriptions.tsx'));
-const SettingsPage = lazy(() => import('./pages/settings.tsx'));
-const SessionsPage = lazy(() => import('./pages/sessions.tsx'));
-const IotmButtonPage = lazy(() => import('./pages/iotm_button.tsx'));
-const IOTMPage = lazy(() => import('./pages/iotm.tsx'));
-const CLIPage = lazy(() => import('./pages/cli.tsx'));
-const MPTIPage = lazy(() => import('./pages/toys.tsx'));
-const ReleaseNotesPage = lazy(() => import('./pages/release_notes.tsx'));
-const AcknowledgementsPage = lazy(() => import('./pages/acknowledgements.tsx'));
-const HowPwaPage = lazy(() => import('./pages/how_pwa.tsx'));
-const RestrictionsPage = lazy(() => import('./pages/restrictions.tsx'));
-const ConnectionPage = lazy(() => import('./pages/connection.tsx'));
-const ThemeApplyPage = lazy(() => import('./pages/theme_apply.tsx'));
-const SettingsApplyPage = lazy(() => import('./pages/settings_apply.tsx'));
-const NotFoundPage = lazy(() => import('./pages/not_found.tsx'));
+const OnboardingPage = lazy(() => import('./flow/pages/onboarding.tsx'));
+const DashboardPage = lazy(() => import('./pages/account/dashboard.tsx'));
+const AccountPage = lazy(() => import('./pages/account/account.tsx'));
+const CardsPage = lazy(() => import('./pages/scambait/cards.tsx'));
+const TransferPage = lazy(() => import('./pages/transfer/regular.tsx'));
+const BulkTransferPage = lazy(() => import('./pages/transfer/bulk.tsx'));
+const HistoryPage = lazy(() => import('./pages/account/history.tsx'));
+const SimpleHistoryPage = lazy(() => import('./pages/account/simple_history.tsx'));
+const StatementsPage = lazy(() => import('./pages/scambait/statements.tsx'));
+const OldTransactionPage = lazy(() => import('./pages/account/old_transaction.tsx'));
+const LinksPage = lazy(() => import('./flow/pages/links.tsx'));
+const LeaderboardPage = lazy(() => import('./pages/information/leaderboard.tsx'));
+const TeamPage = lazy(() => import('./pages/information/team.tsx'));
+const TeamMapPage = lazy(() => import('./pages/information/team_map.tsx'));
+const NewsPage = lazy(() => import('./pages/information/news.tsx'));
+const NewsItemPage = lazy(() => import('./pages/information/news_item.tsx'));
+const SubscriptionsPage = lazy(() => import('./flow/pages/subscriptions.tsx'));
+const SettingsPage = lazy(() => import('./pages/settings/settings_index.tsx'));
+const SessionsPage = lazy(() => import('./flow/pages/sessions.tsx'));
+const IotmButtonPage = lazy(() => import('./pages/iotm/button.tsx'));
+const IOTMPage = lazy(() => import('./pages/iotm/index.tsx'));
+const CLIPage = lazy(() => import('./pages/pwa/cli.tsx'));
+const MPTIPage = lazy(() => import('./flow/pages/toys.tsx'));
+const ReleaseNotesPage = lazy(() => import('./pages/information/release_notes.tsx'));
+const AcknowledgementsPage = lazy(() => import('./pages/information/acknowledgements.tsx'));
+const HowPwaPage = lazy(() => import('./pages/information/how_pwa.tsx'));
+const RestrictionsPage = lazy(() => import('./pages/account/restrictions.tsx'));
+const ConnectionPage = lazy(() => import('./flow/pages/connection.tsx'));
+const ThemeApplyPage = lazy(() => import('./flow/pages/theme_apply.tsx'));
+const SettingsApplyPage = lazy(() => import('./flow/pages/settings_apply.tsx'));
+const NotFoundPage = lazy(() => import('./pages/pwa/not_found.tsx'));
 const Flowback = lazy(() => import('./flow/shell_fallback.tsx'));
-const ExternalRedirectPage = lazy(() => import('./pages/external_redirect.tsx'));
+const ExternalRedirectPage = lazy(() => import('./pages/pwa/external_redirect.tsx'));
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -97,12 +97,13 @@ export default function App() {
       <Route path="/team" element={<Navigate to="/i/team" replace />} />
       <Route path="/docs" element={<ExternalRedirectPage to="https://mypayindia.com/docs" />} />
       <Route path="/app" element={<ExternalRedirectPage to="https://mypayindia.com/app" />} />
-      <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/auth/register" />} />
+      <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/auth/register" schnell />} />
       <Route path="/account/transfers" element={<Navigate to="/account/history" replace />} />
       <Route path="/account/transfers/:id" element={<TransactionRedirect />} />
       <Route path="/account/transfers/new" element={<Navigate to="/account/transfer" replace />} />
       <Route path="/account/payment-links" element={<Navigate to="/i/flow/links" replace />} />
       <Route path="/account/subscriptions" element={<Navigate to="/subscriptions" replace />} />
+      <Route path="/news" element={<Navigate to="/i/news" replace />} />
       <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />

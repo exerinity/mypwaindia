@@ -8,7 +8,7 @@ import { useGlobalData } from '../context/global_data_ctx.tsx';
 import { LoginIcon, WarningIcon } from './icons.tsx';
 import { storageGet, storageSet, KEYS } from '../utils/storage.ts';
 import { THEME_PANEL_OPEN_EVENT } from '../utils/theme_panel_store.ts';
-import { RELEASES } from '../pages/release_notes.tsx';
+import { RELEASES } from '../pages/information/release_notes.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { HeaderSkeleton, SidebarSkeleton } from './app_skeleton.tsx';
 
