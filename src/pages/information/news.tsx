@@ -16,7 +16,6 @@ export default function NewsPage() {
     <>
       <h1 className="mt-0">MyPayIndia News</h1>
       <p className="mt-0 mb-0">This is where we announce the most recent additions to MyPayIndia and surrounding services!</p>
-      <p className="mt-0 mb-0"><Link to="/i/release_notes">MyPWAIndia release notes</Link></p>
 
       {loading && !data ? (
         <div className="card mb-2">

@@ -1,15 +1,16 @@
 import { useState, useRef, useEffect, useSyncExternalStore } from 'react';
+import type { CSSProperties } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
-import { CliTerminal } from './cli_terminal.tsx';
-import { TerminalIcon, ChevronDown, CloseIcon, ExternalIcon } from '../ui/icons.tsx';
-import { clearLines, consumeDrawerOpenRequest, CLI_DRAWER_OPEN_EVENT } from '../../utils/cli_store.ts';
+import { ChatWidget } from './chat_widget.tsx';
+import { ChatBubbleIcon, ChevronDown, CloseIcon, ExternalIcon } from '../ui/icons.tsx';
+import { consumeDrawerOpenRequest, CHAT_DRAWER_OPEN_EVENT, subscribeChat, getChatState } from '../../utils/chat_store.ts';
 import { announceDrawerOpen, announceDrawerClosed, subscribeDrawers, getOpenDrawer } from '../../utils/drawer_bus.ts';
-import '../../styles/cli_drawer.css';
+import '../../styles/chat_drawer.css';
 
 const CLOSE_MS = 200;
 
-export function CliDrawer() {
+export function ChatDrawer() {
   const { settings } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,16 +19,17 @@ export function CliDrawer() {
   const [minimized, setMinimized] = useState(false);
   const [entered, setEntered] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const chatState = useSyncExternalStore(subscribeChat, getChatState);
 
-  const onCliPage = location.pathname === '/i/command' || location.pathname.startsWith('/i/command/');
-  const hidden = !settings.cliDrawer || onCliPage;
+  const onChatPage = location.pathname === '/i/chat' || location.pathname.startsWith('/i/chat/');
+  const hidden = !settings.chatDrawer || onChatPage;
 
   const openDrawerId = useSyncExternalStore(subscribeDrawers, getOpenDrawer);
-  const otherOpen = openDrawerId !== null && openDrawerId !== 'cli';
+  const otherOpen = openDrawerId !== null && openDrawerId !== 'chat';
 
   useEffect(() => () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
-    announceDrawerClosed('cli');
+    announceDrawerClosed('chat');
   }, []);
 
   useEffect(() => {
@@ -41,26 +43,26 @@ export function CliDrawer() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setOpen(false);
     setClosing(false);
-    announceDrawerClosed('cli');
+    announceDrawerClosed('chat');
   }, [hidden]);
 
   useEffect(() => {
     function onOpenRequest() {
       consumeDrawerOpenRequest();
       if (closeTimer.current) clearTimeout(closeTimer.current);
-      announceDrawerOpen('cli');
+      announceDrawerOpen('chat');
       setClosing(false);
       setMinimized(false);
       setOpen(true);
     }
     if (consumeDrawerOpenRequest()) onOpenRequest();
-    window.addEventListener(CLI_DRAWER_OPEN_EVENT, onOpenRequest);
-    return () => window.removeEventListener(CLI_DRAWER_OPEN_EVENT, onOpenRequest);
+    window.addEventListener(CHAT_DRAWER_OPEN_EVENT, onOpenRequest);
+    return () => window.removeEventListener(CHAT_DRAWER_OPEN_EVENT, onOpenRequest);
   }, []);
 
   function openDrawer() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
-    announceDrawerOpen('cli');
+    announceDrawerOpen('chat');
     setClosing(false);
     setMinimized(false);
     setOpen(true);
@@ -76,49 +78,48 @@ export function CliDrawer() {
     closeTimer.current = setTimeout(() => {
       setOpen(false);
       setClosing(false);
-      announceDrawerClosed('cli');
+      announceDrawerClosed('chat');
     }, CLOSE_MS);
   }
 
   if (settings.scambait) return null;
 
   const launcherOut = hidden || !entered || otherOpen || (open && !closing);
+  const stackedAbove = (settings.cliDrawer ? 1 : 0) + (settings.clankerDrawer ? 1 : 0);
 
   return (
     <>
       <button
-        className={`cli-launcher${launcherOut ? ' cli-launcher--out' : ''}`}
+        className={`chat-launcher${launcherOut ? ' chat-launcher--out' : ''}`}
+        style={{ '--chat-stack': stackedAbove } as CSSProperties}
         onClick={openDrawer}
-        title="Open MyCLiIndia"
-        aria-label="Open MyCLiIndia"
+        title="Open MyChatIndia"
+        aria-label="Open MyChatIndia"
         aria-hidden={launcherOut}
         tabIndex={launcherOut ? -1 : 0}
       >
-        <TerminalIcon size={22} />
+        <ChatBubbleIcon size={20} />
       </button>
 
       {open && !hidden && (
-        <div className={`cli-drawer${minimized ? ' cli-drawer--min' : ''}${closing ? ' cli-drawer--closing' : ''}`}>
+        <div className={`chat-drawer${minimized ? ' chat-drawer--min' : ''}${closing ? ' chat-drawer--closing' : ''}`}>
           <div
-            className="cli-drawer-header"
+            className="chat-drawer-header"
             onClick={() => { if (minimized) setMinimized(false); }}
           >
-            <span className="cli-drawer-icon"><TerminalIcon size={17} /></span>
-            <span className="cli-drawer-title">MyCLiIndia</span>
-            <div className="cli-drawer-actions" onClick={(e) => e.stopPropagation()}>
-              <button className="cli-drawer-btn cli-drawer-btn--text" onClick={clearLines} title="Clear terminal history">
-                CLEAR
-              </button>
+            <span className="chat-drawer-icon"><ChatBubbleIcon size={16} /></span>
+            <span className="chat-drawer-title">MyChatIndia</span>
+            <div className="chat-drawer-actions" onClick={(e) => e.stopPropagation()}>
               <button
-                className="cli-drawer-btn"
-                onClick={() => { closeDrawer(); navigate('/i/command'); }}
+                className="chat-drawer-btn"
+                onClick={() => { closeDrawer(); navigate(chatState.activePeer ? `/i/chat/${chatState.activePeer}` : '/i/chat'); }}
                 title="Open the full page"
                 aria-label="Open the full page"
               >
                 <ExternalIcon size={16} />
               </button>
               <button
-                className={`cli-drawer-btn${minimized ? ' cli-drawer-btn--flip' : ''}`}
+                className={`chat-drawer-btn${minimized ? ' chat-drawer-btn--flip' : ''}`}
                 onClick={() => setMinimized((m) => !m)}
                 title={minimized ? 'Expand' : 'Minimize'}
                 aria-label={minimized ? 'Expand' : 'Minimize'}
@@ -126,7 +127,7 @@ export function CliDrawer() {
                 <ChevronDown size={18} />
               </button>
               <button
-                className="cli-drawer-btn"
+                className="chat-drawer-btn"
                 onClick={closeDrawer}
                 title="Close"
                 aria-label="Close"
@@ -135,8 +136,8 @@ export function CliDrawer() {
               </button>
             </div>
           </div>
-          <div className="cli-drawer-body">
-            <CliTerminal variant="drawer" active={!minimized && !closing} onExit={closeDrawer} />
+          <div className="chat-drawer-body">
+            <ChatWidget variant="drawer" showHeader={false} />
           </div>
         </div>
       )}
@@ -144,4 +145,4 @@ export function CliDrawer() {
   );
 }
 
-export default CliDrawer;
+export default ChatDrawer;

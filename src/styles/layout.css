@@ -32,17 +32,60 @@
 }
 
 .mpi-sidebar h4 {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--muted);
 }
 
+.mpi-sidebar-group-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 8px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.mpi-sidebar-group-toggle:hover,
+.mpi-sidebar-group-toggle:active {
+  background: none;
+  color: inherit;
+  transform: none;
+}
+
+.mpi-sidebar-group-toggle:hover h4 {
+  color: var(--fg);
+}
+
+.mpi-sidebar-group-chevron {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  opacity: 0.7;
+  transition: transform 0.16s ease;
+}
+
+.mpi-sidebar-group-chevron.collapsed {
+  transform: rotate(-90deg);
+}
+
 .mpi-sidebar .links {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.mpi-sidebar .links.mpi-sidebar-group-links--collapsed {
+  display: none;
 }
 
 .mpi-sidebar .links a {
@@ -56,6 +99,28 @@
   text-decoration: none;
   border: 1px solid transparent;
   transition: background 320ms ease, color 320ms ease, opacity 320ms ease;
+}
+
+.mpi-sidebar-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.mpi-sidebar-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: var(--brand-text);
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
 }
 
 .mpi-sidebar .links a svg {
@@ -158,31 +223,36 @@
   width: 100%;
 }
 
-.mpi-shell:has(.mpi-settings-layout) {
+.mpi-shell:has(.mpi-settings-layout),
+.mpi-shell:has(.mpi-chat-layout--page) {
   height: calc(100dvh - var(--mpi-bottom-nav-h) - env(safe-area-inset-bottom));
   overflow: hidden;
 }
 
-.mpi-body:has(.mpi-settings-layout) {
+.mpi-body:has(.mpi-settings-layout),
+.mpi-body:has(.mpi-chat-layout--page) {
   overflow: hidden;
 }
 
 @media (min-width: 901px) {
-  .mpi-body:has(.mpi-settings-layout) .mpi-sidebar {
+  .mpi-body:has(.mpi-settings-layout) .mpi-sidebar,
+  .mpi-body:has(.mpi-chat-layout--page) .mpi-sidebar {
     position: static;
     align-self: stretch;
     max-height: none;
   }
 }
 
-.mpi-main:has(.mpi-settings-layout) {
+.mpi-main:has(.mpi-settings-layout),
+.mpi-main:has(.mpi-chat-layout--page) {
   padding: 0;
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
 
-.mpi-wrap:has(.mpi-settings-layout) {
+.mpi-wrap:has(.mpi-settings-layout),
+.mpi-wrap:has(.mpi-chat-layout--page) {
   max-width: 100%;
   margin: 0;
   flex: 1;

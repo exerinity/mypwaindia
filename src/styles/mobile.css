@@ -10,6 +10,7 @@
   }
 
   .mpi-settings-nav-item,
+  .mpi-chat-nav-item,
   .mpi-sidebar .links a {
     min-height: 46px;
   }
@@ -35,7 +36,8 @@
     padding: 20px max(18px, env(safe-area-inset-right)) 28px max(18px, env(safe-area-inset-left));
   }
 
-  .mpi-shell:has(.mpi-settings-layout) {
+  .mpi-shell:has(.mpi-settings-layout),
+  .mpi-shell:has(.mpi-chat-layout--page) {
     transition: height 280ms cubic-bezier(0.32, 0.72, 0, 1);
   }
 }
@@ -43,7 +45,8 @@
 @media (prefers-reduced-motion: reduce) {
   .mpi-main,
   .toast-container,
-  .mpi-shell:has(.mpi-settings-layout) {
+  .mpi-shell:has(.mpi-settings-layout),
+  .mpi-shell:has(.mpi-chat-layout--page) {
     transition: none;
   }
 }

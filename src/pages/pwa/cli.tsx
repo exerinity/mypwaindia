@@ -5,7 +5,7 @@ import { CliTerminal } from '../../components/cli/cli_terminal.tsx';
 export default function CLIPage() {
   usePageTitle('MyCLiIndia');
   const location = useLocation();
-  const fullscreen = location.pathname === '/i/flow/mci/focus';
+  const fullscreen = location.pathname === '/i/command/focus';
 
   return <CliTerminal variant="page" fullscreen={fullscreen} />;
 }

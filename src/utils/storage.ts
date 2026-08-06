@@ -34,6 +34,7 @@ export const KEYS = {
   APP_LOCK: 'mpi_app_lock',
   APP_LOCK_LAST_UNLOCK: 'mpi_app_lock_last_unlock',
   RECENT_ACCENTS: 'mpi_recent_accents',
+  SIDEBAR_COLLAPSED: 'mpi_sidebar_collapsed',
 };
 
 type HideKey = 'install' | 'sbshint' | 'clickers' | 'iotm_welcome';

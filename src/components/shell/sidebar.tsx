@@ -1,8 +1,10 @@
 import type { ComponentType } from 'react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState, useSyncExternalStore } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
+import { subscribeChat, getUnreadSnapshot } from '../../utils/chat_store.ts';
+import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import {
   CloseIcon,
   CreditCardIcon,
@@ -20,6 +22,8 @@ import {
   ExternalIcon,
   TerminalIcon,
   SparkleIcon,
+  ChatBubbleIcon,
+  ChevronDown,
 } from '../ui/icons.tsx';
 
 const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
@@ -51,6 +55,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/i/leaderboard', label: 'Leaderboard', icon: TrophyIcon },
       { to: '/i/team', label: 'Meet the team', icon: TeamIcon },
       { to: '/i/news', label: 'News', icon: NewspaperIcon },
+      { to: '/i/release_notes', label: 'App release notes', icon: NotesIcon },
       { href: 'https://mypayindia.com/', label: 'MyPayIndia.com', icon: LinkIcon, external: true },
     ],
   },
@@ -58,8 +63,9 @@ const NAV_GROUPS: NavGroup[] = [
     title: 'App management',
     items: [
       { to: '/settings', label: 'Settings', icon: SettingsIcon },
-      { to: '/i/flow/mci', label: 'MyCLiIndia', icon: TerminalIcon, hideInScambait: true },
+      { to: '/i/command', label: 'MyCLiIndia', icon: TerminalIcon, hideInScambait: true },
       { to: '/i/clanker', label: 'MyClankerIndia', icon: SparkleIcon, hideInScambait: true, requireAuth: true },
+      { to: '/i/chat', label: 'MyChatIndia', icon: ChatBubbleIcon, hideInScambait: true, requireAuth: true },
     ],
     scambaitTitle: 'Control',
     defaultTitle: 'MyPWAIndia',
@@ -72,6 +78,18 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
   const { settings } = useSettings();
   const { active } = useAuth();
   const scambait = settings.scambait;
+  const chatUnread = useSyncExternalStore(subscribeChat, getUnreadSnapshot);
+  const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set(storageGet<string[]>(KEYS.SIDEBAR_COLLAPSED, [])));
+
+  function toggleGroup(title: string) {
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(title)) next.delete(title);
+      else next.add(title);
+      storageSet(KEYS.SIDEBAR_COLLAPSED, Array.from(next));
+      return next;
+    });
+  }
 
   return (
     <>
@@ -101,13 +119,35 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
 
           if (!visibleItems.length) return null;
 
+          const displayTitle = !active && group.loggedOutTitle ? group.loggedOutTitle : scambait && group.scambaitTitle ? group.scambaitTitle : (group.defaultTitle ?? group.title);
+          const isCollapsed = collapsed.has(group.title);
+
           return (
             <div key={group.title}>
-              <h4>{!active && group.loggedOutTitle ? group.loggedOutTitle : scambait && group.scambaitTitle ? group.scambaitTitle : (group.defaultTitle ?? group.title)}</h4>
-              <div className="links">
+              <button
+                type="button"
+                className="mpi-sidebar-group-toggle"
+                onClick={() => toggleGroup(group.title)}
+                aria-expanded={!isCollapsed}
+              >
+                <h4>{displayTitle}</h4>
+                <span className={`mpi-sidebar-group-chevron${isCollapsed ? ' collapsed' : ''}`}>
+                  <ChevronDown size={13} />
+                </span>
+              </button>
+              <div className={`links${isCollapsed ? ' mpi-sidebar-group-links--collapsed' : ''}`}>
                 {visibleItems.map((item) => {
                   const Icon = item.icon;
                   const label = !active && item.loggedOutLabel ? item.loggedOutLabel : item.label;
+                  const badge = item.to === '/i/chat' && chatUnread > 0 ? chatUnread : null;
+                  const iconNode = Icon && (
+                    badge ? (
+                      <span className="mpi-sidebar-icon-wrap">
+                        <Icon />
+                        <span className="mpi-sidebar-badge">{badge > 9 ? '9+' : badge}</span>
+                      </span>
+                    ) : <Icon />
+                  );
                   if (item.external) {
                     return (
                       <a
@@ -117,7 +157,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                         rel="noopener noreferrer"
                         onClick={onClose}
                       >
-                        {Icon && <Icon />}
+                        {iconNode}
                         <span>{label}</span>
                         <ExternalIcon />
                       </a>
@@ -134,7 +174,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                         return location.pathname === item.to ? 'active' : 'active active-parent';
                       }}
                     >
-                      {Icon && <Icon />}
+                      {iconNode}
                       <span>{label}</span>
                     </NavLink>
                   );

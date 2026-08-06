@@ -27,5 +27,13 @@
 			"binding": "MPI_KV",
 			"id": "9aedd75612ed4a0b855bb042ab1da3b2"
 		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{ "name": "CHAT_MAILBOX", "class_name": "ChatMailbox" }
+		]
+	},
+	"migrations": [
+		{ "tag": "v1", "new_sqlite_classes": ["ChatMailbox"] }
 	]
 }

@@ -85,7 +85,7 @@ export function ScambaitSettings() {
         <p className="mb-0">You can also enable scambait mode by:</p>
         <ul className="mt-0">
           <li>Pressing <strong>Ctrl+Alt+B</strong></li>
-          <li>Running &quot;scambait&quot; in <Link to="/i/flow/mci">MyCLiIndia</Link></li>
+          <li>Running &quot;scambait&quot; in <Link to="/i/command">MyCLiIndia</Link></li>
           <li>Middle-clicking the <strong>Reset settings</strong> button 5 times</li>
           <li>Holding <strong>Ctrl+Enter</strong> when logging in</li>
         </ul>

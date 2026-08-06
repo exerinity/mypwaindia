@@ -29,6 +29,7 @@ const IotmButtonPage = lazy(() => import('./pages/iotm/button.tsx'));
 const IOTMPage = lazy(() => import('./pages/iotm/index.tsx'));
 const CLIPage = lazy(() => import('./pages/pwa/cli.tsx'));
 const AgentPage = lazy(() => import('./flow/pages/agent.tsx'));
+const ChatPage = lazy(() => import('./flow/pages/chat.tsx'));
 const MPTIPage = lazy(() => import('./flow/pages/toys.tsx'));
 const ReleaseNotesPage = lazy(() => import('./pages/information/release_notes.tsx'));
 const AcknowledgementsPage = lazy(() => import('./pages/information/acknowledgements.tsx'));
@@ -106,6 +107,8 @@ export default function App() {
       <Route path="/account/subscriptions" element={<Navigate to="/subscriptions" replace />} />
       <Route path="/news" element={<Navigate to="/i/news" replace />} />
       <Route path="/i/flow/agent" element={<Navigate to="/i/clanker" replace />} />
+      <Route path="/i/flow/mci" element={<Navigate to="/i/command" replace />} />
+      <Route path="/i/flow/mci/focus" element={<Navigate to="/i/command/focus" replace />} />
       <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
@@ -136,8 +139,8 @@ export default function App() {
         <Route path="/i/flow/settings" element={<SettingsApplyPage />} />
         <Route path="/theme" element={<ThemeRedirect />} />
 
-        <Route path="/i/flow/mci" element={<CLIPage />} />
-        <Route path="/i/flow/mci/focus" element={<CLIPage />} />
+        <Route path="/i/command" element={<CLIPage />} />
+        <Route path="/i/command/focus" element={<CLIPage />} />
         <Route path="/i/flow/mpti" element={<MPTIPage />} />
 
         <Route element={<RequireAuth />}>
@@ -149,6 +152,8 @@ export default function App() {
           <Route path="/account/history/simple" element={<SimpleHistoryPage />} />
           <Route path="/i/flow/sessions" element={<SessionsPage />} />
           <Route path="/i/clanker" element={<AgentPage />} />
+          <Route path="/i/chat" element={<ChatPage />} />
+          <Route path="/i/chat/:peer" element={<ChatPage />} />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
           <Route path="/i/flow/links" element={<LinksPage />} />
           <Route path="/i/flow/links/claim" element={<Navigate to="/i/flow/links" replace />} />

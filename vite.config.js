@@ -74,7 +74,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/i\/subscribe/, '') || '/'
       },
-      '/i/pwa/meta/news': {
+      '/i/pwa': {
         target: 'https://mypayindia.sbs',
         changeOrigin: true
       }
@@ -108,6 +108,7 @@ export default defineConfig({
           if (id.match(/pages\/iotm\//)) return 'iotm';
           if (id.match(/pages\/pwa\/cli|components\/cli\//)) return 'cli';
           if (id.match(/pages\/agent|api\/agent|utils\/agent_store|components\/clanker\/|components\/ui\/markdown/)) return 'agent';
+          if (id.match(/pages\/chat|components\/chat\//)) return 'chat';
           if (id.match(/pages\/toys/)) return 'tools';
           if (id.match(/pages\/information\/(release_notes|acknowledgements|how_pwa)|pages\/account\/restrictions|pages\/connection/)) return 'info';
           if (id.match(/pages\/pwa\/(not_found|external_redirect)|pages\/theme_apply/)) return 'misc';

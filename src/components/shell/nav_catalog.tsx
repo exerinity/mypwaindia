@@ -42,7 +42,7 @@ export const NAV_DESTINATIONS: NavDestination[] = [
   { route: '/i/team', label: 'Meet the team', short: 'Team', icon: TeamIcon, hideInScambait: true },
   { route: '/i/news', label: 'News', short: 'News', icon: NewspaperIcon, hideInScambait: true },
   { route: '/i/release_notes', label: 'App release notes', short: 'Release notes', icon: NotesIcon, hideInScambait: true },
-  { route: '/i/flow/mci', label: 'MyCLiIndia', short: 'CLi', icon: TerminalIcon, hideInScambait: true },
+  { route: '/i/command', label: 'MyCLiIndia', short: 'CLi', icon: TerminalIcon, hideInScambait: true },
   { route: '/settings', label: 'Settings', short: 'Settings', icon: SettingsIcon },
 ];
 

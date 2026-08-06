@@ -81,7 +81,7 @@ const PAGE_MAP = {
   leaderboard: '/i/leaderboard', lb: '/i/leaderboard',
   team: '/i/team',
   notes: '/i/release_notes', releases: '/i/release_notes',
-  cli: '/i/flow/mci',
+  cli: '/i/command',
   acknowledgements: '/i/acknowledgements',
   connection: '/i/flow/connection',
   button: '/iotm/button', iotm: '/iotm/button',
@@ -334,18 +334,18 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
         if (drawer) {
           push(L.info('Now fullscreen'));
           onExit?.();
-          navigate('/i/flow/mci/focus');
+          navigate('/i/command/focus');
         } else if (fullscreen) {
           push(L.info('Not fullscreen'));
-          navigate('/i/flow/mci');
+          navigate('/i/command');
         } else {
           push(L.info('Now fullscreen'));
-          navigate('/i/flow/mci/focus');
+          navigate('/i/command/focus');
         }
         return;
 
       case 'fly': {
-        const onCliPage = location.pathname === '/i/flow/mci' || location.pathname.startsWith('/i/flow/mci/');
+        const onCliPage = location.pathname === '/i/command' || location.pathname.startsWith('/i/command/');
         if (onCliPage) {
           if (!settings.cliDrawer) {
             push(L.warn('That command requires the drawer - enable it? [y/n]'));
@@ -360,7 +360,7 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
         } else {
           push(L.info('OK'));
           onExit?.();
-          navigate('/i/flow/mci');
+          navigate('/i/command');
         }
         return;
       }
@@ -774,7 +774,7 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
             const pw = await promptPassword();
             if (!pw) { push(L.warn('cancelled')); return; }
             push(L.info(`Signing in as ${uname} and reloading...`));
-            await login({ username: uname, password: pw }, '/i/flow/mci');
+            await login({ username: uname, password: pw }, '/i/command');
             return;
           }
           case 'move':
@@ -943,7 +943,7 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
       clearLines();
     } else if (e.key === 'Escape') {
       if (drawer) onExit?.();
-      else if (fullscreen) navigate('/i/flow/mci');
+      else if (fullscreen) navigate('/i/command');
     }
   }
 
@@ -955,7 +955,7 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
       {!drawer && (
         <div className="cli-topbar">
           <button className="cli-clear-btn" onClick={clearLines} title="Clear terminal history">CLEAR</button>
-          <button className="cli-clear-btn" onClick={() => navigate(fullscreen ? '/i/flow/mci' : '/i/flow/mci/focus')} title={fullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}>
+          <button className="cli-clear-btn" onClick={() => navigate(fullscreen ? '/i/command' : '/i/command/focus')} title={fullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}>
             {fullscreen ? 'EXIT FS' : 'FS'}
           </button>
         </div>

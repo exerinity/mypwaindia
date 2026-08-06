@@ -1,0 +1,176 @@
+/* =====================================================================
+   MyChatIndia drawer
+   ===================================================================== */
+
+:root {
+  --chat-drawer-head-h: 50px;
+  --chat-drawer-body-h: min(60dvh, 480px);
+  --chat-launcher-bottom: 18px;
+  --chat-drawer-w: 396px;
+}
+
+.chat-launcher {
+  position: fixed;
+  right: 18px;
+  bottom: calc(var(--chat-launcher-bottom) + (var(--chat-stack, 0) * 58px) + var(--mpi-bottom-nav-h) + env(safe-area-inset-bottom));
+  z-index: 153;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  translate: 0 0;
+  margin-right: var(--mpi-tp-inset, 0px);
+  transition:
+    translate 320ms cubic-bezier(0.32, 0.72, 0, 1),
+    margin-right 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    bottom 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 0.16s ease,
+    color 0.16s,
+    border-color 0.16s;
+}
+
+.chat-launcher:hover {
+  transform: translateY(-3px);
+  color: var(--brand);
+  border-color: var(--brand);
+  background: var(--card);
+}
+
+.chat-launcher:active {
+  transform: translateY(0);
+}
+
+.chat-launcher--out {
+  translate: 0 calc(100% + var(--chat-launcher-bottom) + (var(--chat-stack, 0) * 58px) + 58px + var(--mpi-bottom-nav-h) + env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+
+.chat-drawer {
+  position: fixed;
+  right: 18px;
+  bottom: calc(var(--mpi-bottom-nav-h) + env(safe-area-inset-bottom));
+  z-index: 152;
+  width: var(--chat-drawer-w);
+  max-width: calc(100vw - 36px);
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-right: var(--mpi-tp-inset, 0px);
+  transition: margin-right 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  animation: chat-drawer-in 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.chat-drawer--closing {
+  pointer-events: none;
+  animation: chat-drawer-out 200ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes chat-drawer-in {
+  from { transform: translateY(100%); opacity: 0.4; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes chat-drawer-out {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(100%); opacity: 0.4; }
+}
+
+.chat-drawer-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: var(--chat-drawer-head-h);
+  flex-shrink: 0;
+  padding: 0 8px 0 16px;
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.chat-drawer--min .chat-drawer-header {
+  border-bottom: none;
+  cursor: pointer;
+}
+
+.chat-drawer-icon {
+  display: flex;
+  color: var(--muted);
+}
+
+.chat-drawer-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-drawer-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.chat-drawer-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s;
+}
+
+.chat-drawer-btn:hover {
+  color: var(--fg);
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+}
+
+.chat-drawer-btn--flip {
+  transform: rotate(180deg);
+}
+
+.chat-drawer-body {
+  height: var(--chat-drawer-body-h);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-drawer--min .chat-drawer-body {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  :root {
+    --chat-drawer-body-h: min(62dvh, 440px);
+  }
+
+  .chat-drawer {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: none;
+  }
+}
