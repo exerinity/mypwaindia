@@ -9,7 +9,7 @@ import {
   editChatMessage,
   deleteChatMessage,
   markChatRead,
-} from '../api/chat.ts';
+} from '../api/converse.ts';
 
 export interface ChatState {
   connected: boolean;

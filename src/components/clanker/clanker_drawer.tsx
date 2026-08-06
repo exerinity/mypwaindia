@@ -98,8 +98,8 @@ export function ClankerDrawer() {
       <button
         className={`clanker-launcher${stacked ? ' clanker-launcher--stacked' : ''}${launcherOut ? ' clanker-launcher--out' : ''}`}
         onClick={openDrawer}
-        title="Open MyClankerIndia"
-        aria-label="Open MyClankerIndia"
+        title="Open Clanker"
+        aria-label="Open Clanker"
         aria-hidden={launcherOut}
         tabIndex={launcherOut ? -1 : 0}
       >
@@ -113,7 +113,7 @@ export function ClankerDrawer() {
             onClick={() => { if (minimized) setMinimized(false); }}
           >
             <span className="clanker-drawer-icon"><SparkleIcon size={17} /></span>
-            <span className="clanker-drawer-title">MyClankerIndia</span>
+            <span className="clanker-drawer-title">Clanker</span>
             <div className="clanker-drawer-actions" onClick={(e) => e.stopPropagation()}>
               <button className="clanker-drawer-btn clanker-drawer-btn--text" onClick={wipe} title="Clear the conversation">
                 CLEAR

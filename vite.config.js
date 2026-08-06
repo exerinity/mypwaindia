@@ -62,6 +62,18 @@ export default defineConfig({
   ],
   server: {
     proxy: {
+      '/i/api/pwa/clanker': {
+        target: 'https://mypayindia.sbs',
+        changeOrigin: true
+      },
+      '/i/api/pwa/converse': {
+        target: 'https://mypayindia.sbs',
+        changeOrigin: true
+      },
+      '/i/api/pwa/meta/news': {
+        target: 'https://mypayindia.sbs',
+        changeOrigin: true
+      },
       ...Object.fromEntries(
         ['/i/api', '/i/iotm', '/i/accountservices', '/i/api/pwa', '/i/staging'].map((prefix) => [prefix, {
           target: 'https://bastion.mypayindia.sbs',
@@ -73,10 +85,6 @@ export default defineConfig({
         target: 'https://subscribe.mypayindia.sbs',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/i\/subscribe/, '') || '/'
-      },
-      '/i/pwa': {
-        target: 'https://mypayindia.sbs',
-        changeOrigin: true
       }
     }
   },
@@ -108,7 +116,7 @@ export default defineConfig({
           if (id.match(/pages\/iotm\//)) return 'iotm';
           if (id.match(/pages\/pwa\/cli|components\/cli\//)) return 'cli';
           if (id.match(/pages\/agent|api\/agent|utils\/agent_store|components\/clanker\/|components\/ui\/markdown/)) return 'agent';
-          if (id.match(/pages\/chat|components\/chat\//)) return 'chat';
+          if (id.match(/pages\/converse|components\/converse\//)) return 'converse';
           if (id.match(/pages\/toys/)) return 'tools';
           if (id.match(/pages\/information\/(release_notes|acknowledgements|how_pwa)|pages\/account\/restrictions|pages\/connection/)) return 'info';
           if (id.match(/pages\/pwa\/(not_found|external_redirect)|pages\/theme_apply/)) return 'misc';

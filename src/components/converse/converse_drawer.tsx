@@ -2,11 +2,11 @@ import { useState, useRef, useEffect, useSyncExternalStore } from 'react';
 import type { CSSProperties } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
-import { ChatWidget } from './chat_widget.tsx';
+import { ChatWidget } from './converse_widget.tsx';
 import { ChatBubbleIcon, ChevronDown, CloseIcon, ExternalIcon } from '../ui/icons.tsx';
-import { consumeDrawerOpenRequest, CHAT_DRAWER_OPEN_EVENT, subscribeChat, getChatState } from '../../utils/chat_store.ts';
+import { consumeDrawerOpenRequest, CHAT_DRAWER_OPEN_EVENT, subscribeChat, getChatState } from '../../utils/converse_store.ts';
 import { announceDrawerOpen, announceDrawerClosed, subscribeDrawers, getOpenDrawer } from '../../utils/drawer_bus.ts';
-import '../../styles/chat_drawer.css';
+import '../../styles/converse_drawer.css';
 
 const CLOSE_MS = 200;
 
@@ -21,7 +21,7 @@ export function ChatDrawer() {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const chatState = useSyncExternalStore(subscribeChat, getChatState);
 
-  const onChatPage = location.pathname === '/i/chat' || location.pathname.startsWith('/i/chat/');
+  const onChatPage = location.pathname === '/i/converse' || location.pathname.startsWith('/i/converse/');
   const hidden = !settings.chatDrawer || onChatPage;
 
   const openDrawerId = useSyncExternalStore(subscribeDrawers, getOpenDrawer);
@@ -90,11 +90,11 @@ export function ChatDrawer() {
   return (
     <>
       <button
-        className={`chat-launcher${launcherOut ? ' chat-launcher--out' : ''}`}
-        style={{ '--chat-stack': stackedAbove } as CSSProperties}
+        className={`converse-launcher${launcherOut ? ' converse-launcher--out' : ''}`}
+        style={{ '--converse-stack': stackedAbove } as CSSProperties}
         onClick={openDrawer}
-        title="Open MyChatIndia"
-        aria-label="Open MyChatIndia"
+        title="Open Converse"
+        aria-label="Open Converse"
         aria-hidden={launcherOut}
         tabIndex={launcherOut ? -1 : 0}
       >
@@ -102,24 +102,24 @@ export function ChatDrawer() {
       </button>
 
       {open && !hidden && (
-        <div className={`chat-drawer${minimized ? ' chat-drawer--min' : ''}${closing ? ' chat-drawer--closing' : ''}`}>
+        <div className={`converse-drawer${minimized ? ' converse-drawer--min' : ''}${closing ? ' converse-drawer--closing' : ''}`}>
           <div
-            className="chat-drawer-header"
+            className="converse-drawer-header"
             onClick={() => { if (minimized) setMinimized(false); }}
           >
-            <span className="chat-drawer-icon"><ChatBubbleIcon size={16} /></span>
-            <span className="chat-drawer-title">MyChatIndia</span>
-            <div className="chat-drawer-actions" onClick={(e) => e.stopPropagation()}>
+            <span className="converse-drawer-icon"><ChatBubbleIcon size={16} /></span>
+            <span className="converse-drawer-title">Converse</span>
+            <div className="converse-drawer-actions" onClick={(e) => e.stopPropagation()}>
               <button
-                className="chat-drawer-btn"
-                onClick={() => { closeDrawer(); navigate(chatState.activePeer ? `/i/chat/${chatState.activePeer}` : '/i/chat'); }}
+                className="converse-drawer-btn"
+                onClick={() => { closeDrawer(); navigate(chatState.activePeer ? `/i/converse/${chatState.activePeer}` : '/i/converse'); }}
                 title="Open the full page"
                 aria-label="Open the full page"
               >
                 <ExternalIcon size={16} />
               </button>
               <button
-                className={`chat-drawer-btn${minimized ? ' chat-drawer-btn--flip' : ''}`}
+                className={`converse-drawer-btn${minimized ? ' converse-drawer-btn--flip' : ''}`}
                 onClick={() => setMinimized((m) => !m)}
                 title={minimized ? 'Expand' : 'Minimize'}
                 aria-label={minimized ? 'Expand' : 'Minimize'}
@@ -127,7 +127,7 @@ export function ChatDrawer() {
                 <ChevronDown size={18} />
               </button>
               <button
-                className="chat-drawer-btn"
+                className="converse-drawer-btn"
                 onClick={closeDrawer}
                 title="Close"
                 aria-label="Close"
@@ -136,7 +136,7 @@ export function ChatDrawer() {
               </button>
             </div>
           </div>
-          <div className="chat-drawer-body">
+          <div className="converse-drawer-body">
             <ChatWidget variant="drawer" showHeader={false} />
           </div>
         </div>

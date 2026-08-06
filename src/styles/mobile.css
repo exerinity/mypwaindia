@@ -10,7 +10,7 @@
   }
 
   .mpi-settings-nav-item,
-  .mpi-chat-nav-item,
+  .mpi-converse-nav-item,
   .mpi-sidebar .links a {
     min-height: 46px;
   }
@@ -37,7 +37,7 @@
   }
 
   .mpi-shell:has(.mpi-settings-layout),
-  .mpi-shell:has(.mpi-chat-layout--page) {
+  .mpi-shell:has(.mpi-converse-layout--page) {
     transition: height 280ms cubic-bezier(0.32, 0.72, 0, 1);
   }
 }
@@ -46,7 +46,7 @@
   .mpi-main,
   .toast-container,
   .mpi-shell:has(.mpi-settings-layout),
-  .mpi-shell:has(.mpi-chat-layout--page) {
+  .mpi-shell:has(.mpi-converse-layout--page) {
     transition: none;
   }
 }

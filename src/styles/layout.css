@@ -224,19 +224,19 @@
 }
 
 .mpi-shell:has(.mpi-settings-layout),
-.mpi-shell:has(.mpi-chat-layout--page) {
+.mpi-shell:has(.mpi-converse-layout--page) {
   height: calc(100dvh - var(--mpi-bottom-nav-h) - env(safe-area-inset-bottom));
   overflow: hidden;
 }
 
 .mpi-body:has(.mpi-settings-layout),
-.mpi-body:has(.mpi-chat-layout--page) {
+.mpi-body:has(.mpi-converse-layout--page) {
   overflow: hidden;
 }
 
 @media (min-width: 901px) {
   .mpi-body:has(.mpi-settings-layout) .mpi-sidebar,
-  .mpi-body:has(.mpi-chat-layout--page) .mpi-sidebar {
+  .mpi-body:has(.mpi-converse-layout--page) .mpi-sidebar {
     position: static;
     align-self: stretch;
     max-height: none;
@@ -244,7 +244,7 @@
 }
 
 .mpi-main:has(.mpi-settings-layout),
-.mpi-main:has(.mpi-chat-layout--page) {
+.mpi-main:has(.mpi-converse-layout--page) {
   padding: 0;
   flex: 1;
   min-height: 0;
@@ -252,7 +252,7 @@
 }
 
 .mpi-wrap:has(.mpi-settings-layout),
-.mpi-wrap:has(.mpi-chat-layout--page) {
+.mpi-wrap:has(.mpi-converse-layout--page) {
   max-width: 100%;
   margin: 0;
   flex: 1;

@@ -119,12 +119,12 @@ export function AppearanceSettings() {
           </div>
 
           <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
-          <h3 className="mt-0">MyClankerIndia drawer</h3>
+          <h3 className="mt-0">Clanker drawer</h3>
           <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
-            MyClankerIndia is an AI agent that does the same sort of things as MyCLiIndia, but in plain English. Enabling this will show a drawer for a small chat window
+            Clanker is an AI agent that does the same sort of things as MyCLiIndia, but in plain English. Enabling this will show a drawer for a small chat window
           </p>
           <div className="row spread" style={{ alignItems: 'center' }}>
-            <span style={{ fontSize: '0.9rem' }}>Show the MyClankerIndia drawer</span>
+            <span style={{ fontSize: '0.9rem' }}>Show the Clanker drawer</span>
             <label className="toggle-switch">
               <input
                 type="checkbox"
@@ -136,12 +136,12 @@ export function AppearanceSettings() {
           </div>
 
           <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
-          <h3 className="mt-0">MyChatIndia drawer</h3>
+          <h3 className="mt-0">Converse drawer</h3>
           <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
-            MyChatIndia lets you message other enrolled MyPayIndia users. Enabling this will show a drawer for a small chat window
+            Converse lets you message other enrolled MyPayIndia users. Enabling this will show a drawer for a small chat window
           </p>
           <div className="row spread" style={{ alignItems: 'center' }}>
-            <span style={{ fontSize: '0.9rem' }}>Show the MyChatIndia drawer</span>
+            <span style={{ fontSize: '0.9rem' }}>Show the Converse drawer</span>
             <label className="toggle-switch">
               <input
                 type="checkbox"

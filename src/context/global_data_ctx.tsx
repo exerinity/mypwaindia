@@ -4,7 +4,7 @@ import { useAuth } from './auth_ctx.tsx';
 import { useSettings } from './settings_ctx.tsx';
 import { getRestrictions } from '../api/user.js';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
-import { refreshConversations } from '../utils/chat_store.ts';
+import { refreshConversations } from '../utils/converse_store.ts';
 
 export interface UserInfo {
   balance: number;

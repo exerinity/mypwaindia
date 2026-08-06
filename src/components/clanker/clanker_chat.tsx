@@ -268,9 +268,9 @@ export function ClankerChat({ variant = 'page', active: visible = true }: Clanke
     return (
       <div className={drawer ? 'agent-drawer-pad' : 'card'}>
         <div className="agent-locked-icon"><LockIcon size={22} /></div>
-        <h3 style={{ marginTop: 0 }}>Try MyClankerIndia</h3>
+        <h3 style={{ marginTop: 0 }}>Try Clanker</h3>
         <p className="muted">
-          MyClankerIndia is an experimental AI agent that can do a similar array of tasks
+          "Clanker" is an experimental AI agent that can do a similar array of tasks
           as MyCLiIndia, but instead with a large language model. Subscribe for 200
           INR a week, with a 1 day free trial, for 20 messages every 24 hours.</p>
         <button className="btn" onClick={startSubscribe} disabled={subscribing}>
@@ -292,8 +292,8 @@ export function ClankerChat({ variant = 'page', active: visible = true }: Clanke
       <div className="agent-scroll" ref={scrollRef}>
         {items.length === 0 && (
           <div className="agent-empty">
-            <h2>MyClankerIndia Preview</h2>
-            <p>Welcome to the MyClankerIndia preview! This uses IBM Granite 4.0 H Micro, and you can use it to do the same array of stuff in MyCLiIndia. Enjoy!</p>
+            <h2>Clanker Preview</h2>
+            <p>Welcome to the Clanker preview! This uses a GPT OSS model, and you can use it to do the same array of stuff in MyCLiIndia. Enjoy!</p>
             <p className="agent-empty-disclaimer">Again, this is just a preview, which could be removed at any time.</p>
             <div className="agent-suggestions">
               {SUGGESTIONS.map((s) => (
@@ -331,7 +331,7 @@ export function ClankerChat({ variant = 'page', active: visible = true }: Clanke
               send(input);
             }
           }}
-          placeholder={busy ? 'Working on it...' : 'Ask MyClankerIndia...'}
+          placeholder={busy ? 'Working on it...' : 'Ask Clanker...'}
           rows={1}
           maxLength={1000}
           disabled={busy}

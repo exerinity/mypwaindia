@@ -8,7 +8,7 @@ import { subscribe, getRate, clearItems } from '../../utils/agent_store.ts';
 import { ClankerChat, resetLabel } from '../../components/clanker/clanker_chat.tsx';
 
 export default function AgentPage() {
-  usePageTitle('MyClankerIndia');
+  usePageTitle('Clanker');
   const { active } = useAuth();
   const { settings } = useSettings();
   const toast = useToast();
@@ -32,7 +32,7 @@ export default function AgentPage() {
   return (
     <>
       <div className="row spread" style={{ alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-        <h1 className="mt-0 mb-0">MyClankerIndia</h1>
+        <h1 className="mt-0 mb-0">Clanker</h1>
         {rate && (
           <div className="row" style={{ gap: 10, alignItems: 'center' }}>
             <span className="muted" style={{ fontSize: '0.8rem' }}>

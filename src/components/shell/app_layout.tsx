@@ -19,7 +19,7 @@ const ConfirmModal = lazy(() => import('../ui/confirm_modal.tsx').then((m) => ({
 const BottomNav = lazy(() => import('./bottom_nav.tsx').then((m) => ({ default: m.BottomNav })));
 const CliDrawer = lazy(() => import('../cli/cli_drawer.tsx').then((m) => ({ default: m.CliDrawer })));
 const ClankerDrawer = lazy(() => import('../clanker/clanker_drawer.tsx').then((m) => ({ default: m.ClankerDrawer })));
-const ChatDrawer = lazy(() => import('../chat/chat_drawer.tsx').then((m) => ({ default: m.ChatDrawer })));
+const ChatDrawer = lazy(() => import('../converse/converse_drawer.tsx').then((m) => ({ default: m.ChatDrawer })));
 const ThemePanel = lazy(() => import('../../pages/settings/theme_panel.tsx').then((m) => ({ default: m.ThemePanel })));
 
 function ServiceWorkerUpdater({ autoUpdate, toast, syncLastVersion }: {

@@ -38,12 +38,12 @@ export class AgentError extends Error {
 
 async function agentBase(): Promise<string> {
   const { API_BASE } = await import('./config.js');
-  return `${API_BASE}/pwa/agent`;
+  return `${API_BASE}/api/pwa/clanker`;
 }
 
 const MESSAGES: Record<string, string> = {
   unauthorized: 'Your session is no longer valid - log in again to keep chatting',
-  subscription_required: 'MyClankerIndia is part of the subscription',
+  subscription_required: 'Clanker is part of the subscription',
   rate_limited: 'You have used all your messages for now. Come back later!',
   expired: 'That action sat around too long and expired',
 };

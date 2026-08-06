@@ -29,7 +29,7 @@ const IotmButtonPage = lazy(() => import('./pages/iotm/button.tsx'));
 const IOTMPage = lazy(() => import('./pages/iotm/index.tsx'));
 const CLIPage = lazy(() => import('./pages/pwa/cli.tsx'));
 const AgentPage = lazy(() => import('./flow/pages/agent.tsx'));
-const ChatPage = lazy(() => import('./flow/pages/chat.tsx'));
+const ChatPage = lazy(() => import('./flow/pages/converse.tsx'));
 const MPTIPage = lazy(() => import('./flow/pages/toys.tsx'));
 const ReleaseNotesPage = lazy(() => import('./pages/information/release_notes.tsx'));
 const AcknowledgementsPage = lazy(() => import('./pages/information/acknowledgements.tsx'));
@@ -81,6 +81,11 @@ function MerchantRedirect() {
   return <ExternalRedirectPage to={`https://mypayindia.com/merchant/${splat ?? ''}`} />;
 }
 
+function ChatRedirect() {
+  const { peer } = useParams();
+  return <Navigate to={`/i/converse/${peer ?? ''}`} replace />;
+}
+
 export default function App() {
   const location = useLocation();
   const bgLoc = (location.state as { backgroundLocation?: Location })?.backgroundLocation;
@@ -109,6 +114,8 @@ export default function App() {
       <Route path="/i/flow/agent" element={<Navigate to="/i/clanker" replace />} />
       <Route path="/i/flow/mci" element={<Navigate to="/i/command" replace />} />
       <Route path="/i/flow/mci/focus" element={<Navigate to="/i/command/focus" replace />} />
+      <Route path="/i/chat" element={<Navigate to="/i/converse" replace />} />
+      <Route path="/i/chat/:peer" element={<ChatRedirect />} />
       <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
@@ -152,8 +159,8 @@ export default function App() {
           <Route path="/account/history/simple" element={<SimpleHistoryPage />} />
           <Route path="/i/flow/sessions" element={<SessionsPage />} />
           <Route path="/i/clanker" element={<AgentPage />} />
-          <Route path="/i/chat" element={<ChatPage />} />
-          <Route path="/i/chat/:peer" element={<ChatPage />} />
+          <Route path="/i/converse" element={<ChatPage />} />
+          <Route path="/i/converse/:peer" element={<ChatPage />} />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
           <Route path="/i/flow/links" element={<LinksPage />} />
           <Route path="/i/flow/links/claim" element={<Navigate to="/i/flow/links" replace />} />

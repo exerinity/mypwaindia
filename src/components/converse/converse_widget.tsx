@@ -6,17 +6,17 @@ import { useApiCall } from '../../hooks/api_call.js';
 import {
   getChatStatus, enrollChat, unenrollChat, lookupChatUser,
   blockChatUser, unblockChatUser, listBlockedUsers,
-} from '../../api/chat.ts';
-import type { ChatMessage } from '../../api/chat.ts';
+} from '../../api/converse.ts';
+import type { ChatMessage } from '../../api/converse.ts';
 import {
   subscribeChat, getChatState, connectChat, disconnectChat,
   refreshConversations, openConversation, closeConversation,
   sendMessage, editMessage, deleteMessage, sendTyping,
-} from '../../utils/chat_store.ts';
+} from '../../utils/converse_store.ts';
 import { Skeleton, ErrorBox } from '../ui/status.tsx';
 import { Modal } from '../ui/modal.tsx';
 import { ArrowLeftIcon, CheckIcon, PlusIcon } from '../ui/icons.tsx';
-import '../../styles/chat.css';
+import '../../styles/converse.css';
 
 function timeLabel(ts: number): string {
   const d = new Date(ts);
@@ -40,8 +40,8 @@ function relativeTime(ts: number): string {
 
 function PresenceLabel({ online, lastSeen }: { online: boolean; lastSeen?: number }) {
   return (
-    <span className="chat-presence">
-      <span className={`chat-dot${online ? ' online' : ''}`} />
+    <span className="converse-presence">
+      <span className={`converse-dot${online ? ' online' : ''}`} />
       {online ? 'online' : lastSeen ? `last seen ${relativeTime(lastSeen)}` : 'offline'}
     </span>
   );
@@ -56,14 +56,14 @@ function Bubble({ message, mine, onEdit, onDelete }: {
   const [draft, setDraft] = useState(message.text);
 
   if (message.deleted) {
-    return <div className={`chat-msg${mine ? ' mine' : ''} deleted`}><em>message deleted</em></div>;
+    return <div className={`converse-msg${mine ? ' mine' : ''} deleted`}><em>message deleted</em></div>;
   }
 
   if (editing) {
     return (
-      <div className={`chat-msg${mine ? ' mine' : ''} editing`}>
+      <div className={`converse-msg${mine ? ' mine' : ''} editing`}>
         <textarea value={draft} onChange={(e) => setDraft(e.target.value)} rows={2} />
-        <div className="chat-msg-edit-actions">
+        <div className="converse-msg-edit-actions">
           <button type="button" className="btn ghost compact" onClick={() => setEditing(false)}>Cancel</button>
           <button
             type="button"
@@ -79,17 +79,17 @@ function Bubble({ message, mine, onEdit, onDelete }: {
   }
 
   return (
-    <div className={`chat-msg${mine ? ' mine' : ''}${message.pending ? ' pending' : ''}${message.failed ? ' failed' : ''}`}>
-      <div className="chat-msg-text">{message.text}</div>
-      <div className="chat-msg-meta">
-        {message.pending && <span className="chat-msg-pending">sending...</span>}
-        {message.failed && <span className="chat-msg-failed">failed to send</span>}
+    <div className={`converse-msg${mine ? ' mine' : ''}${message.pending ? ' pending' : ''}${message.failed ? ' failed' : ''}`}>
+      <div className="converse-msg-text">{message.text}</div>
+      <div className="converse-msg-meta">
+        {message.pending && <span className="converse-msg-pending">sending...</span>}
+        {message.failed && <span className="converse-msg-failed">failed to send</span>}
         {!message.pending && !message.failed && message.editedAt && (
-          <span className="chat-msg-edited" title={`Edited ${new Date(message.editedAt).toLocaleString()}`}>edited</span>
+          <span className="converse-msg-edited" title={`Edited ${new Date(message.editedAt).toLocaleString()}`}>edited</span>
         )}
         {!message.pending && !message.failed && <span>{timeLabel(message.ts)}</span>}
         {mine && !message.pending && !message.failed && (
-          <span className="chat-msg-actions">
+          <span className="converse-msg-actions">
             <button type="button" onClick={() => { setDraft(message.text); setEditing(true); }}>edit</button>
             <button type="button" onClick={() => onDelete(message.id)}>delete</button>
           </span>
@@ -101,16 +101,18 @@ function Bubble({ message, mine, onEdit, onDelete }: {
 
 function EnrollScreen({ onEnrol, busy }: { onEnrol: () => void; busy: boolean }) {
   return (
-    <div className="card chat-enroll">
+    <div className="card converse-enroll">
       <h2 style={{ marginTop: 0 }}>Enrol</h2>
       <p className="muted">
-        MyChatIndia lets you message other enrolled MyPayIndia users by username. Enrolling registers your MyPayIndia username
+        Converse lets you message other enrolled MyPayIndia users by username. Enrolling registers your MyPayIndia username
         in the chat directory so other
         enrolled users can find and message you.
       </p>
       <button className="btn" onClick={onEnrol} disabled={busy}>
         {busy ? 'Enrolling...' : 'Enrol with my MyPayIndia account'}
-      </button>
+      </button><br></br>
+      <small className="muted">This is independent of your MyPayIndia account and generally MyPayIndia.com as a whole and only usable here, on MyPWAIndia.</small><br></br>
+      <small className="muted">Converse could be removed at any time, so treat it entirely as an experimental feature.</small><br></br>
     </div>
   );
 }
@@ -209,7 +211,7 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
       disconnectChat();
       await unenrollChat(token);
       await statusQ.refetch();
-      toast.success('You have left MyChatIndia. Thanks for trying it out!');
+      toast.success('You have left Converse. Thanks for trying it out!');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not leave');
     } finally {
@@ -231,7 +233,7 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
     try {
       const result = await lookupChatUser(token, target);
       if (!result.enrolled) {
-        toast.error('That person isn\'t enrolled in MyChatIndia yet! Why not ask them to enrol?');
+        toast.error('That person isn\'t enrolled in Converse yet! Why not ask them to enrol?');
         return;
       }
       await sendMessage(token, target, text);
@@ -301,7 +303,7 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
     }
   }
 
-  const pad = variant === 'drawer' ? 'chat-drawer-pad' : undefined;
+  const pad = variant === 'drawer' ? 'converse-drawer-pad' : undefined;
 
   if (settings.scambait) {
     return <div className={pad}>{showHeader && <h1 className="mt-0">Page unavailable</h1>}</div>;
@@ -318,7 +320,7 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
   if (!enrolled) {
     return (
       <div className={pad}>
-        {showHeader && <h1 className="mt-0">MyChatIndia</h1>}
+        {showHeader && <h1 className="mt-0">Converse</h1>}
         <EnrollScreen onEnrol={handleEnrol} busy={enrolling} />
       </div>
     );
@@ -329,76 +331,76 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
   const isTyping = state.activePeer ? !!state.typing[state.activePeer] : false;
 
   return (
-    <div className={`mpi-chat-layout mpi-chat-layout--${variant}`}>
+    <div className={`mpi-converse-layout mpi-converse-layout--${variant}`}>
       {leaving && (
-        <div className="chat-leaving-overlay">
+        <div className="converse-leaving-overlay">
           <span className="spinner lg" />
-          <p>Unenrolling from MyChatIndia...</p>
+          <p>Unenrolling from Converse...</p>
         </div>
       )}
-      <div className={`mpi-chat-nav${mobileShowThread ? ' mpi-chat-nav--hidden' : ''}`}>
+      <div className={`mpi-converse-nav${mobileShowThread ? ' mpi-converse-nav--hidden' : ''}`}>
         {showHeader && (
-          <div className="mpi-chat-nav-header">
-            <h1>MyChatIndia</h1>
+          <div className="mpi-converse-nav-header">
+            <h1>Converse</h1>
           </div>
         )}
 
-        <div className="chat-new">
-          <button type="button" className="btn compact chat-new-btn" onClick={() => setNewMessageOpen(true)}>
+        <div className="converse-new">
+          <button type="button" className="btn compact converse-new-btn" onClick={() => setNewMessageOpen(true)}>
             <PlusIcon size={14} /> New conversation
           </button>
         </div>
 
-        <div className="mpi-chat-nav-list">
+        <div className="mpi-converse-nav-list">
           {state.conversations.length === 0 && (
-            <p className="chat-empty-list muted">empty</p>
+            <p className="converse-empty-list muted">empty</p>
           )}
           {state.conversations.map((c) => (
             <button
               key={c.peer}
               type="button"
-              className={`mpi-chat-nav-item${c.peer === state.activePeer ? ' active' : ''}`}
+              className={`mpi-converse-nav-item${c.peer === state.activePeer ? ' active' : ''}`}
               onClick={() => selectPeer(c.peer)}
             >
-              <span className="chat-convo-body">
+              <span className="converse-convo-body">
                 <PresenceLabel online={c.online} lastSeen={state.lastSeen[c.peer]} />
-                <span className="chat-convo-name">@{c.peer}</span>
-                <span className="chat-convo-preview">{c.deleted ? 'message deleted' : c.lastText}</span>
+                <span className="converse-convo-name">@{c.peer}</span>
+                <span className="converse-convo-preview">{c.deleted ? 'message deleted' : c.lastText}</span>
               </span>
-              {c.unread > 0 && <span className="chat-badge">{c.unread}</span>}
+              {c.unread > 0 && <span className="converse-badge">{c.unread}</span>}
             </button>
           ))}
         </div>
 
-        <div className="mpi-chat-nav-footer">
-          <button className="btn ghost compact" onClick={handleLeave}>Unenrol from MyChatIndia</button>
+        <div className="mpi-converse-nav-footer">
+          <button className="btn ghost compact" onClick={handleLeave}>Unenrol from Converse</button>
         </div>
       </div>
 
-      <div className={`mpi-chat-detail${mobileShowThread ? ' mpi-chat-detail--visible' : ''}`}>
+      <div className={`mpi-converse-detail${mobileShowThread ? ' mpi-converse-detail--visible' : ''}`}>
         {!state.activePeer && (
-          <div className="chat-thread-empty muted">empty</div>
+          <div className="converse-thread-empty muted">empty</div>
         )}
         {state.activePeer && (
           <>
-            <div className="mpi-chat-detail-header">
+            <div className="mpi-converse-detail-header">
               <button
-                className="mpi-chat-detail-back"
+                className="mpi-converse-detail-back"
                 onClick={goBack}
                 aria-label="Back to conversations"
               >
                 <ArrowLeftIcon size={18} />
               </button>
-              <div className="chat-thread-title">
+              <div className="converse-thread-title">
                 <PresenceLabel online={!!activeConvo?.online} lastSeen={state.activePeer ? state.lastSeen[state.activePeer] : undefined} />
-                <span className="chat-thread-name">@{state.activePeer}</span>
+                <span className="converse-thread-name">@{state.activePeer}</span>
               </div>
               <button type="button" className="btn ghost compact" onClick={toggleBlock} style={{ marginLeft: 'auto' }}>
                 {isBlocked ? 'Unblock' : 'Block'}
               </button>
             </div>
 
-            <div className="chat-scroll" ref={scrollRef}>
+            <div className="converse-scroll" ref={scrollRef}>
               {state.loadingMessages && <Skeleton width="100%" height={80} />}
               {!state.loadingMessages && state.messages.map((m) => (
                 <Bubble
@@ -409,10 +411,10 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
                   onDelete={handleDelete}
                 />
               ))}
-              {isTyping && <div className="chat-typing muted">@{state.activePeer} is typing...</div>}
+              {isTyping && <div className="converse-typing muted">@{state.activePeer} is typing...</div>}
             </div>
 
-            <form className="chat-composer" onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
+            <form className="converse-composer" onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
               <textarea
                 value={input}
                 onChange={(e) => handleTyping(e.target.value)}
@@ -437,9 +439,9 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
       <Modal open={newMessageOpen} onClose={closeNewMessage} title="New message">
         <form onSubmit={(e) => { e.preventDefault(); handleNewMessage(); }} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div>
-            <label htmlFor="chat-new-recipient">Recipient</label>
+            <label htmlFor="converse-new-recipient">Recipient</label>
             <input
-              id="chat-new-recipient"
+              id="converse-new-recipient"
               type="text"
               value={newPeer}
               onChange={(e) => setNewPeer(e.target.value)}
@@ -449,9 +451,9 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
             />
           </div>
           <div>
-            <label htmlFor="chat-new-text">Message</label>
+            <label htmlFor="converse-new-text">Message</label>
             <textarea
-              id="chat-new-text"
+              id="converse-new-text"
               value={newMessageText}
               onChange={(e) => setNewMessageText(e.target.value)}
               placeholder="Say something..."

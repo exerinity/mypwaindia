@@ -1,12 +1,8 @@
 /* =====================================================================
-   MyChatIndia
+   Converse
    ===================================================================== */
 
-.chat-enroll {
-  max-width: 560px;
-}
-
-.mpi-chat-layout {
+.mpi-converse-layout {
   display: grid;
   grid-template-columns: 320px 1fr;
   flex: 1;
@@ -14,7 +10,7 @@
   position: relative;
 }
 
-.chat-leaving-overlay {
+.converse-leaving-overlay {
   position: fixed;
   inset: 0;
   z-index: 300;
@@ -26,13 +22,13 @@
   background: var(--bg);
 }
 
-.chat-leaving-overlay p {
+.converse-leaving-overlay p {
   margin: 0;
   color: var(--muted);
   font-size: 0.95rem;
 }
 
-.mpi-chat-nav {
+.mpi-converse-nav {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border);
@@ -40,7 +36,7 @@
   overflow: hidden;
 }
 
-.mpi-chat-nav-header {
+.mpi-converse-nav-header {
   display: flex;
   align-items: center;
   height: 64px;
@@ -49,19 +45,19 @@
   flex-shrink: 0;
 }
 
-.mpi-chat-nav-header h1 {
+.mpi-converse-nav-header h1 {
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0;
 }
 
-.mpi-chat-nav-list {
+.mpi-converse-nav-list {
   flex: 1;
   overflow-y: auto;
   padding: 4px 0;
 }
 
-.mpi-chat-nav-item {
+.mpi-converse-nav-item {
   display: flex;
   align-items: center;
   width: 100%;
@@ -78,16 +74,16 @@
   transition: background 0.12s ease;
 }
 
-.mpi-chat-nav-item:hover {
+.mpi-converse-nav-item:hover {
   background: var(--bg-elev);
 }
 
-.mpi-chat-nav-item.active {
+.mpi-converse-nav-item.active {
   background: var(--bg-elev);
   border-left-color: var(--brand);
 }
 
-.mpi-chat-nav-footer {
+.mpi-converse-nav-footer {
   display: flex;
   align-items: center;
   height: 64px;
@@ -97,14 +93,14 @@
   border-top: 1px solid var(--border);
 }
 
-.mpi-chat-detail {
+.mpi-converse-detail {
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
 }
 
-.mpi-chat-detail-header {
+.mpi-converse-detail-header {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -114,7 +110,7 @@
   flex-shrink: 0;
 }
 
-.mpi-chat-detail-back {
+.mpi-converse-detail-back {
   display: none;
   background: none;
   border: none;
@@ -128,22 +124,22 @@
   flex-shrink: 0;
 }
 
-.mpi-chat-detail-back:hover {
+.mpi-converse-detail-back:hover {
   background: var(--bg-elev);
 }
 
-.chat-thread-title {
+.converse-thread-title {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
 
-.chat-thread-name {
+.converse-thread-name {
   font-weight: 700;
 }
 
-.chat-presence {
+.converse-presence {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -151,13 +147,13 @@
   color: var(--muted);
 }
 
-.chat-new {
+.converse-new {
   padding: 14px 20px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
 
-.chat-new-btn {
+.converse-new-btn {
   width: 100%;
   display: flex;
   align-items: center;
@@ -165,12 +161,12 @@
   gap: 6px;
 }
 
-.chat-empty-list {
+.converse-empty-list {
   padding: 20px;
   font-size: 0.88rem;
 }
 
-.chat-dot {
+.converse-dot {
   width: 8px;
   height: 8px;
   border-radius: 999px;
@@ -179,12 +175,12 @@
   opacity: 0.4;
 }
 
-.chat-dot.online {
+.converse-dot.online {
   background: #2ecc71;
   opacity: 1;
 }
 
-.chat-convo-body {
+.converse-convo-body {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -192,12 +188,12 @@
   gap: 2px;
 }
 
-.chat-convo-name {
+.converse-convo-name {
   font-weight: 600;
   font-size: 0.92rem;
 }
 
-.chat-convo-preview {
+.converse-convo-preview {
   font-size: 0.8rem;
   color: var(--muted);
   white-space: nowrap;
@@ -205,7 +201,7 @@
   text-overflow: ellipsis;
 }
 
-.chat-badge {
+.converse-badge {
   background: var(--brand);
   color: #fff;
   font-size: 0.7rem;
@@ -220,7 +216,7 @@
   flex-shrink: 0;
 }
 
-.chat-thread-empty {
+.converse-thread-empty {
   flex: 1;
   display: flex;
   align-items: center;
@@ -229,7 +225,7 @@
   text-align: center;
 }
 
-.chat-scroll {
+.converse-scroll {
   flex: 1;
   overflow-y: auto;
   padding: 16px 20px;
@@ -238,7 +234,7 @@
   gap: 10px;
 }
 
-.chat-msg {
+.converse-msg {
   max-width: 68%;
   align-self: flex-start;
   background: var(--bg-elev);
@@ -247,41 +243,41 @@
   padding: 8px 12px;
 }
 
-.chat-msg.mine {
+.converse-msg.mine {
   align-self: flex-end;
   background: color-mix(in srgb, var(--brand) 14%, var(--bg-elev));
   border-color: color-mix(in srgb, var(--brand) 35%, var(--border));
 }
 
-.chat-msg.deleted {
+.converse-msg.deleted {
   color: var(--muted);
   font-size: 0.85rem;
 }
 
-.chat-msg.pending {
+.converse-msg.pending {
   opacity: 0.6;
 }
 
-.chat-msg.failed {
+.converse-msg.failed {
   border-color: var(--alert-error);
 }
 
-.chat-msg-pending {
+.converse-msg-pending {
   font-style: italic;
 }
 
-.chat-msg-failed {
+.converse-msg-failed {
   color: var(--alert-error);
   font-weight: 600;
 }
 
-.chat-msg-text {
+.converse-msg-text {
   white-space: pre-wrap;
   word-break: break-word;
   font-size: 0.92rem;
 }
 
-.chat-msg-meta {
+.converse-msg-meta {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -290,17 +286,17 @@
   color: var(--muted);
 }
 
-.chat-msg-edited {
+.converse-msg-edited {
   font-style: italic;
 }
 
-.chat-msg-actions {
+.converse-msg-actions {
   margin-left: auto;
   display: flex;
   gap: 8px;
 }
 
-.chat-msg-actions button {
+.converse-msg-actions button {
   background: none;
   border: none;
   padding: 0;
@@ -310,28 +306,28 @@
   text-decoration: underline;
 }
 
-.chat-msg-actions button:hover {
+.converse-msg-actions button:hover {
   color: var(--fg);
 }
 
-.chat-msg.editing textarea {
+.converse-msg.editing textarea {
   width: 100%;
   font-size: 0.9rem;
 }
 
-.chat-msg-edit-actions {
+.converse-msg-edit-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 6px;
 }
 
-.chat-typing {
+.converse-typing {
   font-size: 0.8rem;
   padding: 2px 4px;
 }
 
-.chat-composer {
+.converse-composer {
   display: flex;
   align-items: flex-end;
   gap: 8px;
@@ -340,7 +336,7 @@
   flex-shrink: 0;
 }
 
-.chat-composer textarea {
+.converse-composer textarea {
   flex: 1;
   resize: none;
   min-height: 40px;
@@ -348,67 +344,67 @@
   font-size: 0.92rem;
 }
 
-.chat-composer .btn {
+.converse-composer .btn {
   height: 40px;
 }
 
 @media (max-width: 700px) {
-  .mpi-chat-layout {
+  .mpi-converse-layout {
     grid-template-columns: 1fr;
     border-top: none;
   }
 
-  .mpi-chat-nav {
+  .mpi-converse-nav {
     border-right: none;
   }
 
-  .mpi-chat-nav.mpi-chat-nav--hidden {
+  .mpi-converse-nav.mpi-converse-nav--hidden {
     display: none;
   }
 
-  .mpi-chat-detail {
+  .mpi-converse-detail {
     display: none;
   }
 
-  .mpi-chat-detail.mpi-chat-detail--visible {
+  .mpi-converse-detail.mpi-converse-detail--visible {
     display: flex;
   }
 
-  .mpi-chat-detail-back {
+  .mpi-converse-detail-back {
     display: flex;
   }
 }
 
-.mpi-chat-layout--drawer {
+.mpi-converse-layout--drawer {
   grid-template-columns: 1fr;
   border-top: none;
 }
 
-.mpi-chat-layout--drawer .mpi-chat-nav {
+.mpi-converse-layout--drawer .mpi-converse-nav {
   border-right: none;
 }
 
-.mpi-chat-layout--drawer .mpi-chat-nav.mpi-chat-nav--hidden {
+.mpi-converse-layout--drawer .mpi-converse-nav.mpi-converse-nav--hidden {
   display: none;
 }
 
-.mpi-chat-layout--drawer .mpi-chat-detail {
+.mpi-converse-layout--drawer .mpi-converse-detail {
   display: none;
 }
 
-.mpi-chat-layout--drawer .mpi-chat-detail.mpi-chat-detail--visible {
+.mpi-converse-layout--drawer .mpi-converse-detail.mpi-converse-detail--visible {
   display: flex;
 }
 
-.mpi-chat-layout--drawer .mpi-chat-detail-back {
+.mpi-converse-layout--drawer .mpi-converse-detail-back {
   display: flex;
 }
 
-.mpi-chat-layout--drawer .chat-composer {
+.mpi-converse-layout--drawer .converse-composer {
   padding: 8px;
 }
 
-.mpi-chat-layout--drawer .chat-composer textarea {
+.mpi-converse-layout--drawer .converse-composer textarea {
   font-size: 0.88rem;
   line-height: 1.2;
   padding: 7px 10px;
@@ -416,17 +412,17 @@
   max-height: 36px;
 }
 
-.mpi-chat-layout--drawer .chat-composer .btn {
+.mpi-converse-layout--drawer .converse-composer .btn {
   height: 36px;
 }
 
-.chat-drawer-pad {
+.converse-drawer-pad {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   padding: 14px 16px;
 }
 
-.chat-drawer-pad h1 {
+.converse-drawer-pad h1 {
   font-size: 1rem;
 }

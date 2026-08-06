@@ -10,5 +10,5 @@ export async function getTeam() {
 
 export async function getNews() {
   const { apiFetch } = await import('./client.js');
-  return apiFetch('/pwa/meta/news');
+  return apiFetch('/api/pwa/meta/news');
 }

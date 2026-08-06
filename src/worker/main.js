@@ -8,9 +8,9 @@ export { ChatMailbox };
 
 const API_ROOTS = ["/api", "/iotm", "/accountservices", "/api/pwa", "/staging"];
 const SUBSCRIBE_PREFIX = "/i/subscribe";
-const AGENT_PREFIX = "/i/pwa/agent";
-const CHAT_PREFIX = "/i/pwa/chat";
-const NEWS_PATH = "/i/pwa/meta/news";
+const AGENT_PREFIX = "/i/api/pwa/clanker";
+const CHAT_PREFIX = "/i/api/pwa/converse";
+const NEWS_PATH = "/i/api/pwa/meta/news";
 
 export default {
   async fetch(req, env) {

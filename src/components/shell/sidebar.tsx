@@ -3,7 +3,7 @@ import { lazy, Suspense, useState, useSyncExternalStore } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
-import { subscribeChat, getUnreadSnapshot } from '../../utils/chat_store.ts';
+import { subscribeChat, getUnreadSnapshot } from '../../utils/converse_store.ts';
 import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import {
   CloseIcon,
@@ -64,8 +64,8 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/settings', label: 'Settings', icon: SettingsIcon },
       { to: '/i/command', label: 'MyCLiIndia', icon: TerminalIcon, hideInScambait: true },
-      { to: '/i/clanker', label: 'MyClankerIndia', icon: SparkleIcon, hideInScambait: true, requireAuth: true },
-      { to: '/i/chat', label: 'MyChatIndia', icon: ChatBubbleIcon, hideInScambait: true, requireAuth: true },
+      { to: '/i/clanker', label: 'Clanker', icon: SparkleIcon, hideInScambait: true, requireAuth: true },
+      { to: '/i/converse', label: 'Converse', icon: ChatBubbleIcon, hideInScambait: true, requireAuth: true },
     ],
     scambaitTitle: 'Control',
     defaultTitle: 'MyPWAIndia',
@@ -139,7 +139,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                 {visibleItems.map((item) => {
                   const Icon = item.icon;
                   const label = !active && item.loggedOutLabel ? item.loggedOutLabel : item.label;
-                  const badge = item.to === '/i/chat' && chatUnread > 0 ? chatUnread : null;
+                  const badge = item.to === '/i/converse' && chatUnread > 0 ? chatUnread : null;
                   const iconNode = Icon && (
                     badge ? (
                       <span className="mpi-sidebar-icon-wrap">

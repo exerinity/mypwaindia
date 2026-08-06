@@ -46,7 +46,7 @@ export class ChatError extends Error {
 
 const MESSAGES: Record<string, string> = {
   unauthorized: 'Your session is no longer valid - log in again',
-  not_enrolled: 'You need to enrol in MyChatIndia first',
+  not_enrolled: 'You need to enrol in Converse first',
   rate_limited: 'You are sending messages too fast, slow down a little',
   blocked_by_self: 'Unblock this user before messaging them',
   blocked_by_peer: 'This user has blocked you',
@@ -54,7 +54,7 @@ const MESSAGES: Record<string, string> = {
 
 async function chatBase(): Promise<string> {
   const { API_BASE } = await import('./config.js');
-  return `${API_BASE}/pwa/chat`;
+  return `${API_BASE}/api/pwa/converse`;
 }
 
 async function fail(res: Response): Promise<never> {

@@ -1,6 +1,6 @@
 import { verifyUser, subscriptionStatus, PLANS } from "./button_subscribe.js";
 
-const MODEL = "@cf/ibm-granite/granite-4.0-h-micro";
+const MODEL = "@cf/openai/gpt-oss-120b";
 const VERSION = 2;
 const MAX_TOOL_CALLS = 5;
 const MAX_REPAIRS = 1;
@@ -372,7 +372,7 @@ const TOOL_NAMES = Object.keys(TOOLS).join(", ");
 
 function systemPrompt(username) {
   return [
-    `You are MyClankerIndia, the assistant built into the MyPayIndia web app. You are speaking with @${username}.`,
+    `You are Clanker, the assistant built into the MyPayIndia web app. You are speaking with @${username}.`,
     "",
     "WHAT YOU DO",
     "You handle this MyPayIndia account: balances, transactions, payment links, restrictions, sessions, the leaderboard, the team, and questions about the app itself. You are warm, brief and a bit playful, never stiff.",

@@ -33,8 +33,8 @@ export const SETTINGS_FIELD_LABELS: { key: keyof Settings; label: string }[] = [
   { key: 'suppressUpdateToast', label: 'Suppress update notification' },
   { key: 'swEnabled', label: 'Service worker enabled' },
   { key: 'cliDrawer', label: 'MyCLiIndia drawer' },
-  { key: 'clankerDrawer', label: 'MyClankerIndia drawer' },
-  { key: 'chatDrawer', label: 'MyChatIndia drawer' },
+  { key: 'clankerDrawer', label: 'Clanker drawer' },
+  { key: 'chatDrawer', label: 'Converse drawer' },
   { key: 'copyLinkOnCreate', label: 'Copy payment links on creation' },
   { key: 'scambait', label: 'Scambait mode' },
 ];
