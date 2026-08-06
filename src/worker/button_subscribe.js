@@ -25,8 +25,48 @@ function subJson(data, status, origin) {
 }
 
 const ALWAYS_SUBSCRIBED_IDS = [228];
+export const PLANS = {
+  clicker: { id: 5, order: "clicker", returnVar: "RETURN_URL", returnUrl: "https://mypayindia.sbs/iotm/button" },
+  agent: { id: 7, order: "agent", returnVar: "AGENT_RETURN_URL", returnUrl: "https://mypayindia.sbs/i/clanker" }
+};
 
-async function verifyUser(auth, userBase) {
+export function resolvePlan(name) {
+  return typeof name === "string" && Object.prototype.hasOwnProperty.call(PLANS, name) ? PLANS[name] : PLANS.clicker;
+}
+
+export async function subscriptionStatus(user, env, planId = PLANS.clicker.id) {
+  if (ALWAYS_SUBSCRIBED_IDS.includes(user.id)) {
+    return {
+      subscribed: true,
+      status: "active",
+      plan: "Complimentary",
+      current_period_end: null,
+      cancel_at_period_end: false
+    };
+  }
+
+  const payBase = env.MPI_PAY_BASE || "https://mypayindia.com";
+  const subsRes = await fetch(`${payBase}/api/v2/pay/subscriptions`, {
+    headers: { Authorization: `Bearer ${env.MPI_SECRET_KEY}`, Accept: "application/json" }
+  }).then((r) => r.json()).catch(() => null);
+
+  const subs = subsRes && subsRes.success ? (subsRes.data || []) : [];
+  const match = subs.find((s) =>
+    s.payer_username === user.username &&
+    (s.status === "active" || s.status === "trialing") &&
+    (planId === null || s.plan_id === planId)
+  );
+
+  return {
+    subscribed: !!match,
+    status: match?.status ?? null,
+    plan: match?.plan_name ?? null,
+    current_period_end: match?.current_period_end ?? null,
+    cancel_at_period_end: match?.cancel_at_period_end ?? false
+  };
+}
+
+export async function verifyUser(auth, userBase) {
   if (!auth || !auth.startsWith("Bearer ")) return null;
   const me = await fetch(`${userBase}/api/v2/user/info`, {
     headers: { Authorization: auth, Accept: "application/json" }
@@ -48,46 +88,18 @@ export const subscribe = {
 
     const userBase = env.MPI_USER_BASE || "https://bastion.mypayindia.sbs";
     const payBase = env.MPI_PAY_BASE || "https://mypayindia.com";
-    const planId = 5;
     const secret = env.MPI_SECRET_KEY;
 
     if (url.pathname === "/status" && request.method === "GET") {
       const user = await verifyUser(request.headers.get("Authorization"), userBase);
       if (!user) return subJson({ subscribed: false, error: "unauthorized" }, 401, origin);
-      const username = user.username;
-
-      if (ALWAYS_SUBSCRIBED_IDS.includes(user.id)) {
-        return subJson({
-          subscribed: true,
-          status: "active",
-          plan: "Complimentary",
-          current_period_end: null,
-          cancel_at_period_end: false
-        }, 200, origin);
-      }
-
-      const subsRes = await fetch(`${payBase}/api/v2/pay/subscriptions`, {
-        headers: { Authorization: `Bearer ${secret}`, Accept: "application/json" }
-      }).then((r) => r.json()).catch(() => null);
-
-      const subs = subsRes && subsRes.success ? (subsRes.data || []) : [];
-      const match = subs.find((s) =>
-        s.payer_username === username &&
-        (s.status === "active" || s.status === "trialing") &&
-        (planId === null || s.plan_id === planId)
-      );
-
-      return subJson({
-        subscribed: !!match,
-        status: match?.status ?? null,
-        plan: match?.plan_name ?? null,
-        current_period_end: match?.current_period_end ?? null,
-        cancel_at_period_end: match?.cancel_at_period_end ?? false
-      }, 200, origin);
+      const plan = resolvePlan(url.searchParams.get("plan"));
+      return subJson(await subscriptionStatus(user, env, plan.id), 200, origin);
     }
 
     if (url.pathname === "/subscribe" && request.method === "POST") {
-      if (!planId) return subJson({ error: "no plan configured" }, 500, origin);
+      const body = await request.json().catch(() => null);
+      const plan = resolvePlan(body?.plan);
       const username = (await verifyUser(request.headers.get("Authorization"), userBase))?.username ?? null;
 
       const res = await fetch(`${payBase}/api/v2/pay/create`, {
@@ -98,9 +110,9 @@ export const subscribe = {
           Accept: "application/json"
         },
         body: JSON.stringify({
-          plan_id: planId,
-          return_url: env.RETURN_URL || "https://mypayindia.sbs/iotm/button",
-          ...(username ? { order_id: `clicker-${username}` } : {})
+          plan_id: plan.id,
+          return_url: env[plan.returnVar] || plan.returnUrl,
+          ...(username ? { order_id: `${plan.order}-${username}` } : {})
         })
       }).then((r) => r.json()).catch(() => null);
 

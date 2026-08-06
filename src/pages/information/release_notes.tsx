@@ -14,6 +14,13 @@ type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '22',
+    date: '6 Aug 2026',
+    notes: [
+      <>New thing: <Link to="/i/clanker">MyClankerIndia preview</Link>, which can do tasks akin to MyCLiIndia, only with a conversational large language model. Oh, and you gotta cough up some Innovative Rupees</>
+    ]
+  },
+  {
     version: '21a',
     date: '2 Aug 2026',
     notes: [

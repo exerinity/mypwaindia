@@ -29,6 +29,8 @@
 @import "utils.css";
 @import "cli.css";
 @import "cli_drawer.css";
+@import "agent.css";
+@import "clanker_drawer.css";
 @import "settings.css";
 @import "theme_panel.css";
 @import "iotm_button.css";

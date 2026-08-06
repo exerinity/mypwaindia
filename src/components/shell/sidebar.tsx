@@ -19,6 +19,7 @@ import {
   SettingsIcon,
   ExternalIcon,
   TerminalIcon,
+  SparkleIcon,
 } from '../ui/icons.tsx';
 
 const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
@@ -58,6 +59,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/settings', label: 'Settings', icon: SettingsIcon },
       { to: '/i/flow/mci', label: 'MyCLiIndia', icon: TerminalIcon, hideInScambait: true },
+      { to: '/i/clanker', label: 'MyClankerIndia', icon: SparkleIcon, hideInScambait: true, requireAuth: true },
     ],
     scambaitTitle: 'Control',
     defaultTitle: 'MyPWAIndia',

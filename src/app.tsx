@@ -28,6 +28,7 @@ const SessionsPage = lazy(() => import('./flow/pages/sessions.tsx'));
 const IotmButtonPage = lazy(() => import('./pages/iotm/button.tsx'));
 const IOTMPage = lazy(() => import('./pages/iotm/index.tsx'));
 const CLIPage = lazy(() => import('./pages/pwa/cli.tsx'));
+const AgentPage = lazy(() => import('./flow/pages/agent.tsx'));
 const MPTIPage = lazy(() => import('./flow/pages/toys.tsx'));
 const ReleaseNotesPage = lazy(() => import('./pages/information/release_notes.tsx'));
 const AcknowledgementsPage = lazy(() => import('./pages/information/acknowledgements.tsx'));
@@ -104,6 +105,7 @@ export default function App() {
       <Route path="/account/payment-links" element={<Navigate to="/i/flow/links" replace />} />
       <Route path="/account/subscriptions" element={<Navigate to="/subscriptions" replace />} />
       <Route path="/news" element={<Navigate to="/i/news" replace />} />
+      <Route path="/i/flow/agent" element={<Navigate to="/i/clanker" replace />} />
       <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
@@ -146,6 +148,7 @@ export default function App() {
           <Route path="/account/history" element={<HistoryPage />} />
           <Route path="/account/history/simple" element={<SimpleHistoryPage />} />
           <Route path="/i/flow/sessions" element={<SessionsPage />} />
+          <Route path="/i/clanker" element={<AgentPage />} />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
           <Route path="/i/flow/links" element={<LinksPage />} />
           <Route path="/i/flow/links/claim" element={<Navigate to="/i/flow/links" replace />} />

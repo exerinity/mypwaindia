@@ -1,16 +1,19 @@
 import { useState, useRef, useEffect, useSyncExternalStore } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/auth_ctx.tsx';
 import { useSettings } from '../../context/settings_ctx.tsx';
-import { CliTerminal } from './cli_terminal.tsx';
-import { TerminalIcon, ChevronDown, CloseIcon, ExternalIcon } from '../ui/icons.tsx';
-import { clearLines, consumeDrawerOpenRequest, CLI_DRAWER_OPEN_EVENT } from '../../utils/cli_store.ts';
+import { ClankerChat } from './clanker_chat.tsx';
+import { SparkleIcon, ChevronDown, CloseIcon, ExternalIcon } from '../ui/icons.tsx';
+import { resetAgentThread } from '../../api/agent.ts';
+import { clearItems, consumeDrawerOpenRequest, CLANKER_DRAWER_OPEN_EVENT } from '../../utils/agent_store.ts';
 import { announceDrawerOpen, announceDrawerClosed, subscribeDrawers, getOpenDrawer } from '../../utils/drawer_bus.ts';
-import '../../styles/cli_drawer.css';
+import '../../styles/clanker_drawer.css';
 
 const CLOSE_MS = 200;
 
-export function CliDrawer() {
+export function ClankerDrawer() {
   const { settings } = useSettings();
+  const { active } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -19,15 +22,16 @@ export function CliDrawer() {
   const [entered, setEntered] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const onCliPage = location.pathname === '/i/flow/mci' || location.pathname.startsWith('/i/flow/mci/');
-  const hidden = !settings.cliDrawer || onCliPage;
+  const onClankerPage = location.pathname === '/i/clanker';
+  const hidden = !settings.clankerDrawer || onClankerPage;
+  const stacked = settings.cliDrawer;
 
   const openDrawerId = useSyncExternalStore(subscribeDrawers, getOpenDrawer);
-  const otherOpen = openDrawerId !== null && openDrawerId !== 'cli';
+  const otherOpen = openDrawerId !== null && openDrawerId !== 'clanker';
 
   useEffect(() => () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
-    announceDrawerClosed('cli');
+    announceDrawerClosed('clanker');
   }, []);
 
   useEffect(() => {
@@ -41,26 +45,26 @@ export function CliDrawer() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setOpen(false);
     setClosing(false);
-    announceDrawerClosed('cli');
+    announceDrawerClosed('clanker');
   }, [hidden]);
 
   useEffect(() => {
     function onOpenRequest() {
       consumeDrawerOpenRequest();
       if (closeTimer.current) clearTimeout(closeTimer.current);
-      announceDrawerOpen('cli');
+      announceDrawerOpen('clanker');
       setClosing(false);
       setMinimized(false);
       setOpen(true);
     }
     if (consumeDrawerOpenRequest()) onOpenRequest();
-    window.addEventListener(CLI_DRAWER_OPEN_EVENT, onOpenRequest);
-    return () => window.removeEventListener(CLI_DRAWER_OPEN_EVENT, onOpenRequest);
+    window.addEventListener(CLANKER_DRAWER_OPEN_EVENT, onOpenRequest);
+    return () => window.removeEventListener(CLANKER_DRAWER_OPEN_EVENT, onOpenRequest);
   }, []);
 
   function openDrawer() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
-    announceDrawerOpen('cli');
+    announceDrawerOpen('clanker');
     setClosing(false);
     setMinimized(false);
     setOpen(true);
@@ -76,8 +80,13 @@ export function CliDrawer() {
     closeTimer.current = setTimeout(() => {
       setOpen(false);
       setClosing(false);
-      announceDrawerClosed('cli');
+      announceDrawerClosed('clanker');
     }, CLOSE_MS);
+  }
+
+  function wipe() {
+    clearItems();
+    if (active) resetAgentThread(active.token).catch(() => {});
   }
 
   if (settings.scambait) return null;
@@ -87,38 +96,38 @@ export function CliDrawer() {
   return (
     <>
       <button
-        className={`cli-launcher${launcherOut ? ' cli-launcher--out' : ''}`}
+        className={`clanker-launcher${stacked ? ' clanker-launcher--stacked' : ''}${launcherOut ? ' clanker-launcher--out' : ''}`}
         onClick={openDrawer}
-        title="Open MyCLiIndia"
-        aria-label="Open MyCLiIndia"
+        title="Open MyClankerIndia"
+        aria-label="Open MyClankerIndia"
         aria-hidden={launcherOut}
         tabIndex={launcherOut ? -1 : 0}
       >
-        <TerminalIcon size={22} />
+        <SparkleIcon size={22} />
       </button>
 
       {open && !hidden && (
-        <div className={`cli-drawer${minimized ? ' cli-drawer--min' : ''}${closing ? ' cli-drawer--closing' : ''}`}>
+        <div className={`clanker-drawer${minimized ? ' clanker-drawer--min' : ''}${closing ? ' clanker-drawer--closing' : ''}`}>
           <div
-            className="cli-drawer-header"
+            className="clanker-drawer-header"
             onClick={() => { if (minimized) setMinimized(false); }}
           >
-            <span className="cli-drawer-icon"><TerminalIcon size={17} /></span>
-            <span className="cli-drawer-title">MyCLiIndia</span>
-            <div className="cli-drawer-actions" onClick={(e) => e.stopPropagation()}>
-              <button className="cli-drawer-btn cli-drawer-btn--text" onClick={clearLines} title="Clear terminal history">
+            <span className="clanker-drawer-icon"><SparkleIcon size={17} /></span>
+            <span className="clanker-drawer-title">MyClankerIndia</span>
+            <div className="clanker-drawer-actions" onClick={(e) => e.stopPropagation()}>
+              <button className="clanker-drawer-btn clanker-drawer-btn--text" onClick={wipe} title="Clear the conversation">
                 CLEAR
               </button>
               <button
-                className="cli-drawer-btn"
-                onClick={() => { closeDrawer(); navigate('/i/flow/mci'); }}
+                className="clanker-drawer-btn"
+                onClick={() => { closeDrawer(); navigate('/i/clanker'); }}
                 title="Open the full page"
                 aria-label="Open the full page"
               >
                 <ExternalIcon size={16} />
               </button>
               <button
-                className={`cli-drawer-btn${minimized ? ' cli-drawer-btn--flip' : ''}`}
+                className={`clanker-drawer-btn${minimized ? ' clanker-drawer-btn--flip' : ''}`}
                 onClick={() => setMinimized((m) => !m)}
                 title={minimized ? 'Expand' : 'Minimize'}
                 aria-label={minimized ? 'Expand' : 'Minimize'}
@@ -126,7 +135,7 @@ export function CliDrawer() {
                 <ChevronDown size={18} />
               </button>
               <button
-                className="cli-drawer-btn"
+                className="clanker-drawer-btn"
                 onClick={closeDrawer}
                 title="Close"
                 aria-label="Close"
@@ -135,8 +144,8 @@ export function CliDrawer() {
               </button>
             </div>
           </div>
-          <div className="cli-drawer-body">
-            <CliTerminal variant="drawer" active={!minimized && !closing} onExit={closeDrawer} />
+          <div className="clanker-drawer-body">
+            <ClankerChat variant="drawer" active={!minimized && !closing} />
           </div>
         </div>
       )}
@@ -144,4 +153,4 @@ export function CliDrawer() {
   );
 }
 
-export default CliDrawer;
+export default ClankerDrawer;

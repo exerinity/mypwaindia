@@ -112,6 +112,7 @@ export interface Settings {
   swEnabled: boolean;
   rememberInfo: boolean;
   cliDrawer: boolean;
+  clankerDrawer: boolean;
   copyLinkOnCreate: boolean;
 }
 
@@ -142,6 +143,7 @@ export const DEFAULT_SETTINGS: Settings = {
   swEnabled: false,
   rememberInfo: true,
   cliDrawer: false,
+  clankerDrawer: false,
   copyLinkOnCreate: true,
 };
 

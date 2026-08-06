@@ -119,6 +119,23 @@ export function AppearanceSettings() {
           </div>
 
           <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+          <h3 className="mt-0">MyClankerIndia drawer</h3>
+          <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+            MyClankerIndia is an AI agent that does the same sort of things as MyCLiIndia, but in plain English. Enabling this will show a drawer for a small chat window
+          </p>
+          <div className="row spread" style={{ alignItems: 'center' }}>
+            <span style={{ fontSize: '0.9rem' }}>Show the MyClankerIndia drawer</span>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={settings.clankerDrawer}
+                onChange={(e) => update({ clankerDrawer: e.target.checked })}
+              />
+              <span className="toggle-track" />
+            </label>
+          </div>
+
+          <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
           <h3 className="mt-0">Display name</h3>
           <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
             Change how your name appears throughout the app

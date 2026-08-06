@@ -107,6 +107,7 @@ export default defineConfig({
           if (id.match(/pages\/iotm\/button/)) return 'iotm_button';
           if (id.match(/pages\/iotm\//)) return 'iotm';
           if (id.match(/pages\/pwa\/cli|components\/cli\//)) return 'cli';
+          if (id.match(/pages\/agent|api\/agent|utils\/agent_store|components\/clanker\/|components\/ui\/markdown/)) return 'agent';
           if (id.match(/pages\/toys/)) return 'tools';
           if (id.match(/pages\/information\/(release_notes|acknowledgements|how_pwa)|pages\/account\/restrictions|pages\/connection/)) return 'info';
           if (id.match(/pages\/pwa\/(not_found|external_redirect)|pages\/theme_apply/)) return 'misc';

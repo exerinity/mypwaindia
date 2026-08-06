@@ -1,0 +1,350 @@
+/* =====================================================================
+   MyClankerIndia
+   ===================================================================== */
+
+.agent-shell {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 210px - var(--mpi-bottom-nav-h) - env(safe-area-inset-bottom));
+  min-height: 340px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.agent-scroll {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+}
+
+.agent-msg {
+  max-width: 78%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.agent-msg.user {
+  align-self: flex-end;
+  background: var(--brand);
+  color: var(--brand-text);
+  border-bottom-right-radius: 4px;
+}
+
+.agent-msg.agent {
+  align-self: flex-start;
+  background: var(--card-soft);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+  white-space: normal;
+}
+
+.agent-md > *:first-child {
+  margin-top: 0;
+}
+
+.agent-md > *:last-child {
+  margin-bottom: 0;
+}
+
+.agent-md p {
+  margin: 0 0 8px;
+}
+
+.agent-md ul,
+.agent-md ol {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+
+.agent-md li {
+  margin: 2px 0;
+}
+
+.agent-md code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  font-size: 0.85em;
+}
+
+.agent-md pre {
+  margin: 0 0 8px;
+  padding: 9px 11px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+
+.agent-md pre code {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: inherit;
+}
+
+.agent-md blockquote {
+  margin: 0 0 8px;
+  padding-left: 10px;
+  border-left: 2px solid var(--border);
+  color: var(--muted);
+}
+
+.agent-md .md-h {
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.agent-msg.failed {
+  align-self: flex-start;
+  background: transparent;
+  border: 1px solid var(--alert-error);
+  color: var(--alert-error);
+  border-bottom-left-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.agent-chip {
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+.agent-chip-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px;
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.agent-chip-head:hover {
+  color: var(--fg);
+  border-color: var(--muted);
+}
+
+.agent-chip-head .spinner {
+  width: 11px;
+  height: 11px;
+  border-width: 2px;
+}
+
+.agent-chip-head code {
+  font-size: 0.72rem;
+  opacity: 0.65;
+}
+
+.agent-chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success, #22c55e);
+  flex-shrink: 0;
+}
+
+.agent-chip.failed .agent-chip-dot {
+  background: var(--alert-error);
+}
+
+.agent-chip-body {
+  margin: 6px 0 0;
+  max-height: 260px;
+  overflow: auto;
+  font-size: 0.74rem;
+  line-height: 1.5;
+  background: var(--card-soft);
+  border: 1px solid var(--border);
+}
+
+.agent-confirm {
+  align-self: flex-start;
+  width: min(340px, 100%);
+  padding: 13px 15px;
+  background: var(--card-soft);
+  border: 1px solid var(--brand);
+  border-radius: var(--radius);
+}
+
+.agent-confirm.state-declined,
+.agent-confirm.state-expired {
+  border-color: var(--border);
+  opacity: 0.7;
+}
+
+.agent-confirm.state-approved {
+  border-color: var(--alert-success);
+}
+
+.agent-confirm-title {
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.agent-confirm-rows {
+  margin: 0 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.85rem;
+}
+
+.agent-confirm-rows > div {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.agent-confirm-rows dt {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.agent-confirm-rows dd {
+  margin: 0;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.agent-confirm-rows dd.agent-confirm-mono {
+  font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agent-confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.agent-confirm-actions .btn {
+  gap: 5px;
+}
+
+.agent-confirm-state {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.agent-thinking {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  padding: 2px 4px;
+}
+
+.agent-thinking .spinner {
+  width: 13px;
+  height: 13px;
+  border-width: 2px;
+}
+
+.agent-empty {
+  margin: auto;
+  max-width: 460px;
+  text-align: center;
+  color: var(--muted);
+  padding: 20px;
+}
+
+.agent-empty h2 {
+  margin: 0 0 8px;
+}
+
+.agent-empty p {
+  margin: 0 0 16px;
+}
+
+.agent-empty-disclaimer {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.agent-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.agent-suggestion {
+  padding: 6px 12px;
+  background: var(--pill-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--fg);
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.agent-suggestion:hover {
+  border-color: var(--brand);
+}
+
+.agent-composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+
+.agent-composer textarea {
+  min-height: 42px;
+  max-height: 140px;
+  resize: none;
+  padding: 10px 13px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.agent-composer .btn {
+  height: 42px;
+}
+
+.agent-locked-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--pill-bg);
+  color: var(--brand);
+  margin-bottom: 10px;
+}
+
+@media (max-width: 640px) {
+  .agent-msg {
+    max-width: 88%;
+  }
+
+  .agent-shell {
+    height: calc(100dvh - 240px - var(--mpi-bottom-nav-h) - env(safe-area-inset-bottom));
+  }
+}

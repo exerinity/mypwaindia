@@ -16,7 +16,11 @@
 	"vars": {
 		"MPI_USER_BASE": "https://bastion.mypayindia.sbs",
 		"MPI_PAY_BASE": "https://mypayindia.com",
-		"RETURN_URL": "https://mypayindia.sbs/iotm/button"
+		"RETURN_URL": "https://mypayindia.sbs/iotm/button",
+		"AGENT_RETURN_URL": "https://mypayindia.sbs/i/clanker"
+	},
+	"ai": {
+		"binding": "AI"
 	},
 	"kv_namespaces": [
 		{

@@ -18,6 +18,7 @@ const VerificationBanner = lazy(() => import('../account/verify_banner.tsx').the
 const ConfirmModal = lazy(() => import('../ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const BottomNav = lazy(() => import('./bottom_nav.tsx').then((m) => ({ default: m.BottomNav })));
 const CliDrawer = lazy(() => import('../cli/cli_drawer.tsx').then((m) => ({ default: m.CliDrawer })));
+const ClankerDrawer = lazy(() => import('../clanker/clanker_drawer.tsx').then((m) => ({ default: m.ClankerDrawer })));
 const ThemePanel = lazy(() => import('../../pages/settings/theme_panel.tsx').then((m) => ({ default: m.ThemePanel })));
 
 function ServiceWorkerUpdater({ autoUpdate, toast, syncLastVersion }: {
@@ -62,6 +63,7 @@ export function AppLayout() {
   const [scambaitConfirmOpen, setScambaitConfirmOpen] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [cliDrawerMounted, setCliDrawerMounted] = useState(false);
+  const [clankerDrawerMounted, setClankerDrawerMounted] = useState(false);
   const [themePanelOpen, setThemePanelOpen] = useState(false);
 
   useEffect(() => {
@@ -126,6 +128,12 @@ export function AppLayout() {
     const id = setTimeout(() => setCliDrawerMounted(false), 420);
     return () => clearTimeout(id);
   }, [settings.cliDrawer]);
+
+  useEffect(() => {
+    if (settings.clankerDrawer) { setClankerDrawerMounted(true); return; }
+    const id = setTimeout(() => setClankerDrawerMounted(false), 420);
+    return () => clearTimeout(id);
+  }, [settings.clankerDrawer]);
 
   useEffect(() => {
     const el = stickyTopRef.current;
@@ -262,6 +270,12 @@ export function AppLayout() {
     {cliDrawerMounted && !settings.scambait && (
       <Suspense fallback={null}>
         <CliDrawer />
+      </Suspense>
+    )}
+
+    {clankerDrawerMounted && !settings.scambait && (
+      <Suspense fallback={null}>
+        <ClankerDrawer />
       </Suspense>
     )}
 
