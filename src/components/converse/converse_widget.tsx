@@ -99,20 +99,20 @@ function Bubble({ message, mine, onEdit, onDelete }: {
   );
 }
 
-function EnrollScreen({ onEnrol, busy }: { onEnrol: () => void; busy: boolean }) {
+function EnrollScreen({ onEnroll, busy }: { onEnroll: () => void; busy: boolean }) {
   return (
     <div className="card converse-enroll">
-      <h2 style={{ marginTop: 0 }}>Enrol</h2>
+      <h2 style={{ marginTop: 0 }}>Enroll in MyPWAIndia Converse</h2>
       <p className="muted">
         Converse lets you message other enrolled MyPayIndia users by username. Enrolling registers your MyPayIndia username
         in the chat directory so other
         enrolled users can find and message you.
       </p>
-      <button className="btn" onClick={onEnrol} disabled={busy}>
-        {busy ? 'Enrolling...' : 'Enrol with my MyPayIndia account'}
+      <button className="btn" onClick={onEnroll} disabled={busy}>
+        {busy ? 'Enrolling...' : 'Enroll with my MyPayIndia account'}
       </button><br></br>
-      <small className="muted">This is independent of your MyPayIndia account and generally MyPayIndia.com as a whole and only usable here, on MyPWAIndia.</small><br></br>
-      <small className="muted">Converse could be removed at any time, so treat it entirely as an experimental feature.</small><br></br>
+      <small className="muted">This is independent of your MyPayIndia account and generally MyPayIndia.com as a whole and only usable here, on MyPWAIndia</small><br></br>
+      <small className="muted">Converse could be removed at any time, so treat it entirely as an experimental feature</small><br></br>
     </div>
   );
 }
@@ -193,13 +193,13 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
     }
   }
 
-  async function handleEnrol() {
+  async function handleEnroll() {
     setEnrolling(true);
     try {
       await enrollChat(token);
       await statusQ.refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not enrol');
+      toast.error(err instanceof Error ? err.message : 'Could not enroll');
     } finally {
       setEnrolling(false);
     }
@@ -233,7 +233,7 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
     try {
       const result = await lookupChatUser(token, target);
       if (!result.enrolled) {
-        toast.error('That person isn\'t enrolled in Converse yet! Why not ask them to enrol?');
+        toast.error('That person isn\'t enrolled in Converse yet! Why not ask them to enroll?');
         return;
       }
       await sendMessage(token, target, text);
@@ -321,7 +321,7 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
     return (
       <div className={pad}>
         {showHeader && <h1 className="mt-0">Converse</h1>}
-        <EnrollScreen onEnrol={handleEnrol} busy={enrolling} />
+        <EnrollScreen onEnroll={handleEnroll} busy={enrolling} />
       </div>
     );
   }
@@ -373,7 +373,7 @@ export function ChatWidget({ variant, showHeader = true, routePeer, onSelectPeer
         </div>
 
         <div className="mpi-converse-nav-footer">
-          <button className="btn ghost compact" onClick={handleLeave}>Unenrol from Converse</button>
+          <button className="btn ghost compact" onClick={handleLeave}>Unenroll from Converse</button>
         </div>
       </div>
 
