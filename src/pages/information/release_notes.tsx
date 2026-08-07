@@ -18,8 +18,8 @@ export const RELEASES: Release[] = [
     date: '6 Aug 2026',
     notes: [
       { h3: 'Big stuff' },
-      <>New: <Link to="/i/clanker">MyClankerIndia preview</Link>, which can do tasks akin to MyCLiIndia, only with a conversational large language model. You can chat with it, it can execute commands for you, and it's also really wonky right now. Oh, and you gotta cough up some Innovative Rupees</>,
-      <>New: <Link to="/i/chat">MyChatIndia</Link>. This was an experiment on its own two legs that lasted about a week and I mushed and frankensteined it into the PWA. For now, you can't really do much except send texts to other enrolled users. No paywall on this one</>,
+      <>New: <Link to="/i/clanker">MyPWAIndia Clanker preview</Link>, which can do tasks akin to MyCLiIndia, only with a conversational large language model. You can chat with it, it can execute commands for you, and it's also really wonky right now. Oh, and you gotta cough up some Innovative Rupees</>,
+      <>New: <Link to="/i/converse">MyPWAIndia Converse</Link>. This was an experiment on its own two legs that lasted about a week and I mushed and frankensteined it into the PWA. For now, you can't really do much except send texts to other enrolled users. No paywall on this one</>,
       { p: <>These two services are entirely independent of MyPayIndia and run on the PWA backend. Also, these two services have new drawers which you can activate in <Link to="/settings/appearance">appearance settings</Link></> },
       { h3: 'Other stuff' },
       'Categories in the sidebar can now be collapsed and expanded',
