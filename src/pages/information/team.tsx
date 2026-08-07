@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useCachedQuery } from '../../hooks/cached_query.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { getTeam } from '../../api/flow.js';
@@ -10,19 +10,38 @@ import { TeamMemberCard, avatarConductor, type TeamMember } from '../../componen
 export default function TeamPage() {
   usePageTitle('Meet the team');
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [searchParams] = useSearchParams();
+  const highlight = (searchParams.get('highlight') ?? '').trim().toLowerCase();
+  const highlightRef = useRef<HTMLDivElement>(null);
+  const scrolledFor = useRef<string | null>(null);
   const { data, loading, error } = useCachedQuery<{ team: TeamMember[] }>('team', () => getTeam() as Promise<{ team: TeamMember[] }>, []);
   const team = data?.team || [];
   const current = team.filter((m) => (m.status ?? 'current') === 'current');
   const past = team.filter((m) => m.status === 'past');
   const specialThanks = team.filter((m) => m.status === 'special_thanks');
 
+  useEffect(() => {
+    if (!highlight || scrolledFor.current === highlight) return;
+    const el = highlightRef.current;
+    if (!el) return;
+    scrolledFor.current = highlight;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [highlight, data]);
+
   const renderGrid = (members: TeamMember[]) => (
     <div className="grid cols-team">
-      {members.map((m) => (
-        <div key={m.name} className="card team-card">
-          <TeamMemberCard m={m} onAvatarClick={setSelectedMember} />
-        </div>
-      ))}
+      {members.map((m) => {
+        const highlighted = !!highlight && m.name.trim().toLowerCase() === highlight;
+        return (
+          <div
+            key={m.name}
+            ref={highlighted ? highlightRef : undefined}
+            className={`card team-card${highlighted ? ' team-card--highlight' : ''}`}
+          >
+            <TeamMemberCard m={m} onAvatarClick={setSelectedMember} />
+          </div>
+        );
+      })}
     </div>
   );
 

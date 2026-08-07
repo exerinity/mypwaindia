@@ -318,6 +318,18 @@
 .team-card > .roles-toggle-label {
   align-self: stretch;
 }
+.team-card--highlight {
+  animation: team-highlight 0.7s ease-in-out 3;
+  scroll-margin-block: calc(var(--mpi-header-h, 92px) + 16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-card--highlight {
+    animation: none;
+    border-color: var(--brand);
+  }
+}
+
 .team-status-heading {
   margin-top: 32px;
   margin-bottom: 14px;

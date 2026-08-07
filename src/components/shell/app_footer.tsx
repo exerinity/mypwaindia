@@ -8,13 +8,11 @@ export function AppFooter({ version, style }: { version: string; style?: CSSProp
       {' | '}
       by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a>
       {' | '}
-      {window.location.hostname === 'mypayindia.sbs' ? 'production' : 'staging'}
-      {' | '}
-      <a href="https://legacy.mpi.exerinity.gay" target="_blank" rel="noopener noreferrer">legacy</a>
-      {' | '}
       <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer">MyPayIndia.com</a>
       {' | '}
       <Link to="/i/acknowledgements">acknowledgements</Link>
+      {' | '}
+      <Link to="/i/privacy">privacy</Link>
     </p>
   );
 }

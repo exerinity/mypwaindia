@@ -29,6 +29,17 @@
   50%       { opacity: 0.2; }
 }
 
+@keyframes team-highlight {
+  0%, 100% {
+    border-color: var(--border);
+    background: var(--card);
+  }
+  50% {
+    border-color: var(--brand);
+    background: color-mix(in srgb, var(--brand) 22%, var(--card));
+  }
+}
+
 @keyframes modal-pop {
   from { opacity: 0; transform: translateY(6px) scale(0.98); }
   to   { opacity: 1; transform: translateY(0)   scale(1); }
