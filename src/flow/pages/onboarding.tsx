@@ -4,20 +4,19 @@ import { useAuth } from '../../context/auth_ctx.tsx';
 import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { RELEASES } from '../../pages/information/release_notes.tsx';
-import { useToast } from '../../context/toast_ctx.tsx';
 import { ExternalIcon } from '../../components/ui/icons.tsx';
 
 const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
 const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 
 export default function OnboardingPage() {
-  usePageTitle('Welcome to the MyPayIndia PWA');
   const { active } = useAuth();
   const navigate = useNavigate();
   const [leaving, setLeaving] = useState(false);
   const [alreadyAccepted] = useState(() => storageGet<number>(KEYS.ONBOARD, 0) === 1);
   const [showAnyway, setShowAnyway] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(true);
+  usePageTitle(alreadyAccepted && !showAnyway ? null : 'Welcome to the MyPayIndia PWA');
 
   if (!active) {
     return <Navigate to="/i/flow/login" replace />;
@@ -29,7 +28,7 @@ export default function OnboardingPage() {
         <ConfirmModal
           open={confirmOpen}
           fullscreen
-          title="Just making sure..."
+          title="Show the onboarding flow again?"
           message="You've already accepted the onboarding message. Would you like to see it again anyway?"
           confirmLabel="Yeah gimme"
           cancelLabel="Nah"
@@ -78,6 +77,9 @@ export default function OnboardingPage() {
             By using this app, you agree to the{' '}
             <a href="https://mypayindia.com/terms" target="_blank" rel="noreferrer">terms and conditions</a>,
             constituted by your initial registration
+          </li>
+          <li>
+            MyPWAIndia is open source here: <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noreferrer">exerinity/mypwaindia</a>
           </li>
           <li>
             <strong>This app is still an early work in progress</strong>
