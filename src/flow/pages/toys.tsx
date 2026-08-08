@@ -9,7 +9,7 @@ import { Skeleton } from '../../components/ui/status.tsx';
 
 const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const HoldButton = lazy(() => import('../../components/ui/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { storageSet, KEYS } from '../../utils/storage.ts';
 
 const TOAST_KINDS = ['info', 'success', 'error', 'warning'] as const;
@@ -18,10 +18,11 @@ type ToastKind = (typeof TOAST_KINDS)[number];
 export default function MPTIPage() {
   usePageTitle('MyPWAToysIndia');
   const toast = useToast();
+  const navigate = useNavigate();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalTitle, setModalTitle] = useState('Good morning');
-  const [modalContent, setModalContent] = useState('Coca-Cola or Pepsi?');
+  const [modalTitle, setModalTitle] = useState('Transaction analysis');
+  const [modalContent, setModalContent] = useState('Conclusion: u r not sigma');
   const [modalFullscreen, setModalFullscreen] = useState(false);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -33,10 +34,12 @@ export default function MPTIPage() {
   const [skelHeight, setSkelHeight] = useState(14);
   const [skelRadius, setSkelRadius] = useState(4);
 
-  const [toastMessage, setToastMessage] = useState('Ding dong');
+  const [toastMessage, setToastMessage] = useState('TOAST! Toast! Where is the toast???');
   const [toastKind, setToastKind] = useState<ToastKind>('info');
   const [toastTimeout, setToastTimeout] = useState(4000);
   const [toastAction, setToastAction] = useState(false);
+
+  const [flowPath, setFlowPath] = useState('');
 
   const [showRestrictionsBanner, setShowRestrictionsBanner] = useState(false);
   const [showOnboardingBanner, setShowOnboardingBanner] = useState(false);
@@ -67,6 +70,12 @@ export default function MPTIPage() {
         setTimeout(() => window.location.reload(), 600);
       },
     });
+  }
+
+  function triggerFlow() {
+    const path = flowPath.trim().replace(/^\/+/, '').replace(/^i\/flow\//, '').replace(/\/+$/, '');
+    if (!path) return;
+    navigate(`/i/flow/${path}`);
   }
 
   function fireToast() {
@@ -146,7 +155,7 @@ export default function MPTIPage() {
         <h2 className="mt-0">Hold button</h2>
         <p className="mt-0">Confirmed {holdCount} time{holdCount === 1 ? '' : 's'}</p>
         <div className="btn-row">
-          <HoldButton onConfirm={() => setHoldCount((c) => c + 1)}>Go</HoldButton>
+          <HoldButton onConfirm={() => setHoldCount((c) => c + 1)}>Hold this button</HoldButton>
         </div>
       </div>
 
@@ -180,6 +189,7 @@ export default function MPTIPage() {
 
       <div className="card mb-2">
         <h2 className="mt-0">Simulate update</h2>
+        <p className="mt-0 mb-0">This simulates when a new version is available; it does not actually update. What this does is falsifies the latest version key and simulates the regular toast flow</p>
         <div className="btn-row">
           <button onClick={simulateUpdater}>Go</button>
         </div>
@@ -194,6 +204,21 @@ export default function MPTIPage() {
             <label htmlFor={id} style={{ margin: 0 }}>{label}</label>
           </div>
         ))}
+      </div>
+
+      <div className="card mb-2">
+        <h2 className="mt-0">Trigger flow</h2>
+        <p className="mt-0 mb-0">(/i/flow conductors and pages)</p>
+        <label>Task</label>
+        <input
+          type="text"
+          value={flowPath}
+          onChange={(e) => setFlowPath(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') triggerFlow(); }}
+        />
+        <div className="btn-row">
+          <button onClick={triggerFlow} disabled={!flowPath.trim()}>Go</button>
+        </div>
       </div>
 
       <div className="card">
@@ -228,7 +253,7 @@ export default function MPTIPage() {
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={modalTitle || 'Untitled'}
+        title={modalTitle}
         fullscreen={modalFullscreen}
       >
         <p style={{ whiteSpace: 'pre-wrap' }}>{modalContent}</p>
@@ -237,9 +262,8 @@ export default function MPTIPage() {
       <ConfirmModal
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
-        onConfirm={() => { toast.success('Thank you!'); setConfirmOpen(false); }}
-        title="Confirm?"
-        message="Yay or nay?"
+        onConfirm={() => { toast.success('Confirmed!'); setConfirmOpen(false); }}
+        message="Do you promise my son that you're going to give him free Robux?"
         confirmLabel={confirmHold ? 'Confirm (hold)' : 'Confirm'}
         holdConfirm={confirmHold}
       />
