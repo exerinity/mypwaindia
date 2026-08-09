@@ -1,4 +1,4 @@
-export type DrawerId = 'cli' | 'clanker' | 'chat';
+export type DrawerId = 'cli';
 
 const DRAWER_STATE_EVENT = 'mpi-drawer-state';
 

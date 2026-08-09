@@ -6,7 +6,7 @@ export interface SubscriptionStatus {
   cancel_at_period_end?: boolean;
 }
 
-export type SubscribePlan = 'clicker' | 'agent';
+export type SubscribePlan = 'clicker';
 
 export async function checkSubscription(token: string, plan: SubscribePlan = 'clicker'): Promise<SubscriptionStatus> {
   const { SUBSCRIBE_BASE } = await import('./config.js');
