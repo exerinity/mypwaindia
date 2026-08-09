@@ -30,8 +30,6 @@ export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/i/release_notes', label: 'App release notes' },
   { value: '/i/acknowledgements', label: 'Acknowledgements' },
   { value: '/i/command', label: 'MyCLiIndia' },
-  { value: '/i/clanker', label: 'Clanker' },
-  { value: '/i/converse', label: 'Converse' },
   { value: '/iotm', label: 'Investment Opportunities™' },
   { value: '/iotm/button', label: 'The Button' },
 ];
@@ -114,8 +112,6 @@ export interface Settings {
   swEnabled: boolean;
   rememberInfo: boolean;
   cliDrawer: boolean;
-  clankerDrawer: boolean;
-  chatDrawer: boolean;
   copyLinkOnCreate: boolean;
 }
 
@@ -146,8 +142,6 @@ export const DEFAULT_SETTINGS: Settings = {
   swEnabled: false,
   rememberInfo: true,
   cliDrawer: false,
-  clankerDrawer: false,
-  chatDrawer: false,
   copyLinkOnCreate: true,
 };
 

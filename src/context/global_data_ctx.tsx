@@ -4,7 +4,6 @@ import { useAuth } from './auth_ctx.tsx';
 import { useSettings } from './settings_ctx.tsx';
 import { getRestrictions } from '../api/user.js';
 import { useRefreshTimer } from '../hooks/refresh_timer.js';
-import { refreshConversations } from '../utils/converse_store.ts';
 
 export interface UserInfo {
   balance: number;
@@ -90,11 +89,6 @@ export function GlobalDataProvider({ children }: { children: ReactNode }) {
     return p;
   }, [active]);
 
-  const fetchChatMessages = useCallback(async () => {
-    if (!active) return;
-    await refreshConversations(active.token).catch(() => {});
-  }, [active]);
-
   useEffect(() => {
     if (!active) {
       setUserInfo(null);
@@ -107,11 +101,10 @@ export function GlobalDataProvider({ children }: { children: ReactNode }) {
     setRestrictionsLoading(true);
     fetchUserInfo();
     fetchRestrictions();
-    fetchChatMessages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active?.token]);
 
-  const { secondsLeft, refreshNow } = useRefreshTimer([fetchUserInfo, fetchRestrictions, fetchChatMessages], {
+  const { secondsLeft, refreshNow } = useRefreshTimer([fetchUserInfo, fetchRestrictions], {
     enabled: settings.autoRefresh && !!active,
     pauseWhenHidden: settings.autoRefreshOnlyWhenFocused,
   });

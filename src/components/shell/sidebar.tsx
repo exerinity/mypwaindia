@@ -3,7 +3,6 @@ import { lazy, Suspense, useState, useSyncExternalStore } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
-import { subscribeChat, getUnreadSnapshot } from '../../utils/converse_store.ts';
 import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import {
   CloseIcon,
@@ -21,8 +20,6 @@ import {
   SettingsIcon,
   ExternalIcon,
   TerminalIcon,
-  SparkleIcon,
-  ChatBubbleIcon,
   ChevronDown,
 } from '../ui/icons.tsx';
 
@@ -64,8 +61,6 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/settings', label: 'Settings', icon: SettingsIcon },
       { to: '/i/command', label: 'MyCLiIndia', icon: TerminalIcon, hideInScambait: true },
-      { to: '/i/clanker', label: 'Clanker', icon: SparkleIcon, hideInScambait: true, requireAuth: true },
-      { to: '/i/converse', label: 'Converse', icon: ChatBubbleIcon, hideInScambait: true, requireAuth: true },
     ],
     scambaitTitle: 'Control',
     defaultTitle: 'MyPWAIndia',
@@ -78,7 +73,6 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
   const { settings } = useSettings();
   const { active } = useAuth();
   const scambait = settings.scambait;
-  const chatUnread = useSyncExternalStore(subscribeChat, getUnreadSnapshot);
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set(storageGet<string[]>(KEYS.SIDEBAR_COLLAPSED, [])));
 
   function toggleGroup(title: string) {
@@ -139,15 +133,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                 {visibleItems.map((item) => {
                   const Icon = item.icon;
                   const label = !active && item.loggedOutLabel ? item.loggedOutLabel : item.label;
-                  const badge = item.to === '/i/converse' && chatUnread > 0 ? chatUnread : null;
-                  const iconNode = Icon && (
-                    badge ? (
-                      <span className="mpi-sidebar-icon-wrap">
-                        <Icon />
-                        <span className="mpi-sidebar-badge">{badge > 9 ? '9+' : badge}</span>
-                      </span>
-                    ) : <Icon />
-                  );
+                  const iconNode = Icon && <Icon />;
                   if (item.external) {
                     return (
                       <a
