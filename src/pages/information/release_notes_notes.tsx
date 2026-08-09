@@ -11,6 +11,16 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '22a',
+    date: '9 Aug 2026',
+    notes: [
+      { h3: 'Clanker and Converse have been completely removed'},
+      'That didn\'t last long... but I don\'t really see how either of those were relevant to literally anything, all it really did was overburden myself with more shit. Anyone who subscribed to Clanker has been issued a full refund.',
+      { h3: 'Other stuff' },
+      'When viewing a payment link logged out, clicking "Log in to claim" should now actually bring you back to the interstitial after logging in'
+    ]
+  },
+  {
     version: '22',
     date: '6 Aug 2026',
     notes: [
