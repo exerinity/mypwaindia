@@ -26,8 +26,7 @@ function subJson(data, status, origin) {
 
 const ALWAYS_SUBSCRIBED_IDS = [228];
 export const PLANS = {
-  clicker: { id: 5, order: "clicker", returnVar: "RETURN_URL", returnUrl: "https://mypayindia.sbs/iotm/button" },
-  agent: { id: 7, order: "agent", returnVar: "AGENT_RETURN_URL", returnUrl: "https://mypayindia.sbs/i/clanker" }
+  clicker: { id: 5, order: "clicker", returnVar: "RETURN_URL", returnUrl: "https://mypayindia.sbs/iotm/button" }
 };
 
 export function resolvePlan(name) {
