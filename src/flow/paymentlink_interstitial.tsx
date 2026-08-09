@@ -32,12 +32,15 @@ export default function ClaimModal() {
 
   function handleClose() {
     if (bgLoc) navigate(-1);
-    else navigate('/account');
+    else navigate('/');
   }
 
   async function handleClaim() {
     if (!active) {
-      navigate('/i/flow/login');
+      const back = location.pathname + location.search;
+      navigate(`/i/flow/login?goto=${encodeURIComponent(back)}`, {
+        state: bgLoc ? { backgroundLocation: bgLoc } : undefined,
+      });
       return;
     }
     setClaiming(true);

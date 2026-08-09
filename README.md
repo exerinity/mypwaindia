@@ -117,7 +117,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 
 ### Payment links
 - **/i/flow/links** - links home, list & create & revoke
-- **/i/flow/links/interim/:token** - claim/inspect a link by token
+- **/i/flow/links/interstitial/:token** - claim/inspect a link by token
 
 (**/links**, **/links/claim** and **/links/claim/:token** still work as compatibility redirects)
 

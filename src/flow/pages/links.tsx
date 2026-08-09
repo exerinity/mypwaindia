@@ -106,7 +106,7 @@ export default function LinksPage() {
       const fromUrl = url.searchParams.get('token');
       if (fromUrl) t = fromUrl;
     } catch {}
-    navigate(`/i/flow/links/interim/${encodeURIComponent(t)}`, { state: { backgroundLocation: location } });
+    navigate(`/i/flow/links/interstitial/${encodeURIComponent(t)}`, { state: { backgroundLocation: location } });
   }
 
   async function create() {
@@ -176,7 +176,7 @@ export default function LinksPage() {
     }
   }
   function inspectLink(token: string) {
-    navigate(`/i/flow/links/interim/${encodeURIComponent(token)}`, { state: { backgroundLocation: location } });
+    navigate(`/i/flow/links/interstitial/${encodeURIComponent(token)}`, { state: { backgroundLocation: location } });
   }
 
   async function copyUrl(url: string) {

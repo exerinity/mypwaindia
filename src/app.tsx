@@ -28,8 +28,6 @@ const SessionsPage = lazy(() => import('./flow/pages/sessions.tsx'));
 const IotmButtonPage = lazy(() => import('./pages/iotm/button.tsx'));
 const IOTMPage = lazy(() => import('./pages/iotm/index.tsx'));
 const CLIPage = lazy(() => import('./pages/pwa/cli.tsx'));
-const AgentPage = lazy(() => import('./flow/pages/agent.tsx'));
-const ChatPage = lazy(() => import('./flow/pages/converse.tsx'));
 const MPTIPage = lazy(() => import('./flow/pages/toys.tsx'));
 const ReleaseNotesPage = lazy(() => import('./pages/information/release_notes.tsx'));
 const AcknowledgementsPage = lazy(() => import('./pages/information/acknowledgements.tsx'));
@@ -63,12 +61,12 @@ function TransactionRedirect() {
 function PayLinkRedirect() {
   const { search } = useLocation();
   const token = new URLSearchParams(search).get('token');
-  return <Navigate to={token ? `/i/flow/links/interim/${encodeURIComponent(token)}` : '/account'} replace />;
+  return <Navigate to={token ? `/i/flow/links/interstitial/${encodeURIComponent(token)}` : '/account'} replace />;
 }
 
 function ClaimLinkRedirect() {
   const { token } = useParams();
-  return <Navigate to={`/i/flow/links/interim/${encodeURIComponent(token ?? '')}`} replace />;
+  return <Navigate to={`/i/flow/links/interstitial/${encodeURIComponent(token ?? '')}`} replace />;
 }
 
 
@@ -80,11 +78,6 @@ function ThemeRedirect() {
 function MerchantRedirect() {
   const { '*': splat } = useParams();
   return <ExternalRedirectPage to={`https://mypayindia.com/merchant/${splat ?? ''}`} />;
-}
-
-function ChatRedirect() {
-  const { peer } = useParams();
-  return <Navigate to={`/i/converse/${peer ?? ''}`} replace />;
 }
 
 export default function App() {
@@ -112,11 +105,8 @@ export default function App() {
       <Route path="/account/payment-links" element={<Navigate to="/i/flow/links" replace />} />
       <Route path="/account/subscriptions" element={<Navigate to="/subscriptions" replace />} />
       <Route path="/news" element={<Navigate to="/i/news" replace />} />
-      <Route path="/i/flow/agent" element={<Navigate to="/i/clanker" replace />} />
       <Route path="/i/flow/mci" element={<Navigate to="/i/command" replace />} />
       <Route path="/i/flow/mci/focus" element={<Navigate to="/i/command/focus" replace />} />
-      <Route path="/i/chat" element={<Navigate to="/i/converse" replace />} />
-      <Route path="/i/chat/:peer" element={<ChatRedirect />} />
       <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
@@ -160,9 +150,6 @@ export default function App() {
           <Route path="/account/history" element={<HistoryPage />} />
           <Route path="/account/history/simple" element={<SimpleHistoryPage />} />
           <Route path="/i/flow/sessions" element={<SessionsPage />} />
-          <Route path="/i/clanker" element={<AgentPage />} />
-          <Route path="/i/converse" element={<ChatPage />} />
-          <Route path="/i/converse/:peer" element={<ChatPage />} />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
           <Route path="/i/flow/links" element={<LinksPage />} />
           <Route path="/i/flow/links/claim" element={<Navigate to="/i/flow/links" replace />} />
@@ -177,6 +164,12 @@ export default function App() {
           <Route path="/iotm" element={<IOTMPage />} />
           <Route path="/i/flow/transaction:old/:id" element={<OldTransactionPage />} />
         </Route>
+
+        <Route path="/i/clanker" element={<Flowback />} />
+        <Route path="/i/converse" element={<Flowback />} />
+        <Route path="/i/converse/:peer" element={<Flowback />} />
+        <Route path="/i/chat" element={<Flowback />} />
+        <Route path="/i/chat/:peer" element={<Flowback />} />
 
         <Route path="/i/flow/*" element={<Flowback />} />
         <Route path="*" element={<NotFoundPage />} />
