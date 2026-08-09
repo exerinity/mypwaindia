@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ExternalIcon } from '../../components/ui/icons.js';
-const UPDATED = '8th August 2026';
+const UPDATED = '9th August 2026';
 
 const LOCAL_KEYS = [
   { key: 'mpi_accounts', what: 'your saved accounts, up to 10, including usernames, display info and the session token for each' },
@@ -20,16 +20,6 @@ const SERVER_STORES = [
     name: 'Settings sync',
     where: 'Cloudflare KV',
     what: 'if you turn it on, your app settings (theme, accent, layout preferences) are stored against your MyPayIndia user id, 64KB maximum. turning sync off or deleting them removes the stored copy',
-  },
-  {
-    name: <><Link to="/i/clanker">MyPWAIndia Clanker</Link></>,
-    where: 'Cloudflare KV',
-    what: 'your conversation thread is kept for 7 days, capped at the most recent 40 messages, keyed to your user id. clearing the thread in the app deletes it immediately. usage is rate-limited to 20 messages per 12 hours',
-  },
-  {
-    name: <Link to="/i/converse">MyPWAIndia Converse</Link>,
-    where: 'Cloudflare Durable Object',
-    what: 'messages you send are stored on the server so the person you sent them to can receive them. they are NOT (yet, maybe ever) end-to-end encrypted',
   },
 ];
 
@@ -110,21 +100,10 @@ export default function PrivacyPage() {
       </p>
 
       <h2 className="mt-0 mb-0">What is stored on MyPWAIndia's side</h2>
-      <p className="mt-0 mb-0">Three things, all on Cloudflare:</p>
+      <p className="mt-0 mb-0">One thing, on Cloudflare:</p>
       <div className="mt-0">
         <Rows items={SERVER_STORES.map((s) => ({ title: <>{s.name} ({s.where})</>, body: s.what }))} />
       </div>
-
-      <h2 className="mt-0 mb-0">Clanker and Workers AI</h2>
-      <p className="mt-0 mb-0">
-        The agent runs on Cloudflare Workers AI using <code>@cf/openai/gpt-oss-120b</code>, an open-weights model running on
-        Cloudflare's hardware. Your messages are not sent to OpenAI, or to any other AI vendor.
-      </p>
-      <p className="mt-0 mb-0">
-        What the model can see: what you type, and the results of any tools it runs for you. Those tools can read your
-        balance, transaction history, payment links, restrictions and active sessions. Anything that actually moves money
-        stops and asks you to confirm first
-      </p>
 
       <h2 className="mt-0 mb-0">Analytics</h2>
       <p className="mt-0 mb-0">
@@ -134,8 +113,8 @@ export default function PrivacyPage() {
 
       <h2 className="mt-0 mb-0">Cloudflare</h2>
       <p className="mt-0 mb-0">
-        This whole thing runs on Cloudflare: the static files, the Worker, KV, the Durable Object behind Converse and the AI
-        binding behind Clanker. Worker observability logging is switched on, so Cloudflare receives the usual request
+        This whole thing runs on Cloudflare: the static files, the Worker and KV. Worker observability logging is switched
+        on, so Cloudflare receives the usual request
         metadata (IP address, timestamp, requested path, user agent, response status) for requests to this app. Cloudflare acts as the processor here and{' '}
         <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
           their own privacy policy <ExternalIcon size={12} />
@@ -156,8 +135,6 @@ export default function PrivacyPage() {
         items={[
           { title: 'Everything stored locally', body: <>delete all storage in <Link to="/settings/data">settings</Link></> },
           { title: 'Synced settings', body: <>turn sync off or delete them, also in <Link to="/settings/data">settings</Link></> },
-          { title: 'Your Clanker thread', body: <>clear it from <Link to="/i/clanker">the agent</Link> itself</> },
-          { title: 'Converse messages', body: <>delete them individually by clicking Delete</> },
           { title: 'Your MyPayIndia account', body: <><a href="https://mypayindia.com/account/settings">log in to MyPayIndia</a></> },
         ]}
       />
