@@ -65,7 +65,8 @@ export default function LoginPage() {
       const from = (location.state as { from?: { pathname?: string; search?: string; hash?: string } })?.from;
       const dest = goto ?? (from ? (from.pathname ?? '/dash') + (from.search ?? '') + (from.hash ?? '') : '/dash');
       const onboarded = storageGet<number>(KEYS.ONBOARD, 0) === 1;
-      await login({ username, password, totp_code: totp || undefined, env }, onboarded || isScambait ? dest : '/i/flow/onboarding');
+      const claiming = dest.startsWith('/i/flow/links/interstitial/');
+      await login({ username, password, totp_code: totp || undefined, env }, onboarded || isScambait || claiming ? dest : '/i/flow/onboarding');
     } catch (e) {
       const err = e as { code?: number };
       if (err.code === 1002) {
