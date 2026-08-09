@@ -16,11 +16,7 @@
 	"vars": {
 		"MPI_USER_BASE": "https://bastion.mypayindia.sbs",
 		"MPI_PAY_BASE": "https://mypayindia.com",
-		"RETURN_URL": "https://mypayindia.sbs/iotm/button",
-		"AGENT_RETURN_URL": "https://mypayindia.sbs/i/clanker"
-	},
-	"ai": {
-		"binding": "AI"
+		"RETURN_URL": "https://mypayindia.sbs/iotm/button"
 	},
 	"kv_namespaces": [
 		{
@@ -28,12 +24,8 @@
 			"id": "9aedd75612ed4a0b855bb042ab1da3b2"
 		}
 	],
-	"durable_objects": {
-		"bindings": [
-			{ "name": "CHAT_MAILBOX", "class_name": "ChatMailbox" }
-		]
-	},
 	"migrations": [
-		{ "tag": "v1", "new_sqlite_classes": ["ChatMailbox"] }
+		{ "tag": "v1", "new_sqlite_classes": ["ChatMailbox"] },
+		{ "tag": "v2", "deleted_classes": ["ChatMailbox"] }
 	]
 }
