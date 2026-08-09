@@ -223,36 +223,31 @@
   width: 100%;
 }
 
-.mpi-shell:has(.mpi-settings-layout),
-.mpi-shell:has(.mpi-converse-layout--page) {
+.mpi-shell:has(.mpi-settings-layout) {
   height: calc(100dvh - var(--mpi-bottom-nav-h) - env(safe-area-inset-bottom));
   overflow: hidden;
 }
 
-.mpi-body:has(.mpi-settings-layout),
-.mpi-body:has(.mpi-converse-layout--page) {
+.mpi-body:has(.mpi-settings-layout) {
   overflow: hidden;
 }
 
 @media (min-width: 901px) {
-  .mpi-body:has(.mpi-settings-layout) .mpi-sidebar,
-  .mpi-body:has(.mpi-converse-layout--page) .mpi-sidebar {
+  .mpi-body:has(.mpi-settings-layout) .mpi-sidebar {
     position: static;
     align-self: stretch;
     max-height: none;
   }
 }
 
-.mpi-main:has(.mpi-settings-layout),
-.mpi-main:has(.mpi-converse-layout--page) {
+.mpi-main:has(.mpi-settings-layout) {
   padding: 0;
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
 
-.mpi-wrap:has(.mpi-settings-layout),
-.mpi-wrap:has(.mpi-converse-layout--page) {
+.mpi-wrap:has(.mpi-settings-layout) {
   max-width: 100%;
   margin: 0;
   flex: 1;
