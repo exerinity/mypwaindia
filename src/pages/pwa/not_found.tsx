@@ -8,9 +8,6 @@ export default function NotFoundPage() {
   return (
     <>
       <h1 className="mt-0">404</h1>
-      <p className="mt-0 mb-0">
-        The resource or page you're looking for no longer exists, never existed, or you may not be allowed to view it.
-      </p>
       <div className="btn-row">
         <Link to="/dash" className="btn">Back to dashboard</Link>
         <a
@@ -19,14 +16,7 @@ export default function NotFoundPage() {
           target="_blank"
           rel="noreferrer"
         >Try on MyPayIndia.com <ExternalIcon size={11} /></a>
-        <a
-          href={`https://legacy.mpi.exerinity.gay${pathname}`}
-          className="btn secondary"
-          target="_blank"
-          rel="noreferrer"
-        >Try on legacy app <ExternalIcon size={11} /></a>
       </div>
-      <small><i>(if you're certain there should be something here, refresh the page with CTRL+Shift+R, the cached router might be out of date)</i></small>
     </>
   );
 }

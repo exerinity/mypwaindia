@@ -9,8 +9,6 @@ At the start of May, this remake was born. The original PWA was becoming quite d
 
 MyPWAIndia (usually) achieves quad-100 scores on Lighthouse, works on anything with a modern JavaScript engine, and uses near-to-naught RAM. For, what it does, I guess...? It is hosted entirely on Cloudflare Workers (one Worker serves both the frontend and a backend proxy)
 
-However, *this is chunky*. Both in footprint and feel. The previous one is a lot more minimalist, lightweight, and mobile-friendly. You can still use it here: https://legacy.mpi.exerinity.gay/
-
 ## About this repo
 This repo is not intended for self-hosting or contributing; it is meant to just show how the app works. Please do not create pull requests, they will not be merged.
 
