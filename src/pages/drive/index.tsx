@@ -214,13 +214,7 @@ export default function DrivePage() {
         className="slide"
       />
 
-      <div className="team-heading-row">
-        <h1 className="mt-0">Drive</h1>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <Link to="/i/drive/new" className="btn secondary compact">Upload</Link>
-          <Link to="/i/drive/trash" className="btn secondary compact">Trash</Link>
-        </div>
-      </div>
+      <h1 className="mt-0">Drive</h1>
       {userQuery.data && (
         <p className="mb-0 mt-0">
           {formatBytes(userQuery.data.space_used)} used with {formatBytes(userQuery.data.space_available)} available

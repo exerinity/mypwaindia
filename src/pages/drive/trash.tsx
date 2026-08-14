@@ -106,17 +106,7 @@ export default function DriveTrashPage() {
         className="slide"
       />
 
-      <div className="team-heading-row">
-        <h1 className="mt-0">Trash</h1>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {files.length > 0 && (
-            <button className="secondary compact" onClick={restoreAll} disabled={working !== null}>
-              {working === 'restore-all' ? 'Restoring...' : 'Restore all'}
-            </button>
-          )}
-          <Link to="/i/drive" className="btn secondary compact">Back</Link>
-        </div>
-      </div>
+      <h1 className="mt-0">Trash</h1>
 
       {filesQuery.loading && !filesQuery.data ? (
         <div className="table-wrap">
