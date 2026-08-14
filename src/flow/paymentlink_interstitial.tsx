@@ -8,6 +8,7 @@ import { getUserInfo } from '../api/user.js';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/ui/status.tsx';
 import { Modal } from '../components/ui/modal.tsx';
+import { ExternalIcon } from '../components/ui/icons.tsx';
 
 type LinkPreview = { creator?: { username: string }; amount: number; note?: string; created: string; status: string };
 
@@ -123,6 +124,15 @@ export default function ClaimModal() {
           <button onClick={handleClaim} disabled={claiming} style={{ width: '100%' }}>
             {claiming ? <><span className="spinner" /> Claiming...</> : active ? `Claim ${formatINR(data.amount)}` : 'Log in to claim'}
           </button>
+          <a
+            href={`https://mypayindia.com/pay/link?token=${encodeURIComponent(token)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn secondary"
+            style={{ width: '100%', marginTop: 10, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+          >
+            Claim on MyPayIndia.com <ExternalIcon />
+          </a>
         </>
       )}
     </Modal>
