@@ -21,11 +21,13 @@ import {
   ExternalIcon,
   TerminalIcon,
   ChevronDown,
+  ShareIcon,
+  DriveIcon,
 } from '../ui/icons.tsx';
 
 const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
 
-interface NavItem { to?: string; href?: string; label: string; loggedOutLabel?: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; hideInScambait?: boolean; scambaitOnly?: boolean; requireAuth?: boolean }
+interface NavItem { to?: string; href?: string; label: string; loggedOutLabel?: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; hideInScambait?: boolean; scambaitOnly?: boolean; requireAuth?: boolean; loggedOutOnly?: boolean }
 interface NavGroup { title: string; items: NavItem[]; hideInScambait?: boolean; scambaitTitle?: string; defaultTitle?: string; loggedOutTitle?: string }
 
 const NAV_GROUPS: NavGroup[] = [
@@ -55,6 +57,13 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/i/release_notes', label: 'App release notes', icon: NotesIcon },
       { href: 'https://mypayindia.com/', label: 'MyPayIndia.com', icon: LinkIcon, external: true },
     ],
+  },
+  {
+    title: 'More from MyPayIndia',
+    items: [
+      { href: 'https://drive.mypayindia.com', label: 'MyDriveIndia', icon: DriveIcon, loggedOutOnly: true, external: true },
+      { href: 'https://share.mypayindia.com', label: 'MyShareIndia', icon: ShareIcon, loggedOutOnly: true, external: true },
+    ]
   },
   {
     title: 'App management',
@@ -106,6 +115,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
 
           const visibleItems = group.items.filter((item) => {
             if (item.requireAuth && !active) return false;
+            if (item.loggedOutOnly && active) return false;
             if (scambait && item.hideInScambait) return false;
             if (!scambait && item.scambaitOnly) return false;
             return true;

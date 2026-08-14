@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { LogoutIcon } from '../components/ui/icons.tsx';
@@ -17,6 +17,10 @@ export default function LogoutPage() {
   const nextName = nextAccount ? nextAccount.username : null;
 
   const bgLoc = (location.state as { backgroundLocation?: unknown } | null)?.backgroundLocation;
+
+  if (!active) {
+    return <Navigate to="/dash" replace />;
+  }
 
   function handleClose() {
     if (bgLoc) navigate(-1);

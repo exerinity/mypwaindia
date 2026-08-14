@@ -40,6 +40,10 @@ const SettingsApplyPage = lazy(() => import('./flow/pages/settings_apply.tsx'));
 const NotFoundPage = lazy(() => import('./pages/pwa/not_found.tsx'));
 const Flowback = lazy(() => import('./flow/shell_fallback.tsx'));
 const ExternalRedirectPage = lazy(() => import('./pages/pwa/external_redirect.tsx'));
+const DrivePage = lazy(() => import('./pages/drive/index.tsx'));
+const DriveUploadPage = lazy(() => import('./pages/drive/new.tsx'));
+const DriveTrashPage = lazy(() => import('./pages/drive/trash.tsx'));
+const DriveSharePage = lazy(() => import('./pages/drive/share.tsx'));
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -98,6 +102,8 @@ export default function App() {
       <Route path="/team" element={<Navigate to="/i/team" replace />} />
       <Route path="/docs" element={<ExternalRedirectPage to="https://mypayindia.com/docs" />} />
       <Route path="/app" element={<ExternalRedirectPage to="https://mypayindia.com/app" />} />
+      <Route path="/cards" element={<ExternalRedirectPage to="https://mypayindia.com/cards" />} />
+      <Route path="/news/premium" element={<ExternalRedirectPage to="https://mypayindia.com/news/premium" />} />
       <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/auth/register" schnell />} />
       <Route path="/account/transfers" element={<Navigate to="/account/history" replace />} />
       <Route path="/account/transfers/:id" element={<TransactionRedirect />} />
@@ -108,6 +114,7 @@ export default function App() {
       <Route path="/i/flow/mci" element={<Navigate to="/i/command" replace />} />
       <Route path="/i/flow/mci/focus" element={<Navigate to="/i/command/focus" replace />} />
       <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
+      <Route path="/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
 
@@ -124,6 +131,7 @@ export default function App() {
         <Route path="/i/team/globe" element={<TeamMapPage />} />
         <Route path="/i/news" element={<NewsPage />} />
         <Route path="/i/news/:slug" element={<NewsItemPage />} />
+        <Route path="/i/drive/share/:uuid" element={<DriveSharePage />} />
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
         <Route path="/settings/sessions" element={<Navigate to="/i/flow/sessions" replace />} />
@@ -162,6 +170,9 @@ export default function App() {
           <Route path="/i/flow/button" element={<Navigate to="/iotm/button" replace />} />
           <Route path="/iotm/button" element={<IotmButtonPage />} />
           <Route path="/iotm" element={<IOTMPage />} />
+          <Route path="/i/drive" element={<DrivePage />} />
+          <Route path="/i/drive/new" element={<DriveUploadPage />} />
+          <Route path="/i/drive/trash" element={<DriveTrashPage />} />
           <Route path="/i/flow/transaction:old/:id" element={<OldTransactionPage />} />
         </Route>
 

@@ -14,7 +14,12 @@ export default function NewsPage() {
 
   return (
     <>
-      <h1 className="mt-0">MyPayIndia News</h1>
+      <div className="team-heading-row">
+        <h1 className="mt-0">MyPayIndia News</h1>
+        <a href="https://mypayindia.com/news/premium" target="_blank" rel="noopener noreferrer" className="btn secondary compact">
+          Premium News <ExternalIcon size={11} />
+        </a>
+      </div>
       <p className="mt-0 mb-0">This is where we announce the most recent additions to MyPayIndia and surrounding services!</p>
 
       {loading && !data ? (

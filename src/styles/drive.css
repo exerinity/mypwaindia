@@ -1,0 +1,24 @@
+.drive-file-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+}
+
+.drive-file-link:hover {
+  background: none;
+  text-decoration: underline;
+  box-shadow: none;
+}
+
+button.drive-file-link:disabled {
+  background: none !important;
+  color: var(--muted) !important;
+}

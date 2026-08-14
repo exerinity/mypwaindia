@@ -1,10 +1,12 @@
 import { bastion } from "./proxy.js";
 import { subscribe } from "./button_subscribe.js";
 import { handle_news } from "./news.js";
+import { handleDrive } from "./drive.js";
 
 const API_ROOTS = ["/api", "/iotm", "/accountservices", "/api/pwa", "/staging"];
 const SUBSCRIBE_PREFIX = "/i/subscribe";
 const NEWS_PATH = "/i/api/pwa/meta/news";
+const DRIVE_PREFIX = "/i/pwa/drive";
 
 export default {
   async fetch(req, env) {
@@ -14,6 +16,9 @@ export default {
     }
     if (url.pathname === NEWS_PATH) {
       return handle_news();
+    }
+    if (url.pathname === DRIVE_PREFIX || url.pathname.startsWith(DRIVE_PREFIX + "/")) {
+      return handleDrive(req);
     }
     if (url.pathname === SUBSCRIBE_PREFIX || url.pathname.startsWith(SUBSCRIBE_PREFIX + "/")) {
       url.pathname = url.pathname.slice(SUBSCRIBE_PREFIX.length) || "/";
