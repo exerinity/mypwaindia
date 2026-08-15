@@ -73,6 +73,11 @@ function ClaimLinkRedirect() {
   return <Navigate to={`/i/flow/links/interstitial/${encodeURIComponent(token ?? '')}`} replace />;
 }
 
+function DriveShareRedirect() {
+  const { hash } = useParams();
+  return <Navigate to={`/i/drive/share/${encodeURIComponent(hash ?? '')}`} replace />;
+}
+
 
 function ThemeRedirect() {
   const { search } = useLocation();
@@ -95,6 +100,7 @@ export default function App() {
     <>
     {(!modalPath || bgLoc) && <Routes location={bgLoc || location}>
       <Route path="/pay/link" element={<PayLinkRedirect />} />
+      <Route path="/share/:hash" element={<DriveShareRedirect />} />
 
       <Route path="/login" element={<LoginRedirect />} />
 

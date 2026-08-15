@@ -20,6 +20,7 @@ import { Empty, ErrorBox, Skeleton } from '../../components/ui/status.tsx';
 import { Modal } from '../../components/ui/modal.tsx';
 import { ConfirmModal } from '../../components/ui/confirm_modal.tsx';
 import { FloatingInput } from '../../components/ui/floating_input.tsx';
+import { CopyIcon } from '../../components/ui/icons.tsx';
 import { drivePathError, drivePreviewRoute, fileName, formatBytes, formatDriveDate } from './drive_helpers.ts';
 
 export default function DrivePage() {
@@ -100,7 +101,7 @@ export default function DrivePage() {
     try {
       const uuid = file.share_uuid || await shareDriveFile(active!.token, file.path);
       setShareTarget({ ...file, share_uuid: uuid });
-      setShareUrl(`${window.location.origin}/i/drive/share/${encodeURIComponent(uuid)}`);
+      setShareUrl(`${window.location.origin}/share/${encodeURIComponent(uuid)}`);
       if (!file.share_uuid) await filesQuery.refetch();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Could not share the file');
@@ -127,12 +128,12 @@ export default function DrivePage() {
     }
   }
 
-  async function copyShareUrl() {
+  async function copyShareLink(url: string) {
     try {
-      await navigator.clipboard.writeText(shareUrl);
-      toast.success('OK, copied link');
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied');
     } catch {
-      toast.error('Could not copy the share link');
+      toast.error('Could not copy the link');
     }
   }
 
@@ -150,6 +151,10 @@ export default function DrivePage() {
       setWorking(null);
     }
   }
+
+  const drivePortalShareUrl = shareTarget?.share_uuid
+    ? `https://drive.mypayindia.com/share/${encodeURIComponent(shareTarget.share_uuid)}`
+    : '';
 
   return (
     <>
@@ -174,16 +179,33 @@ export default function DrivePage() {
       <Modal className="slide" open={!!shareTarget} onClose={() => setShareTarget(null)} title="Share file">
         <p className="mt-0">Anyone with this link can view and download {shareTarget ? fileName(shareTarget.path) : 'this file'}</p>
         <FloatingInput
+          id="drive-portal-share-url"
+          label="MyDriveIndia link"
+          type="url"
+          value={drivePortalShareUrl}
+          readOnly
+          onFocus={(event) => event.target.select()}
+          trailing={
+            <button type="button" onClick={() => copyShareLink(drivePortalShareUrl)} aria-label="Copy drive.mypayindia.com link" title="Copy drive.mypayindia.com link">
+              <CopyIcon />
+            </button>
+          }
+        />
+        <FloatingInput
           id="drive-share-url"
-          label="Share link"
+          label="MyPWAIndia link"
           type="url"
           value={shareUrl}
           readOnly
           onFocus={(event) => event.target.select()}
+          trailing={
+            <button type="button" onClick={() => copyShareLink(shareUrl)} aria-label="Copy share link" title="Copy share link">
+              <CopyIcon />
+            </button>
+          }
         />
         <div className="modal-actions">
           <button className="secondary" onClick={() => setShareTarget(null)}>Close</button>
-          <button onClick={copyShareUrl}>Copy link</button>
           {shareTarget?.share_uuid && (
             <button
               className="danger"
@@ -217,7 +239,10 @@ export default function DrivePage() {
       <h1 className="mt-0">Drive</h1>
       {userQuery.data && (
         <p className="mb-0 mt-0">
-          {formatBytes(userQuery.data.space_used)} used with {formatBytes(userQuery.data.space_available)} available
+          {formatBytes(userQuery.data.space_used)} used with {formatBytes(userQuery.data.space_available)} allocated
+          {' '}({userQuery.data.space_available > 0 ? Math.round((userQuery.data.space_used / userQuery.data.space_available) * 100) : 0}%).
+          {' '}{formatBytes(Math.max(userQuery.data.space_available - userQuery.data.space_used, 0))} left
+          {' '}({userQuery.data.space_available > 0 ? Math.round((Math.max(userQuery.data.space_available - userQuery.data.space_used, 0) / userQuery.data.space_available) * 100) : 0}%)
         </p>
       )}
 
