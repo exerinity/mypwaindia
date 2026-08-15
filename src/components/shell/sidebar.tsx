@@ -87,6 +87,7 @@ const DRIVE_NAV_GROUPS: NavGroup[] = [
       { to: '/i/drive', label: 'Home', end: true, icon: DriveIcon },
       { to: '/i/drive/trash', label: 'Trash', icon: TrashIcon },
       { to: '/i/drive/new', label: 'Upload file', icon: PlusIcon },
+      { href: 'https://drive.mypayindia.com', label: 'MyDriveIndia', icon: DriveIcon, external: true },
     ],
   },
 ];
