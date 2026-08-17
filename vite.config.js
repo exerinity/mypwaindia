@@ -37,6 +37,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,woff2,png,svg,ico}'],
         globIgnores: [
           '**/mpi_globe-*.js',
+          '**/mpi_three-*.js',
           '**/mpi_fluid_video_player-*.js',
           '**/mpi_fluid-player-*.js',
           '**/mpi_fluid-player-*.css',
@@ -113,7 +114,8 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (id.includes('/node_modules/fluid-player/node_modules/three/')) return 'node/mpi_fluid-three';
-            if (/[\\/]node_modules[\\/](three|three-globe|three-render-objects|three-conic-polygon-geometry|three-geojson-geometry|three-slippy-map-globe|globe\.gl|react-globe\.gl|react-kapsule|kapsule|accessor-fn|index-array-by|tinycolor2|frame-ticker|data-bind-mapper|h3-js|earcut|float-tooltip|@tweenjs[\\/]tween\.js|d3-[^\\/]+)[\\/]/.test(id)) return 'globe';
+            if (/[\\/]node_modules[\\/]three[\\/]/.test(id)) return 'node/mpi_three';
+            if (/[\\/]node_modules[\\/](three-globe|three-render-objects|three-conic-polygon-geometry|three-geojson-geometry|three-slippy-map-globe|globe\.gl|react-globe\.gl|react-kapsule|kapsule|accessor-fn|index-array-by|tinycolor2|frame-ticker|data-bind-mapper|h3-js|earcut|float-tooltip|@tweenjs[\\/]tween\.js|d3-[^\\/]+)[\\/]/.test(id)) return 'globe';
             const parts = id.slice(id.lastIndexOf('node_modules/') + 'node_modules/'.length).split('/');
             return `node/mpi_${parts[0][0] === '@' ? `${parts[0].slice(1)}-${parts[1]}` : parts[0]}`;
           }

@@ -8,10 +8,21 @@
   "description": "MyPayIndia responsive web app",
   "scripts": {
     "dev": "vite",
+    "dev:host": "vite --host",
     "build": "vite build",
-    "minify": "vite build --config vite.config.minify.js",
+    "build:watch": "vite build --watch",
+    "build:single": "vite build --config vite.config.minify.js",
+    "build:all": "vite build && vite build --config vite.config.minify.js",
     "preview": "vite preview",
-    "minirun": "vite preview --config vite.config.minify.js"
+    "preview:fresh": "vite build && vite preview",
+    "preview:single": "vite preview --config vite.config.minify.js",
+    "typecheck": "tsc --noEmit",
+    "check": "tsc --noEmit && vite build",
+    "check:chunks": "vite build && node scripts/check-chunks.mjs",
+    "worker:dev": "vite build && wrangler dev",
+    "worker:logs": "wrangler tail",
+    "deploy:dry": "tsc --noEmit && vite build && wrangler deploy --dry-run",
+    "deploy": "tsc --noEmit && vite build && wrangler deploy"
   },
   "dependencies": {
     "@twemoji/api": "^17.0.3",

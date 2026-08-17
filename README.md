@@ -1,5 +1,5 @@
-# [MyPWAIndia](https://mypayindia.sbs)
-The React MyPayIndia responsive web app is an official albeit alternative client for using [MyPayIndia](https://mypayindia.com). 
+# [MyPWAIndia](https://mypayindia.sbs) (React version)
+The React MyPayIndia responsive web app is [the official](https://mypayindia.com/app) albeit alternative client for using [MyPayIndia](https://mypayindia.com). 
 
 > [!WARNING]
 This **is not** the source code for MyPayIndia, the website.
@@ -53,7 +53,7 @@ The app is built with Vite. The output is deliberately **unminified** (no source
 The entry point is `/i/scripts/mypwaindia_index-[hash].js` and everything else is split into named chunks (`/i/scripts/mpi_[name]-[hash].js`). Chunking is done artisanally in [vite.config.js](vite.config.js) via `manualChunks`, matching on file paths:
 
 - Pages are grouped by feature: `flow` (onboarding), `transfers`, `history` (history/statements/old transactions), `links`, `social` (leaderboard/team), `teammap`, `settings`, `iotm` & `iotm_button`, `cli` (MyCLiIndia), `tools` (MyPWAToysIndia), `client` (dashboard/account), `scambait`, `subs`, `info` and `misc`
-- `node_modules` gets its own chunk, except for the three.js/globe.gl stack which is quarantined into `globe` (c. 4.9MB & only needed by the [team globe](https://mypayindia.sbs/i/team/globe))
+- `node_modules` gets its own chunk. The globe.gl stack is quarantined into `globe`, while its shared three.js runtime lives in `node/mpi_three`; both stay lazy, and photo-sphere previews can use three.js without downloading the globe-only libraries
 - Context providers live in `bastion`, the status components in `stability`
 - Anything that doesn't match a rule (news, sessions, the flow modals) gets an automatic chunk named after its module
 
@@ -170,5 +170,51 @@ I have no idea what they mean inside Twitter, but **i** means both internal and 
 
 Read [app.tsx](src/app.tsx) for a full map
 
+# Run yourself
+If you have Bun:
+
+```
+git clone https://github.com/exerinity/mypwaindia.git && cd mypwaindia && bun i && bun run dev
+```
+
+or npm:
+
+```
+git clone https://github.com/exerinity/mypwaindia.git && cd mypwaindia && npm i && npm run dev
+```
+
+And to build:
+
+```
+bun run build # or npm
+```
+
+Run that:
+```
+bun run preview # or npm
+```
+## Building minified
+```
+bun run minify
+```
+
+This spits out a humongous index.html with absolutely everything in `dist-minify/`. Again, I really recommend you *don't* use this unless you're in a warzone and need an ultimately portable version of the app, or have a grudge against lazy loading scripts...
+
+### Run that minified file
+```
+bun run minirun
+```
+
+### Build and preview in the same go
+```
+bun run stage
+```
+
+## Running the backend:
+```
+wrangler dev
+```
+
+*See all scripts in [package.json](package.json)*
 # License
 [MIT](LICENSE)
