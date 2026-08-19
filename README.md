@@ -53,7 +53,7 @@ The app is built with Vite. The output is deliberately **unminified** (no source
 The entry point is `/i/scripts/mypwaindia_index-[hash].js` and everything else is split into named chunks (`/i/scripts/mpi_[name]-[hash].js`). Chunking is done artisanally in [vite.config.js](vite.config.js) via `manualChunks`, matching on file paths:
 
 - Pages are grouped by feature: `flow` (onboarding), `transfers`, `history` (history/statements/old transactions), `links`, `social` (leaderboard/team), `teammap`, `settings`, `iotm` & `iotm_button`, `cli` (MyCLiIndia), `tools` (MyPWAToysIndia), `client` (dashboard/account), `scambait`, `subs`, `info` and `misc`
-- `node_modules` gets its own chunk. The globe.gl stack is quarantined into `globe`, while its shared three.js runtime lives in `node/mpi_three`; both stay lazy, and photo-sphere previews can use three.js without downloading the globe-only libraries
+- `node_modules` gets its own chunk. The globe.gl stack is quarantined into `globe`, while its shared three.js runtime lives in `node/mpi_three`; both stay lazy
 - Context providers live in `bastion`, the status components in `stability`
 - Anything that doesn't match a rule (news, sessions, the flow modals) gets an automatic chunk named after its module
 

@@ -40,10 +40,6 @@ const SettingsApplyPage = lazy(() => import('./flow/pages/settings_apply.tsx'));
 const NotFoundPage = lazy(() => import('./pages/pwa/not_found.tsx'));
 const Flowback = lazy(() => import('./flow/shell_fallback.tsx'));
 const ExternalRedirectPage = lazy(() => import('./pages/pwa/external_redirect.tsx'));
-const DrivePage = lazy(() => import('./pages/drive/index.tsx'));
-const DriveUploadPage = lazy(() => import('./pages/drive/new.tsx'));
-const DriveTrashPage = lazy(() => import('./pages/drive/trash.tsx'));
-const DriveSharePage = lazy(() => import('./pages/drive/share.tsx'));
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -73,12 +69,6 @@ function ClaimLinkRedirect() {
   return <Navigate to={`/i/flow/links/interstitial/${encodeURIComponent(token ?? '')}`} replace />;
 }
 
-function DriveShareRedirect() {
-  const { hash } = useParams();
-  return <Navigate to={`/i/drive/share/${encodeURIComponent(hash ?? '')}`} replace />;
-}
-
-
 function ThemeRedirect() {
   const { search } = useLocation();
   return <Navigate to={`/i/flow/theme${search}`} replace />;
@@ -100,8 +90,6 @@ export default function App() {
     <>
     {(!modalPath || bgLoc) && <Routes location={bgLoc || location}>
       <Route path="/pay/link" element={<PayLinkRedirect />} />
-      <Route path="/share/:hash" element={<DriveShareRedirect />} />
-
       <Route path="/login" element={<LoginRedirect />} />
 
       <Route path="/leaderboard" element={<Navigate to="/i/leaderboard" replace />} />
@@ -137,7 +125,6 @@ export default function App() {
         <Route path="/i/team/globe" element={<TeamMapPage />} />
         <Route path="/i/news" element={<NewsPage />} />
         <Route path="/i/news/:slug" element={<NewsItemPage />} />
-        <Route path="/i/drive/share/:uuid" element={<DriveSharePage />} />
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
         <Route path="/settings/sessions" element={<Navigate to="/i/flow/sessions" replace />} />
@@ -176,9 +163,6 @@ export default function App() {
           <Route path="/i/flow/button" element={<Navigate to="/iotm/button" replace />} />
           <Route path="/iotm/button" element={<IotmButtonPage />} />
           <Route path="/iotm" element={<IOTMPage />} />
-          <Route path="/i/drive" element={<DrivePage />} />
-          <Route path="/i/drive/new" element={<DriveUploadPage />} />
-          <Route path="/i/drive/trash" element={<DriveTrashPage />} />
           <Route path="/i/flow/transaction:old/:id" element={<OldTransactionPage />} />
         </Route>
 

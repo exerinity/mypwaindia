@@ -37,19 +37,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,woff2,png,svg,ico}'],
         globIgnores: [
           '**/mpi_globe-*.js',
-          '**/mpi_three-*.js',
-          '**/mpi_fluid_video_player-*.js',
-          '**/mpi_fluid-player-*.js',
-          '**/mpi_fluid-player-*.css',
-          '**/mpi_fluid-three-*.js',
-          '**/mpi_hls.js-*.js',
-          '**/mpi_dashjs-*.js',
-          '**/mpi_es6-promise-*.js',
-          '**/mpi_global-*.js',
-          '**/mpi_photo-sphere-viewer-*.js',
-          '**/mpi_photo-sphere-viewer-*.css',
-          '**/mpi_videojs-vtt.js-*.js',
-          '**/fluid-icons-*.svg'
+          '**/mpi_three-*.js'
         ]
       },
       manifest: {
@@ -81,11 +69,6 @@ export default defineConfig({
         target: 'https://mypayindia.sbs',
         changeOrigin: true
       },
-      '/i/pwa/drive': {
-        target: 'https://drive.mypayindia.com',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/i\/pwa\/drive/, '/api')
-      },
       ...Object.fromEntries(
         ['/i/api', '/i/iotm', '/i/accountservices', '/i/api/pwa', '/i/staging'].map((prefix) => [prefix, {
           target: 'https://bastion.mypayindia.sbs',
@@ -113,7 +96,6 @@ export default defineConfig({
         assetFileNames: '[name]-[hash].[ext]',
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('/node_modules/fluid-player/node_modules/three/')) return 'node/mpi_fluid-three';
             if (/[\\/]node_modules[\\/]three[\\/]/.test(id)) return 'node/mpi_three';
             if (/[\\/]node_modules[\\/](three-globe|three-render-objects|three-conic-polygon-geometry|three-geojson-geometry|three-slippy-map-globe|globe\.gl|react-globe\.gl|react-kapsule|kapsule|accessor-fn|index-array-by|tinycolor2|frame-ticker|data-bind-mapper|h3-js|earcut|float-tooltip|@tweenjs[\\/]tween\.js|d3-[^\\/]+)[\\/]/.test(id)) return 'globe';
             const parts = id.slice(id.lastIndexOf('node_modules/') + 'node_modules/'.length).split('/');

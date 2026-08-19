@@ -53,7 +53,6 @@
   color: inherit;
   font: inherit;
   text-align: left;
-  text-decoration: none;
 }
 
 .mpi-sidebar-group-toggle:hover,
@@ -61,7 +60,6 @@
   background: none;
   color: inherit;
   transform: none;
-  text-decoration: none;
 }
 
 .mpi-sidebar-group-toggle:hover h4 {

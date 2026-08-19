@@ -22,9 +22,6 @@ import {
   TerminalIcon,
   ChevronDown,
   ShareIcon,
-  DriveIcon,
-  PlusIcon,
-  TrashIcon,
 } from '../ui/icons.tsx';
 
 const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
@@ -56,7 +53,6 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/i/leaderboard', label: 'Leaderboard', icon: TrophyIcon },
       { to: '/i/team', label: 'Meet the team', icon: TeamIcon },
       { to: '/i/news', label: 'News', icon: NewspaperIcon },
-      { to: '/i/drive', label: 'Drive', icon: DriveIcon, requireAuth: true },
       { to: '/i/release_notes', label: 'App release notes', icon: NotesIcon },
       { href: 'https://mypayindia.com/', label: 'MyPayIndia.com', icon: LinkIcon, external: true },
     ],
@@ -64,7 +60,6 @@ const NAV_GROUPS: NavGroup[] = [
   {
     title: 'More from MyPayIndia',
     items: [
-      { href: 'https://drive.mypayindia.com', label: 'MyDriveIndia', icon: DriveIcon, loggedOutOnly: true, external: true },
       { href: 'https://share.mypayindia.com', label: 'MyShareIndia', icon: ShareIcon, loggedOutOnly: true, external: true },
     ]
   },
@@ -80,27 +75,11 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-const DRIVE_NAV_GROUPS: NavGroup[] = [
-  {
-    title: 'MyDriveIndia',
-    items: [
-      { to: '/i/drive', label: 'Home', end: true, icon: DriveIcon },
-      { to: '/i/drive/trash', label: 'Trash', icon: TrashIcon },
-      { to: '/i/drive/new', label: 'Upload file', icon: PlusIcon },
-      { href: 'https://drive.mypayindia.com', label: 'MyDriveIndia', icon: DriveIcon, external: true },
-    ],
-  },
-];
-
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const location = useLocation();
   const { settings } = useSettings();
   const { active } = useAuth();
   const scambait = settings.scambait;
-  const backgroundPath = (location.state as { backgroundLocation?: { pathname?: string } } | null)?.backgroundLocation?.pathname;
-  const sidebarPath = backgroundPath ?? location.pathname;
-  const driveNavigation = sidebarPath === '/i/drive' || sidebarPath === '/i/drive/trash' || sidebarPath === '/i/drive/new';
-  const navGroups = driveNavigation ? DRIVE_NAV_GROUPS : NAV_GROUPS;
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set(storageGet<string[]>(KEYS.SIDEBAR_COLLAPSED, [])));
 
   function toggleGroup(title: string) {
@@ -129,12 +108,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
             <CloseIcon />
           </button>
         </div>
-        {driveNavigation && (
-          <NavLink to="/dash" className="mpi-sidebar-group-toggle" onClick={onClose}>
-            <h4>Back to MyPWAIndia</h4>
-          </NavLink>
-        )}
-        {navGroups.map((group) => {
+        {NAV_GROUPS.map((group) => {
           if (scambait && group.hideInScambait) return null;
 
           const visibleItems = group.items.filter((item) => {
@@ -190,11 +164,6 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                       end={item.end}
                       onClick={onClose}
                       className={({ isActive }) => {
-                        if (driveNavigation) {
-                          if (sidebarPath === item.to) return 'active';
-                          if (!item.end && sidebarPath.startsWith(`${item.to}/`)) return 'active active-parent';
-                          return '';
-                        }
                         if (!isActive) return '';
                         return location.pathname === item.to ? 'active' : 'active active-parent';
                       }}

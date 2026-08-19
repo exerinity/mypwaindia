@@ -89,7 +89,6 @@ const entry = require_one(chunks, 'entry', /^i\/scripts\/mypwaindia_index-[^/]+\
 const globe = require_one(chunks, 'globe', /^i\/scripts\/mpi_globe-[^/]+\.js$/);
 const shared_three = require_one(chunks, 'shared three.js', /^i\/scripts\/node\/mpi_three-[^/]+\.js$/);
 const team_map = require_one(chunks, 'team map', /^i\/scripts\/mpi_teammap-[^/]+\.js$/);
-const video_player = require_one(chunks, 'fluid video player', /^i\/scripts\/mpi_fluid_video_player-[^/]+\.js$/);
 
 enforce_budget(entry, 'Entry chunk', 64 * kib);
 enforce_budget(globe, 'Globe chunk', 4 * mib);
@@ -100,19 +99,6 @@ const application_chunks = chunks.filter((chunk) =>
 );
 for (const chunk of application_chunks) {
   enforce_budget(chunk, 'Application chunk', 256 * kib);
-}
-
-const vendor_budgets = [
-  ['Fluid Player', /^i\/scripts\/node\/mpi_fluid-player-[^/]+\.js$/, 640 * kib],
-  ['Fluid Player three.js', /^i\/scripts\/node\/mpi_fluid-three-[^/]+\.js$/, 2.5 * mib],
-  ['HLS.js', /^i\/scripts\/node\/mpi_hls\.js-[^/]+\.js$/, 2 * mib],
-  ['dash.js', /^i\/scripts\/node\/mpi_dashjs-[^/]+\.js$/, 1.25 * mib]
-];
-
-for (const [label, pattern, maximum] of vendor_budgets) {
-  const matches = find_chunks(chunks, pattern);
-  if (matches.length > 1) failures.push(`expected at most one ${label} chunk, found ${matches.length}`);
-  enforce_budget(matches[0], `${label} chunk`, maximum);
 }
 
 const initial_chunks = new Set();
@@ -130,8 +116,7 @@ if (initial_raw > mib) {
 }
 
 const lazy_only_patterns = [
-  ['3D stack', /^(?:i\/scripts\/mpi_(?:teammap|globe)-|i\/scripts\/node\/mpi_three-)/],
-  ['media player', /^(?:i\/scripts\/mpi_fluid_video_player-|i\/scripts\/node\/mpi_(?:fluid-player|fluid-three|hls\.js|dashjs|photo-sphere-viewer|videojs-vtt\.js)-)/]
+  ['3D stack', /^(?:i\/scripts\/mpi_(?:teammap|globe)-|i\/scripts\/node\/mpi_three-)/]
 ];
 for (const [label, pattern] of lazy_only_patterns) {
   const leaked = [...initial_chunks].filter((chunk) => pattern.test(chunk.path));
@@ -166,11 +151,6 @@ if (globe) {
   if (unexpected.length) {
     failures.push(`globe chunk has unexpected importers: ${unexpected.map((chunk) => chunk.path).join(', ')}`);
   }
-}
-
-const player_vendor = find_chunks(chunks, vendor_budgets[0][1])[0];
-if (video_player && player_vendor && !video_player.imports.includes(player_vendor)) {
-  failures.push(`Fluid video player does not statically import its isolated vendor chunk (${player_vendor.path})`);
 }
 
 const chunks_by_logical_name = new Map();

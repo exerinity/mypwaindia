@@ -1,10 +1,9 @@
 import { useEffect, useRef } from 'react';
-import type { ReactNode } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
 
-export function RequireAuth({ children }: { children?: ReactNode } = {}) {
+export function RequireAuth() {
   const { active } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -20,5 +19,5 @@ export function RequireAuth({ children }: { children?: ReactNode } = {}) {
   }, [active]);
 
   if (!active) return null;
-  return children ?? <Outlet />;
+  return <Outlet />;
 }
