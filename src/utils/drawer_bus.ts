@@ -1,4 +1,4 @@
-export type DrawerId = 'cli';
+export type DrawerId = 'cli' | 'agent';
 
 const DRAWER_STATE_EVENT = 'mpi-drawer-state';
 
