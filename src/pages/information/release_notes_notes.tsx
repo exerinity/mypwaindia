@@ -11,6 +11,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '23',
+    date: '21 Aug 2026',
+    notes: [
+      <>Added <Link to="/i/agent">MyAgentIndia</Link></>
+    ]
+  },
+  {
     version: '22a',
     date: '9 Aug 2026',
     notes: [
