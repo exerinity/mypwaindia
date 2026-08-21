@@ -22,6 +22,7 @@ import {
   TerminalIcon,
   ChevronDown,
   ShareIcon,
+  SparkleIcon,
 } from '../ui/icons.tsx';
 
 const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
@@ -32,10 +33,11 @@ interface NavGroup { title: string; items: NavItem[]; hideInScambait?: boolean; 
 const NAV_GROUPS: NavGroup[] = [
   {
     title: 'Your account',
-    loggedOutTitle: 'Welcome',
+    loggedOutTitle: 'MyPWAIndia',
     items: [
       { to: '/dash', label: 'Dashboard', loggedOutLabel: 'Welcome', end: true, icon: DashboardIcon },
       { to: '/account', label: 'Account info', icon: UserIcon, requireAuth: true },
+      { to: '/i/agent', label: 'Agent', icon: SparkleIcon, hideInScambait: true, requireAuth: true },
       { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon, requireAuth: true },
       { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true, requireAuth: true },
       { to: '/i/flow/links', label: 'Payment links', icon: LinkIcon, hideInScambait: true, requireAuth: true },
@@ -61,6 +63,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: 'More from MyPayIndia',
     items: [
       { href: 'https://share.mypayindia.com', label: 'MyShareIndia', icon: ShareIcon, loggedOutOnly: true, external: true },
+      { href: 'https://drive.mypayindia.com', label: 'MyDriveIndia', icon: TeamIcon, loggedOutOnly: true, external: true },
     ]
   },
   {
