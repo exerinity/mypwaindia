@@ -1,0 +1,830 @@
+/* =====================================================================
+   AGENT
+   ===================================================================== */
+.agent-page {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mpi-main:has(.agent-page),
+.mpi-wrap:has(.agent-page) {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.agent-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.agent-identity {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.agent-identity h1 {
+  margin: 0;
+  line-height: 1.15;
+}
+
+.agent-identity-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: min(520px, 60vw);
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.84rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agent-identity-name .spinner {
+  width: 12px;
+  height: 12px;
+  border-width: 2px;
+}
+
+.agent-avatar {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card-soft);
+  color: var(--brand);
+  object-fit: cover;
+}
+
+.agent-avatar--small {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
+}
+
+.agent-avatar--fallback {
+  background: color-mix(in srgb, var(--brand) 10%, var(--card));
+}
+
+.agent-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+
+.agent-scroll {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding: 18px;
+  overscroll-behavior: contain;
+}
+
+.agent-message-row {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.agent-message-row.user {
+  justify-content: flex-end;
+}
+
+.agent-msg {
+  max-width: 78%;
+  min-width: 0;
+  padding: 10px 13px;
+  overflow-wrap: anywhere;
+  border-radius: 14px;
+  line-height: 1.45;
+}
+
+.agent-msg.user {
+  border-bottom-right-radius: 4px;
+  background: var(--brand);
+  color: var(--brand-text);
+  white-space: pre-wrap;
+}
+
+.agent-msg.user a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.agent-msg.agent {
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+  background: var(--card-soft);
+}
+
+.agent-msg.agent:has(.agent-card-list) {
+  width: min(700px, calc(100% - 38px));
+  max-width: min(700px, calc(100% - 38px));
+}
+
+.agent-msg.agent:has(.agent-weather-response) {
+  width: min(900px, calc(100% - 38px));
+  max-width: min(900px, calc(100% - 38px));
+}
+
+.agent-message-text,
+.agent-greeting {
+  white-space: pre-wrap;
+}
+
+.agent-msg.agent > * + * {
+  margin-top: 10px;
+}
+
+.agent-sender {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.agent-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 8px 10px;
+  border: 1px solid;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.agent-result svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.agent-result.ok {
+  border-color: color-mix(in srgb, var(--success) 65%, var(--border));
+  background: color-mix(in srgb, var(--success) 7%, transparent);
+}
+
+.agent-result.ok svg {
+  color: var(--success);
+}
+
+.agent-result.failed {
+  border-color: color-mix(in srgb, var(--alert-error) 70%, var(--border));
+  background: color-mix(in srgb, var(--alert-error) 7%, transparent);
+}
+
+.agent-result.failed svg {
+  color: var(--alert-error);
+}
+
+.agent-card-list {
+  display: grid;
+  gap: 8px;
+}
+
+.agent-data-card {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg-elev);
+}
+
+.agent-data-card-icon,
+.agent-transaction-direction {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--pill-bg);
+  color: var(--brand);
+}
+
+.agent-data-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-data-card-heading {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.agent-payment-card .agent-data-card-heading {
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.agent-data-card-heading > * {
+  min-width: 0;
+}
+
+.agent-data-card-note {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+
+.agent-data-card-meta {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.agent-data-card-meta .mono {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agent-meta-label {
+  margin-right: 2px;
+  color: var(--fg);
+  font-size: 0.92em;
+  font-weight: 600;
+}
+
+.agent-card-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 5px;
+}
+
+.agent-card-actions button,
+.agent-card-actions .btn {
+  min-height: 32px;
+  padding: 5px 8px;
+}
+
+.agent-card-status,
+.agent-step-status {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--pill-bg);
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.agent-card-status.status-active,
+.agent-card-status.status-completed,
+.agent-card-status.status-complete,
+.agent-card-status.status-paid,
+.agent-card-status.status-success,
+.agent-step-status.status-done,
+.agent-step-status.status-completed {
+  background: color-mix(in srgb, var(--success) 14%, transparent);
+  color: var(--success);
+}
+
+.agent-card-status.status-pending,
+.agent-step-status.status-ready,
+.agent-step-status.status-pending {
+  background: color-mix(in srgb, var(--alert-info) 14%, transparent);
+  color: var(--alert-info);
+}
+
+.agent-card-status.status-failed,
+.agent-card-status.status-cancelled,
+.agent-card-status.status-declined,
+.agent-card-status.status-expired,
+.agent-step-status.status-failed {
+  background: color-mix(in srgb, var(--alert-error) 12%, transparent);
+  color: var(--alert-error);
+}
+
+.agent-transaction-direction.sent {
+  color: var(--alert-error);
+}
+
+.agent-transaction-direction.received {
+  color: var(--success);
+}
+
+.agent-transaction-party {
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.agent-transaction-party:hover {
+  color: var(--brand-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.agent-amount-sent {
+  color: var(--alert-error);
+  white-space: nowrap;
+}
+
+.agent-amount-received {
+  color: var(--success);
+  white-space: nowrap;
+}
+
+.agent-weather-icon {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  line-height: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.agent-weather-response {
+  display: grid;
+  gap: 10px;
+}
+
+.agent-weather-summary {
+  color: var(--fg);
+  line-height: 1.5;
+}
+
+.agent-weather-card {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+}
+
+.agent-weather-current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px 12px;
+}
+
+.agent-weather-temperature {
+  display: block;
+  color: var(--fg);
+  font-size: 1.9rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.agent-weather-label {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.agent-weather-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.agent-weather-details > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.agent-weather-forecast {
+  display: flex;
+  overflow-x: auto;
+  border-top: 1px solid var(--border);
+  overscroll-behavior-x: contain;
+}
+
+.agent-weather-day {
+  flex: 1 0 96px;
+  min-width: 0;
+  padding: 9px 7px 10px;
+  text-align: center;
+}
+
+.agent-weather-day + .agent-weather-day {
+  border-left: 1px solid var(--border);
+}
+
+.agent-weather-day-name {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.agent-weather-day-icon {
+  height: 29px;
+  margin: 3px 0;
+  font-size: 1.3rem;
+  line-height: 29px;
+  white-space: nowrap;
+}
+
+.agent-weather-day-temperatures {
+  color: var(--fg);
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.agent-weather-day-label {
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.66rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agent-step-list {
+  display: grid;
+  gap: 8px;
+}
+
+.agent-step {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elev);
+}
+
+.agent-step-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.agent-step-description {
+  margin-top: 3px;
+  font-size: 0.88rem;
+}
+
+.agent-step-note {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.agent-confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.agent-confirm-state {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.agent-thinking {
+  display: flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 4px 3px 38px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.agent-thinking .spinner {
+  width: 13px;
+  height: 13px;
+  border-width: 2px;
+}
+
+.agent-empty {
+  display: flex;
+  width: min(520px, 100%);
+  margin: auto;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 12px;
+  text-align: center;
+}
+
+.agent-empty .agent-avatar {
+  width: 64px;
+  height: 64px;
+  flex-basis: 64px;
+}
+
+.agent-empty h2 {
+  margin: 12px 0 5px;
+}
+
+.agent-greeting {
+  color: var(--muted);
+}
+
+.agent-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.agent-suggestion {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--pill-bg);
+  color: var(--fg);
+  font-size: 0.8rem;
+  font-weight: 450;
+  text-align: left;
+}
+
+.agent-suggestion:hover {
+  border-color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 7%, var(--pill-bg));
+  color: var(--fg);
+}
+
+.agent-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 4px;
+}
+
+.agent-skeleton-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.agent-skeleton-row.user {
+  justify-content: flex-end;
+}
+
+.agent-load-error {
+  display: flex;
+  width: min(560px, 100%);
+  margin: auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.agent-load-error .alert {
+  width: 100%;
+}
+
+.agent-composer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-elev);
+  flex-shrink: 0;
+}
+
+.agent-composer-input {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-composer textarea {
+  display: block;
+  min-height: 44px;
+  max-height: 140px;
+  resize: none;
+  padding: 10px 58px 10px 13px;
+  overflow-y: auto;
+  line-height: 1.4;
+}
+
+.agent-character-count {
+  position: absolute;
+  right: 10px;
+  bottom: 11px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.agent-character-count.near-limit {
+  color: var(--alert-warning);
+}
+
+.agent-composer-input:has(.agent-suggestion-menu) textarea {
+  padding-right: 94px;
+}
+
+.agent-composer-input:has(.agent-suggestion-menu) .agent-character-count {
+  right: 44px;
+}
+
+.agent-suggestion-menu {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  z-index: 3;
+}
+
+.agent-suggestion-trigger {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agent-suggestion-flyout {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 4;
+  width: min(280px, calc(100vw - 32px));
+  max-height: min(300px, 45dvh);
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  transform-origin: bottom right;
+  animation: agent-suggestion-flyout-in 100ms ease-out forwards;
+}
+
+@keyframes agent-suggestion-flyout-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.agent-suggestion-option {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  justify-content: flex-start;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--fg);
+  font-size: 0.8rem;
+  font-weight: 450;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.agent-suggestion-option:hover,
+.agent-suggestion-option:focus-visible {
+  background: color-mix(in srgb, var(--brand) 9%, var(--pill-bg));
+  color: var(--fg);
+}
+
+.agent-composer > button {
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.agent-composer > button .spinner {
+  width: 13px;
+  height: 13px;
+  border-width: 2px;
+  border-color: color-mix(in srgb, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  border-right-color: currentColor;
+}
+
+.agent-message-pending {
+  opacity: 0.78;
+}
+
+@media (max-width: 640px) {
+  .agent-page-header {
+    align-items: flex-start;
+  }
+
+  .agent-page-header > button {
+    margin-top: 3px;
+  }
+
+  .agent-scroll {
+    padding: 13px;
+  }
+
+  .agent-msg {
+    max-width: 88%;
+  }
+
+  .agent-msg.agent:has(.agent-card-list) {
+    width: calc(100% - 38px);
+    max-width: calc(100% - 38px);
+  }
+
+  .agent-msg.agent:has(.agent-weather-response) {
+    width: calc(100% - 38px);
+    max-width: calc(100% - 38px);
+  }
+
+  .agent-data-card {
+    align-items: flex-start;
+  }
+
+  .agent-payment-card {
+    flex-wrap: wrap;
+  }
+
+  .agent-payment-card .agent-card-actions {
+    width: 100%;
+    justify-content: flex-end;
+    padding-left: 44px;
+  }
+
+  .agent-data-card-heading {
+    align-items: flex-start;
+  }
+
+  .agent-data-card-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .agent-data-card-meta .mono {
+    max-width: 100%;
+  }
+
+  .agent-composer {
+    padding: 8px;
+  }
+
+  .agent-composer > button {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+}
+
+@media (pointer: coarse) {
+  .agent-suggestion,
+  .agent-confirm-actions button,
+  .agent-card-actions button,
+  .agent-card-actions .btn {
+    min-height: 44px;
+  }
+
+  .agent-suggestion-option {
+    min-height: 44px;
+  }
+
+  .agent-card-actions button {
+    min-width: 44px;
+  }
+}
