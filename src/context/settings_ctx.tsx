@@ -17,6 +17,7 @@ export const CUSTOM_VAR_KEYS = [
 export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/dash', label: 'Dashboard' },
   { value: '/account', label: 'Account' },
+  { value: '/i/agent', label: 'Agent' },
   { value: '/account/transfer', label: 'Transfer funds' },
   { value: '/account/history', label: 'Full transaction history' },
   { value: '/account/history/simple', label: 'Simple history' },
@@ -112,6 +113,7 @@ export interface Settings {
   swEnabled: boolean;
   rememberInfo: boolean;
   cliDrawer: boolean;
+  agentDrawer: boolean;
   copyLinkOnCreate: boolean;
 }
 
@@ -142,6 +144,7 @@ export const DEFAULT_SETTINGS: Settings = {
   swEnabled: false,
   rememberInfo: true,
   cliDrawer: false,
+  agentDrawer: false,
   copyLinkOnCreate: true,
 };
 
