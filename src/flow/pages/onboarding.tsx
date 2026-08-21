@@ -30,7 +30,7 @@ export default function OnboardingPage() {
           fullscreen
           title="Show the onboarding flow again?"
           message="You've already accepted the onboarding message. Would you like to see it again anyway?"
-          confirmLabel="Yeah gimme"
+          confirmLabel="Yeah"
           cancelLabel="Nah"
           danger={false}
           onClose={() => { setConfirmOpen(false); navigate(-1); }}
@@ -56,17 +56,13 @@ export default function OnboardingPage() {
       <div className="card" style={{ maxWidth: 520, width: '100%' }}>
         <h1 style={{ marginTop: 0 }}>Welcome to MyPWAIndia!</h1>
         <p>
-          This is an experimental progressive web app/alternative client for MyPayIndia.
-          Please keep in mind:
+          MyPWAIndia is the official responsive web app for using MyPayIndia. Please keep in mind when using MyPWAIndia:
         </p>
         <ul>
           <li>
             This is not (a substitute for){' '}
             <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>{' '}
             and does not take precedence over it
-          </li>
-          <li>
-            Roughly 90% of things can be done here from <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>
           </li>
           <li>
             This app is (or should be seen as) completely standalone from the main{' '}
@@ -76,24 +72,24 @@ export default function OnboardingPage() {
           <li>
             By using this app, you agree to the{' '}
             <a href="https://mypayindia.com/terms" target="_blank" rel="noreferrer">terms and conditions</a>,
-            constituted by your initial registration
+            constituted by your initial account registration
           </li>
           <li>
             MyPWAIndia is open source here: <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noreferrer">exerinity/mypwaindia</a>
           </li>
           <li>
-            <strong>This app is still an early work in progress</strong>
+            <strong>This app is an early work in progress</strong>
           </li>
         </ul>
         <p className="mt-0 mb-0">
           <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noopener noreferrer">
-            Please submit feedback in the Discord, mentioning @exerinity in the #dev channel <ExternalIcon />
+            Please submit feedback in the #dev channel in our Discord <ExternalIcon />
           </a>
         </p>
         <button onClick={accept} style={{ width: '100%', marginTop: '8px' }}>
-          Continue
+          I understand, let me in!
         </button>
-        <p className="muted" style={{ fontSize: '0.8rem', marginTop: 24, marginBottom: 4 }}>After clicking continue, a setup wizard will begin. You can skip it by pressing the X on the modal or skip any step within it</p>
+        <p className="muted" style={{ fontSize: '0.8rem', marginTop: 24, marginBottom: 4 }}>After continuing, a setup wizard will start. You can skip it by just closing it</p>
         <Suspense fallback={null}><AppFooter version={RELEASES[0].version} style={{ marginTop: 4 }} /></Suspense>
       </div>
     </div>
