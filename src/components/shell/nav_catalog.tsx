@@ -14,6 +14,7 @@ import {
   SettingsIcon,
   TerminalIcon,
   StopIcon,
+  SparkleIcon,
 } from '../ui/icons.tsx';
 
 export interface NavDestination {
@@ -29,6 +30,7 @@ export interface NavDestination {
 export const NAV_DESTINATIONS: NavDestination[] = [
   { route: '/dash', label: 'Dashboard', short: 'Dashboard', icon: DashboardIcon },
   { route: '/account', label: 'Account info', short: 'Account', icon: UserIcon, requireAuth: true },
+  { route: '/i/agent', label: 'MyAgentIndia', short: 'Agent', icon: SparkleIcon, requireAuth: true, hideInScambait: true },
   { route: '/account/transfer', label: 'Transfer funds', short: 'Transfer', icon: TransferIcon, requireAuth: true },
   { route: '/account/history', label: 'Transaction history', short: 'History', icon: HistoryIcon, requireAuth: true, hideInScambait: true },
   { route: '/account/history/simple', label: 'Simple history', short: 'Simple', icon: HistoryIcon, requireAuth: true, hideInScambait: true },
