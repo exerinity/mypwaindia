@@ -119,6 +119,23 @@ export function AppearanceSettings() {
           </div>
 
           <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+          <h3 className="mt-0">MyAgentIndia drawer</h3>
+          <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+            MyAgentIndia is a conversational assistant for checking information and performing actions on MyPayIndia. Enabling this will show it in a drawer
+          </p>
+          <div className="row spread" style={{ alignItems: 'center' }}>
+            <span style={{ fontSize: '0.9rem' }}>Show the MyAgentIndia drawer</span>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={settings.agentDrawer}
+                onChange={(e) => update({ agentDrawer: e.target.checked })}
+              />
+              <span className="toggle-track" />
+            </label>
+          </div>
+
+          <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
           <h3 className="mt-0">Display name</h3>
           <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
             Change how your name appears throughout the app
