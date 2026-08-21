@@ -141,6 +141,31 @@
   min-width: 0;
 }
 
+.cli-input[type='password'] {
+  width: auto;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  appearance: none;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  box-shadow: none;
+}
+
+.cli-input[type='password']:focus {
+  border: none;
+  box-shadow: none;
+}
+
+.cli-input::-ms-reveal,
+.cli-input::-ms-clear,
+.cli-input::-webkit-credentials-auto-fill-button {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .cli-input:disabled {
   opacity: 0.5;
 }

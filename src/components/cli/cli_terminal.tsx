@@ -57,6 +57,7 @@ const COMMANDS = [
   'verify-email',
   'go', 'nav', 'goto', 'cd',
   'clear', 'cls',
+  'exit',
   'logout',
   'help',
   'sudo',
@@ -122,6 +123,7 @@ const HELP = [
   '  fly                              hop to the MyCLiIndia page (or back to your home page from it)',
   '  drawer / dr                      toggle the floating drawer',
   '  clear / cls                      self-explanatory',
+  '  exit                             leave MyCLiIndia and return to the dashboard',
   '  logout                           self-explanatory',
   '  help                             show this help',
 ];
@@ -134,6 +136,9 @@ const HELP_TIPS = [
   '  Wrap multi-word args in "quotes"',
   '  Arrow up/down: command history - tab: run autocomplete',
 ];
+
+const LOGGED_OUT_NOTICE = 'For the best experience, please log in. You can do that by typing "acc add <username>" or "go login"';
+let loggedOutNoticeShown = false;
 
 export interface CliTerminalProps {
   variant?: 'page' | 'drawer';
@@ -173,7 +178,15 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
 
   const loading = busy && promptMode === 'none';
 
-  useEffect(() => { seedWelcome(username); }, []);
+  useEffect(() => {
+    seedWelcome(username);
+    if (active) {
+      loggedOutNoticeShown = false;
+    } else if (!loggedOutNoticeShown) {
+      loggedOutNoticeShown = true;
+      pushLines(L.warn(LOGGED_OUT_NOTICE));
+    }
+  }, [active, username]);
 
   useEffect(() => {
     const el = outputRef.current;
@@ -328,6 +341,11 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
     const { formatDate, formatRelative } = await import('../../utils/dates.js');
 
     switch (c) {
+
+      case 'exit':
+        window.location.replace('/');
+        push(L.info('Bye'));
+        return;
 
       case 'fs':
       case 'fullscreen':
@@ -985,6 +1003,10 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="none"
+            data-1p-ignore="true"
+            data-bwignore="true"
+            data-lpignore="true"
+            data-protonpass-ignore="true"
             spellCheck={false}
             enterKeyHint="go"
             aria-label="Command input"
