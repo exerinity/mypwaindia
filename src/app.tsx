@@ -9,6 +9,7 @@ const RequireAuth = lazy(() => import('./components/shell/require_auth.tsx').the
 const OnboardingPage = lazy(() => import('./flow/pages/onboarding.tsx'));
 const DashboardPage = lazy(() => import('./pages/account/dashboard.tsx'));
 const AccountPage = lazy(() => import('./pages/account/account.tsx'));
+const AgentPage = lazy(() => import('./pages/account/agent.tsx'));
 const CardsPage = lazy(() => import('./pages/scambait/cards.tsx'));
 const TransferPage = lazy(() => import('./pages/transfer/regular.tsx'));
 const BulkTransferPage = lazy(() => import('./pages/transfer/bulk.tsx'));
@@ -145,6 +146,7 @@ export default function App() {
 
         <Route element={<RequireAuth />}>
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/i/agent" element={<AgentPage />} />
           <Route path="/account/restrictions" element={<RestrictionsPage />} />
           <Route path="/account/transfer" element={<TransferPage />} />
           <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
