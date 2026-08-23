@@ -87,13 +87,16 @@ export default defineConfig({
     modulePreload: false,
     minify: false,
     cssMinify: false,
+    cssCodeSplit: false,
     sourcemap: false,
     target: 'esnext',
     rollupOptions: {
       output: {
         entryFileNames: 'i/scripts/mypwaindia_index-[hash].js',
         chunkFileNames: (chunk) => chunk.name.startsWith('node/') ? 'i/scripts/[name]-[hash].js' : 'i/scripts/mpi_[name]-[hash].js',
-        assetFileNames: '[name]-[hash].[ext]',
+        assetFileNames: (asset) => asset.name?.endsWith('.css')
+          ? 'i/css/mypwaindia_[hash].css'
+          : '[name]-[hash].[ext]',
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (/[\\/]node_modules[\\/]three[\\/]/.test(id)) return 'node/mpi_three';
