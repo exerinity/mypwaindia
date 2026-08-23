@@ -44,7 +44,12 @@ export function SwSettings() {
       const reg = await getSwRegistration();
       if (reg) await reg.unregister();
     } else {
-      toast.success('The service worker will register when you reload the app');
+      toast.push(
+        'The service worker will register when you reload the app',
+        'success',
+        7000,
+        { label: 'Reload now', onClick: () => window.location.reload() },
+      );
     }
   }
 
