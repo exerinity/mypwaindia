@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
 <!--
+    index.html for MyPWAIndia / mypayindia.sbs
+
+    You might also be after:
     https://github.com/exerinity/mypwaindia
 -->
 
@@ -14,8 +17,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#121212" />
   <title>MyPayIndia</title>
-  <meta name="description" content="MyPayIndia responsive web app" />
-  <meta name="author" content="exerinity.com" />
+  <meta name="description" content="MyPayIndia responsive web app" /> <!-- i should really come up with a more interesting description -->
+  <meta name="author" content="exerinity.com" /> <!-- even though mypayindia is a group project, mypwaindia is 100% my work, soo -->
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://mypayindia.sbs" />
   <meta property="og:title" content="MyPayIndia" />
@@ -29,8 +32,22 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="MyPayIndia" />
-  <script>try { var d = document.documentElement, s = JSON.parse(localStorage.getItem('mpi_settings') || '{}'), t = s.theme == 'custom' ? 'dark' : s.theme || 'dim', b = t == 'light' ? '#fff' : t == 'dark' ? '#000' : '#121212'; d.dataset.theme = t; d.style.setProperty('--splash-bg', b); d.style.background = b; document.querySelector('meta[name=theme-color]').setAttribute('content', b) } catch (e) { }</script>
+  <script>
+    /* theme bootstrapper to mitigate flashbangs */
+    try {
+      var document_element = document.documentElement;
+      var settings = JSON.parse(localStorage.getItem('mpi_settings') || '{}');
+      var theme = settings.theme == 'custom' ? 'dark' : settings.theme || 'dim';
+      var background_color = theme == 'light' ? '#fff' : theme == 'dark' ? '#000' : '#121212';
+
+      document_element.dataset.theme = theme;
+      document_element.style.setProperty('--splash-bg', background_color);
+      document_element.style.background = background_color;
+      document.querySelector('meta[name=theme-color]').setAttribute('content', background_color);
+    } catch (error) { /* Fuck #unfuck */ }
+  </script>
   <style>
+    /* quick inline styles */
     :root {
       --brand: #d03505;
       --brand-dark: #b22d04;
@@ -42,7 +59,7 @@
       --pill-bg: #232323
     }
 
-    /* all this styling for something that only shows for 20 nanoseconds */
+    /* the splash screen which in most circumstances only exists for 500 milliseconds */
     #splash {
       position: fixed;
       inset: 0;
@@ -65,6 +82,7 @@
       pointer-events: none
     }
 
+    /* react root */
     #mpi-meow {
       opacity: 0;
       transition: opacity .55s ease .1s
@@ -74,6 +92,7 @@
       opacity: 1
     }
 
+    /* fade in */
     @keyframes sli {
       from {
         opacity: 0;
@@ -86,6 +105,7 @@
       }
     }
 
+    /* out */
     @keyframes slo {
       from {
         opacity: 1;
@@ -112,6 +132,7 @@
       }
     }
 
+    /* hints down the bottom */
     #splash-hint {
       color: #666
     }
@@ -161,6 +182,7 @@
   </style>
   <noscript>
     <style>
+      /* splash screen is pretty useless without javascript, so hide it */
       #splash {
         display: none
       }
@@ -198,7 +220,7 @@
       </div>
     </div>
   </noscript>
-  <div id="mpi-meow"></div> <!-- this is the react root for anyone wondering meow meow meow meow -->
+  <div id="mpi-meow"></div> <!-- the react root xdxd -->
   <div id="splash">
     <img class="splash-logo" src="/i/mypayindia-full.webp" alt="MyPayIndia" width="141" height="52" draggable="false" />
     <p id="splash-hint">Stuck loading?<br><a href="">Reload app</a> (<a href="?cachebust=676767">cachebust</a>) - <a
