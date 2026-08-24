@@ -25,6 +25,7 @@ function rgbToHex({ r, g, b }: Rgb) {
 
 interface Dot { lat: number; lng: number; member: TeamMember; radius: number }
 interface Label { lat: number; lng: number; text: string; el?: HTMLElement }
+interface Connection { start: Dot; end: Dot }
 type Centroid = { lat: number; lng: number; name: string };
 const CENTROIDS = centroids as Record<string, Centroid>;
 
@@ -114,6 +115,7 @@ export default function TeamMapPage() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [dims, setDims] = useState({ w: 0, h: 0 });
   const [selected, setSelected] = useState<TeamMember | null>(null);
+  const [connectDots, setConnectDots] = useState(false);
 
   const { data, loading, error } = useCachedQuery<{ team: TeamMember[] }>('team', () => getTeam() as Promise<{ team: TeamMember[] }>, []);
   const team = useMemo(() => (data?.team || []).filter((m) => (m.status ?? 'current') === 'current'), [data]);
@@ -186,6 +188,12 @@ export default function TeamMapPage() {
     }
     return { dots, labels };
   }, [team]);
+
+  const connections = useMemo<Connection[]>(() => {
+    if (!connectDots || dots.length < 2) return [];
+    if (dots.length === 2) return [{ start: dots[0], end: dots[1] }];
+    return dots.map((dot, i) => ({ start: dot, end: dots[(i + 1) % dots.length] }));
+  }, [connectDots, dots]);
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -296,6 +304,16 @@ export default function TeamMapPage() {
         <p className="mt-0 mb-0 muted"><i>{ranksSentence}</i></p>
       )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-info"><InfoIcon /><span>Dots are scattered randomly within each member's country (for better clarity and space) and don't reflect anyone's actual location. If you refresh the page, the dots will be somewhere new</span></div>
+      <div className="checkbox-row">
+        <input
+          id="team-globe-connect-dots"
+          type="checkbox"
+          checked={connectDots}
+          onChange={(e) => setConnectDots(e.target.checked)}
+          disabled={dots.length < 2}
+        />
+        <label htmlFor="team-globe-connect-dots" style={{ margin: 0 }}>Connect dots</label>
+      </div>
 
       {error ? <ErrorBox error={error} /> :
        (!loading && team.length === 0) ? <Empty>N</Empty> :
@@ -342,6 +360,17 @@ export default function TeamMapPage() {
              pointsMerge={false}
              pointLabel={(d: any) => `<div class="team-globe-tip">${d.member.name} ${d.member.country_flag ?? ''}<br><span>${d.member.role}</span></div>`}
              onPointClick={(d: any) => setSelected(d.member)}
+             arcsData={connections}
+             arcStartLat={(d: any) => d.start.lat}
+             arcStartLng={(d: any) => d.start.lng}
+             arcStartAltitude={0.02}
+             arcEndLat={(d: any) => d.end.lat}
+             arcEndLng={(d: any) => d.end.lng}
+             arcEndAltitude={0.02}
+             arcColor={() => brand}
+             arcAltitudeAutoScale={0.3}
+             arcStroke={0.12}
+             arcsTransitionDuration={700}
              onGlobeReady={onReady}
            />
          )}
