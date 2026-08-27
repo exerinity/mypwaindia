@@ -12,6 +12,7 @@ import { AppearanceSettings } from './appearance.tsx';
 import { HomeSettings } from './home.tsx';
 import { NavSettings } from './nav.tsx';
 import { DataSettings } from './data.tsx';
+import { DownloadSettings } from './download.tsx';
 import { LockSettings } from './lock.tsx';
 import { PortSettings } from './port.tsx';
 import { SwSettings } from './sw.tsx';
@@ -50,6 +51,7 @@ export default function SettingsPage() {
       case 'nav': return <NavSettings />;
       case 'port': return <PortSettings />;
       case 'data': return <DataSettings />;
+      case 'download': return <DownloadSettings />;
       case 'lock': return <LockSettings />;
       case 'sw': return <SwSettings />;
       case 'scambait': return <ScambaitSettings />;

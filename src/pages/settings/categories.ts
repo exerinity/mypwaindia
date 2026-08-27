@@ -3,6 +3,7 @@ export type CategoryId =
   | 'home'
   | 'nav'
   | 'data'
+  | 'download'
   | 'port'
   | 'sw'
   | 'account'
@@ -31,6 +32,7 @@ export const CATEGORIES: Category[] = [
   { id: 'sessions', label: 'List of sessions', desc: 'View and manage active login sessions', authRequired: true, to: '/i/flow/sessions' },
   { id: 'logout', label: 'Log out', desc: 'Log out of MyPWAIndia', authRequired: true, to: '/i/flow/logout' },
   { id: 'toys', label: 'Toys', desc: 'Poke around with UI components', to: '/i/flow/mpti', hideWhenScambait: true },
+  { id: 'download', label: 'Download the app', desc: "Download the MyPayIndia app. It's free." },
   { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/account/settings' },
   { id: 'mypayindia', label: 'MyPayIndia.com', desc: 'Visit the main website', href: 'https://mypayindia.com' },
 ];

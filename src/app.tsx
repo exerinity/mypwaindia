@@ -96,7 +96,8 @@ export default function App() {
       <Route path="/leaderboard" element={<Navigate to="/i/leaderboard" replace />} />
       <Route path="/team" element={<Navigate to="/i/team" replace />} />
       <Route path="/docs" element={<ExternalRedirectPage to="https://mypayindia.com/docs" />} />
-      <Route path="/app" element={<ExternalRedirectPage to="https://mypayindia.com/app" />} />
+      <Route path="/app" element={<Navigate to="/settings/download" replace />} />
+      <Route path="/download" element={<Navigate to="/settings/download" replace />} />
       <Route path="/cards" element={<ExternalRedirectPage to="https://mypayindia.com/cards" />} />
       <Route path="/news/premium" element={<ExternalRedirectPage to="https://mypayindia.com/news/premium" />} />
       <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/auth/register" schnell />} />
