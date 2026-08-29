@@ -1,6 +1,6 @@
 export async function getLeaderboard() {
   const { apiFetch } = await import('./client.js');
-  return apiFetch('/api/v2/info/leaderboard');
+  return apiFetch('/api/v2/info/leaderboard?limit=67');
 }
 
 export async function getTeam() {

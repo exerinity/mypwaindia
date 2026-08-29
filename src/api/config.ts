@@ -20,3 +20,4 @@ export const API_BASE = getApiBase();
 export const SUBSCRIBE_BASE = getSubscribeBase();
 
 // this fucking file was so controversial creating the original app omg
+// (and by that i mean one asshole couldnt wrap their head around it)
