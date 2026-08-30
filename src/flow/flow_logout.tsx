@@ -11,9 +11,12 @@ interface LogoutModalProps {
   subtask: LogoutConfirmationSubtask | null;
   loading: boolean;
   error: unknown;
+  embedded?: boolean;
+  onClose?: () => void;
+  onAbort?: (subtaskId: string, actionId: string) => void;
 }
 
-export default function LogoutPage({ subtask, loading, error }: LogoutModalProps) {
+export default function LogoutPage({ subtask, loading, error, embedded = false, onClose, onAbort }: LogoutModalProps) {
   const { logout, active } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,8 +33,20 @@ export default function LogoutPage({ subtask, loading, error }: LogoutModalProps
   }
 
   function handleClose() {
+    if (onClose) {
+      onClose();
+      return;
+    }
     if (bgLoc) navigate(-1);
     else navigate('/dash');
+  }
+
+  function handleCancel() {
+    if (onAbort && subtask && cancelAction?.link_type === 'abort') {
+      onAbort(subtask.subtask_id, cancelAction.link_id);
+      return;
+    }
+    handleClose();
   }
 
   async function handleLogout() {
@@ -47,8 +62,8 @@ export default function LogoutPage({ subtask, loading, error }: LogoutModalProps
     }
   }
 
-  return (
-    <Modal open className="noanim" onClose={handleClose}>
+  const content = (
+    <>
       {loading && !detail ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <Skeleton width={220} height={24} />
@@ -69,7 +84,7 @@ export default function LogoutPage({ subtask, loading, error }: LogoutModalProps
           </p>
           <div className="modal-actions">
             {cancelAction && (
-              <button className="secondary" onClick={handleClose} disabled={isSubmitting}>
+              <button className="secondary" onClick={handleCancel} disabled={isSubmitting}>
                 {cancelAction.label}
               </button>
             )}
@@ -87,6 +102,9 @@ export default function LogoutPage({ subtask, loading, error }: LogoutModalProps
           </div>
         </>
       )}
-    </Modal>
+    </>
   );
+
+  if (embedded) return content;
+  return <Modal open className="noanim" onClose={handleClose}>{content}</Modal>;
 }
