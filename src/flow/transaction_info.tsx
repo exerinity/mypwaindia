@@ -58,9 +58,12 @@ interface TransactionModalProps {
   subtask: TransactionDetailSubtask | null;
   loading: boolean;
   error: unknown;
+  embedded?: boolean;
+  onClose?: () => void;
+  onAbort?: (subtaskId: string, actionId: string) => void;
 }
 
-export default function TransactionModal({ subtask, loading, error }: TransactionModalProps) {
+export default function TransactionModal({ subtask, loading, error, embedded = false, onClose, onAbort }: TransactionModalProps) {
   const { active, updateBalance } = useAuth();
   const format = useCurrency();
   const toast = useToast();
@@ -80,11 +83,23 @@ export default function TransactionModal({ subtask, loading, error }: Transactio
   const bgLoc = (location.state as any)?.backgroundLocation;
 
   function handleClose() {
+    if (onClose) {
+      onClose();
+      return;
+    }
     if (bgLoc) {
       navigate(-1);
     } else {
       navigate('/dash');
     }
+  }
+
+  function handleCloseAction() {
+    if (onAbort && subtask && closeAction?.link_type === 'abort') {
+      onAbort(subtask.subtask_id, closeAction.link_id);
+      return;
+    }
+    handleClose();
   }
 
   function otherUsername() {
@@ -128,15 +143,8 @@ export default function TransactionModal({ subtask, loading, error }: Transactio
   }
 
   const outgoing = data && active ? data.sender?.id === active.id : false;
-  return (
-    <Modal
-      open
-      onClose={handleClose}
-      title={data && detail
-        ? (outgoing ? detail.outgoing_title.text : detail.incoming_title.text)
-        : (detail?.primary_text.text ?? 'Transaction')}
-      className="slide"
-    >
+  const content = (
+    <>
       {loading && !data ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <Skeleton width={160} height={48} />
@@ -226,7 +234,7 @@ export default function TransactionModal({ subtask, loading, error }: Transactio
                 ) : returnAction.label}
               </button>
             )}
-            <button type="button" onClick={handleClose}>
+            <button type="button" onClick={handleCloseAction}>
               {closeAction?.label ?? 'OK'}
             </button>
           </div>
@@ -237,6 +245,20 @@ export default function TransactionModal({ subtask, loading, error }: Transactio
           )}
         </>
       )}
+    </>
+  );
+
+  if (embedded) return content;
+  return (
+    <Modal
+      open
+      onClose={handleClose}
+      title={data && detail
+        ? (outgoing ? detail.outgoing_title.text : detail.incoming_title.text)
+        : (detail?.primary_text.text ?? 'Transaction')}
+      className="slide"
+    >
+      {content}
     </Modal>
   );
 }
