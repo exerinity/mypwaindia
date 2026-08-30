@@ -1,4 +1,4 @@
-# [MyPWAIndia](https://mypayindia.sbs) (React version)
+# [MyPWAIndia](https://mypayindia.sbs)
 The React MyPayIndia responsive web app is [the official](https://mypayindia.com/app) albeit alternative client for using [MyPayIndia](https://mypayindia.com). 
 
 > [!WARNING]
@@ -142,7 +142,43 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/flow/transaction/:id** - transaction detail viewer
 - **/i/flow/links/interstitial/:token** - claim/inspect a payment link
 
-Login, logout, the setup wizard, link claiming and the transaction viewer are modals rather than pages ([flow_conductor.tsx](src/flow/flow_conductor.tsx)). Navigating to one directly renders it over the app
+`/i/flow/*` is for server driven flows. There are no regular pages under that prefix. Every path under `/i/flow/` is passed to the flow API
+
+#### Flow composite
+When you visit `/i/flow/{task}`, [flow_conductor.tsx](src/flow/flow_conductor.tsx) immediately opens a modal and takes the complete path after `/i/flow/` and sends it as `flow_name` to:
+
+```
+GET /api/pwa/flow/task?flow_name={task}
+```
+
+That means `/i/flow/login` requests `login`, while `/i/flow/transaction/6767` requests `transaction/6767`. Path matching and parameter extraction belong to the server task module
+
+The API returns a flow token, presentation instructions and one or more typed subtasks. The conductor keeps the original modal mounted and populates it with the subtask when ready. A response looks roughly like this:
+
+```json
+{
+  "success": true,
+  "data": {
+    "flow_token": "transaction.6767...",
+    "status": "success",
+    "presentation": {
+      "kind": "modal",
+      "close_behavior": "return_or_dash"
+    },
+    "subtasks": [
+      {
+        "subtask_id": "TransactionDetail",
+        "type": "transaction_detail",
+        "transaction_detail": {}
+      }
+    ]
+  }
+}
+```
+
+Actions with `link_type: "task"` continue the flow by posting the flow token and subtask input to the same endpoint. Actions with `link_type: "abort"` do the same before closing: the modal body clears, the abort input is acknowledged by the server, and the client exits the flow after the request settles
+
+In a nutshell, this idea is copied from Twitter, like https://twitter.com/i/flow/add_email calls https://api.twitter.com/1.1/onboarding/task.json?flow_name=add_email
 
 ### Investment Opportunities™
 - **/iotm** - home
