@@ -16,7 +16,6 @@ const BulkTransferPage = lazy(() => import('./pages/transfer/bulk.tsx'));
 const HistoryPage = lazy(() => import('./pages/account/history.tsx'));
 const SimpleHistoryPage = lazy(() => import('./pages/account/simple_history.tsx'));
 const StatementsPage = lazy(() => import('./pages/scambait/statements.tsx'));
-const OldTransactionPage = lazy(() => import('./pages/account/old_transaction.tsx'));
 const LinksPage = lazy(() => import('./flow/pages/links.tsx'));
 const LeaderboardPage = lazy(() => import('./pages/information/leaderboard.tsx'));
 const TeamPage = lazy(() => import('./pages/information/team.tsx'));
@@ -70,9 +69,9 @@ function ClaimLinkRedirect() {
   return <Navigate to={`/i/flow/links/interstitial/${encodeURIComponent(token ?? '')}`} replace />;
 }
 
-function ThemeRedirect() {
+function SearchRedirect({ to }: { to: string }) {
   const { search } = useLocation();
-  return <Navigate to={`/i/flow/theme${search}`} replace />;
+  return <Navigate to={`${to}${search}`} replace />;
 }
 
 function MerchantRedirect() {
@@ -104,18 +103,16 @@ export default function App() {
       <Route path="/account/transfers" element={<Navigate to="/account/history" replace />} />
       <Route path="/account/transfers/:id" element={<TransactionRedirect />} />
       <Route path="/account/transfers/new" element={<Navigate to="/account/transfer" replace />} />
-      <Route path="/account/payment-links" element={<Navigate to="/i/flow/links" replace />} />
+      <Route path="/account/payment-links" element={<Navigate to="/account/links" replace />} />
       <Route path="/account/subscriptions" element={<Navigate to="/subscriptions" replace />} />
       <Route path="/news" element={<Navigate to="/i/news" replace />} />
-      <Route path="/i/flow/mci" element={<Navigate to="/i/command" replace />} />
-      <Route path="/i/flow/mci/focus" element={<Navigate to="/i/command/focus" replace />} />
       <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/logout" element={<Navigate to="/i/flow/logout" replace />} />
       <Route path="/merchant/*" element={<MerchantRedirect />} />
       <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
 
       <Route element={<Suspense fallback={<CardSkeleton />}><Outlet /></Suspense>}>
-        <Route path="/i/flow/onboarding" element={<OnboardingPage />} />
+        <Route path="/i/onboarding" element={<OnboardingPage />} />
       </Route>
 
       <Route element={<AppLayout />}>
@@ -129,21 +126,20 @@ export default function App() {
         <Route path="/i/news/:slug" element={<NewsItemPage />} />
         <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
         <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
-        <Route path="/settings/sessions" element={<Navigate to="/i/flow/sessions" replace />} />
+        <Route path="/settings/sessions" element={<Navigate to="/i/sessions" replace />} />
         <Route path="/settings/:category" element={<SettingsPage />} />
         <Route path="/settings:old" element={<Flowback />} />
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
         <Route path="/i/how_pwa" element={<HowPwaPage />} />
         <Route path="/i/privacy" element={<PrivacyPage />} />
-        <Route path="/i/flow/scambaitmode" element={<Navigate to="/settings/scambait" replace />} />
-        <Route path="/i/flow/connection" element={<ConnectionPage />} />
-        <Route path="/i/flow/theme" element={<ThemeApplyPage />} />
-        <Route path="/i/flow/settings" element={<SettingsApplyPage />} />
-        <Route path="/theme" element={<ThemeRedirect />} />
+        <Route path="/i/connecttest" element={<ConnectionPage />} />
+        <Route path="/i/theme" element={<ThemeApplyPage />} />
+        <Route path="/i/sharedsett" element={<SettingsApplyPage />} />
+        <Route path="/theme" element={<SearchRedirect to="/i/theme" />} />
 
         <Route path="/i/command" element={<CLIPage />} />
         <Route path="/i/command/focus" element={<CLIPage />} />
-        <Route path="/i/flow/mpti" element={<MPTIPage />} />
+        <Route path="/i/debug" element={<MPTIPage />} />
 
         <Route element={<RequireAuth />}>
           <Route path="/account" element={<AccountPage />} />
@@ -153,20 +149,16 @@ export default function App() {
           <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
           <Route path="/account/history" element={<HistoryPage />} />
           <Route path="/account/history/simple" element={<SimpleHistoryPage />} />
-          <Route path="/i/flow/sessions" element={<SessionsPage />} />
+          <Route path="/i/sessions" element={<SessionsPage />} />
           <Route path="/subscriptions" element={<SubscriptionsPage />} />
-          <Route path="/i/flow/links" element={<LinksPage />} />
-          <Route path="/i/flow/links/claim" element={<Navigate to="/i/flow/links" replace />} />
-          <Route path="/i/flow/links/claim/:token" element={<ClaimLinkRedirect />} />
-          <Route path="/links" element={<Navigate to="/i/flow/links" replace />} />
-          <Route path="/links/claim" element={<Navigate to="/i/flow/links" replace />} />
+          <Route path="/account/links" element={<LinksPage />} />
+          <Route path="/links" element={<Navigate to="/account/links" replace />} />
+          <Route path="/links/claim" element={<Navigate to="/account/links" replace />} />
           <Route path="/links/claim/:token" element={<ClaimLinkRedirect />} />
           <Route path="/dash/statements" element={<StatementsPage />} />
           <Route path="/dash/cards" element={<CardsPage />} />
-          <Route path="/i/flow/button" element={<Navigate to="/iotm/button" replace />} />
           <Route path="/iotm/button" element={<IotmButtonPage />} />
           <Route path="/iotm" element={<IOTMPage />} />
-          <Route path="/i/flow/transaction:old/:id" element={<OldTransactionPage />} />
         </Route>
 
         <Route path="/i/clanker" element={<Flowback />} />
@@ -175,7 +167,6 @@ export default function App() {
         <Route path="/i/chat" element={<Flowback />} />
         <Route path="/i/chat/:peer" element={<Flowback />} />
 
-        <Route path="/i/flow/*" element={<Flowback />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>}
