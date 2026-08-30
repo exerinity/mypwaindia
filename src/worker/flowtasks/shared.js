@@ -41,6 +41,7 @@ export function decodeTaskParameter(value) {
  *   name: string,
  *   match: (taskName: string) => Record<string, string> | null,
  *   get: (context: Record<string, any>) => Response | Promise<Response>,
+ *   abortActions?: Record<string, string[]>,
  *   matchesFlowToken?: (flowToken: string) => boolean,
  *   continue?: (context: Record<string, any>) => Response | Promise<Response>
  * }} task
