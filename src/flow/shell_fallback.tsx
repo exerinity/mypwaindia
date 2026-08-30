@@ -1,7 +1,12 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Modal } from '../components/ui/modal.tsx';
 
-export default function FlowNotFound() {
+interface FlowNotFoundProps {
+  embedded?: boolean;
+  onClose?: () => void;
+}
+
+export default function FlowNotFound({ embedded = false, onClose }: FlowNotFoundProps) {
   const nav = useNavigate();
   const location = useLocation();
 
@@ -10,6 +15,17 @@ export default function FlowNotFound() {
   const content = (
     <p className="mt-0 mb-0">Oops, something went wrong. Please try again later.</p>
   );
+
+  if (embedded) {
+    return (
+      <>
+        {content}
+        <div className="modal-actions">
+          <button onClick={onClose ?? (() => { nav('/dash'); })}>OK</button>
+        </div>
+      </>
+    );
+  }
 
   if (od) {
     return (
