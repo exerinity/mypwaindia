@@ -2,19 +2,26 @@ import { useState } from 'react';
 import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
+import type { LogoutConfirmationSubtask } from '../api/flow.ts';
+import { Skeleton, ErrorBox } from '../components/ui/status.tsx';
 import { LogoutIcon } from '../components/ui/icons.tsx';
 import { Modal } from '../components/ui/modal.tsx';
 
-export default function LogoutPage() {
-  const { logout, active, accounts } = useAuth();
+interface LogoutModalProps {
+  subtask: LogoutConfirmationSubtask | null;
+  loading: boolean;
+  error: unknown;
+}
+
+export default function LogoutPage({ subtask, loading, error }: LogoutModalProps) {
+  const { logout, active } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const remaining = accounts.filter((a) => a.id !== active?.id);
-  const nextAccount = remaining.length > 0 ? remaining[remaining.length - 1] : null;
-  const nextName = nextAccount ? nextAccount.username : null;
+  const detail = subtask?.logout_confirmation;
+  const cancelAction = detail?.actions.find((action) => action.link_id === 'cancel');
+  const logoutAction = detail?.actions.find((action) => action.link_id === 'logout');
 
   const bgLoc = (location.state as { backgroundLocation?: unknown } | null)?.backgroundLocation;
 
@@ -42,30 +49,44 @@ export default function LogoutPage() {
 
   return (
     <Modal open className="noanim" onClose={handleClose}>
-      <h2 className="mt-0">Log out of @{active?.username || 'this account'}?</h2>
-      {nextName ? (
-        <p>
-          This will only apply to this account, and you'll still be logged in to your other accounts. You'll be switched to <strong>@{nextName}</strong>.
-        </p>
-      ) : (
-        <p className="mt-0 mb-0">
-          You can always log back in at any time. If you just want to switch accounts, you can do that by adding an existing account.
-        </p>
+      {loading && !detail ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <Skeleton width={220} height={24} />
+          <Skeleton width="100%" height={48} />
+          <div className="modal-actions">
+            <Skeleton width={80} height={38} radius={6} />
+            <Skeleton width={100} height={38} radius={6} />
+          </div>
+        </div>
+      ) : error ? (
+        <ErrorBox error={error} />
+      ) : detail && (
+        <>
+          <h2 className="mt-0">{detail.primary_text.text}</h2>
+          <p className={detail.next_account_text ? undefined : 'mt-0 mb-0'}>
+            {detail.secondary_text.text}
+            {detail.next_account_text && <> <strong>{detail.next_account_text.text}</strong>.</>}
+          </p>
+          <div className="modal-actions">
+            {cancelAction && (
+              <button className="secondary" onClick={handleClose} disabled={isSubmitting}>
+                {cancelAction.label}
+              </button>
+            )}
+            {logoutAction && (
+              <button
+                className="danger"
+                onClick={handleLogout}
+                disabled={isSubmitting}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+              >
+                <LogoutIcon />
+                {isSubmitting ? (logoutAction.pending_label ?? 'Logging out...') : logoutAction.label}
+              </button>
+            )}
+          </div>
+        </>
       )}
-      <div className="modal-actions">
-        <button className="secondary" onClick={handleClose} disabled={isSubmitting}>
-          Cancel
-        </button>
-        <button
-          className="danger"
-          onClick={handleLogout}
-          disabled={isSubmitting}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-        >
-          <LogoutIcon />
-          {isSubmitting ? 'Logging out...' : 'Log out'}
-        </button>
-      </div>
     </Modal>
   );
 }
