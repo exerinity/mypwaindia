@@ -2,25 +2,14 @@ import { useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
-import { useApiCall } from '../hooks/api_call.js';
-import { getTransaction, transfer } from '../api/transactions.js';
+import { transfer } from '../api/transactions.js';
+import type { TransactionDetailSubtask } from '../api/flow.ts';
 import { getUserInfo } from '../api/user.js';
 import { useCurrency } from '../context/settings_ctx.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/ui/status.tsx';
 import { Modal } from '../components/ui/modal.tsx';
 import { CopyIcon, ArrowDownLeftIcon, ArrowUpRightIcon, SuccessIcon } from '../components/ui/icons.tsx';
-
-type TxDetail = {
-  transaction_id: string;
-  id: number;
-  status: string;
-  amount: number;
-  created: string;
-  note?: string;
-  sender?: { username: string; id: number };
-  recipient?: { username: string; id: number };
-};
 
 function CopyButton({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);
@@ -65,7 +54,13 @@ function Field({ label, value, display, style, showCopy = false }: { label: stri
   );
 }
 
-export default function TransactionModal() {
+interface TransactionModalProps {
+  subtask: TransactionDetailSubtask | null;
+  loading: boolean;
+  error: unknown;
+}
+
+export default function TransactionModal({ subtask, loading, error }: TransactionModalProps) {
   const { active, updateBalance } = useAuth();
   const format = useCurrency();
   const toast = useToast();
@@ -73,14 +68,14 @@ export default function TransactionModal() {
   const [returning, setReturning] = useState(false);
   const [returned, setReturned] = useState(false);
   const location = useLocation();
-  const id = location.pathname.split('/').pop();
   const datesMod = useLazyModule(() => import('../utils/dates.js'));
   const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
-
-  const { data, loading, error } = useApiCall<TxDetail>(
-    () => getTransaction(active!, id!) as Promise<TxDetail>,
-    [active?.token, id]
-  );
+  const detail = subtask?.transaction_detail;
+  const data = detail?.transaction;
+  const labels = detail?.labels;
+  const newTransferAction = detail?.actions.find((action) => action.link_id === 'new_transfer');
+  const returnAction = detail?.actions.find((action) => action.link_id === 'return_transfer');
+  const closeAction = detail?.actions.find((action) => action.link_id === 'close');
 
   const bgLoc = (location.state as any)?.backgroundLocation;
 
@@ -133,14 +128,13 @@ export default function TransactionModal() {
   }
 
   const outgoing = data && active ? data.sender?.id === active.id : false;
-  const deeplinkOfficial = data ? `https://mypayindia.com/account/transfers/${data.id}` : '';
-  const deeplinkAlt = data ? `https://mypayindia.sbs/i/flow/transaction/${data.transaction_id}` : '';
-
   return (
     <Modal
       open
       onClose={handleClose}
-      title={data ? (outgoing ? `Transaction to @${data.recipient?.username ?? '?'}` : `Transaction from @${data.sender?.username ?? '?'}`) : 'Transaction'}
+      title={data && detail
+        ? (outgoing ? detail.outgoing_title.text : detail.incoming_title.text)
+        : (detail?.primary_text.text ?? 'Transaction')}
       className="slide"
     >
       {loading && !data ? (
@@ -159,7 +153,7 @@ export default function TransactionModal() {
         <ErrorBox error={error} />
       ) : data && (
         <>
-          <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>Amount</div>
+          <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>{labels?.amount ?? 'Amount'}</div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
             <div
               className="balance-display"
@@ -191,28 +185,34 @@ export default function TransactionModal() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 24px' }}>
-            <Field label="From" value={`@${data.sender?.username}`} display={<strong>@{data.sender?.username}</strong>} showCopy />
-            <Field label="When" value={formatDate(data.created)} />
-            <Field label="To" value={`@${data.recipient?.username}`} display={<strong>@{data.recipient?.username}</strong>} showCopy />
-            <Field label="ID" value={`#${data.id}`} display={<span className="mono">#{data.id}</span>} showCopy />
+            <Field label={labels?.from ?? 'From'} value={`@${data.sender?.username}`} display={<strong>@{data.sender?.username}</strong>} showCopy />
+            <Field label={labels?.when ?? 'When'} value={formatDate(data.created)} />
+            <Field label={labels?.to ?? 'To'} value={`@${data.recipient?.username}`} display={<strong>@{data.recipient?.username}</strong>} showCopy />
+            <Field label={labels?.id ?? 'ID'} value={`#${data.id}`} display={<span className="mono">#{data.id}</span>} showCopy />
             <div style={{ gridColumn: '1' }}>
-              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>Deeplinks</div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}><a href={deeplinkOfficial} target="_blank" rel="noopener noreferrer">MyPayIndia</a><CopyButton value={deeplinkOfficial} /></div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}><a href={deeplinkAlt} target="_blank" rel="noopener noreferrer">MyPWAIndia</a><CopyButton value={deeplinkAlt} /></div>
+              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>{labels?.deeplinks ?? 'Deeplinks'}</div>
+              {detail?.deeplinks.map((link) => (
+                <div key={link.url} style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
+                  <a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>
+                  <CopyButton value={link.url} />
+                </div>
+              ))}
             </div>
-            <Field label="Transaction ID" value={data.transaction_id} display={<span className="mono">{data.transaction_id}</span>} style={{ gridColumn: '2' }} showCopy />
+            <Field label={labels?.transaction_id ?? 'Transaction ID'} value={data.transaction_id} display={<span className="mono">{data.transaction_id}</span>} style={{ gridColumn: '2' }} showCopy />
           </div>
 
           {data.note && (
             <div style={{ marginTop: 16 }}>
-              <Field label="Note" value={data.note} showCopy />
+              <Field label={labels?.note ?? 'Note'} value={data.note} showCopy />
             </div>
           )}
           <div style={{ marginTop: 18, display: 'flex', gap: 8 }}>
-            <button type="button" className="secondary" onClick={handleNewTransfer}>
-              New transfer to @{otherUsername()}
-            </button>
-            {!outgoing && (
+            {newTransferAction && (
+              <button type="button" className="secondary" onClick={handleNewTransfer}>
+                {newTransferAction.label} to @{otherUsername()}
+              </button>
+            )}
+            {!outgoing && returnAction && (
               <button
                 type="button"
                 className="secondary"
@@ -223,11 +223,11 @@ export default function TransactionModal() {
                   <><span className="spinner" /> Returning...</>
                 ) : returned ? (
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><SuccessIcon size={15} /> Returned</span>
-                ) : 'Return it'}
+                ) : returnAction.label}
               </button>
             )}
             <button type="button" onClick={handleClose}>
-              OK
+              {closeAction?.label ?? 'OK'}
             </button>
           </div>
           {!outgoing && !returned && (
