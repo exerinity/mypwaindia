@@ -1,5 +1,6 @@
 import { SETTINGS_PATH, handleSettings } from "./settings_saver.js";
 import { parseButtonPage, parseLeaderboard } from "./button_parse.js";
+import { FLOW_TASK_PATH, handleFlowTask } from "./flow.js";
 
 function jsonResponse(body, corsOrigin) {
   const headers = { "Content-Type": "application/json" };
@@ -105,6 +106,9 @@ export const bastion = {
           "Access-Control-Max-Age": "86400"
         }
       });
+    }
+    if (strippedPath === FLOW_TASK_PATH) {
+      return handleFlowTask(req, backendBase, corsOrigin);
     }
     if (
       req.method === "POST" &&
