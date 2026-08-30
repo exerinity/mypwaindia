@@ -11,9 +11,12 @@ interface OnboardingWizardProps {
   subtask: OnboardingWizardSubtask | null;
   loading: boolean;
   error: unknown;
+  embedded?: boolean;
+  onClose?: () => void;
+  onAbort?: (subtaskId: string, actionId: string) => void;
 }
 
-export default function FinetunePage({ subtask, loading, error }: OnboardingWizardProps) {
+export default function FinetunePage({ subtask, loading, error, embedded = false, onClose, onAbort }: OnboardingWizardProps) {
   const navigate = useNavigate();
   const { settings, update } = useSettings();
   const [step, setStep] = useState(0);
@@ -34,7 +37,19 @@ export default function FinetunePage({ subtask, loading, error }: OnboardingWiza
 
   function next() { setStep((current) => current + 1); }
   function back() { setStep((current) => Math.max(0, current - 1)); }
-  function close() { navigate('/dash', { replace: true }); }
+  function close() {
+    if (onClose) onClose();
+    else navigate('/dash', { replace: true });
+  }
+
+  function complete() {
+    const action = detail?.completion.action;
+    if (onAbort && subtask && action?.link_type === 'abort') {
+      onAbort(subtask.subtask_id, action.link_id);
+      return;
+    }
+    close();
+  }
 
   function renderStep() {
     if (!currentStep) return null;
@@ -185,8 +200,8 @@ export default function FinetunePage({ subtask, loading, error }: OnboardingWiza
     }
   }
 
-  return (
-    <Modal open onClose={close}>
+  const content = (
+    <>
       {loading && !detail ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <Skeleton width={140} height={14} />
@@ -231,11 +246,14 @@ export default function FinetunePage({ subtask, loading, error }: OnboardingWiza
           <SuccessIcon size={40} />
           <h2>{detail.completion.primary_text.text}</h2>
           <p>{detail.completion.secondary_text.text}</p>
-          <button style={{ width: '100%', marginTop: 8 }} onClick={close}>
+          <button style={{ width: '100%', marginTop: 8 }} onClick={complete}>
             {detail.completion.action.label}
           </button>
         </div>
       ) : null}
-    </Modal>
+    </>
   );
+
+  if (embedded) return content;
+  return <Modal open onClose={close}>{content}</Modal>;
 }
