@@ -23,9 +23,12 @@ interface LoginModalProps {
   flowToken: string | null;
   loading: boolean;
   error: unknown;
+  embedded?: boolean;
+  onClose?: () => void;
+  onAbort?: (subtaskId: string, actionId: string) => void;
 }
 
-export default function LoginPage({ subtask, flowToken, loading, error: taskError }: LoginModalProps) {
+export default function LoginPage({ subtask, flowToken, loading, error: taskError, embedded = false, onClose, onAbort }: LoginModalProps) {
   const { completeLogin, accounts, maxAccounts } = useAuth();
   const { update: updateSettings } = useSettings();
   const location = useLocation();
@@ -56,8 +59,20 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
   usePageTitle(bgLoc ? null : (form?.page_title ?? 'Log in to MyPayIndia'));
 
   function handleClose() {
+    if (onClose) {
+      onClose();
+      return;
+    }
     if (bgLoc) navigate(-1);
     else navigate('/dash');
+  }
+
+  function handleCancel() {
+    if (onAbort && task && cancelAction?.link_type === 'abort') {
+      onAbort(task.subtask_id, cancelAction.link_id);
+      return;
+    }
+    handleClose();
   }
 
   useEffect(() => {
@@ -137,10 +152,10 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
     }
   }
 
-  if (missingTask) return <Flowback />;
+  if (missingTask) return <Flowback embedded={embedded} onClose={handleClose} />;
 
-  return (
-    <Modal open onClose={handleClose} className="slide">
+  const content = (
+    <>
       <Suspense fallback={null}>
         {loading && !form ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -269,7 +284,7 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
                 <button
                   className="muted"
                   style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'inherit', font: 'inherit', padding: 0 }}
-                  onClick={handleClose}
+                  onClick={handleCancel}
                 >
                   <ArrowLeftIcon /> {atCapacity ? (cancelAction.at_capacity_label ?? cancelAction.label) : cancelAction.label}
                 </button>
@@ -278,6 +293,9 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
           </>
         )}
       </Suspense>
-    </Modal>
+    </>
   );
+
+  if (embedded) return content;
+  return <Modal open onClose={handleClose} className="slide">{content}</Modal>;
 }
