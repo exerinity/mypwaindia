@@ -3,7 +3,7 @@ import login from "./login.js";
 import logout from "./logout.js";
 import onboardingWizard from "./onboarding_wizard.js";
 import transaction from "./transaction.js";
-import { flowError } from "./shared.js";
+import { corsJson, flowError } from "./shared.js";
 
 const FLOW_TASKS = [
   linksInterstitial,
@@ -30,7 +30,13 @@ export function runFlowTask(taskName, context) {
 export function continueFlowTask(body, context) {
   const token = typeof body?.flow_token === "string" ? body.flow_token : "";
   const task = FLOW_TASKS.find(
-    (candidate) => candidate.continue && candidate.matchesFlowToken?.(token)
+    (candidate) => {
+      const prefix = `${candidate.name}.`;
+      return (
+        (token.startsWith(prefix) && /^[a-f0-9]{32}$/.test(token.slice(prefix.length))) ||
+        candidate.matchesFlowToken?.(token)
+      );
+    }
   );
 
   if (!task) {
@@ -42,5 +48,25 @@ export function continueFlowTask(body, context) {
     );
   }
 
-  return task.continue({ ...context, body });
+  const input = Array.isArray(body?.subtask_inputs) ? body.subtask_inputs[0] : null;
+  const abortActions = input ? task.abortActions?.[input.subtask_id] : null;
+  if (abortActions?.includes(input.action_id)) {
+    return corsJson({
+      success: true,
+      data: {
+        flow_token: token,
+        status: "success",
+        subtasks: []
+      }
+    }, 200, context.corsOrigin);
+  }
+
+  if (task.continue) return task.continue({ ...context, body });
+
+  return flowError(
+    "invalid_subtask_input",
+    "The flow subtask input is invalid",
+    400,
+    context.corsOrigin
+  );
 }
