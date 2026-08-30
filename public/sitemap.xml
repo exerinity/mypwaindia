@@ -16,16 +16,16 @@
     <loc>https://mypayindia.sbs/i/team/globe</loc>
   </url>
   <url>
-    <loc>https://mypayindia.sbs/i/flow/mci</loc>
+    <loc>https://mypayindia.sbs/i/command</loc>
   </url>
   <url>
-    <loc>https://mypayindia.sbs/i/flow/mpti</loc>
+    <loc>https://mypayindia.sbs/i/debug</loc>
   </url>
   <url>
     <loc>https://mypayindia.sbs/i/release_notes</loc>
   </url>
   <url>
-    <loc>https://mypayindia.sbs/i/flow/connection</loc>
+    <loc>https://mypayindia.sbs/i/connecttest</loc>
   </url>
   <url>
     <loc>https://mypayindia.sbs/i/acknowledgements</loc>

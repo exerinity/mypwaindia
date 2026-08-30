@@ -78,7 +78,7 @@ Scambait mode transforms this app into a more convincing-looking interface for u
 
 The mode hides things a scammer may find suspicious (the whole Meta group in the sidebar, so the leaderboard and team, plus transfers, payment links, subscriptions, IOTM and MyCLiIndia) and exposes fabricated pages containing credit card information and a bank statement history, and changes INR to Dollars ($).
 
-**Learn more & activate: https://mypayindia.sbs/i/flow/scambaitmode**
+**Learn more & activate: https://mypayindia.sbs/settings/scambait**
 
 ## [The Button](https://mypayindia.sbs/iotm/button)
 The MyPWAIndia Button brings more features and information than the original, like:
@@ -114,7 +114,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 (everything above except /dash sits behind an auth guard: signed out, you get a toast and a bounce to the login flow, which remembers where you were going and returns you there after signing in)
 
 ### Payment links
-- **/i/flow/links** - links home, list & create & revoke
+- **/account/links** - links home, list & create & revoke
 - **/i/flow/links/interstitial/:token** - claim/inspect a link by token
 
 (**/links**, **/links/claim** and **/links/claim/:token** still work as compatibility redirects)
@@ -128,21 +128,19 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/release_notes** - app release notes
 - **/i/acknowledgements** - thanks and acknowledgements
 - **/i/how_pwa** - how to install the app on whatever you're holding
+- **/i/onboarding** - onboarding disclaimer screen
+- **/i/connecttest** - connection checker
+- **/i/theme** - apply a theme from a shared link
+- **/i/sharedsett** - apply settings from a shared link
+- **/i/debug** - ...debug page
+- **/i/sessions** - view and manage active login sessions
 
 ### Internal flow (hence the /i/flow)
 - **/i/flow/login** - log in
 - **/i/flow/logout** - log out
-- **/i/flow/onboarding** - onboarding disclaimer screen
 - **/i/flow/onboarding/wizard** - setup wizard after onboarder
-- **/i/flow/connection** - stupid connection checker
-- **/i/flow/mci** - MyCLiIndia, a fake Unix-like command line
-- **/i/flow/mci/focus** - MyCLiIndia, fullscreen
-- **/i/flow/mpti** - MyPWAToysIndia, fuck with shit, basically a debug page
-- **/i/flow/sessions** - view and manage active login sessions
 - **/i/flow/transaction/:id** - transaction detail viewer
-- **/i/flow/transaction:old/:id** - the old transaction viewer
-- **/i/flow/theme** - apply a theme from a shared link
-- **/i/flow/settings** - apply settings from a shared link
+- **/i/flow/links/interstitial/:token** - claim/inspect a payment link
 
 Login, logout, the setup wizard, link claiming and the transaction viewer are modals rather than pages ([flow_conductor.tsx](src/flow/flow_conductor.tsx)). Navigating to one directly renders it over the app
 
@@ -155,12 +153,12 @@ Login, logout, the setup wizard, link claiming and the transaction viewer are mo
 ### Scambait
 - **/dash/cards** - 3 fake randomly generated credit cards: everyday, savings & business, complete with CVV, numbers, routing and SWIFT
 - **/dash/statements** - 450 generated statements with various American businesses and random people (in place of /account/history). They're seeded off the account id, so the same account always gets the same history, walking backwards from this month until it has enough (about a year and a half)
-- **/i/flow/scambaitmode** - redirects to /settings/scambait
+- **/settings/scambait** - configure scambait mode
 
 ### Control
 - **/settings** - app settings (takes you to /settings/appearance)
 - **/settings/:category** - settings by category
-- **/settings/sessions** - redirects to /i/flow/sessions
+- **/settings/sessions** - redirects to /i/sessions
 
 The categories list ([categories.ts](src/pages/settings/categories.ts)) also carries entries that just point elsewhere (sessions, logout, toys, account management on the main site), and some hide themselves in scambait mode
 

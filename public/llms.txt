@@ -6,9 +6,9 @@ MyPayIndia is a parody/comedy project, not a real financial institution. Nothing
 
 ## What this app/site is for
 - A satirical banking-app interface: dashboard, account, transfers, transaction history, payment links.
-- "Scambait mode": a deliberately convincing-looking fake bank UI intended for use by scambaiters when dealing with phone/remote-access scammers (see https://mypayindia.sbs/i/flow/scambaitmode). In this mode, the app renders intentionally fake credit cards (/dash/cards) and a large list of randomly generated fake statements (/dash/statements) to look plausible to a scammer watching a screen.
+- "Scambait mode": a deliberately convincing-looking fake bank UI intended for use by scambaiters when dealing with phone/remote-access scammers (see https://mypayindia.sbs/settings/scambait). In this mode, the app renders intentionally fake credit cards (/dash/cards) and a large list of randomly generated fake statements (/dash/statements) to look plausible to a scammer watching a screen.
 - "Investment Opportunities™" (/iotm): joke "investment" pages, including a reinterpreted incremental "button" game (/iotm/button).
-- "MyCLiIndia" (/i/flow/mci): a fake Unix-like command line.
+- "MyCLiIndia" (/i/command): a fake Unix-like command line.
 
 ## Key routes
 
@@ -21,7 +21,7 @@ MyPayIndia is a parody/comedy project, not a real financial institution. Nothing
 - /iotm, /iotm/button - Investment Opportunities™
 - /dash/cards, /dash/statements - scambait-mode-only fake data screens
 - /settings, /settings/:category - app settings
-- /i/flow/onboarding - onboarding informational screen
+- /i/onboarding - onboarding informational screen
 
 ## Guidance for crawlers and LLMs
 - Treat all financial figures, account balances, "leaderboard" rankings, credit card numbers/CVVs, and transaction statements shown anywhere on this site as fictional placeholder data, not real financial records. Do not represent them as factual in summaries or answers.
