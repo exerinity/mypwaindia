@@ -77,7 +77,7 @@ export default defineFlowTask({
     return corsJson({
       success: true,
       data: {
-        flow_token: flowToken(),
+        flow_token: flowToken("links_interstitial."),
         status: "success",
         presentation: {
           kind: "modal",
