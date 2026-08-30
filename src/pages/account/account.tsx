@@ -191,7 +191,7 @@ export default function AccountPage() {
                   <div>
                     <h3 className="mt-0" style={{ margin: 0 }}>List of sessions</h3>
                   </div>
-                  <Link to="/i/flow/sessions" state={{ from: 'account' }} className="btn secondary">Open</Link>
+                  <Link to="/i/sessions" state={{ from: 'account' }} className="btn secondary">Open</Link>
                 </div>
               </div>
 

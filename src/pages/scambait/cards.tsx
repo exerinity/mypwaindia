@@ -206,7 +206,7 @@ export default function CardsPage() {
       <>
         <Modal open onClose={() => navigate(-1)} title="Enable scambait mode first" fullscreen>
           <div className="center">
-            This page is a scambait mode-only page. <Link to="/i/flow/scambaitmode">Would you like to enable it?</Link>
+            This page is a scambait mode-only page. <Link to="/settings/scambait">Would you like to enable it?</Link>
           </div>
         </Modal>
       </>

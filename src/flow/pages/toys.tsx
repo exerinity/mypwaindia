@@ -103,22 +103,22 @@ export default function MPTIPage() {
           )}
           {showOnboardingBanner && (
             <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
-              <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
+              <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/onboarding" className="link">Open...</Link>
             </div>
           )}
           {showSessionExpiredBanner && (
             <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
-              <WarningIcon /> Your session has expired. <Link to="/i/flow/sessions" className="link">Reinitialize the session...</Link>
+              <WarningIcon /> Your session has expired. <Link to="/i/sessions" className="link">Reinitialize the session...</Link>
             </div>
           )}
           {showFetchFailedBanner && (
             <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
-              <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link>
+              <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/connecttest" className="link">Troubleshoot...</Link>
             </div>
           )}
           {showOfflineBanner && (
             <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
-              <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/flow/connection" className="link">Diagnose...</Link>
+              <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/connecttest" className="link">Diagnose...</Link>
             </div>
           )}
         </>,
@@ -207,8 +207,7 @@ export default function MPTIPage() {
       </div>
 
       <div className="card mb-2">
-        <h2 className="mt-0">Trigger flow</h2>
-        <p className="mt-0 mb-0">(/i/flow conductors and pages)</p>
+        <h2 className="mt-0">Call a flow task</h2>
         <label>Task</label>
         <input
           type="text"

@@ -11,6 +11,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '24',
+    date: '31 Aug 2026',
+    notes: [
+      'A lot of backend work, especially to flow tasks: that is now done mostly server-side'
+    ]
+  },
+  {
     version: '23',
     date: '21 Aug 2026',
     notes: [
@@ -80,7 +87,7 @@ export const RELEASES: Release[] = [
     version: '18',
     date: '25 Jul 2026',
     notes: [
-      <><Link to="/i/flow/mci">MyCLiIndia</Link> has been given a slight refresh to look more like an actual terminal</>,
+      <><Link to="/i/command">MyCLiIndia</Link> has been given a slight refresh to look more like an actual terminal</>,
       "Scambait mode has been improved, especially the statements page",
       "Added a fast-return button to transaction info modals"
     ]
@@ -89,7 +96,7 @@ export const RELEASES: Release[] = [
     version: '17a',
     date: '18 Jul 2026',
     notes: [
-      <>The payment links category has been removed and moved to a single page: <Link to="/i/flow/links">here</Link></>,
+      <>The payment links category has been removed and moved to a single page: <Link to="/account/links">here</Link></>,
       'Payment links are now inspected and claimed through modals',
       'Migrated most MyPayIndia.com routes and links',
       <>Added a search bar to <Link to="/account/history">the transaction history table</Link></>
@@ -130,7 +137,7 @@ export const RELEASES: Release[] = [
     version: '16',
     date: '26 Jun 2026',
     notes: [
-      <>Added a <Link to="/i/flow/onboarding/wizard">setup wizard</Link> that begins after <Link to="/i/flow/onboarding">onboarding</Link></>,
+      <>Added a <Link to="/i/flow/onboarding/wizard">setup wizard</Link> that begins after <Link to="/i/onboarding">onboarding</Link></>,
       <>Added an <Link to="/settings/lock">app locker</Link></>
     ]
   },
@@ -145,7 +152,7 @@ export const RELEASES: Release[] = [
     version: '15a',
     date: '16 Jun 2026',
     notes: [
-      <>Transaction detail viewer overhauled: it is now a modal with action buttons rather than a full page<br></br>(the old one is still available at <strong>/i/flow/transaction:old/:ID</strong>)</>,
+      <>Transaction detail viewer overhauled: it is now a modal with action buttons rather than a full page</>,
       { 'h3': <><Link to="/account/history">Try it out</Link></> },
       'The login and logout views are now modals'
     ]
@@ -178,7 +185,7 @@ export const RELEASES: Release[] = [
     version: '14a',
     date: '7 Jun 2026',
     notes: [
-      <>Added a new devtools/debug/toys/whatever page: <Link to="/i/flow/mpti">MyPWAToysIndia</Link></>,
+      <>Added a new devtools/debug/toys/whatever page: <Link to="/i/debug">MyPWAToysIndia</Link></>,
       <>Buffed toast notifications: new animations, and hovering over them halts the time to expire</>,
       'Toasts should now show when the app has an update and also after an update offering to show the release notes',
     ]
@@ -260,8 +267,8 @@ export const RELEASES: Release[] = [
     version: '10b',
     date: '20 May 2026',
     notes: [
-      <>Added a rudimental <Link to="/i/flow/connection">connection helper</Link> and offline banner</>,
-      <>Refreshed the <Link to="/i/flow/links">claim payment link</Link> page</>,
+      <>Added a rudimental <Link to="/i/connecttest">connection helper</Link> and offline banner</>,
+      <>Refreshed the <Link to="/account/links">claim payment link</Link> page</>,
       'Tables in the transaction history and account session list are now sortable by clicking on the column headers',
       'Added a Remove all button to the payment links page to nullify all active links',
       'Removed the animations from the team page'
@@ -273,11 +280,11 @@ export const RELEASES: Release[] = [
     disclaimer: 'This was mostly a behind the scenes update. In spite of that, here are the major changes:',
     notes: [
       <>Added some really wacky animations and shit that I'll probably remove later; to some buttons, modals, <Link to="/i/team">the team page</Link>, and the account switcher dropdown</>,
-      <>Added a <Link to="/i/flow/scambaitmode">discrete scambait mode page</Link></>,
+      <>Added a <Link to="/settings/scambait">discrete scambait mode page</Link></>,
       <>Added a <Link to="/account/restrictions">discrete restrictions page</Link></>,
       'Added many redirects to mirror the main website, so for example, visiting /accountservices/dashboard (from the main website) will take you to the dashboard (backward compatibility or whateverrr)',
       'Made icons for alert boxes',
-      <>Overhauled <Link to="/account/transfer">the transfer page</Link> and the <Link to="/i/flow/links">payment links page</Link></>,
+      <>Overhauled <Link to="/account/transfer">the transfer page</Link> and the <Link to="/account/links">payment links page</Link></>,
       'Replaced most loading messages w/ spinners with skeleton shimmer'
     ]
   },
@@ -285,9 +292,9 @@ export const RELEASES: Release[] = [
     version: '10',
     date: '12 May 2026',
     notes: [
-      <>Introducing <Link to="/i/flow/mci">MyCLiIndia</Link>!</>,
+      <>Introducing <Link to="/i/command">MyCLiIndia</Link>!</>,
       'Added a splash screen',
-      <>Added <Link to="/i/flow/onboarding">an onboarding flow</Link> and an <Link to="/i/acknowledgements">acknowledgements page</Link></>
+      <>Added <Link to="/i/onboarding">an onboarding flow</Link> and an <Link to="/i/acknowledgements">acknowledgements page</Link></>
     ]
   },
   {

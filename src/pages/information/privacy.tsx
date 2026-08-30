@@ -8,7 +8,7 @@ const LOCAL_KEYS = [
   { key: 'mpi_settings', what: 'theme, accent colour, home page, speed dials, auto-refresh, service worker toggle, etc. basically the forefront of settings' },
   { key: 'mpi_app_lock', what: 'your app lock, stored as a SHA-256 hash with a random 16-byte salt. which, that lock can be defeated by deleting this, but whatever...' },
   { key: 'mpi_app_lock_last_unlock', what: 'when you last unlocked, so the app knows when to ask again' },
-  { key: 'accepted_onboard', what: <>if you accepted <Link to="/i/flow/onboarding">the onboarding flow</Link></> },
+  { key: 'accepted_onboard', what: <>if you accepted <Link to="/i/onboarding">the onboarding flow</Link></> },
   { key: 'mpi_hide', what: 'which dismissable components you have... dismissed' },
   { key: 'mpi_last_version', what: 'the last version you ran, used to show you release notes' },
   { key: 'mpi_recent_accents', what: 'accent colours you have used recently' },

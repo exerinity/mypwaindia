@@ -92,7 +92,7 @@ export default function ConnectionPage() {
     if (mpiState === 'down') {
       conclusion = <>MyPayIndia is down.</>;
     } else if (onLine && bastion && mpi) {
-      conclusion = <>You are connected to the internet, the bastion responded and so did MyPayIndia. If the app is misbehaving, there may be a stale cache - press <kbd>Ctrl+Shift+R</kbd> to update it. Or your session may have expired - <Link to="/i/flow/sessions" className="link">reinitialize the session</Link>.</>;
+      conclusion = <>You are connected to the internet, the bastion responded and so did MyPayIndia. If the app is misbehaving, there may be a stale cache - press <kbd>Ctrl+Shift+R</kbd> to update it. Or your session may have expired - <Link to="/i/sessions" className="link">reinitialize the session</Link>.</>;
     } else if (onLine && !bastion && mpi) {
       conclusion = <>The bastion is unresponsive. Please notify <a href="https://exerinity.com/hello">exerinity</a>.</>;
     } else if (onLine && bastion && !mpi) {

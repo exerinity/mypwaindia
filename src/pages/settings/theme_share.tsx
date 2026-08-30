@@ -52,7 +52,7 @@ export function ThemeShareRow() {
       return (norm ?? '#000000').slice(1);
     }).join('');
     const accentHex = (normalizeHex(settings.accent) ?? '#d03505').slice(1);
-    const url = `https://mypayindia.sbs/i/flow/theme?id=${colorsHex}${accentHex}`;
+    const url = `https://mypayindia.sbs/i/theme?id=${colorsHex}${accentHex}`;
     navigator.clipboard.writeText(url).then(
       () => toast.success('Theme encoded into URL and copied'),
       () => toast.error('Copying failed, why not create a file?'),

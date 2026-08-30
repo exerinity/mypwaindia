@@ -53,7 +53,7 @@ export function PortSettings() {
         return;
       }
       setRemoteSavedAt(res.savedAt);
-      navigate(`/i/flow/settings?${settingsToSearchParams(res.payload)}`);
+      navigate(`/i/sharedsett?${settingsToSearchParams(res.payload)}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Failed');
     } finally {
@@ -175,7 +175,7 @@ export function PortSettings() {
       <div className="btn-row" style={{ marginTop: 4 }}>
         <button className="secondary compact" onClick={async () => {
           const { collectSettingsExport, settingsToSearchParams } = await import('../../utils/settings_io.ts');
-          const url = `https://mypayindia.sbs/i/flow/settings?${settingsToSearchParams(collectSettingsExport(settings))}`;
+          const url = `https://mypayindia.sbs/i/sharedsett?${settingsToSearchParams(collectSettingsExport(settings))}`;
           navigator.clipboard.writeText(url).then(
             () => toast.success('Settings link copied to clipboard!'),
             () => toast.error('Copying failed, why not export a file?'),
