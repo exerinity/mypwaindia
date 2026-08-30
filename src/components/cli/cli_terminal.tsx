@@ -75,8 +75,8 @@ const PAGE_MAP = {
   statements: '/dash/statements',
   cards: '/dash/cards',
   restrictions: '/account/restrictions',
-  links: '/i/flow/links',
-  claim: '/i/flow/links',
+  links: '/account/links',
+  claim: '/account/links',
   settings: '/settings',
   scambait: '/settings/scambait',
   leaderboard: '/i/leaderboard', lb: '/i/leaderboard',
@@ -84,11 +84,11 @@ const PAGE_MAP = {
   notes: '/i/release_notes', releases: '/i/release_notes',
   cli: '/i/command',
   acknowledgements: '/i/acknowledgements',
-  connection: '/i/flow/connection',
+  connection: '/i/connecttest',
   button: '/iotm/button', iotm: '/iotm/button',
   login: '/i/flow/login',
   logout: '/i/flow/logout',
-  onboarding: '/i/flow/onboarding',
+  onboarding: '/i/onboarding',
 };
 
 const HELP = [

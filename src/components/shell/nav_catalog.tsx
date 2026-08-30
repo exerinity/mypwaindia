@@ -34,7 +34,7 @@ export const NAV_DESTINATIONS: NavDestination[] = [
   { route: '/account/transfer', label: 'Transfer funds', short: 'Transfer', icon: TransferIcon, requireAuth: true },
   { route: '/account/history', label: 'Transaction history', short: 'History', icon: HistoryIcon, requireAuth: true, hideInScambait: true },
   { route: '/account/history/simple', label: 'Simple history', short: 'Simple', icon: HistoryIcon, requireAuth: true, hideInScambait: true },
-  { route: '/i/flow/links', label: 'Payment links', short: 'Links', icon: LinkIcon, requireAuth: true, hideInScambait: true },
+  { route: '/account/links', label: 'Payment links', short: 'Links', icon: LinkIcon, requireAuth: true, hideInScambait: true },
   { route: '/subscriptions', label: 'Subscriptions', short: 'Subscriptions', icon: StoreIcon, requireAuth: true, hideInScambait: true },
   { route: '/dash/statements', label: 'Bank statements', short: 'Statements', icon: NotesIcon, requireAuth: true, scambaitOnly: true },
   { route: '/dash/cards', label: 'Cards', short: 'Cards', icon: CreditCardIcon, requireAuth: true, scambaitOnly: true },

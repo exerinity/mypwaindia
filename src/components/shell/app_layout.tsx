@@ -201,22 +201,22 @@ export function AppLayout() {
             )}
             {active && !settings.scambait && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
               <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/flow/onboarding" className="link">Open...</Link>
+                <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/onboarding" className="link">Open...</Link>
               </div>
             )}
             {sessionExpired && (
               <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <LoginIcon /> Your session has expired. <Link to="/i/flow/sessions" className="link">Reinitialize the session...</Link> <Link to="/i/flow/logout" state={{ backgroundLocation: location }}>Log out of the app...</Link>
+                <LoginIcon /> Your session has expired. <Link to="/i/sessions" className="link">Reinitialize the session...</Link> <Link to="/i/flow/logout" state={{ backgroundLocation: location }}>Log out of the app...</Link>
               </div>
             )}
             {fetchFailed && (
               <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/flow/connection" className="link">Troubleshoot...</Link> <a href="https://status.mypayindia.com" target="_blank">Status page...</a>
+                <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/connecttest" className="link">Troubleshoot...</Link> <a href="https://status.mypayindia.com" target="_blank">Status page...</a>
               </div>
             )}
             {!isOnline && (
               <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/flow/connection" className="link">Diagnose...</Link>
+                <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/connecttest" className="link">Diagnose...</Link>
               </div>
             )}
             <div id="mpi-toy-banners" />

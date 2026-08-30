@@ -40,7 +40,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/i/agent', label: 'Agent', icon: SparkleIcon, hideInScambait: true, requireAuth: true },
       { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon, requireAuth: true },
       { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true, requireAuth: true },
-      { to: '/i/flow/links', label: 'Payment links', icon: LinkIcon, hideInScambait: true, requireAuth: true },
+      { to: '/account/links', label: 'Payment links', icon: LinkIcon, hideInScambait: true, requireAuth: true },
       { to: '/subscriptions', label: 'Subscriptions', icon: StoreIcon, hideInScambait: true, requireAuth: true },
       { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true, requireAuth: true },
       { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true, requireAuth: true },

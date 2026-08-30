@@ -36,7 +36,7 @@ export function ErrorBox({ error }: { error: unknown }) {
       <ErrorIcon />
       <span>
         {e.message === 'Unauthorized.'
-          ? <>Your session is no longer valid. <Link to="/i/flow/sessions" className="link">Would you like to restart it?</Link></>
+          ? <>Your session is no longer valid. <Link to="/i/sessions" className="link">Would you like to restart it?</Link></>
           : (e.message || String(error))}
         {parts.length > 0 && <span className="muted" style={{ marginLeft: 8, fontSize: '0.85em' }}>({parts.join(' - ')})</span>}
       </span>
