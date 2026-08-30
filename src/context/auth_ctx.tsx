@@ -22,14 +22,14 @@ export interface Account {
   credentialOnly?: boolean;
 }
 
-interface LoginParams {
+export interface LoginParams {
   username: string;
   password: string;
   totp_code?: string;
   env?: Env;
 }
 
-interface LoginApiResponse {
+export interface LoginSessionResponse {
   user: { id: number; username: string; role: string };
   session_id: string;
 }
@@ -40,6 +40,7 @@ interface AuthContextValue {
   activeId: number | null;
   switchingTo: Account | null;
   login: (params: LoginParams, redirectTo?: string) => Promise<Account>;
+  completeLogin: (params: LoginParams, session: LoginSessionResponse, redirectTo?: string) => Account;
   logout: () => Promise<void>;
   switchAccount: (id: number) => Promise<void>;
   removeAccount: (id: number) => void;
@@ -134,9 +135,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const login = useCallback(async ({ username, password, totp_code, env = 'production' }: LoginParams, redirectTo?: string): Promise<Account> => {
+  const completeLogin = useCallback((
+    { password, env = 'production' }: LoginParams,
+    data: LoginSessionResponse,
+    redirectTo?: string
+  ): Account => {
     const snapshot: Account[] = storageGet(KEYS.ACCOUNTS, []);
-    const data = await apiLogin({ username, password, totp_code, env }) as LoginApiResponse;
     const acc: Account = {
       id: data.user.id,
       username: data.user.username,
@@ -156,6 +160,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return acc;
   }, []);
 
+  const login = useCallback(async ({ username, password, totp_code, env = 'production' }: LoginParams, redirectTo?: string): Promise<Account> => {
+    const data = await apiLogin({ username, password, totp_code, env }) as LoginSessionResponse;
+    return completeLogin({ username, password, totp_code, env }, data, redirectTo);
+  }, [completeLogin]);
+
   const switchAccount = useCallback(async (id: number) => {
     const all: Account[] = storageGet(KEYS.ACCOUNTS, []);
     const target = all.find((a) => a.id === id);
@@ -164,7 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let nextActiveId = id;
     if (target?.password) {
       try {
-        const data = await apiLogin({ username: target.username, password: target.password, env: target.env }) as LoginApiResponse;
+        const data = await apiLogin({ username: target.username, password: target.password, env: target.env }) as LoginSessionResponse;
         const realId = data.user.id;
         const current: Account[] = storageGet(KEYS.ACCOUNTS, []);
         // If a real account with this server ID already exists, activate that and drop the stub
@@ -239,6 +248,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     activeId,
     switchingTo,
     login,
+    completeLogin,
     logout,
     switchAccount,
     removeAccount,
@@ -248,7 +258,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     updateAccountInfo,
     refreshActive,
     maxAccounts: MAX_ACCOUNTS,
-  }), [accounts, active, activeId, switchingTo, login, logout, switchAccount, removeAccount, addOrReplaceAccount, saveCredentials, updateBalance, updateAccountInfo, refreshActive]);
+  }), [accounts, active, activeId, switchingTo, login, completeLogin, logout, switchAccount, removeAccount, addOrReplaceAccount, saveCredentials, updateBalance, updateAccountInfo, refreshActive]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
