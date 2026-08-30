@@ -23,6 +23,7 @@ const ROUTE_OPTIONS = [
 
 export default defineFlowTask({
   name: "onboarding_wizard",
+  abortActions: { OnboardingWizard: ["complete"] },
 
   match(task) {
     return task === "onboarding/wizard" || task === "onboarding_wizard" ? {} : null;
@@ -32,7 +33,7 @@ export default defineFlowTask({
     return corsJson({
       success: true,
       data: {
-        flow_token: flowToken(),
+        flow_token: flowToken("onboarding_wizard."),
         status: "success",
         presentation: {
           kind: "modal",
