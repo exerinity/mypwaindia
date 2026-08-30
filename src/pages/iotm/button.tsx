@@ -425,7 +425,7 @@ export default function IotmButtonPage() {
     setLoading(true);
     setError(null);
 
-    fetch(`${API_BASE}/api/v0/button/inter`, {
+    fetch(`${API_BASE}/api/pwa/button/gist`, {
       headers: { Authorization: `Bearer ${active.token}` },
       credentials: 'include',
     })
@@ -464,7 +464,7 @@ export default function IotmButtonPage() {
       }
       if (now < nextRefreshAt.current) return;
       nextRefreshAt.current = now + 10000;
-      fetch(`${API_BASE}/api/v0/button/inter`, {
+      fetch(`${API_BASE}/api/pwa/button/gist`, {
         headers: { Authorization: `Bearer ${active.token}` },
         credentials: 'include',
       })
@@ -489,7 +489,7 @@ export default function IotmButtonPage() {
     if (!active?.token) return;
     tempClicks.current = 0;
 
-    fetch(`${API_BASE}/api/v0/button/click`, {
+    fetch(`${API_BASE}/api/pwa/button/click`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${active.token}`, Accept: 'application/json' },
       credentials: 'include',

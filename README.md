@@ -41,7 +41,7 @@ Besides proxying data, it runs the session layer and handles [the button](https:
 Everything the Worker answers for sits under `/i/`, and anything it doesn't recognise falls through to the static assets :
 
 - **/i/api**, **/i/api/pwa**, **/i/accountservices**, **/i/iotm**, **/i/staging** - proxied to the bastion with the `/i` stripped
-- **/i/subscribe/** - button autoclicker subscriptions
+- **/i/api/buttonac/** - button autoclicker subscriptions
 - **/i/pwa/meta/news** - fetches MyPayIndia's news feed, decodes it and rewrites its links so they resolve, which is what [/i/news](https://mypayindia.sbs/i/news) renders
 
 **Sessions live in two places:** a cookie on the bastion side and a session token on the frontend. Deleting the cookie won't log you out (the app still remembers you via the token), so to clear both, use [/i/flow/logout](https://mypayindia.sbs/i/flow/logout).

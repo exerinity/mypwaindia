@@ -130,7 +130,7 @@ export const bastion = {
       req = new Request(req, { body });
     }
 
-    if (req.method === "GET" && strippedPath === "/api/v0/button/inter") {
+    if (req.method === "GET" && strippedPath === "/api/pwa/button/gist") {
       const upstream = await fetch(backendBase + "/iotm/button?minimal", {
         method: "GET",
         headers: req.headers,
@@ -140,7 +140,7 @@ export const bastion = {
       return jsonResponse(parseButtonPage(await upstream.text()), corsOrigin);
     }
 
-    if (req.method === "POST" && strippedPath === "/api/v0/button/click") {
+    if (req.method === "POST" && strippedPath === "/api/pwa/button/click") {
       const upstream = await fetch(backendBase + "/iotm/button/click", {
         method: "POST",
         headers: req.headers,

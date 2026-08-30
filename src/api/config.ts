@@ -12,7 +12,7 @@ export function getApiBase(): string {
 }
 
 export function getSubscribeBase(): string {
-  return isPreview() ? '/i/subscribe' : 'https://mypayindia.sbs/i/subscribe';
+  return isPreview() ? '/i/api/buttonac' : 'https://mypayindia.sbs/i/api/buttonac';
 }
 
 export const API_BASE = getApiBase();

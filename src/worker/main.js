@@ -3,7 +3,7 @@ import { subscribe } from "./button_subscribe.js";
 import { handle_news } from "./news.js";
 
 const API_ROOTS = ["/api", "/iotm", "/accountservices", "/api/pwa", "/staging"];
-const SUBSCRIBE_PREFIX = "/i/subscribe";
+const SUBSCRIBE_PREFIX = "/i/api/buttonac";
 const NEWS_PATH = "/i/api/pwa/meta/news";
 
 export default {
