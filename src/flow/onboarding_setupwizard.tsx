@@ -1,34 +1,29 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { OnboardingWizardSubtask } from '../api/flow.ts';
 import { Modal } from '../components/ui/modal.tsx';
-import {
-  useSettings,
-  HOME_PAGE_OPTIONS,
-  DEFAULT_DASHBOARD_BUTTONS,
-  DASHBOARD_BUTTON_STYLES,
-} from '../context/settings_ctx.tsx';
-import type { Settings, DashboardButtonStyle } from '../context/settings_ctx.tsx';
+import { Skeleton, ErrorBox } from '../components/ui/status.tsx';
+import { useSettings } from '../context/settings_ctx.tsx';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { PlusIcon, CloseIcon, SuccessIcon, ArrowLeftIcon, ChevronRight } from '../components/ui/icons.tsx';
 
-const THEME_OPTIONS: { value: Settings['theme']; label: string }[] = [
-  { value: 'light', label: 'Light' },
-  { value: 'dim', label: 'Dim' },
-  { value: 'dark', label: 'Dark' },
-];
+interface OnboardingWizardProps {
+  subtask: OnboardingWizardSubtask | null;
+  loading: boolean;
+  error: unknown;
+}
 
-const STEP_LABELS = ['Theme', 'Speed dial', 'Default page', 'Updates', 'Syncing'];
-
-export default function FinetunePage() {
+export default function FinetunePage({ subtask, loading, error }: OnboardingWizardProps) {
   const navigate = useNavigate();
   const { settings, update } = useSettings();
   const [step, setStep] = useState(0);
   const [accentInput, setAccentInput] = useState(settings.accent);
   const colorsMod = useLazyModule(() => import('../utils/colors.js'));
   const normalizeHex = (hex: string) => colorsMod ? colorsMod.normalizeHex(hex) : null;
-
-  const totalSteps = STEP_LABELS.length;
-  const done = step >= totalSteps;
+  const detail = subtask?.onboarding_wizard;
+  const totalSteps = detail?.steps.length ?? 0;
+  const currentStep = detail?.steps[step];
+  const done = Boolean(detail) && step >= totalSteps;
 
   function applyAccent(hex: string) {
     const norm = normalizeHex(hex);
@@ -37,176 +32,178 @@ export default function FinetunePage() {
     setAccentInput(norm);
   }
 
-  function next() { setStep((s) => s + 1); }
-  function back() { setStep((s) => Math.max(0, s - 1)); }
+  function next() { setStep((current) => current + 1); }
+  function back() { setStep((current) => Math.max(0, current - 1)); }
   function close() { navigate('/dash', { replace: true }); }
 
   function renderStep() {
-    switch (step) {
-      case 0:
+    if (!currentStep) return null;
+
+    switch (currentStep.type) {
+      case 'theme_picker':
         return (
           <>
-            <h2 className="mt-0">Pick a theme</h2>
-            <p className="muted" style={{ marginTop: 0 }}>You can create a custom theme later in Settings</p>
+            <h2 className="mt-0">{currentStep.primary_text.text}</h2>
+            <p className="muted" style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
             <div className="btn-row">
-              {THEME_OPTIONS.map((opt) => (
+              {currentStep.theme_options.map((option) => (
                 <button
-                  key={opt.value}
-                  className={settings.theme === opt.value ? '' : 'secondary'}
-                  onClick={() => update({ theme: opt.value })}
+                  key={option.value}
+                  className={settings.theme === option.value ? '' : 'secondary'}
+                  onClick={() => update({ theme: option.value })}
                 >
-                  {opt.label}
+                  {option.label}
                 </button>
               ))}
             </div>
-            <label className="mt-2">Accent color</label>
+            <label className="mt-2">{currentStep.accent_label}</label>
             <div className="row gap-sm">
               <input
                 type="color"
-                value={normalizeHex(accentInput) || '#d03505'}
-                onChange={(e) => applyAccent(e.target.value)}
+                value={normalizeHex(accentInput) || currentStep.accent_placeholder}
+                onChange={(event) => applyAccent(event.target.value)}
               />
               <input
                 type="text"
                 value={accentInput}
-                onChange={(e) => setAccentInput(e.target.value)}
+                onChange={(event) => setAccentInput(event.target.value)}
                 onBlur={() => applyAccent(accentInput)}
-                placeholder="#d03505"
+                placeholder={currentStep.accent_placeholder}
                 style={{ maxWidth: 160 }}
               />
             </div>
           </>
         );
 
-      case 1:
+      case 'speed_dial': {
+        const firstRoute = currentStep.route_options[0]?.value;
         return (
           <>
-            <h2 className="mt-0">Speed dial</h2>
-            <p className="muted" style={{ marginTop: 0 }}>Choose up to 5 quick-action buttons for your dashboard</p>
-            {settings.dashboardButtons.map((btn, i) => (
-              <div key={i} className="row gap-sm" style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
+            <h2 className="mt-0">{currentStep.primary_text.text}</h2>
+            <p className="muted" style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
+            {settings.dashboardButtons.map((button, index) => (
+              <div key={index} className="row gap-sm" style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
                 <select
-                  value={btn.route}
+                  value={button.route}
                   style={{ flex: 1, minWidth: 0 }}
-                  onChange={(e) => {
-                    const next = [...settings.dashboardButtons];
-                    next[i] = { ...next[i], route: e.target.value };
-                    update({ dashboardButtons: next });
+                  onChange={(event) => {
+                    const buttons = [...settings.dashboardButtons];
+                    buttons[index] = { ...buttons[index], route: event.target.value };
+                    update({ dashboardButtons: buttons });
                   }}
                 >
-                  {HOME_PAGE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  {currentStep.route_options.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
                   ))}
                 </select>
                 <select
-                  value={btn.style}
+                  value={button.style}
                   style={{ width: 130, flexShrink: 0 }}
-                  aria-label="Button style"
-                  onChange={(e) => {
-                    const next = [...settings.dashboardButtons];
-                    next[i] = { ...next[i], style: e.target.value as DashboardButtonStyle };
-                    update({ dashboardButtons: next });
+                  aria-label={currentStep.style_label}
+                  onChange={(event) => {
+                    const buttons = [...settings.dashboardButtons];
+                    buttons[index] = {
+                      ...buttons[index],
+                      style: event.target.value as 'primary' | 'secondary' | 'danger',
+                    };
+                    update({ dashboardButtons: buttons });
                   }}
                 >
-                  {DASHBOARD_BUTTON_STYLES.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  {currentStep.style_options.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
                   ))}
                 </select>
                 <button
                   className="btn ghost"
                   style={{ padding: '0 6px', lineHeight: 0, flexShrink: 0 }}
-                  aria-label="Remove button"
-                  onClick={() => update({ dashboardButtons: settings.dashboardButtons.filter((_, j) => j !== i) })}
+                  aria-label={currentStep.remove_label}
+                  onClick={() => update({ dashboardButtons: settings.dashboardButtons.filter((_, itemIndex) => itemIndex !== index) })}
                 >
                   <CloseIcon size={16} />
                 </button>
               </div>
             ))}
             <div className="row gap-sm" style={{ marginTop: 10 }}>
-              {settings.dashboardButtons.length < 5 && (
+              {firstRoute && settings.dashboardButtons.length < currentStep.max_buttons && (
                 <button
                   className="btn secondary row gap-sm"
-                  onClick={() => update({ dashboardButtons: [...settings.dashboardButtons, { route: HOME_PAGE_OPTIONS[0].value, style: 'secondary' }] })}
+                  onClick={() => update({
+                    dashboardButtons: [...settings.dashboardButtons, { route: firstRoute, style: 'secondary' }],
+                  })}
                 >
-                  <PlusIcon size={16} /> Add button
+                  <PlusIcon size={16} /> {currentStep.add_label}
                 </button>
               )}
               <button
                 className="btn ghost"
-                onClick={() => update({ dashboardButtons: [...DEFAULT_DASHBOARD_BUTTONS] })}
+                onClick={() => update({ dashboardButtons: currentStep.default_buttons.map((button) => ({ ...button })) })}
               >
-                Reset to defaults
+                {currentStep.reset_label}
               </button>
             </div>
           </>
         );
+      }
 
-      case 2:
+      case 'default_page':
         return (
           <>
-            <h2 className="mt-0">Default page</h2>
-            <p className="muted" style={{ marginTop: 0 }}>What should load when you open the app?</p>
+            <h2 className="mt-0">{currentStep.primary_text.text}</h2>
+            <p className="muted" style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
             <select
               value={settings.homePage}
-              onChange={(e) => update({ homePage: e.target.value })}
+              onChange={(event) => update({ homePage: event.target.value })}
             >
-              {HOME_PAGE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              {currentStep.route_options.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
           </>
         );
 
-      case 3:
+      case 'boolean_setting': {
+        const inputId = `onboarding-${currentStep.setting}`;
         return (
           <>
-            <h2 className="mt-0">Updates</h2>
-            <p className="muted" style={{ marginTop: 0 }}>Should the app update itself when a new version is available?</p>
+            <h2 className="mt-0">{currentStep.primary_text.text}</h2>
+            <p className="muted" style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
             <div className="checkbox-row">
               <input
                 type="checkbox"
-                id="ft-auto-update"
-                checked={settings.autoUpdate}
-                onChange={(e) => update({ autoUpdate: e.target.checked })}
+                id={inputId}
+                checked={settings[currentStep.setting]}
+                onChange={(event) => {
+                  if (currentStep.setting === 'autoUpdate') update({ autoUpdate: event.target.checked });
+                  else update({ autoRefresh: event.target.checked });
+                }}
               />
-              <label htmlFor="ft-auto-update" style={{ margin: 0 }}>
-                Yeah
-              </label>
+              <label htmlFor={inputId} style={{ margin: 0 }}>{currentStep.label}</label>
             </div>
           </>
         );
-
-      case 4:
-        return (
-          <>
-            <h2 className="mt-0">Syncing</h2>
-            <p className="muted" style={{ marginTop: 0 }}>Keep your data fresh in the background?</p>
-            <div className="checkbox-row">
-              <input
-                type="checkbox"
-                id="ft-auto-refresh"
-                checked={settings.autoRefresh}
-                onChange={(e) => update({ autoRefresh: e.target.checked })}
-              />
-              <label htmlFor="ft-auto-refresh" style={{ margin: 0 }}>
-                Auto-refresh data (every 30 seconds)
-              </label>
-            </div>
-          </>
-        );
-
-      default:
-        return null;
+      }
     }
   }
 
   return (
     <Modal open onClose={close}>
-      {!done && (
+      {loading && !detail ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <Skeleton width={140} height={14} />
+          <Skeleton width={200} height={26} />
+          <Skeleton width="100%" height={72} />
+          <div className="modal-actions">
+            <Skeleton width={90} height={38} radius={6} />
+            <Skeleton width={90} height={38} radius={6} />
+          </div>
+        </div>
+      ) : error ? (
+        <ErrorBox error={error} />
+      ) : detail && !done && currentStep ? (
         <>
           <div className="row spread" style={{ marginBottom: 4 }}>
             <span className="muted" style={{ fontSize: '0.85rem' }}>Step {step + 1} of {totalSteps}</span>
-            <span className="muted" style={{ fontSize: '0.85rem' }}>{STEP_LABELS[step]}</span>
+            <span className="muted" style={{ fontSize: '0.85rem' }}>{currentStep.progress_label}</span>
           </div>
           <div style={{ height: 4, background: 'var(--border)', borderRadius: 2, marginBottom: 20, overflow: 'hidden' }}>
             <div style={{
@@ -221,25 +218,24 @@ export default function FinetunePage() {
 
           <div className="modal-actions">
             <button className="secondary row gap-sm" onClick={back} disabled={step === 0}>
-              <ArrowLeftIcon size={16} /> Back
+              <ArrowLeftIcon size={16} /> {detail.navigation.back_label}
             </button>
             <button className="row gap-sm" onClick={next}>
-              {step === totalSteps - 1 ? 'Finish' : 'Next'} <ChevronRight size={16} />
+              {step === totalSteps - 1 ? detail.navigation.finish_label : detail.navigation.next_label}
+              <ChevronRight size={16} />
             </button>
           </div>
         </>
-      )}
-
-      {done && (
+      ) : detail && done ? (
         <div className="center" style={{ textAlign: 'center', padding: '12px 0' }}>
           <SuccessIcon size={40} />
-          <h2>Setup finished</h2>
-          <p>MyPWAIndia is now yours. Enjoy!</p>
+          <h2>{detail.completion.primary_text.text}</h2>
+          <p>{detail.completion.secondary_text.text}</p>
           <button style={{ width: '100%', marginTop: 8 }} onClick={close}>
-            OK let me in already
+            {detail.completion.action.label}
           </button>
         </div>
-      )}
+      ) : null}
     </Modal>
   );
 }
