@@ -236,6 +236,23 @@ export async function getFlowTask(
   });
 }
 
+export async function abortFlowTask(
+  flowToken: string,
+  input: { subtask_id: string; action_id: string },
+  auth?: AuthOpts
+): Promise<void> {
+  const { apiFetch } = await import('./client.js');
+  await apiFetch('/api/pwa/flow/task', {
+    method: 'POST',
+    token: auth?.token,
+    env: auth?.env,
+    body: {
+      flow_token: flowToken,
+      subtask_inputs: [input],
+    },
+  });
+}
+
 export async function continueLoginFlowTask(
   flowToken: string,
   input: {
