@@ -2,6 +2,7 @@ import { corsJson, defineFlowTask, flowError, flowToken, text } from "./shared.j
 
 export default defineFlowTask({
   name: "logout",
+  abortActions: { LogoutConfirmation: ["cancel"] },
 
   match(task) {
     return task === "logout" ? {} : null;
@@ -75,7 +76,7 @@ export default defineFlowTask({
     return corsJson({
       success: true,
       data: {
-        flow_token: flowToken(),
+        flow_token: flowToken("logout."),
         status: "success",
         presentation: {
           kind: "modal",
