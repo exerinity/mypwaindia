@@ -9,6 +9,7 @@ import {
 
 export default defineFlowTask({
   name: "transaction",
+  abortActions: { TransactionDetail: ["close"] },
 
   match(task) {
     if (task === "transaction") return {};
@@ -90,7 +91,7 @@ export default defineFlowTask({
     return corsJson({
       success: true,
       data: {
-        flow_token: flowToken(),
+        flow_token: flowToken("transaction."),
         status: "success",
         presentation: {
           kind: "modal",
