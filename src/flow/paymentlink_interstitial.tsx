@@ -14,9 +14,11 @@ interface ClaimModalProps {
   subtask: PaymentLinkInterstitialSubtask | null;
   loading: boolean;
   error: unknown;
+  embedded?: boolean;
+  onClose?: () => void;
 }
 
-export default function ClaimModal({ subtask, loading, error }: ClaimModalProps) {
+export default function ClaimModal({ subtask, loading, error, embedded = false, onClose }: ClaimModalProps) {
   const { active, updateBalance } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,6 +38,10 @@ export default function ClaimModal({ subtask, loading, error }: ClaimModalProps)
   const bgLoc = (location.state as { backgroundLocation?: unknown } | null)?.backgroundLocation;
 
   function handleClose() {
+    if (onClose) {
+      onClose();
+      return;
+    }
     if (bgLoc) navigate(-1);
     else navigate('/');
   }
@@ -65,8 +71,8 @@ export default function ClaimModal({ subtask, loading, error }: ClaimModalProps)
     }
   }
 
-  return (
-    <Modal open onClose={handleClose} title={detail?.primary_text.text ?? 'Claim a payment link'}>
+  const content = (
+    <>
       {loading && !data ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div className="row spread">
@@ -147,6 +153,9 @@ export default function ClaimModal({ subtask, loading, error }: ClaimModalProps)
           )}
         </>
       )}
-    </Modal>
+    </>
   );
+
+  if (embedded) return content;
+  return <Modal open onClose={handleClose} title={detail?.primary_text.text ?? 'Claim a payment link'}>{content}</Modal>;
 }
