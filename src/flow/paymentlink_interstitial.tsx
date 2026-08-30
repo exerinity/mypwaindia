@@ -2,32 +2,36 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
-import { useApiCall } from '../hooks/api_call.js';
-import { getLink, claimLink } from '../api/links.js';
+import { claimLink } from '../api/links.js';
+import type { PaymentLinkInterstitialSubtask } from '../api/flow.ts';
 import { getUserInfo } from '../api/user.js';
 import { useLazyModule } from '../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../components/ui/status.tsx';
 import { Modal } from '../components/ui/modal.tsx';
 import { ExternalIcon } from '../components/ui/icons.tsx';
 
-type LinkPreview = { creator?: { username: string }; amount: number; note?: string; created: string; status: string };
+interface ClaimModalProps {
+  subtask: PaymentLinkInterstitialSubtask | null;
+  loading: boolean;
+  error: unknown;
+}
 
-export default function ClaimModal() {
+export default function ClaimModal({ subtask, loading, error }: ClaimModalProps) {
   const { active, updateBalance } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
-  const token = decodeURIComponent(location.pathname.split('/').pop() || '');
   const moneyMod = useLazyModule(() => import('../utils/money.js'));
   const datesMod = useLazyModule(() => import('../utils/dates.js'));
   const formatINR = (n: number) => moneyMod ? moneyMod.formatINR(n) : '...';
   const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
   const [claiming, setClaiming] = useState(false);
-
-  const { data, loading, error } = useApiCall<LinkPreview>(
-    () => getLink(token) as Promise<LinkPreview>,
-    [token]
-  );
+  const detail = subtask?.payment_link_interstitial;
+  const data = detail?.payment_link;
+  const token = detail?.token ?? '';
+  const labels = detail?.labels;
+  const claimAction = detail?.actions.find((action) => action.link_id === 'claim');
+  const externalAction = detail?.actions.find((action) => action.link_id === 'claim_external');
 
   const bgLoc = (location.state as { backgroundLocation?: unknown } | null)?.backgroundLocation;
 
@@ -62,7 +66,7 @@ export default function ClaimModal() {
   }
 
   return (
-    <Modal open onClose={handleClose} title="Claim a payment link">
+    <Modal open onClose={handleClose} title={detail?.primary_text.text ?? 'Claim a payment link'}>
       {loading && !data ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div className="row spread">
@@ -88,17 +92,17 @@ export default function ClaimModal() {
         <>
           <div className="grid cols-2" style={{ marginBottom: 16 }}>
             <div>
-              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>From</div>
+              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.from ?? 'From'}</div>
               <div>@{data.creator?.username ?? '-'}</div>
             </div>
             <div>
-              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>Created</div>
+              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.created ?? 'Created'}</div>
               <div>{formatDate(data.created)}</div>
             </div>
           </div>
 
           <div style={{ marginBottom: data.note ? 16 : 20 }}>
-            <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>Amount</div>
+            <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.amount ?? 'Amount'}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span className="balance-display" style={{ fontSize: '2rem' }}>{formatINR(data.amount)}</span>
               <span className={`link-status ${data.status}`}>{data.status}</span>
@@ -107,7 +111,7 @@ export default function ClaimModal() {
 
           {data.note && (
             <div style={{ marginBottom: 20 }}>
-              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>Note</div>
+              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.note ?? 'Note'}</div>
               <div style={{
                 background: 'var(--surface-2, var(--bg))',
                 border: '1px solid var(--border)',
@@ -121,18 +125,26 @@ export default function ClaimModal() {
             </div>
           )}
 
-          <button onClick={handleClaim} disabled={claiming} style={{ width: '100%' }}>
-            {claiming ? <><span className="spinner" /> Claiming...</> : active ? `Claim ${formatINR(data.amount)}` : 'Log in to claim'}
-          </button>
-          <a
-            href={`https://mypayindia.com/pay/link?token=${encodeURIComponent(token)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn secondary"
-            style={{ width: '100%', marginTop: 10, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
-          >
-            Claim on MyPayIndia.com <ExternalIcon />
-          </a>
+          {claimAction && (
+            <button onClick={handleClaim} disabled={claiming} style={{ width: '100%' }}>
+              {claiming
+                ? <><span className="spinner" /> {claimAction.pending_label ?? 'Claiming...'}</>
+                : active
+                  ? `${claimAction.label} ${formatINR(data.amount)}`
+                  : (claimAction.logged_out_label ?? 'Log in to claim')}
+            </button>
+          )}
+          {externalAction?.url && (
+            <a
+              href={externalAction.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn secondary"
+              style={{ width: '100%', marginTop: 10, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+            >
+              {externalAction.label} <ExternalIcon />
+            </a>
+          )}
         </>
       )}
     </Modal>
