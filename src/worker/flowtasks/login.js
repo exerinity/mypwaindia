@@ -80,6 +80,10 @@ function loginTaskResponse(token, subtask, corsOrigin, upstreamHeaders) {
 
 export default defineFlowTask({
   name: "login",
+  abortActions: {
+    LoginEnterCredentials: ["cancel"],
+    LoginEnterTotp: ["cancel"]
+  },
 
   match(task) {
     return task === "login" ? {} : null;
@@ -90,7 +94,7 @@ export default defineFlowTask({
   },
 
   matchesFlowToken(token) {
-    return typeof token === "string" && token.startsWith("login.");
+    return typeof token === "string" && /^login\.[a-f0-9]{32}$/.test(token);
   },
 
   async continue({ body, backendBase, corsOrigin }) {
