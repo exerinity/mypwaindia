@@ -1,9 +1,10 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { CardSkeleton } from '../components/shell/app_skeleton.tsx';
+import { lazy, Suspense, useState, type ReactNode } from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Modal } from '../components/ui/modal.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.ts';
 import {
+  abortFlowTask,
   getFlowTask,
   type FlowTaskResponse,
   type LoginFormSubtask,
@@ -25,9 +26,19 @@ function isMissingTaskError(error: unknown): boolean {
   return code === 'unknown_flow' || code === 'unknown_task';
 }
 
+function FlowSpinner() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
+      <span className="spinner lg" />
+    </div>
+  );
+}
+
 function ServerFlow({ task }: { task: string }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { active, accounts } = useAuth();
+  const [aborting, setAborting] = useState(false);
   const remaining = active ? accounts.filter((account) => account.id !== active.id) : [];
   const nextAccount = remaining.length > 0 ? remaining[remaining.length - 1] : null;
   const params = Object.fromEntries(new URLSearchParams(location.search));
@@ -37,46 +48,108 @@ function ServerFlow({ task }: { task: string }) {
     [active?.token, active?.env, task, JSON.stringify(params)]
   );
 
-  if (isMissingTaskError(error)) return <Flowback />;
-  if (loading) return <CardSkeleton />;
-  if (error || !data) return <Flowback />;
+  const backgroundLocation = (
+    location.state as { backgroundLocation?: unknown } | null
+  )?.backgroundLocation;
 
-  const transaction = data.subtasks.find(
+  function handleClose() {
+    if (backgroundLocation) {
+      navigate(-1);
+      return;
+    }
+    const destination = data?.presentation.close_behavior === 'return_or_home' ? '/' : '/dash';
+    navigate(destination, { replace: true });
+  }
+
+  async function handleAbort(subtaskId: string, actionId: string) {
+    if (aborting || !data?.flow_token) return;
+    setAborting(true);
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    try {
+      await abortFlowTask(data.flow_token, {
+        subtask_id: subtaskId,
+        action_id: actionId,
+      }, active ?? undefined);
+    } catch {
+      // Fuck
+    } finally {
+      handleClose();
+    }
+  }
+
+  let title: string | undefined;
+  let content: ReactNode = <FlowSpinner />;
+
+  if (!loading && (isMissingTaskError(error) || error || !data)) {
+    title = 'Error';
+    content = <Flowback embedded onClose={handleClose} />;
+  }
+
+  const transaction = data?.subtasks.find(
     (candidate): candidate is TransactionDetailSubtask => candidate.type === 'transaction_detail'
   );
   if (transaction) {
-    return <TransactionModal subtask={transaction} loading={false} error={null} />;
+    const detail = transaction.transaction_detail;
+    const outgoing = active ? detail.transaction.sender?.id === active.id : false;
+    title = outgoing ? detail.outgoing_title.text : detail.incoming_title.text;
+    content = (
+      <TransactionModal embedded onClose={handleClose} onAbort={handleAbort} subtask={transaction} loading={false} error={null} />
+    );
   }
 
-  const paymentLink = data.subtasks.find(
+  const paymentLink = data?.subtasks.find(
     (candidate): candidate is PaymentLinkInterstitialSubtask => candidate.type === 'payment_link_interstitial'
   );
   if (paymentLink) {
-    return <ClaimModal subtask={paymentLink} loading={false} error={null} />;
+    title = paymentLink.payment_link_interstitial.primary_text.text;
+    content = <ClaimModal embedded onClose={handleClose} subtask={paymentLink} loading={false} error={null} />;
   }
 
-  const logout = data.subtasks.find(
+  const logout = data?.subtasks.find(
     (candidate): candidate is LogoutConfirmationSubtask => candidate.type === 'logout_confirmation'
   );
   if (logout) {
-    return <LogoutModal subtask={logout} loading={false} error={null} />;
+    content = <LogoutModal embedded onClose={handleClose} onAbort={handleAbort} subtask={logout} loading={false} error={null} />;
   }
 
-  const wizard = data.subtasks.find(
+  const wizard = data?.subtasks.find(
     (candidate): candidate is OnboardingWizardSubtask => candidate.type === 'onboarding_wizard'
   );
   if (wizard) {
-    return <WizardModal subtask={wizard} loading={false} error={null} />;
+    content = <WizardModal embedded onClose={handleClose} onAbort={handleAbort} subtask={wizard} loading={false} error={null} />;
   }
 
-  const login = data.subtasks.find(
+  const login = data?.subtasks.find(
     (candidate): candidate is LoginFormSubtask => candidate.type === 'login_form'
   );
   if (login) {
-    return <LoginModal subtask={login} flowToken={data.flow_token} loading={false} error={null} />;
+    content = (
+      <LoginModal
+        embedded
+        onClose={handleClose}
+        onAbort={handleAbort}
+        subtask={login}
+        flowToken={data?.flow_token ?? null}
+        loading={false}
+        error={null}
+      />
+    );
   }
 
-  return <Flowback />;
+  if (!loading && data && !transaction && !paymentLink && !logout && !wizard && !login) {
+    title = 'Error';
+    content = <Flowback embedded onClose={handleClose} />;
+  }
+
+  if (aborting) content = <FlowSpinner />;
+
+  return (
+    <Modal open onClose={handleClose} title={title}>
+      <Suspense fallback={<FlowSpinner />}>
+        {content}
+      </Suspense>
+    </Modal>
+  );
 }
 
 function FlowRoute() {
@@ -93,10 +166,8 @@ export function isFlowModalPath(pathname: string): boolean {
 export function FlowModals() {
   const location = useLocation();
   return (
-    <Suspense fallback={<CardSkeleton />}>
-      <Routes location={location}>
-        <Route path="/i/flow/*" element={<FlowRoute />} />
-      </Routes>
-    </Suspense>
+    <Routes location={location}>
+      <Route path="/i/flow/*" element={<FlowRoute />} />
+    </Routes>
   );
 }
