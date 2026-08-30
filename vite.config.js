@@ -58,7 +58,7 @@ export default defineConfig({
         shortcuts: [
           { name: 'Transfer funds', short_name: 'Transfer', url: '/account/transfer', icons: [{ src: '/i/mypayindia-bg.png', sizes: '1024x1024', type: 'image/png' }] },
           { name: 'Transaction history', short_name: 'History', url: '/account/history', icons: [{ src: '/i/mypayindia-bg.png', sizes: '1024x1024', type: 'image/png' }] },
-          { name: 'Payment links', short_name: 'Links', url: '/i/flow/links', icons: [{ src: '/i/mypayindia-bg.png', sizes: '1024x1024', type: 'image/png' }] }
+          { name: 'Payment links', short_name: 'Links', url: '/account/links', icons: [{ src: '/i/mypayindia-bg.png', sizes: '1024x1024', type: 'image/png' }] }
         ]
       }
     })
@@ -106,7 +106,7 @@ export default defineConfig({
           }
           if (id.match(/pages\/(login|logout|onboarding)/)) return 'flow';
           if (id.match(/pages\/transfer\//)) return 'transfers';
-          if (id.match(/pages\/account\/(history|simple_history|old_transaction)|pages\/scambait\/statements/)) return 'history';
+          if (id.match(/pages\/account\/(history|simple_history)|pages\/scambait\/statements/)) return 'history';
           if (id.match(/pages\/(links|claim_link)/)) return 'links';
           if (id.match(/pages\/information\/team_map/)) return 'teammap';
           if (id.match(/pages\/information\/(leaderboard|team)/)) return 'social';
