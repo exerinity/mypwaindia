@@ -141,6 +141,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/flow/onboarding/wizard** - setup wizard after onboarder
 - **/i/flow/transaction/:id** - transaction detail viewer
 - **/i/flow/links/interstitial/:token** - claim/inspect a payment link
+- **/i/flow/test** - inert debug
 
 `/i/flow/*` is for server driven flows. There are no regular pages under that prefix. Every path under `/i/flow/` is passed to the flow API
 

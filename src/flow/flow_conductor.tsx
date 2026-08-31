@@ -6,6 +6,8 @@ import { useApiCall } from '../hooks/api_call.ts';
 import {
   abortFlowTask,
   getFlowTask,
+  submitFlowTaskAction,
+  type FlowTestSubtask,
   type FlowTaskResponse,
   type LoginFormSubtask,
   type LogoutConfirmationSubtask,
@@ -19,6 +21,7 @@ const LogoutModal = lazy(() => import('./flow_logout.tsx'));
 const WizardModal = lazy(() => import('./onboarding_setupwizard.tsx'));
 const ClaimModal = lazy(() => import('./paymentlink_interstitial.tsx'));
 const TransactionModal = lazy(() => import('./transaction_info.tsx'));
+const FlowTestModal = lazy(() => import('./flow_test.tsx'));
 const Flowback = lazy(() => import('./shell_fallback.tsx'));
 
 function isMissingTaskError(error: unknown): boolean {
@@ -39,6 +42,7 @@ function ServerFlow({ task }: { task: string }) {
   const navigate = useNavigate();
   const { active, accounts } = useAuth();
   const [aborting, setAborting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const remaining = active ? accounts.filter((account) => account.id !== active.id) : [];
   const nextAccount = remaining.length > 0 ? remaining[remaining.length - 1] : null;
   const params = Object.fromEntries(new URLSearchParams(location.search));
@@ -74,6 +78,20 @@ function ServerFlow({ task }: { task: string }) {
       // Fuck
     } finally {
       handleClose();
+    }
+  }
+
+  async function handleTask(subtaskId: string, actionId: string) {
+    if (submitting || !data?.flow_token) return;
+    setSubmitting(true);
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    try {
+      await submitFlowTaskAction(data.flow_token, {
+        subtask_id: subtaskId,
+        action_id: actionId,
+      }, active ?? undefined);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -136,12 +154,20 @@ function ServerFlow({ task }: { task: string }) {
     );
   }
 
-  if (!loading && data && !transaction && !paymentLink && !logout && !wizard && !login) {
+  const flowTest = data?.subtasks.find(
+    (candidate): candidate is FlowTestSubtask => candidate.type === 'flow_test'
+  );
+  if (flowTest) {
+    title = flowTest.flow_test.primary_text.text;
+    content = <FlowTestModal subtask={flowTest} onAbort={handleAbort} onTask={handleTask} />;
+  }
+
+  if (!loading && data && !transaction && !paymentLink && !logout && !wizard && !login && !flowTest) {
     title = 'Error';
     content = <Flowback embedded onClose={handleClose} />;
   }
 
-  if (aborting) content = <FlowSpinner />;
+  if (aborting || submitting) content = <FlowSpinner />;
 
   return (
     <Modal open onClose={handleClose} title={title}>

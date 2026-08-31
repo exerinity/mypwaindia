@@ -204,13 +204,77 @@ export interface LoginSuccessSubtask {
   subtask_back_navigation: 'hide_explicit_cta';
 }
 
+export interface FlowTestInput {
+  input_id: string;
+  type: 'text' | 'email' | 'password' | 'number' | 'url' | 'search' | 'color';
+  label: string;
+  value: string;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  read_only?: boolean;
+}
+
+export interface FlowTestToggle {
+  input_id: string;
+  label: string;
+  checked: boolean;
+  disabled?: boolean;
+}
+
+export interface FlowTestButton {
+  button_id: string;
+  label: string;
+  style: 'primary' | 'secondary' | 'danger' | 'ghost' | 'compact' | 'option';
+  description?: string;
+  disabled?: boolean;
+}
+
+export interface FlowTestSubtask {
+  subtask_id: 'FlowTest';
+  type: 'flow_test';
+  flow_test: {
+    flow_id: string;
+    rendered_at: string;
+    auth_state: 'logged_in' | 'signed_out' | 'lookup_failed';
+    logged_in_as: { id: number | null; username: string; role: string | null } | null;
+    identity_error: string | null;
+    primary_text: FlowText;
+    secondary_text: FlowText;
+    text_samples: { label: string; value: FlowText }[];
+    options: FlowOption[];
+    flags: Record<string, boolean | null>;
+    inputs: FlowTestInput[];
+    textarea: {
+      input_id: string;
+      label: string;
+      value: string;
+      placeholder?: string;
+      disabled?: boolean;
+    };
+    select: {
+      input_id: string;
+      label: string;
+      value: string;
+      options: FlowOption[];
+      disabled?: boolean;
+    };
+    checkboxes: FlowTestToggle[];
+    toggles: FlowTestToggle[];
+    buttons: FlowTestButton[];
+    actions: FlowAction<'test_task' | 'test_navigate' | 'test_client_action' | 'test_abort' | 'test_external'>[];
+  };
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
 export type FlowSubtask =
   | TransactionDetailSubtask
   | PaymentLinkInterstitialSubtask
   | LogoutConfirmationSubtask
   | OnboardingWizardSubtask
   | LoginFormSubtask
-  | LoginSuccessSubtask;
+  | LoginSuccessSubtask
+  | FlowTestSubtask;
 
 export interface FlowTaskResponse {
   flow_token: string;
@@ -241,8 +305,16 @@ export async function abortFlowTask(
   input: { subtask_id: string; action_id: string },
   auth?: AuthOpts
 ): Promise<void> {
+  await submitFlowTaskAction(flowToken, input, auth);
+}
+
+export async function submitFlowTaskAction(
+  flowToken: string,
+  input: { subtask_id: string; action_id: string },
+  auth?: AuthOpts
+): Promise<FlowTaskResponse> {
   const { apiFetch } = await import('./client.js');
-  await apiFetch('/api/pwa/flow/task', {
+  return apiFetch('/api/pwa/flow/task', {
     method: 'POST',
     token: auth?.token,
     env: auth?.env,
