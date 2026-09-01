@@ -29,6 +29,17 @@ const PRESETS_PAISA = [
   100000, // 1,000
 ];
 
+const NO_MODAL_IMAGES = [
+  '/i/exquisite_imagery/opsec/anon.jpg',
+  '/i/exquisite_imagery/opsec/bro.jpg',
+  '/i/exquisite_imagery/opsec/discord.jpg',
+  '/i/exquisite_imagery/opsec/godinf.jpg',
+  '/i/exquisite_imagery/opsec/gx.jpg',
+  '/i/exquisite_imagery/opsec/infinite.jpg',
+  '/i/exquisite_imagery/opsec/what.jpg',
+  '/i/exquisite_imagery/opsec/x.jpg',
+];
+
 const TRUNCATE: React.CSSProperties = {
   display: 'block',
   width: '100%',
@@ -54,7 +65,8 @@ export default function TransferPage() {
   });
   const [rawInput, setRawInput] = useState('');
   const [editingAmount, setEditingAmount] = useState(false);
-  const [showSonModal, setShowSonModal] = useState(false);
+  const [showNoModal, setShowNoModal] = useState(false);
+  const [noModalImage, setNoModalImage] = useState(NO_MODAL_IMAGES[0]);
   const [showRecents, setShowRecents] = useState(false);
   const [recentSort, setRecentSort] = useState<'recent' | 'amount'>('recent');
 
@@ -133,9 +145,14 @@ export default function TransferPage() {
     setRawInput('');
   }
 
+  function openNoModal() {
+    setNoModalImage(NO_MODAL_IMAGES[Math.floor(Math.random() * NO_MODAL_IMAGES.length)]);
+    setShowNoModal(true);
+  }
+
   async function doTransfer() {
-    if (stackPaisa <= 0) { setShowSonModal(true); toast.success('im crine son 😭😭😭😭😭'); return; }
-    if (!recipient.trim()) { setShowSonModal(true); toast.success('im crine son 😭😭😭😭😭'); return; }
+    if (stackPaisa <= 0) { openNoModal(); return; }
+    if (!recipient.trim()) { openNoModal(); return; }
     setBusy(true);
     try {
       const res = await transfer(active!, {
@@ -159,8 +176,8 @@ export default function TransferPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭">
-        <img src="/i/exquisite_imagery/charlie_son.jpg" alt="" style={{ display: 'block', maxWidth: '100%' }} />
+      <Modal open={showNoModal} onClose={() => setShowNoModal(false)}>
+        <img src={noModalImage} alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
       <Modal open={showRecents} onClose={() => setShowRecents(false)}>
         <div className="table-controls">

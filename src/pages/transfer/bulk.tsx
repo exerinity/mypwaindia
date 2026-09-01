@@ -28,6 +28,17 @@ const PRESETS_PAISA = [
   100000, // 1,000
 ];
 
+const NO_MODAL_IMAGES = [
+  '/i/exquisite_imagery/opsec/anon.jpg',
+  '/i/exquisite_imagery/opsec/bro.jpg',
+  '/i/exquisite_imagery/opsec/discord.jpg',
+  '/i/exquisite_imagery/opsec/godinf.jpg',
+  '/i/exquisite_imagery/opsec/gx.jpg',
+  '/i/exquisite_imagery/opsec/infinite.jpg',
+  '/i/exquisite_imagery/opsec/what.jpg',
+  '/i/exquisite_imagery/opsec/x.jpg',
+];
+
 interface QueueItem {
   id: string;
   recipient: string;
@@ -80,7 +91,8 @@ export default function BulkTransferPage() {
   const [stackPaisa, setStackPaisa] = useState(0);
   const [rawInput, setRawInput] = useState('');
   const [editingAmount, setEditingAmount] = useState(false);
-  const [showSonModal, setShowSonModal] = useState(false);
+  const [showNoModal, setShowNoModal] = useState(false);
+  const [noModalImage, setNoModalImage] = useState(NO_MODAL_IMAGES[0]);
 
   const [keepAmount, setKeepAmount] = useState(false);
   const [keepNote, setKeepNote] = useState(false);
@@ -112,8 +124,13 @@ export default function BulkTransferPage() {
     setRawInput('');
   }
 
+  function openNoModal() {
+    setNoModalImage(NO_MODAL_IMAGES[Math.floor(Math.random() * NO_MODAL_IMAGES.length)]);
+    setShowNoModal(true);
+  }
+
   function addToQueue() {
-    if (stackPaisa <= 0 || !recipient.trim()) { setShowSonModal(true); toast.success('im crine son 😭😭😭😭😭'); return; }
+    if (stackPaisa <= 0 || !recipient.trim()) { openNoModal(); return; }
     const item: QueueItem = {
       id: `${uid}-${Date.now()}-${Math.random()}`,
       recipient: recipient.trim(),
@@ -172,8 +189,8 @@ export default function BulkTransferPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <Modal open={showSonModal} onClose={() => setShowSonModal(false)} title="son 😭😭😭😭😭">
-        <img src="/i/exquisite_imagery/charlie_son.jpg" alt="" style={{ display: 'block', maxWidth: '100%' }} />
+      <Modal open={showNoModal} onClose={() => setShowNoModal(false)}>
+        <img src={noModalImage} alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
 
       <h1 className="mt-0">Bulk transfer</h1>
