@@ -197,8 +197,8 @@ export default function AcknowledgementsPage() {
         </div>
       ))}
       <p className="mt-0 mb-0"><a href="https://github.com/exerinity/mypwaindia/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>MyPWAIndia is open-source under the MIT license <ExternalIcon size={12} /></a></p>
-      <a href="/i/exquisite_imagery/meow.jpg" target="_blank" rel="noopener noreferrer">
-        <img src="/i/exquisite_imagery/meow.jpg" style={{ maxWidth: '50%' }} />
+      <a href="/i/exquisite_imagery/opsec/what.jpg" target="_blank" rel="noopener noreferrer">
+        <img src="/i/exquisite_imagery/opsec/what.jpg" style={{ maxWidth: '50%' }} />
       </a>
     </>
   );
