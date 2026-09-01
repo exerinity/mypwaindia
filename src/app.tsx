@@ -33,6 +33,7 @@ const ReleaseNotesPage = lazy(() => import('./pages/information/release_notes.ts
 const AcknowledgementsPage = lazy(() => import('./pages/information/acknowledgements.tsx'));
 const HowPwaPage = lazy(() => import('./pages/information/how_pwa.tsx'));
 const PrivacyPage = lazy(() => import('./pages/information/privacy.tsx'));
+const OpsecPage = lazy(() => import('./pages/pwa/opsec.tsx'));
 const RestrictionsPage = lazy(() => import('./pages/account/restrictions.tsx'));
 const ConnectionPage = lazy(() => import('./flow/pages/connection.tsx'));
 const ThemeApplyPage = lazy(() => import('./flow/pages/theme_apply.tsx'));
@@ -132,6 +133,7 @@ export default function App() {
         <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
         <Route path="/i/how_pwa" element={<HowPwaPage />} />
         <Route path="/i/privacy" element={<PrivacyPage />} />
+        <Route path="/opsec" element={<OpsecPage />} />
         <Route path="/i/connecttest" element={<ConnectionPage />} />
         <Route path="/i/theme" element={<ThemeApplyPage />} />
         <Route path="/i/sharedsett" element={<SettingsApplyPage />} />

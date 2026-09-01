@@ -142,6 +142,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/flow/transaction/:id** - transaction detail viewer
 - **/i/flow/links/interstitial/:token** - claim/inspect a payment link
 - **/i/flow/test** - inert debug
+- **/i/flow/opsec** - WHAT'S YOUR OPSEC LEVEL ?? ? ? ? ? ?
 
 `/i/flow/*` is for server driven flows. There are no regular pages under that prefix. Every path under `/i/flow/` is passed to the flow API
 

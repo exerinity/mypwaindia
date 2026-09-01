@@ -267,6 +267,17 @@ export interface FlowTestSubtask {
   subtask_back_navigation: 'hide_explicit_cta';
 }
 
+export interface ImageSubtask {
+  subtask_id: 'OpsecLevel';
+  type: 'image';
+  image: {
+    image_name: string;
+    url: string;
+    alt: string;
+  };
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
 export type FlowSubtask =
   | TransactionDetailSubtask
   | PaymentLinkInterstitialSubtask
@@ -274,7 +285,8 @@ export type FlowSubtask =
   | OnboardingWizardSubtask
   | LoginFormSubtask
   | LoginSuccessSubtask
-  | FlowTestSubtask;
+  | FlowTestSubtask
+  | ImageSubtask;
 
 export interface FlowTaskResponse {
   flow_token: string;

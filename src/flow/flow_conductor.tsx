@@ -9,6 +9,7 @@ import {
   submitFlowTaskAction,
   type FlowTestSubtask,
   type FlowTaskResponse,
+  type ImageSubtask,
   type LoginFormSubtask,
   type LogoutConfirmationSubtask,
   type OnboardingWizardSubtask,
@@ -22,6 +23,7 @@ const WizardModal = lazy(() => import('./onboarding_setupwizard.tsx'));
 const ClaimModal = lazy(() => import('./paymentlink_interstitial.tsx'));
 const TransactionModal = lazy(() => import('./transaction_info.tsx'));
 const FlowTestModal = lazy(() => import('./flow_test.tsx'));
+const FlowImageModal = lazy(() => import('./flow_image.tsx'));
 const Flowback = lazy(() => import('./shell_fallback.tsx'));
 
 function isMissingTaskError(error: unknown): boolean {
@@ -162,7 +164,14 @@ function ServerFlow({ task }: { task: string }) {
     content = <FlowTestModal subtask={flowTest} onAbort={handleAbort} onTask={handleTask} />;
   }
 
-  if (!loading && data && !transaction && !paymentLink && !logout && !wizard && !login && !flowTest) {
+  const flowImage = data?.subtasks.find(
+    (candidate): candidate is ImageSubtask => candidate.type === 'image'
+  );
+  if (flowImage) {
+    content = <FlowImageModal subtask={flowImage} />;
+  }
+
+  if (!loading && data && !transaction && !paymentLink && !logout && !wizard && !login && !flowTest && !flowImage) {
     title = 'Error';
     content = <Flowback embedded onClose={handleClose} />;
   }
