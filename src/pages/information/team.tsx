@@ -10,6 +10,7 @@ import { TeamMemberCard, avatarConductor, type TeamMember } from '../../componen
 export default function TeamPage() {
   usePageTitle('Meet the team');
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [shiftHeld, setShiftHeld] = useState(false);
   const [searchParams] = useSearchParams();
   const highlight = (searchParams.get('highlight') ?? '').trim().toLowerCase();
   const highlightRef = useRef<HTMLDivElement>(null);
@@ -28,6 +29,21 @@ export default function TeamPage() {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, [highlight, data]);
 
+  useEffect(() => {
+    const updateShiftState = (event: KeyboardEvent) => setShiftHeld(event.shiftKey);
+    const releaseShift = () => setShiftHeld(false);
+
+    window.addEventListener('keydown', updateShiftState);
+    window.addEventListener('keyup', updateShiftState);
+    window.addEventListener('blur', releaseShift);
+
+    return () => {
+      window.removeEventListener('keydown', updateShiftState);
+      window.removeEventListener('keyup', updateShiftState);
+      window.removeEventListener('blur', releaseShift);
+    };
+  }, []);
+
   const renderGrid = (members: TeamMember[]) => (
     <div className="grid cols-team">
       {members.map((m) => {
@@ -38,7 +54,7 @@ export default function TeamPage() {
             ref={highlighted ? highlightRef : undefined}
             className={`card team-card${highlighted ? ' team-card--highlight' : ''}`}
           >
-            <TeamMemberCard m={m} onAvatarClick={setSelectedMember} />
+            <TeamMemberCard m={m} onAvatarClick={setSelectedMember} twitterAsX={shiftHeld} />
           </div>
         );
       })}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { ExternalIcon } from '../ui/icons.tsx';
+import { getSocialSiteLabel, resolveSocialSite, SocialIcon } from '../ui/social_icons.tsx';
 
 const ASSET_HOST = 'https://mypayindia.com';
 export function avatarConductor(avatar?: string): string {
@@ -104,7 +105,15 @@ export function formatMonthYear(iso: string) {
   return d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
-export function TeamMemberCard({ m, onAvatarClick }: { m: TeamMember; onAvatarClick?: (m: TeamMember) => void }) {
+export function TeamMemberCard({
+  m,
+  onAvatarClick,
+  twitterAsX = false,
+}: {
+  m: TeamMember;
+  onAvatarClick?: (m: TeamMember) => void;
+  twitterAsX?: boolean;
+}) {
   const datesMod = useLazyModule(() => import('../../utils/dates.js'));
   const calcAge = (d: string) => datesMod ? datesMod.calcAge(d) : null;
 
@@ -172,12 +181,25 @@ export function TeamMemberCard({ m, onAvatarClick }: { m: TeamMember; onAvatarCl
         </>
       )}
       {m.socials && Object.keys(m.socials).length > 0 && (
-        <div className="team-socials">
-          {Object.entries(m.socials).map(([key, url]) => (
-            <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="btn secondary compact">
-              {key} <ExternalIcon size={11} />
-            </a>
-          ))}
+        <div className="team-socials" role="group" aria-label={`${m.name}'s links`}>
+          {Object.entries(m.socials).map(([key, url]) => {
+            const site = resolveSocialSite(key, url);
+            const label = site ? getSocialSiteLabel(site) : key;
+
+            return (
+              <a
+                key={key}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`btn secondary compact${site ? ' team-social-link' : ''}`}
+                aria-label={`Open ${label} for ${m.name}`}
+                title={label}
+              >
+                {site ? <SocialIcon site={site} twitterAsX={twitterAsX} /> : <>{key} <ExternalIcon size={11} /></>}
+              </a>
+            );
+          })}
         </div>
       )}
     </>
