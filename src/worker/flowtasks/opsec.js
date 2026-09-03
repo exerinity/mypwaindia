@@ -1,12 +1,15 @@
 import { corsJson, defineFlowTask, flowToken } from "./shared.js";
 
 const IMAGES = [
+  "1337.jpg",
   "anon.jpg",
   "bro.jpg",
   "discord.jpg",
   "godinf.jpg",
   "gx.jpg",
   "infinite.jpg",
+  "jsid.jpg",
+  "wa.jpg",
   "what.jpg",
   "x.jpg"
 ];
