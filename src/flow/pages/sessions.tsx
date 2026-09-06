@@ -2,21 +2,21 @@ import React, { useState, useMemo, useRef, lazy } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
+import type { Account, LoginSessionResponse } from '../../context/auth_ctx.tsx';
 import { login as apiLogin, logout as apiLogout } from '../../api/auth.js';
 import { useToast } from '../../context/toast_ctx.tsx';
 import { Modal } from '../../components/ui/modal.tsx';
-import { ExternalIcon, InfoIcon, ErrorIcon, LockIcon, ArrowLeftIcon } from '../../components/ui/icons.tsx';
+import { InfoIcon, ErrorIcon, LockIcon, ArrowLeftIcon } from '../../components/ui/icons.tsx';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { useCachedQuery } from '../../hooks/cached_query.js';
 import { useRefreshTimer } from '../../hooks/refresh_timer.js';
-import { listSessions, invalidateSession } from '../../api/user.js';
+import { getUserInfo, listSessions, invalidateSession } from '../../api/user.js';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
 
 const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const FloatingInput = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
-const HoldButton = lazy(() => import('../../components/ui/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
 
 interface Session { id: string; device_info?: string; ip?: string; created_at: string; last_active: string; current?: boolean; invalidated?: boolean }
 
@@ -80,7 +80,9 @@ export default function SessionsPage() {
   const datesMod = useLazyModule(() => import('../../utils/dates.js'));
   const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
 
-  const [reinitStage, setReinitStage] = useState<'logout' | 'sleeping' | 'login' | null>(null);
+  const [reinitStage, setReinitStage] = useState<'identify' | 'logout' | 'login' | 'verify' | 'cleanup' | null>(null);
+  const reinitRef = useRef<{ account: Account; oldSessionId: string | null } | null>(null);
+  const reinitBusyRef = useRef(false);
   const [reinit2faOpen, setReinit2faOpen] = useState(false);
   const [reinit2faCode, setReinit2faCode] = useState('');
   const [reinit2faError, setReinit2faError] = useState<string | null>(null);
@@ -88,8 +90,6 @@ export default function SessionsPage() {
   const [sessionSort, setSessionSort] = useState('last_active_desc');
   const [killTarget, setKillTarget] = useState<Session | null>(null);
   const [terminateAllOpen, setTerminateAllOpen] = useState(false);
-  const [terminateAllSteps, setTerminateAllSteps] = useState([false, false, false]);
-  const terminateAllDone = terminateAllSteps.every(Boolean);
   const [terminatingProgress, setTerminatingProgress] = useState<{ current: number; total: number } | null>(null);
   const terminateStopRef = useRef(false);
 
@@ -135,39 +135,99 @@ export default function SessionsPage() {
   }
 
   async function performReinitLogin(totpCode?: string) {
+    const pending = reinitRef.current;
+    if (!pending || reinitBusyRef.current) return;
+    const { account, oldSessionId } = pending;
+    reinitBusyRef.current = true;
     setReinitStage('login');
+    let waitingFor2fa = false;
+    let verified = false;
     try {
-      const data = await apiLogin({ username: active!.username, password: active!.password!, totp_code: totpCode || undefined, env: active!.env }) as { user: { role: string; username: string }; session_id: string };
-      updateAccountInfo(active!.id, { token: data.session_id, role: data.user.role, username: data.user.username });
-      toast.success('Session reinitialized');
+      let data: LoginSessionResponse;
+      try {
+        data = await apiLogin({ username: account.username, password: account.password!, totp_code: totpCode || undefined, env: account.env }) as LoginSessionResponse;
+      } catch (e) {
+        const err = e as { code?: number };
+        if (err.code !== 1002 && err.code !== 1010) throw e;
+        waitingFor2fa = true;
+        setReinit2faError(err.code === 1010 ? 'Incorrect 2FA code, try again.' : null);
+        setReinit2faOpen(true);
+        return;
+      }
       setReinit2faOpen(false);
       setReinit2faCode('');
       setReinit2faError(null);
-    } catch (e) {
-      const err = e as { code?: number };
-      if (err.code === 1002) {
-        setReinit2faError(null);
-        setReinit2faOpen(true);
-      } else if (err.code === 1010) {
-        setReinit2faError('Incorrect 2FA code, try again.');
-        setReinit2faOpen(true);
-      } else {
-        const { describeError } = await import('../../utils/errors.js');
-        toast.error(describeError(e));
-        setReinit2faOpen(false);
+      if (!data.session_id || data.session_id === account.token) {
+        throw new Error('The server did not create a new session, the old session was not terminated');
       }
+
+      setReinitStage('verify');
+      const newAccount = { ...account, token: data.session_id };
+      const info = await getUserInfo(newAccount) as { username: string; role: string };
+      if (info.username !== account.username || data.user.id !== account.id) {
+        throw new Error('The new login could not be verified for this account, the old session was not terminated');
+      }
+      updateAccountInfo(account.id, { token: data.session_id, role: info.role, username: info.username });
+      verified = true;
+
+      if (oldSessionId !== null) {
+        setReinitStage('cleanup');
+        await invalidateSession(newAccount, oldSessionId);
+      }
+      toast.success('Session reinitialized');
+    } catch (e) {
+      const { describeError } = await import('../../utils/errors.js');
+      toast.error(verified ? `Logged back in, but could not terminate the old session (perhaps it is already null): ${describeError(e)}` : describeError(e));
+      setReinit2faOpen(false);
     } finally {
+      if (!waitingFor2fa) reinitRef.current = null;
+      reinitBusyRef.current = false;
       setReinitStage(null);
+      if (verified) void sessionsQ.refetch();
     }
   }
 
   async function doReinitializeSession() {
-    if (!active?.password) return;
-    setReinitStage('logout');
-    try { await apiLogout(); } catch (_) { }
-    setReinitStage('sleeping');
-    await new Promise<void>((r) => setTimeout(r, 1000));
+    if (!active?.password || reinitBusyRef.current || reinitRef.current) return;
+    const account = { ...active };
+    setReinit2faCode('');
+    setReinit2faError(null);
+    if (Number((sessionsQ.error as { code?: unknown } | null)?.code) === 1001) {
+      reinitRef.current = { account, oldSessionId: null };
+      await performReinitLogin();
+      return;
+    }
+    reinitBusyRef.current = true;
+    setReinitStage('identify');
+    try {
+      const { sessions } = await listSessions(account) as { sessions: Session[] };
+      const currentSession = sessions.find((s) => s.current);
+      if (!currentSession?.id) throw new Error('Could not identify the current session, no sessions were changed');
+      reinitRef.current = { account, oldSessionId: currentSession.id };
+      setReinitStage('logout');
+      await apiLogout();
+    } catch (e) {
+      if (Number((e as { code?: unknown } | null)?.code) === 1001) {
+        reinitRef.current = { account, oldSessionId: null };
+      } else {
+        reinitRef.current = null;
+        const { describeError } = await import('../../utils/errors.js');
+        toast.error(describeError(e));
+        setReinitStage(null);
+        return;
+      }
+    } finally {
+      reinitBusyRef.current = false;
+    }
     await performReinitLogin();
+  }
+
+  function cancelReinit2fa() {
+    if (reinitBusyRef.current) return;
+    reinitRef.current = null;
+    setReinit2faOpen(false);
+    setReinit2faCode('');
+    setReinit2faError(null);
   }
 
   async function doServerLogout() {
@@ -176,7 +236,7 @@ export default function SessionsPage() {
       try { await invalidateSession(active!, currentSession.id); } catch (_) { }
     }
     try { await apiLogout(); } catch (_) { }
-    toast.success('OK');
+    toast.success('OK, have fun!');
     sessionsQ.refetch();
   }
 
@@ -198,7 +258,6 @@ export default function SessionsPage() {
   async function doTerminateAll() {
     const targets = (sessionsQ.data?.sessions ?? []).filter((s) => !s.invalidated && !s.current);
     setTerminateAllOpen(false);
-    setTerminateAllSteps([false, false, false]);
     terminateStopRef.current = false;
     setTerminatingProgress({ current: 0, total: targets.length });
     let terminated = 0;
@@ -223,7 +282,7 @@ export default function SessionsPage() {
 
   return (
     <>
-      <h1 className="mt-0">Sessions</h1>
+      <h1 className="mt-0">List of sessions</h1>
       {backTarget && (
         <p className="mt-0 mb-0" style={{ marginBottom: 20 }}>
           <Link to={backTarget.to} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
@@ -231,6 +290,11 @@ export default function SessionsPage() {
           </Link>
         </p>
       )}
+
+      <div className="alert alert-info mt-0" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <InfoIcon />
+        <span>Sessions are managed in both the client and server: your browser saves your account and session token; the server dictates whether that session is valid.</span>
+      </div>
 
       {!active && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
@@ -252,9 +316,11 @@ export default function SessionsPage() {
               disabled={!active.password || reinitStage !== null || reinit2faOpen}
               onClick={doReinitializeSession}
             >
+              {reinitStage === 'identify' && <><span className="spinner" /> Retrieving data...</>}
               {reinitStage === 'logout' && <><span className="spinner" /> Logging out...</>}
-              {reinitStage === 'sleeping' && <><span className="spinner" /> Waiting...</>}
               {reinitStage === 'login' && <><span className="spinner" /> Logging in...</>}
+              {reinitStage === 'verify' && <><span className="spinner" /> Retrieving data...</>}
+              {reinitStage === 'cleanup' && <><span className="spinner" /> Terminating old session...</>}
               {reinitStage === null && (reinit2faOpen ? 'Waiting for 2FA code...' : 'Reinitialize session')}
             </button>
             {!active.password && (
@@ -263,9 +329,9 @@ export default function SessionsPage() {
           </div>
           <hr style={{ margin: '0 0 20px', borderColor: 'var(--border)' }} />
           <h3 className="mt-0">Server logout</h3>
-          <p style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>This will tell the server to log you out, but it leaves the app alone. For debugging purposes only - this will break the app. You shouldn't do this. But you can.</p>
+          <p style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>This will tell the server to log out, but it leaves the app alone. For debugging purposes only - this will cause problems</p>
           <div>
-            <button className="compact danger" onClick={doServerLogout}>Kill me</button>
+            <button className="compact danger" onClick={doServerLogout}>Log out server side</button>
           </div>
           <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
         </>
@@ -321,7 +387,7 @@ export default function SessionsPage() {
           <div style={{ marginTop: 16 }}>
             <button
               className="danger"
-              onClick={() => { setTerminateAllSteps([false, false, false]); setTerminateAllOpen(true); }}
+              onClick={() => setTerminateAllOpen(true)}
               disabled={sortedSessions.filter((s) => !s.invalidated && !s.current).length < 3}
             >
               Terminate all sessions
@@ -376,45 +442,16 @@ export default function SessionsPage() {
         confirmLabel="Continue"
       />
 
-      <Modal
-        fullscreen
-        className="slide"
-        bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
+      <ConfirmModal
         open={terminateAllOpen}
         onClose={() => setTerminateAllOpen(false)}
+        onConfirm={doTerminateAll}
         title={`Terminate all ${sortedSessions.filter((s) => !s.invalidated && !s.current).length} sessions`}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 0 }} className="alert alert-error">
-          <ErrorIcon />
-          <span>This is a destructive action - read this carefully</span>
-        </div>
-        <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>
-          You should only use this in extreme cases,
-          like if your password has been leaked and multiple people have access to your account. In that case, you should first <a href="https://mypayindia.com/account/settings" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>change your password <ExternalIcon size={12} /></a>
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
-          {([0, 1, 2] as const).map((i) => (
-            <HoldButton
-              key={i}
-              className="danger"
-              disabled={terminateAllSteps[i] || (i > 0 && !terminateAllSteps[i - 1])}
-              onConfirm={() => setTerminateAllSteps((prev) => { const next = [...prev]; next[i] = true; return next; })}
-              style={{ opacity: terminateAllSteps[i] ? 0.5 : undefined }}
-            >
-              {terminateAllSteps[i] ? `Step ${i + 1} confirmed` : `Hold to confirm (step ${i + 1})`}
-            </HoldButton>
-          ))}
-        </div>
-        {terminateAllDone && (
-          <div className="modal-actions">
-            <button className="secondary" onClick={() => setTerminateAllOpen(false)}>Cancel</button>
-            <button className="danger" onClick={doTerminateAll}>Proceed</button>
-          </div>
-        )}
-      </Modal>
+        message={`Really terminate ${sortedSessions.filter((s) => !s.invalidated && !s.current).length} sessions? The current session will remain logged in.`}
+        confirmLabel="Terminate all sessions"
+      />
 
       <Modal
-        fullscreen
         className="slide"
         bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
         open={!!terminatingProgress}
@@ -423,7 +460,7 @@ export default function SessionsPage() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 0, marginBottom: 16 }}>
           <span className="spinner" />
-          <span>Terminating {terminatingProgress?.current} of {terminatingProgress?.total} session{terminatingProgress?.total === 1 ? '' : 's'}...</span>
+          <span>Terminating {terminatingProgress?.current} of {terminatingProgress?.total} session{terminatingProgress?.total === 1 ? '' : 's'}, please wait...</span>
         </div>
         <div className="btn-row">
           <button className="danger" onClick={() => { terminateStopRef.current = true; }}>
@@ -437,12 +474,12 @@ export default function SessionsPage() {
         className="slide"
         bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
         open={reinit2faOpen}
-        onClose={() => { setReinit2faOpen(false); setReinit2faCode(''); setReinit2faError(null); }}
+        onClose={cancelReinit2fa}
         title="You need a 2FA code"
       >
         <form onSubmit={(e) => { e.preventDefault(); submitReinit2fa(); }}>
           <p className="mt-0" style={{ color: 'var(--muted)' }}>
-            Enter the two-factor code for <strong>{active?.username}</strong> to finish...
+            Enter the two-factor code for <strong>{reinitRef.current?.account.username}</strong> to finish...
           </p>
           <FloatingInput
             label="Two-factor code"
@@ -464,7 +501,7 @@ export default function SessionsPage() {
             <button
               type="button"
               className="secondary"
-              onClick={() => { setReinit2faOpen(false); setReinit2faCode(''); setReinit2faError(null); }}
+              onClick={cancelReinit2fa}
               disabled={reinitStage === 'login'}
             >
               Cancel
