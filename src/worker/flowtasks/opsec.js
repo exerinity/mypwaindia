@@ -9,6 +9,10 @@ const IMAGES = [
   "gx.jpg",
   "infinite.jpg",
   "jsid.jpg",
+  "react.jpg",
+  "svelte.jpg",
+  "twitter.jpg",
+  "vue.jpg",
   "wa.jpg",
   "what.jpg",
   "x.jpg"

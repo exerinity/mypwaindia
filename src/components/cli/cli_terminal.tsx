@@ -55,6 +55,7 @@ const COMMANDS = [
   'invalidate',
   'restrictions',
   'verify-email',
+  'opsec',
   'go', 'nav', 'goto', 'cd',
   'clear', 'cls',
   'exit',
@@ -110,6 +111,7 @@ const HELP = [
   '  invalidate <session_id>          terminate a session',
   '  restrictions                     show account restrictions',
   '  verify-email                     send email verification',
+  '  opsec                            OPSEC LEVEL: ?',
   '  go <page> [--nocheck]            navigate to a page',
   `    pages: ${Object.keys(PAGE_MAP).join(', ')}`,
   '    --nocheck: bypass route map and navigate directly to any raw path',
@@ -734,6 +736,11 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
         navigate(path);
         return;
       }
+
+      case 'opsec':
+        if (drawer) onExit?.();
+        navigate('/i/flow/opsec', { state: { backgroundLocation: location } });
+        return;
 
       case 'logout':
         if (!requireLogin()) return;
