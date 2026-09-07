@@ -738,7 +738,7 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
       }
 
       case 'opsec':
-        if (drawer) onExit?.();
+      case 'install':
         navigate('/i/flow/opsec', { state: { backgroundLocation: location } });
         return;
 
