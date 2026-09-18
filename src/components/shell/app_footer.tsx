@@ -11,8 +11,6 @@ export function AppFooter({ version, style }: { version: string; style?: CSSProp
       <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer">MyPayIndia.com</a>
       {' | '}
       <Link to="/i/acknowledgements">acknowledgements</Link>
-      {' | '}
-      <Link to="/i/privacy">privacy</Link>
     </p>
   );
 }
