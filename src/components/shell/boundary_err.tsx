@@ -24,8 +24,8 @@ export class ChunkErrorBoundary extends Component<Props, State> {
       <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: '#121212', fontFamily: 'system-ui,-apple-system,sans-serif' }}>
         <div style={{ background: '#171717', border: '1px solid #333', borderRadius: 10, padding: 32, width: '100%', maxWidth: 420, boxShadow: '0 2px 8px rgba(0,0,0,0.6)', textAlign: 'center', color: '#eaeaea' }}>
           <img src="/i/mypayindia-full.webp" alt="MyPayIndia" width={135} height={50} style={{ marginBottom: 20 }} />
-          <h2 style={{ margin: '0 0 8px', fontSize: '1.2rem' }}>Well, this is awkward...</h2>
-          <p>Something went seriously awry trying to load this page/view and the app was halted to prevent further issues. The error is:</p>
+          <h2 style={{ margin: '0 0 8px', fontSize: '1.2rem' }}>Aw, snap!</h2>
+          <p>Something went seriously awry trying to load this page/view and the app was halted to prevent further calamity. The error is:</p>
           <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0 0 20px' }}>
             {isChunkError
               ? "A required part of the app couldn't be loaded. This usually happens when the app has been updated since this page was opened, or you are intentionally blocking scripts."
@@ -38,8 +38,7 @@ export class ChunkErrorBoundary extends Component<Props, State> {
           </div>
           <hr style={{ border: 'none', borderTop: '1px solid #2a2a2a', margin: '20px 0 16px' }} />
           <p style={{ color: '#aaa', fontSize: '0.78rem', margin: 0 }}>
-            Try reloading with CTRL+Shift+R, or clear the data for this website. If you see this more than twice, please{' '}
-            <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" style={{ color: '#aaa', textDecoration: 'underline' }}>join the Discord server and let @exerinity know</a>.
+            Try reloading with CTRL+Shift+R. If you see this more than twice, please clear the data for this website in your browser (or site) settings, or <a href="https://github.com/exerinity/mypwaindia/issues/new">create an issue</a>.
           </p>
         </div>
       </div>

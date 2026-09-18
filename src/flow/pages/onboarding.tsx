@@ -81,11 +81,6 @@ export default function OnboardingPage() {
             <strong>This app is an early work in progress</strong>
           </li>
         </ul>
-        <p className="mt-0 mb-0">
-          <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noopener noreferrer">
-            Please submit feedback in the #dev channel in our Discord <ExternalIcon />
-          </a>
-        </p>
         <button onClick={accept} style={{ width: '100%', marginTop: '8px' }}>
           I understand, let me in!
         </button>

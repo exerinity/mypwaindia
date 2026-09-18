@@ -148,14 +148,6 @@ export default function PrivacyPage() {
         the above is in <code>src/worker/</code>. If this page and the code ever disagree, the code is right and I have made
         a mistake, so let me know!
       </p>
-
-      <h2>Ask about MyPWAIndia</h2>
-      <p className="mt-0 mb-0">
-        Please join the <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
-          the Discord <ExternalIcon size={12} />
-        </a>{' '}
-        and mention @exerinity in the #dev channel.
-      </p>
     </>
   );
 }

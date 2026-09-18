@@ -81,12 +81,8 @@ export default function ReleaseNotesPage() {
   return (
     <Suspense fallback={<ContentSkeleton />}>
       <h1 className="mt-0">Release notes</h1>
-      <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. View new changes and fixes for mypayindia.sbs, app.mypayindia.com, and MyPayIndia Lite for Android. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
+      <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. View new changes and fixes for mypayindia.sbs, app.mypayindia.com, and <span title="This does not actually exist LOL">MyPayIndia Lite for Android</span>. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
       </p>
-
-      <p className="mt-0 mb-0"><a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noopener noreferrer">
-        Please submit feedback in the Discord, mentioning @exerinity in the #dev channel <ExternalIcon />
-      </a></p>
       <div className="card">
         <div className="row spread" style={{ marginBottom: 12 }}>
           <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
