@@ -88,89 +88,90 @@ export default function App() {
 
   return (
     <>
-    {(!modalPath || bgLoc) && <Routes location={bgLoc || location}>
-      <Route path="/pay/link" element={<PayLinkRedirect />} />
-      <Route path="/login" element={<LoginRedirect />} />
+      {(!modalPath || bgLoc) && <Routes location={bgLoc || location}>
+        <Route path="/pay/link" element={<PayLinkRedirect />} />
+        <Route path="/login" element={<LoginRedirect />} />
 
-      <Route path="/leaderboard" element={<Navigate to="/i/leaderboard" replace />} />
-      <Route path="/team" element={<Navigate to="/i/team" replace />} />
-      <Route path="/docs" element={<ExternalRedirectPage to="https://mypayindia.com/docs" />} />
-      <Route path="/app" element={<Navigate to="/settings/download" replace />} />
-      <Route path="/download" element={<Navigate to="/settings/download" replace />} />
-      <Route path="/cards" element={<ExternalRedirectPage to="https://mypayindia.com/cards" />} />
-      <Route path="/news/premium" element={<ExternalRedirectPage to="https://mypayindia.com/news/premium" />} />
-      <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/auth/register" schnell />} />
-      <Route path="/account/transfers" element={<Navigate to="/account/history" replace />} />
-      <Route path="/account/transfers/:id" element={<TransactionRedirect />} />
-      <Route path="/account/transfers/new" element={<Navigate to="/account/transfer" replace />} />
-      <Route path="/account/payment-links" element={<Navigate to="/account/links" replace />} />
-      <Route path="/account/subscriptions" element={<Navigate to="/subscriptions" replace />} />
-      <Route path="/news" element={<Navigate to="/i/news" replace />} />
-      <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
-      <Route path="/logout" element={<Navigate to="/i/flow/logout" replace />} />
-      <Route path="/merchant/*" element={<MerchantRedirect />} />
-      <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
+        <Route path="/leaderboard" element={<Navigate to="/i/leaderboard" replace />} />
+        <Route path="/team" element={<Navigate to="/i/team" replace />} />
+        <Route path="/docs" element={<ExternalRedirectPage to="https://mypayindia.com/docs" />} />
+        <Route path="/app" element={<Navigate to="/settings/download" replace />} />
+        <Route path="/download" element={<Navigate to="/settings/download" replace />} />
+        <Route path="/cards" element={<ExternalRedirectPage to="https://mypayindia.com/cards" />} />
+        <Route path="/news/premium" element={<ExternalRedirectPage to="https://mypayindia.com/news/premium" />} />
+        <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/auth/register" schnell />} />
+        <Route path="/account/transfers" element={<Navigate to="/account/history" replace />} />
+        <Route path="/account/transfers/:id" element={<TransactionRedirect />} />
+        <Route path="/account/transfers/new" element={<Navigate to="/account/transfer" replace />} />
+        <Route path="/account/payment-links" element={<Navigate to="/account/links" replace />} />
+        <Route path="/account/subscriptions" element={<Navigate to="/subscriptions" replace />} />
+        <Route path="/news" element={<Navigate to="/i/news" replace />} />
+        <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
+        <Route path="/logout" element={<Navigate to="/i/flow/logout" replace />} />
+        <Route path="/merchant/*" element={<MerchantRedirect />} />
+        <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
 
-      <Route element={<Suspense fallback={<CardSkeleton />}><Outlet /></Suspense>}>
-        <Route path="/i/onboarding" element={<OnboardingPage />} />
-      </Route>
-
-      <Route element={<AppLayout />}>
-        <Route path="/" element={<HomeRedirect />} />
-
-        <Route path="/dash" element={<DashboardPage />} />
-        <Route path="/i/leaderboard" element={<LeaderboardPage />} />
-        <Route path="/i/team" element={<TeamPage />} />
-        <Route path="/i/team/globe" element={<TeamMapPage />} />
-        <Route path="/i/news" element={<NewsPage />} />
-        <Route path="/i/news/:slug" element={<NewsItemPage />} />
-        <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
-        <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
-        <Route path="/settings/sessions" element={<Navigate to="/i/sessions" replace />} />
-        <Route path="/settings/:category" element={<SettingsPage />} />
-        <Route path="/settings:old" element={<Flowback />} />
-        <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
-        <Route path="/i/how_pwa" element={<HowPwaPage />} />
-        <Route path="/opsec" element={<OpsecPage />} />
-        <Route path="/i/connecttest" element={<ConnectionPage />} />
-        <Route path="/i/theme" element={<ThemeApplyPage />} />
-        <Route path="/i/sharedsett" element={<SettingsApplyPage />} />
-        <Route path="/theme" element={<SearchRedirect to="/i/theme" />} />
-
-        <Route path="/i/command" element={<CLIPage />} />
-        <Route path="/i/command/focus" element={<CLIPage />} />
-        <Route path="/i/debug" element={<MPTIPage />} />
-
-        <Route element={<RequireAuth />}>
-          <Route path="/account" element={<AccountPage />} />
-          <Route path="/i/agent" element={<AgentPage />} />
-          <Route path="/account/restrictions" element={<RestrictionsPage />} />
-          <Route path="/account/transfer" element={<TransferPage />} />
-          <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
-          <Route path="/account/history" element={<HistoryPage />} />
-          <Route path="/account/history/simple" element={<SimpleHistoryPage />} />
-          <Route path="/i/sessions" element={<SessionsPage />} />
-          <Route path="/subscriptions" element={<SubscriptionsPage />} />
-          <Route path="/account/links" element={<LinksPage />} />
-          <Route path="/links" element={<Navigate to="/account/links" replace />} />
-          <Route path="/links/claim" element={<Navigate to="/account/links" replace />} />
-          <Route path="/links/claim/:token" element={<ClaimLinkRedirect />} />
-          <Route path="/dash/statements" element={<StatementsPage />} />
-          <Route path="/dash/cards" element={<CardsPage />} />
-          <Route path="/iotm/button" element={<IotmButtonPage />} />
-          <Route path="/iotm" element={<IOTMPage />} />
+        <Route element={<Suspense fallback={<CardSkeleton />}><Outlet /></Suspense>}>
+          <Route path="/i/onboarding" element={<OnboardingPage />} />
         </Route>
 
-        <Route path="/i/clanker" element={<Flowback />} />
-        <Route path="/i/converse" element={<Flowback />} />
-        <Route path="/i/converse/:peer" element={<Flowback />} />
-        <Route path="/i/chat" element={<Flowback />} />
-        <Route path="/i/chat/:peer" element={<Flowback />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<HomeRedirect />} />
 
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>}
-    <FlowModals />
+          <Route path="/dash" element={<DashboardPage />} />
+          <Route path="/i/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/i/team" element={<TeamPage />} />
+          <Route path="/i/team/globe" element={<TeamMapPage />} />
+          <Route path="/i/news" element={<NewsPage />} />
+          <Route path="/i/news/:slug" element={<NewsItemPage />} />
+          <Route path="/i/release_notes" element={<ReleaseNotesPage />} />
+          <Route path="/settings" element={<Navigate to="/settings/appearance" replace />} />
+          <Route path="/settings/sessions" element={<Navigate to="/i/sessions" replace />} />
+          <Route path="/settings/:category" element={<SettingsPage />} />
+          <Route path="/settings:old" element={<Flowback />} />
+          <Route path="/i/acknowledgements" element={<AcknowledgementsPage />} />
+          <Route path="/i/how_pwa" element={<HowPwaPage />} />
+          <Route path="/opsec" element={<OpsecPage />} />
+          <Route path="/i/connecttest" element={<ConnectionPage />} />
+          <Route path="/i/theme" element={<ThemeApplyPage />} />
+          <Route path="/i/sharedsett" element={<SettingsApplyPage />} />
+          <Route path="/theme" element={<SearchRedirect to="/i/theme" />} />
+
+          <Route path="/i/command" element={<CLIPage />} />
+          <Route path="/i/command/focus" element={<CLIPage />} />
+          <Route path="/i/debug" element={<MPTIPage />} />
+
+          <Route element={<RequireAuth />}>
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/i/agent" element={<AgentPage />} />
+            <Route path="/agent" element={<Navigate to="/i/agent" replace />} />
+            <Route path="/account/restrictions" element={<RestrictionsPage />} />
+            <Route path="/account/transfer" element={<TransferPage />} />
+            <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
+            <Route path="/account/history" element={<HistoryPage />} />
+            <Route path="/account/history/simple" element={<SimpleHistoryPage />} />
+            <Route path="/i/sessions" element={<SessionsPage />} />
+            <Route path="/subscriptions" element={<SubscriptionsPage />} />
+            <Route path="/account/links" element={<LinksPage />} />
+            <Route path="/links" element={<Navigate to="/account/links" replace />} />
+            <Route path="/links/claim" element={<Navigate to="/account/links" replace />} />
+            <Route path="/links/claim/:token" element={<ClaimLinkRedirect />} />
+            <Route path="/dash/statements" element={<StatementsPage />} />
+            <Route path="/dash/cards" element={<CardsPage />} />
+            <Route path="/iotm/button" element={<IotmButtonPage />} />
+            <Route path="/iotm" element={<IOTMPage />} />
+          </Route>
+
+          <Route path="/i/clanker" element={<Flowback />} />
+          <Route path="/i/converse" element={<Flowback />} />
+          <Route path="/i/converse/:peer" element={<Flowback />} />
+          <Route path="/i/chat" element={<Flowback />} />
+          <Route path="/i/chat/:peer" element={<Flowback />} />
+
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>}
+      <FlowModals />
     </>
   );
 }
