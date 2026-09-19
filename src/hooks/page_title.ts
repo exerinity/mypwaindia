@@ -1,9 +1,14 @@
 import { useEffect } from 'react';
 
-export function usePageTitle(title: string | null | undefined): void {
+const SITE_NAME = 'MyPayIndia';
+
+export function usePageTitle(
+  title: string | null | undefined,
+  omitSuffix = false
+): void {
   useEffect(() => {
     if (!title) return;
-    document.title = `${title} / MyPayIndia`;
-    return () => { document.title = 'MyPayIndia'; };
-  }, [title]);
+    document.title = omitSuffix ? title : `${title} / ${SITE_NAME}`;
+    return () => { document.title = SITE_NAME; };
+  }, [title, omitSuffix]);
 }

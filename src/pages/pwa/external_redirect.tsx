@@ -28,7 +28,6 @@ export default function ExternalRedirectPage({ to, schnell }: { to: string; schn
     <Modal
       open
       className="noanim"
-      fullscreen
       title={stopped ? '' : 'That is not here'}
       onClose={() => nav('/dash')}
       bgIcon={<div className="app-lock-bg-icon"><ErrorIcon size={666} /></div>}
@@ -36,7 +35,7 @@ export default function ExternalRedirectPage({ to, schnell }: { to: string; schn
       {stopped ? (
         <p className="mt-0">Redirect stopped - if you still want to go there, click Go</p>
       ) : (
-        <p className="mt-0">This resource is unsupported in MyPWAIndia. Taking you back to the MyPayIndia.com page in {secondsLeft} second{secondsLeft === 1 ? '' : 's'}...</p>
+        <p className="mt-0">The page you've requested does not have a MyPWAIndia version. Taking you to MyPayIndia.com in {secondsLeft} second{secondsLeft === 1 ? '' : 's'}...</p>
       )}
       <div className="modal-actions">
         <button type="button" onClick={() => nav('/dash')}>Go to dashboard</button>
