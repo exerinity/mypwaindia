@@ -85,7 +85,7 @@ export default function TeamPage() {
 
       {loading && !data ? (
         <div className="grid cols-team">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 20 }).map((_, i) => (
             <div key={i} className="card team-card">
               <div className="team-header">
                 <Skeleton width={72} height={72} radius={50} />

@@ -94,6 +94,12 @@
   font-size: 0.85rem;
 }
 
+.team-pride-flags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 .team-joined {
   font-size: 0.78rem;
   color: var(--muted);

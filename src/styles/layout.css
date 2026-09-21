@@ -215,7 +215,6 @@
 }
 
 .mpi-wrap {
-  max-width: 1200px;
   margin: 0 auto 0 0;
   display: flex;
   flex-direction: column;

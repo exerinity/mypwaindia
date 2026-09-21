@@ -138,9 +138,13 @@ export function TeamMemberCard({
                 <span style={{ cursor: 'help' }}>{m.country_flag}</span>
               </HoverTip>
             )}
-            {m.pride_flags?.map((f) => <PrideFlagTag key={f} flag={f} />)}
           </div>
           {m.role && m.role !== '-' && <div className="team-role">{m.role}</div>}
+          {!!m.pride_flags?.length && (
+            <div className="team-pride-flags">
+              {m.pride_flags.map((f) => <PrideFlagTag key={f} flag={f} />)}
+            </div>
+          )}
           {m.status !== 'special_thanks' && (
             <div className="team-joined">
               joined {formatJoinDate(m.joined)}
