@@ -10,7 +10,6 @@ import { rememberAccent } from '../../utils/recent_accents.ts';
 import { openThemePanel } from '../../utils/theme_panel_store.ts';
 import { THEME_OPTIONS, THEME_DEFAULTS } from './theme_presets.ts';
 import type { BuiltinTheme } from './theme_presets.ts';
-import { LegacyThemeCreator } from './theme_legacy.tsx';
 
 export function AppearanceSettings() {
   const { settings, update } = useSettings();
@@ -21,7 +20,6 @@ export function AppearanceSettings() {
   const normalizeHex = (hex: string) => colorsMod ? colorsMod.normalizeHex(hex) : null;
 
   const [accentInput, setAccentInput] = useState(settings.accent);
-  const [legacyOpen, setLegacyOpen] = useState(false);
 
   function applyAccent(hex: string) {
     const norm = normalizeHex(hex);
@@ -86,21 +84,6 @@ export function AppearanceSettings() {
 
       {!settings.scambait && (
         <>
-          <label className="mt-2">Legacy custom theme editor</label>
-          <button
-            className="mpi-tp-legacy-toggle"
-            aria-expanded={legacyOpen}
-            onClick={() => setLegacyOpen((o) => !o)}
-          >
-            <span>Legacy custom theme editor</span>
-            <span className="mpi-tp-legacy-toggle-chevron"><ChevronRight size={16} /></span>
-          </button>
-          {legacyOpen && (
-            <div className="mpi-tp-legacy-body">
-              <LegacyThemeCreator />
-            </div>
-          )}
-
           <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
           <h3 className="mt-0">MyCLiIndia drawer</h3>
           <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
