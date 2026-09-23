@@ -115,7 +115,7 @@ export function AccountPill() {
             </div>
             <div className="acct-footer">
               {canAdd ? (
-                <Link to="/i/flow/login" state={{ backgroundLocation: location }} className="acct-add-btn" onClick={closeDropdown}>
+                <Link to="/login" state={{ backgroundLocation: location }} className="acct-add-btn" onClick={closeDropdown}>
                   <PlusIcon size={13} /> Add an account
                 </Link>
               ) : (
@@ -123,7 +123,7 @@ export function AccountPill() {
                   Account limit at capacity ({maxAccounts})
                 </span>
               )}
-              <Link to="/i/flow/logout" className="acct-add-btn" onClick={closeDropdown}>
+              <Link to="/logout" className="acct-add-btn" onClick={closeDropdown}>
                 Log out <LogoutIcon size={13} />
               </Link>
             </div>

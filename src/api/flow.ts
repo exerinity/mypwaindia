@@ -82,18 +82,6 @@ export interface PaymentLinkInterstitialSubtask {
   subtask_back_navigation: 'hide_explicit_cta';
 }
 
-export interface LogoutConfirmationSubtask {
-  subtask_id: 'LogoutConfirmation';
-  type: 'logout_confirmation';
-  logout_confirmation: {
-    primary_text: FlowText;
-    secondary_text: FlowText;
-    next_account_text?: FlowText;
-    actions: FlowAction<'cancel' | 'logout'>[];
-  };
-  subtask_back_navigation: 'hide_explicit_cta';
-}
-
 export interface FlowOption<Value extends string = string> {
   value: Value;
   label: string;
@@ -281,7 +269,6 @@ export interface ImageSubtask {
 export type FlowSubtask =
   | TransactionDetailSubtask
   | PaymentLinkInterstitialSubtask
-  | LogoutConfirmationSubtask
   | OnboardingWizardSubtask
   | LoginFormSubtask
   | LoginSuccessSubtask

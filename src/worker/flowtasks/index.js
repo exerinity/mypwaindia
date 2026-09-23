@@ -1,7 +1,6 @@
 import test from "./test.js";
 import linksInterstitial from "./links_interstitial.js";
 import login from "./login.js";
-import logout from "./logout.js";
 import onboardingWizard from "./onboarding_wizard.js";
 import opsec from "./opsec.js";
 import transaction from "./transaction.js";
@@ -11,7 +10,6 @@ const FLOW_TASKS = [
   test,
   linksInterstitial,
   login,
-  logout,
   onboardingWizard,
   opsec,
   transaction
@@ -25,7 +23,7 @@ export function runFlowTask(taskName, context) {
 
   return flowError(
     "unknown_task",
-    "That flow task doesn't exist",
+    "flow '" + taskName + "' does not exist",
     404,
     context.corsOrigin
   );

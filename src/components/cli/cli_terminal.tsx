@@ -88,7 +88,7 @@ const PAGE_MAP = {
   connection: '/i/connecttest',
   button: '/iotm/button', iotm: '/iotm/button',
   login: '/i/flow/login',
-  logout: '/i/flow/logout',
+  logout: '/logout',
   onboarding: '/i/onboarding',
 };
 
@@ -745,7 +745,7 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
       case 'logout':
         if (!requireLogin()) return;
         push(L.info('OK, opening logout flow...'));
-        setTimeout(() => navigate('/i/flow/logout'), 350);
+        setTimeout(() => navigate('/logout'), 350);
         return;
 
       case 'accounts':

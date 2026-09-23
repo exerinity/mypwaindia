@@ -30,7 +30,7 @@ export const CATEGORIES: Category[] = [
   { id: 'sw', label: 'Service worker', desc: 'Manage the service worker', hideWhenScambait: true },
   { id: 'scambait', label: 'Scambait mode', desc: '67', hideWhenScambait: true },
   { id: 'sessions', label: 'List of sessions', desc: 'View and manage active login sessions', authRequired: true, to: '/i/sessions' },
-  { id: 'logout', label: 'Log out', desc: 'Log out of MyPWAIndia', authRequired: true, to: '/i/flow/logout' },
+  { id: 'logout', label: 'Log out', desc: 'Log out of MyPWAIndia', authRequired: true, to: '/logout' },
   { id: 'toys', label: 'Toys', desc: 'Poke around with UI components', to: '/i/debug', hideWhenScambait: true },
   { id: 'download', label: 'Download the app', desc: "Download the MyPayIndia app. It's free." },
   { id: 'account', label: 'Account management', desc: 'Manage your account on MyPayIndia.com', href: 'https://mypayindia.com/account/settings' },

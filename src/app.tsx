@@ -40,6 +40,7 @@ const SettingsApplyPage = lazy(() => import('./flow/pages/settings_apply.tsx'));
 const NotFoundPage = lazy(() => import('./pages/pwa/not_found.tsx'));
 const Flowback = lazy(() => import('./flow/shell_fallback.tsx'));
 const ExternalRedirectPage = lazy(() => import('./pages/pwa/external_redirect.tsx'));
+const LogoutPage = lazy(() => import('./pages/pwa/logout.tsx'));
 
 function LoginRedirect() {
   const { search } = useLocation();
@@ -106,8 +107,8 @@ export default function App() {
         <Route path="/account/payment-links" element={<Navigate to="/account/links" replace />} />
         <Route path="/account/subscriptions" element={<Navigate to="/subscriptions" replace />} />
         <Route path="/news" element={<Navigate to="/i/news" replace />} />
-        <Route path="/auth/logout" element={<Navigate to="/i/flow/logout" replace />} />
-        <Route path="/logout" element={<Navigate to="/i/flow/logout" replace />} />
+        <Route path="/auth/logout" element={<Navigate to="/logout" replace />} />
+        <Route path="/logout" element={<LogoutPage />} />
         <Route path="/merchant/*" element={<MerchantRedirect />} />
         <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
 

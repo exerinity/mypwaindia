@@ -11,14 +11,12 @@ import {
   type FlowTaskResponse,
   type ImageSubtask,
   type LoginFormSubtask,
-  type LogoutConfirmationSubtask,
   type OnboardingWizardSubtask,
   type PaymentLinkInterstitialSubtask,
   type TransactionDetailSubtask,
 } from '../api/flow.ts';
 
 const LoginModal = lazy(() => import('./flow_login.tsx'));
-const LogoutModal = lazy(() => import('./flow_logout.tsx'));
 const WizardModal = lazy(() => import('./onboarding_setupwizard.tsx'));
 const ClaimModal = lazy(() => import('./paymentlink_interstitial.tsx'));
 const TransactionModal = lazy(() => import('./transaction_info.tsx'));
@@ -125,13 +123,6 @@ function ServerFlow({ task }: { task: string }) {
     content = <ClaimModal embedded onClose={handleClose} subtask={paymentLink} loading={false} error={null} />;
   }
 
-  const logout = data?.subtasks.find(
-    (candidate): candidate is LogoutConfirmationSubtask => candidate.type === 'logout_confirmation'
-  );
-  if (logout) {
-    content = <LogoutModal embedded onClose={handleClose} onAbort={handleAbort} subtask={logout} loading={false} error={null} />;
-  }
-
   const wizard = data?.subtasks.find(
     (candidate): candidate is OnboardingWizardSubtask => candidate.type === 'onboarding_wizard'
   );
@@ -171,20 +162,16 @@ function ServerFlow({ task }: { task: string }) {
     content = <FlowImageModal subtask={flowImage} />;
   }
 
-  if (!loading && data && !transaction && !paymentLink && !logout && !wizard && !login && !flowTest && !flowImage) {
+  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage) {
     title = 'Error';
     content = <Flowback embedded onClose={handleClose} />;
   }
 
   if (aborting || submitting) content = <FlowSpinner />;
 
-  return (
-    <Modal open onClose={handleClose} title={title}>
-      <Suspense fallback={<FlowSpinner />}>
-        {content}
-      </Suspense>
-    </Modal>
-  );
+  const flowContent = <Suspense fallback={<FlowSpinner />}>{content}</Suspense>;
+
+  return <Modal open onClose={handleClose} title={title}>{flowContent}</Modal>;
 }
 
 function FlowRoute() {
