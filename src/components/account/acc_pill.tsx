@@ -115,7 +115,7 @@ export function AccountPill() {
             </div>
             <div className="acct-footer">
               {canAdd ? (
-                <Link to="/login" state={{ backgroundLocation: location }} className="acct-add-btn" onClick={closeDropdown}>
+                <Link to="/login" className="acct-add-btn" onClick={closeDropdown}>
                   <PlusIcon size={13} /> Add an account
                 </Link>
               ) : (

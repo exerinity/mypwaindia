@@ -110,7 +110,7 @@ export default function HowPwaPage() {
     const outcome = await trigger();
     if (outcome === 'accepted') toast.success('Installing the app');
     else if (outcome === 'dismissed') toast.info('The install prompt was dismissed (your browser may only offer it again later)');
-    else toast.info("Your browser didn't offer an install prompt (follow the steps below instead)");
+    else toast.error("Your browser didn't offer an install prompt");
   }
 
   function toggleGuide(browser: string) {
