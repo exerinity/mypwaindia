@@ -22,7 +22,7 @@ export interface Category {
 
 export const CATEGORIES: Category[] = [
   { id: 'appearance', label: 'Appearance', desc: 'Theme and accent color' },
-  { id: 'home', label: 'Home screen', desc: 'Page shown when opening the app', hideWhenScambait: true },
+  { id: 'home', label: 'Home screen', desc: 'Default page, dashboard buttons, and transaction history', hideWhenScambait: true },
   { id: 'nav', label: 'Bottom navigation', desc: 'The quick navigation bar shown on small screens' },
   { id: 'data', label: 'Data control', desc: 'Edit saved accounts, API settings, and other small settings' },
   { id: 'lock', label: 'App lock', desc: 'Require a PIN, pattern, or password to open the app' },

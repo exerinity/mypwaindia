@@ -19,6 +19,7 @@ import type { Account } from '../../context/auth_ctx.tsx';
 const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
 const TransactionTable = lazy(() => import('../../components/data/tx_table.tsx').then((m) => ({ default: m.TransactionTable })));
+const SimpleHistoryList = lazy(() => import('../../components/data/simple_history_list.tsx').then((m) => ({ default: m.SimpleHistoryList })));
 const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
 
@@ -239,16 +240,18 @@ export default function DashboardPage() {
             </div>
           ) :
             txQ.error ? <ErrorBox error={txQ.error} /> :
-              <TransactionTable
-                transactions={transactions.slice(0, 10)}
-                currentUserId={active?.id}
-                hideLimitControl
-              />
+              settings.dashboardHistory === 'simple_history'
+                ? <SimpleHistoryList transactions={transactions.slice(0, 10)} currentUserId={active.id} embedded />
+                : <TransactionTable
+                    transactions={transactions.slice(0, 10)}
+                    currentUserId={active.id}
+                    hideLimitControl
+                  />
         )}
         <div style={{ marginTop: 16, textAlign: 'center' }}>
           {scambait
             ? <Link to="/dash/statements" className="btn secondary" style={{ width: '100%' }}>View all transactions</Link>
-            : <Link to="/account/history" className="btn secondary" style={{ width: '100%' }}>View all transactions</Link>
+            : <Link to={settings.dashboardHistory === 'simple_history' ? '/account/history/simple' : '/account/history'} className="btn secondary" style={{ width: '100%' }}>View all transactions</Link>
           }
         </div>
       </div>

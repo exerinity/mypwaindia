@@ -23,6 +23,7 @@ export const SETTINGS_FIELD_LABELS: { key: keyof Settings; label: string }[] = [
   { key: 'displayName', label: 'Display name format' },
   { key: 'homePage', label: 'Home page' },
   { key: 'dashboardButtons', label: 'Dashboard action buttons' },
+  { key: 'dashboardHistory', label: 'Dashboard transaction history style' },
   { key: 'bottomNav', label: 'Bottom navigation bar' },
   { key: 'bottomNavForce', label: 'Bottom navigation on any screen size' },
   { key: 'bottomNavLabels', label: 'Bottom navigation labels' },
@@ -56,6 +57,7 @@ export function describeHide(payload: SettingsExport): string {
 export function describeSettingValue(key: keyof Settings, value: unknown): string {
   if (typeof value === 'boolean') return value ? 'Yes' : 'No';
   if (key === 'homePage' && typeof value === 'string') return pageLabel(value);
+  if (key === 'dashboardHistory') return value === 'simple_history' ? 'Simply history' : 'Full table';
   if (key === 'dashboardButtons' && Array.isArray(value)) {
     const btns = normalizeDashboardButtons(value);
     return btns.length ? btns.map((b) => `${pageLabel(b.route)} (${b.style})`).join(', ') : '(none)';
@@ -87,7 +89,7 @@ export function sanitizeSettings(raw: unknown): Partial<Settings> {
     } else if (def !== null && typeof def === 'object') {
       if (val && typeof val === 'object' && !Array.isArray(val)) out[key] = val;
     } else if (typeof val === typeof def) {
-      out[key] = val;
+      if (key !== 'dashboardHistory' || val === 'full_table' || val === 'simple_history') out[key] = val;
     }
   }
   return out as Partial<Settings>;
@@ -121,7 +123,7 @@ export function parseSettingsExport(raw: string): SettingsExport | null {
 const BOOL_KEYS: (keyof Settings)[] = [
   'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'scambait', 'swEnabled', 'bottomNav', 'bottomNavForce', 'bottomNavLabels', 'cliDrawer', 'agentDrawer', 'copyLinkOnCreate',
 ];
-const STRING_KEYS: (keyof Settings)[] = ['theme', 'accent', 'displayName', 'homePage'];
+const STRING_KEYS: (keyof Settings)[] = ['theme', 'accent', 'displayName', 'homePage', 'dashboardHistory'];
 
 export function settingsToSearchParams(payload: SettingsExport): string {
   const p = new URLSearchParams();

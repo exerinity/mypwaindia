@@ -6,6 +6,10 @@
   overflow: clip;
 }
 
+.simple-tx-list--embedded {
+  max-width: none;
+}
+
 .simple-tx-day {
   position: sticky;
   top: var(--mpi-header-h, 92px);

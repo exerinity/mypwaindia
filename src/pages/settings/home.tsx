@@ -1,6 +1,6 @@
 import { useState, lazy } from 'react';
 import { useSettings, HOME_PAGE_OPTIONS, DEFAULT_DASHBOARD_BUTTONS, DASHBOARD_BUTTON_STYLES } from '../../context/settings_ctx.tsx';
-import type { DashboardButtonStyle } from '../../context/settings_ctx.tsx';
+import type { DashboardButtonStyle, DashboardHistory } from '../../context/settings_ctx.tsx';
 import { InfoIcon, PlusIcon, CloseIcon } from '../../components/ui/icons.tsx';
 
 const FloatingInput = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
@@ -117,6 +117,23 @@ export function HomeSettings() {
         >
           Reset to defaults
         </button>
+      </div>
+
+      <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
+      <h3 className="mt-0">Recent activity</h3>
+      <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
+        Choose how transaction history appears on your dashboard
+      </p>
+      <label htmlFor="dashboard-history-select">Transaction history style</label>
+      <div className="row gap-sm" style={{ marginTop: 6 }}>
+        <select
+          id="dashboard-history-select"
+          value={settings.dashboardHistory}
+          onChange={(e) => update({ dashboardHistory: e.target.value as DashboardHistory })}
+        >
+          <option value="full_table">Full table</option>
+          <option value="simple_history">Simple history</option>
+        </select>
       </div>
     </>
   );

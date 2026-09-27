@@ -36,6 +36,7 @@ export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
 ];
 
 export type DashboardButtonStyle = 'primary' | 'secondary' | 'danger';
+export type DashboardHistory = 'full_table' | 'simple_history';
 
 export interface DashboardButton {
   route: string;
@@ -105,6 +106,7 @@ export interface Settings {
   scambait: boolean;
   homePage: string;
   dashboardButtons: DashboardButton[];
+  dashboardHistory: DashboardHistory;
   bottomNav: boolean;
   bottomNavForce: boolean;
   bottomNavLabels: boolean;
@@ -136,6 +138,7 @@ export const DEFAULT_SETTINGS: Settings = {
   scambait: false,
   homePage: '/dash',
   dashboardButtons: DEFAULT_DASHBOARD_BUTTONS,
+  dashboardHistory: 'full_table',
   bottomNav: true,
   bottomNavForce: false,
   bottomNavLabels: true,
@@ -154,6 +157,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     return {
       ...merged,
       dashboardButtons: normalizeDashboardButtons(merged.dashboardButtons),
+      dashboardHistory: merged.dashboardHistory === 'simple_history' ? 'simple_history' : 'full_table',
       bottomNavItems: normalizeBottomNavItems(merged.bottomNavItems),
     };
   });
