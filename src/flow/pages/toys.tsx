@@ -16,7 +16,7 @@ const TOAST_KINDS = ['info', 'success', 'error', 'warning'] as const;
 type ToastKind = (typeof TOAST_KINDS)[number];
 
 export default function MPTIPage() {
-  usePageTitle('MyPWAToysIndia');
+  usePageTitle('Toys');
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -34,7 +34,7 @@ export default function MPTIPage() {
   const [skelHeight, setSkelHeight] = useState(14);
   const [skelRadius, setSkelRadius] = useState(4);
 
-  const [toastMessage, setToastMessage] = useState('TOAST! Toast! Where is the toast???');
+  const [toastMessage, setToastMessage] = useState('Your PayPal account has been successfully deleted.');
   const [toastKind, setToastKind] = useState<ToastKind>('info');
   const [toastTimeout, setToastTimeout] = useState(4000);
   const [toastAction, setToastAction] = useState(false);
@@ -160,7 +160,7 @@ export default function MPTIPage() {
       </div>
 
       <div className="card mb-2">
-        <h2 className="mt-0">Skeleton</h2>
+        <h2 className="mt-0">Loading skeleton</h2>
         <label>Width (px)</label>
         <input
           type="number"
@@ -211,12 +211,13 @@ export default function MPTIPage() {
         <label>Task</label>
         <input
           type="text"
+          placeholder="login"
           value={flowPath}
           onChange={(e) => setFlowPath(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') triggerFlow(); }}
         />
         <div className="btn-row">
-          <button onClick={triggerFlow} disabled={!flowPath.trim()}>Go</button>
+          <button onClick={triggerFlow} disabled={!flowPath.trim()}>Execute</button>
         </div>
       </div>
 
@@ -261,7 +262,7 @@ export default function MPTIPage() {
       <ConfirmModal
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
-        onConfirm={() => { toast.success('Confirmed!'); setConfirmOpen(false); }}
+        onConfirm={() => { toast.success('*tips fedora* Holly jolly, thanks for the Reddit Gold, kind stranger!'); setConfirmOpen(false); }}
         message="Do you promise my son that you're going to give him free Robux?"
         confirmLabel={confirmHold ? 'Confirm (hold)' : 'Confirm'}
         holdConfirm={confirmHold}
