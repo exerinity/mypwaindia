@@ -266,6 +266,28 @@ export interface ImageSubtask {
   subtask_back_navigation: 'hide_explicit_cta';
 }
 
+export interface AccountRestrictionsSubtask {
+  subtask_id: 'AccountRestrictions';
+  type: 'account_restrictions';
+  account_restrictions: {
+    primary_text: FlowText;
+    empty_text: FlowText;
+    labels: {
+      expires: string;
+      no_expiration: string;
+    };
+    restrictions: {
+      restriction_id: string;
+      primary_text: FlowText;
+      secondary_text: FlowText;
+      expires_at: string | null;
+      value: unknown;
+    }[];
+    actions: FlowAction<'close'>[];
+  };
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
 export type FlowSubtask =
   | TransactionDetailSubtask
   | PaymentLinkInterstitialSubtask
@@ -273,6 +295,7 @@ export type FlowSubtask =
   | LoginFormSubtask
   | LoginSuccessSubtask
   | FlowTestSubtask
+  | AccountRestrictionsSubtask
   | ImageSubtask;
 
 export interface FlowTaskResponse {

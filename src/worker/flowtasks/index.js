@@ -3,6 +3,7 @@ import linksInterstitial from "./links_interstitial.js";
 import login from "./login.js";
 import onboardingWizard from "./onboarding_wizard.js";
 import opsec from "./opsec.js";
+import restrictions from "./restrictions.js";
 import transaction from "./transaction.js";
 import { corsJson, flowError } from "./shared.js";
 
@@ -12,6 +13,7 @@ const FLOW_TASKS = [
   login,
   onboardingWizard,
   opsec,
+  restrictions,
   transaction
 ];
 
