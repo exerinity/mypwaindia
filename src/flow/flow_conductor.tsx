@@ -7,6 +7,7 @@ import {
   abortFlowTask,
   getFlowTask,
   submitFlowTaskAction,
+  type AccountRestrictionsSubtask,
   type FlowTestSubtask,
   type FlowTaskResponse,
   type ImageSubtask,
@@ -22,6 +23,7 @@ const ClaimModal = lazy(() => import('./paymentlink_interstitial.tsx'));
 const TransactionModal = lazy(() => import('./transaction_info.tsx'));
 const FlowTestModal = lazy(() => import('./flow_test.tsx'));
 const FlowImageModal = lazy(() => import('./flow_image.tsx'));
+const RestrictionsModal = lazy(() => import('./account_restrictions.tsx'));
 const Flowback = lazy(() => import('./shell_fallback.tsx'));
 
 function isMissingTaskError(error: unknown): boolean {
@@ -162,7 +164,15 @@ function ServerFlow({ task }: { task: string }) {
     content = <FlowImageModal subtask={flowImage} />;
   }
 
-  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage) {
+  const restrictions = data?.subtasks.find(
+    (candidate): candidate is AccountRestrictionsSubtask => candidate.type === 'account_restrictions'
+  );
+  if (restrictions) {
+    title = restrictions.account_restrictions.primary_text.text;
+    content = <RestrictionsModal subtask={restrictions} error={error} onAbort={handleAbort} />;
+  }
+
+  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage && !restrictions) {
     title = 'Error';
     content = <Flowback embedded onClose={handleClose} />;
   }

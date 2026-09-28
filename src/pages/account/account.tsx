@@ -1,5 +1,5 @@
 import { useState, lazy, Suspense } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useSettings, useCurrency } from '../../context/settings_ctx.tsx';
 import { useGlobalData } from '../../context/global_data_ctx.tsx';
@@ -15,6 +15,7 @@ import { Modal } from '../../components/ui/modal.tsx';
 
 export default function AccountPage() {
   usePageTitle('Account');
+  const location = useLocation();
   const { active } = useAuth();
   const { settings } = useSettings();
   const restrictionsMod = useLazyModule(() => import('../../utils/restrictions.js'));
@@ -162,7 +163,7 @@ export default function AccountPage() {
                 <div className="card mb-2">
                   <div className="row spread" style={{ marginBottom: 12 }}>
                     <h3 className="mt-0" style={{ margin: 0 }}>Restrictions</h3>
-                    <Link to="/account/restrictions" className="muted" style={{ fontSize: '0.85rem' }}>View details</Link>
+                    <Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className="muted" style={{ fontSize: '0.85rem' }}>View details</Link>
                   </div>
                   {restrictionList.map(([key, val]) => {
                     const info = restrictionsMod ? restrictionsMod.getRestrictionInfo(key) : { title: key, description: '', longDescription: null };
@@ -200,7 +201,7 @@ export default function AccountPage() {
               <div className="btn-row mt-2">
                 <Link to="/account/transfer" className="btn">Transfer funds</Link>
                 <Link to="/account/history" className="btn secondary">Transaction history</Link>
-                <Link to="/account/restrictions" className="btn secondary">See restrictions</Link>
+                <Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className="btn secondary">See restrictions</Link>
                 {settings.scambait && (
                   <button className="btn secondary" onClick={() => setPersonalDetailsOpen(true)}>
                     View personal details
