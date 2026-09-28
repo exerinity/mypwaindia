@@ -19,7 +19,7 @@
     "typecheck": "tsc --noEmit",
     "check": "tsc --noEmit && vite build",
     "check:chunks": "vite build && node scripts/check-chunks.mjs",
-    "worker:dev": "vite build && wrangler dev",
+    "worker:dev": "vite build && wrangler dev --port 5173",
     "worker:logs": "wrangler tail",
     "deploy:dry": "tsc --noEmit && vite build && wrangler deploy --dry-run",
     "deploy": "tsc --noEmit && vite build && wrangler deploy"

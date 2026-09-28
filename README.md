@@ -104,7 +104,6 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 ### Public
 - **/dash** - home
 - **/account** - account information and masthead
-- **/account/restrictions** - account restrictions
 - **/account/transfer** - transfer funds screen
 - **/account/transfer/bulk** - bulk transfers, enqueue people and amount then send them all at once
 - **/account/history** - transaction history
@@ -140,6 +139,7 @@ The routes throughout this app are heavily inspired by the Twitter PWA, if not d
 - **/i/flow/logout** - log out
 - **/i/flow/onboarding/wizard** - setup wizard after onboarder
 - **/i/flow/transaction/:id** - transaction detail viewer
+- **/i/flow/restrictions** - account restrictions
 - **/i/flow/links/interstitial/:token** - claim/inspect a payment link
 - **/i/flow/test** - inert debug
 - **/i/flow/opsec** - WHAT'S YOUR OPSEC LEVEL ?? ? ? ? ? ?
