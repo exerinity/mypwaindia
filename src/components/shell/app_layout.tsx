@@ -196,7 +196,7 @@ export function AppLayout() {
               <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <WarningIcon />Your account is currently restricted:{' '}
                 {restrictionsMod ? restrictionList.map(([k]) => restrictionsMod.getRestrictionInfo(k).title).join(', ') : ''}.
-                {' '}<Link to="/account/restrictions" className="link">More...</Link>
+                {' '}<Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className="link">More...</Link>
               </div>
             )}
             {active && !settings.scambait && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (

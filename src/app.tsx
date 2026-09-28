@@ -33,7 +33,6 @@ const ReleaseNotesPage = lazy(() => import('./pages/information/release_notes.ts
 const AcknowledgementsPage = lazy(() => import('./pages/information/acknowledgements.tsx'));
 const HowPwaPage = lazy(() => import('./pages/information/how_pwa.tsx'));
 const OpsecPage = lazy(() => import('./pages/pwa/opsec.tsx'));
-const RestrictionsPage = lazy(() => import('./pages/account/restrictions.tsx'));
 const ConnectionPage = lazy(() => import('./flow/pages/connection.tsx'));
 const ThemeApplyPage = lazy(() => import('./flow/pages/theme_apply.tsx'));
 const SettingsApplyPage = lazy(() => import('./flow/pages/settings_apply.tsx'));
@@ -102,6 +101,7 @@ export default function App() {
         <Route path="/news/premium" element={<ExternalRedirectPage to="https://mypayindia.com/news/premium" />} />
         <Route path="/signup" element={<ExternalRedirectPage to="https://mypayindia.com/auth/register" schnell />} />
         <Route path="/account/transfers" element={<Navigate to="/account/history" replace />} />
+        <Route path="/account/restrictions" element={<SearchRedirect to="/i/flow/restrictions" />} />
         <Route path="/account/transfers/:id" element={<TransactionRedirect />} />
         <Route path="/account/transfers/new" element={<Navigate to="/account/transfer" replace />} />
         <Route path="/account/payment-links" element={<Navigate to="/account/links" replace />} />
@@ -146,7 +146,6 @@ export default function App() {
             <Route path="/account" element={<AccountPage />} />
             <Route path="/i/agent" element={<AgentPage />} />
             <Route path="/agent" element={<Navigate to="/i/agent" replace />} />
-            <Route path="/account/restrictions" element={<RestrictionsPage />} />
             <Route path="/account/transfer" element={<TransferPage />} />
             <Route path="/account/transfer/bulk" element={<BulkTransferPage />} />
             <Route path="/account/history" element={<HistoryPage />} />

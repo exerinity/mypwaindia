@@ -9,7 +9,7 @@ import { Skeleton } from '../../components/ui/status.tsx';
 
 const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
 const HoldButton = lazy(() => import('../../components/ui/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { storageSet, KEYS } from '../../utils/storage.ts';
 
 const TOAST_KINDS = ['info', 'success', 'error', 'warning'] as const;
@@ -19,6 +19,7 @@ export default function MPTIPage() {
   usePageTitle('Toys');
   const toast = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState('Transaction analysis');
@@ -98,7 +99,7 @@ export default function MPTIPage() {
           {showRestrictionsBanner && (
             <div className="verification-banner banner-error" style={{ display: 'flex', gap: 8 }}>
               <WarningIcon />Your account has some active restrictions: Account Frozen, Banned from Investment Opportunities™.
-              {' '}<Link to="/account/restrictions" className="link">More...</Link>
+              {' '}<Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className="link">More...</Link>
             </div>
           )}
           {showOnboardingBanner && (

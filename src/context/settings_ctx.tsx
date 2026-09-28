@@ -21,7 +21,6 @@ export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/account/transfer', label: 'Transfer funds' },
   { value: '/account/history', label: 'Full transaction history' },
   { value: '/account/history/simple', label: 'Simple history' },
-  { value: '/account/restrictions', label: 'Active restrictions' },
   { value: '/dash/statements', label: 'Statements' },
   { value: '/dash/cards', label: 'Cards' },
   { value: '/account/links', label: 'Payment links' },
