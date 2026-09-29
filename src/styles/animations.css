@@ -100,6 +100,41 @@
   box-shadow: none !important;
 }
 
+.release-entry-summary {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.release-version {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.release-importance {
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--pill-bg);
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.release-importance.major {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: var(--brand-text);
+}
+
+.release-importance.massive {
+  border-color: var(--alert-error);
+  background: var(--alert-error);
+  color: #fff;
+}
+
 .release-body {
   display: grid;
   grid-template-rows: 0fr;

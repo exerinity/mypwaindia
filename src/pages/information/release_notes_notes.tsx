@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 export type Release = {
   version: string;
+  importance?: 1 | 2 | 3;
   date: string;
   notes: (string | React.ReactElement | { h2: string | React.ReactElement } | { h3: string | React.ReactElement } | { p: string | React.ReactElement })[];
   subnotes?: (string | React.ReactElement)[];
@@ -10,6 +11,13 @@ export type Release = {
 };
 
 export const RELEASES: Release[] = [
+  {
+    version: '26',
+    date: '29 Sep 2026',
+    notes: [
+      'These release notes now have a badge denoting whether it was a massive, major or minor update'
+    ]
+  },
   {
     version: '25',
     date: '27 Sep 2026',
@@ -26,6 +34,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '24',
+    importance: 2,
     date: '31 Aug 2026',
     notes: [
       'A lot of backend work, especially to flow tasks: that is now done mostly server-side'
@@ -33,6 +42,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '23',
+    importance: 2,
     date: '21 Aug 2026',
     notes: [
       <>Added <Link to="/i/agent">MyAgentIndia</Link></>
@@ -50,6 +60,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '22',
+    importance: 2,
     date: '6 Aug 2026',
     notes: [
       { h3: 'Big stuff' },
@@ -70,6 +81,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '21',
+    importance: 2,
     date: '1 Aug 2026',
     notes: [
       <>Remade the custom theme editor in <Link to="/settings/appearance">appearance settings</Link></>
@@ -88,6 +100,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '19',
+    importance: 2,
     date: '27 Jul 2026',
     notes: [
       { h3: 'Some mobile care' },
@@ -149,6 +162,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '16',
+    importance: 2,
     date: '26 Jun 2026',
     notes: [
       <>Added a <Link to="/i/flow/onboarding/wizard">setup wizard</Link> that begins after <Link to="/i/onboarding">onboarding</Link></>,
@@ -173,6 +187,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '15',
+    importance: 2,
     date: '13 Jun 2026',
     notes: [
       { h3: <><Link to="/iotm/button">The Button changes</Link></> },
@@ -206,6 +221,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '14',
+    importance: 2,
     date: '3 Jun 2026',
     notes: [
       { h3: <><Link to="/iotm/button">The Button changes</Link></> },
@@ -226,6 +242,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '13b',
+    importance: 3,
     date: '1 Jun 2026',
     notes: [
       { h3: 'Happy Pride month!', },
@@ -279,6 +296,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '10b',
+    importance: 2,
     date: '20 May 2026',
     notes: [
       <>Added a rudimental <Link to="/i/connecttest">connection helper</Link> and offline banner</>,
@@ -290,6 +308,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '10a',
+    importance: 2,
     date: '18 May 2026',
     disclaimer: 'This was mostly a behind the scenes update. In spite of that, here are the major changes:',
     notes: [
@@ -304,6 +323,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '10',
+    importance: 3,
     date: '12 May 2026',
     notes: [
       <>Introducing <Link to="/i/command">MyCLiIndia</Link>!</>,
@@ -342,6 +362,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '8',
+    importance: 3,
     date: '7 May 2026',
     notes: [
       'Completely remade in React',
@@ -356,11 +377,13 @@ export const RELEASES: Release[] = [
   },
   {
     version: '7',
+    importance: 3,
     date: '14 Apr 2026',
     notes: ['Redesign most of the UI!', 'Added account switcher'],
   },
   {
     version: '6',
+    importance: 2,
     date: '8 Apr 2026',
     notes: [
       'Renamed Create payment link to Payment links',
@@ -446,6 +469,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: '2',
+    importance: 2,
     date: '21 Feb 2026',
     notes: [
       'Added a new transaction details view, click on a transaction on the dashboard or bespoke list! (/history)',
@@ -454,11 +478,13 @@ export const RELEASES: Release[] = [
   },
   {
     version: '1',
+    importance: 2,
     date: '14 Feb 2026',
     notes: ['App launches to app.mypayindia.com'],
   },
   {
     version: '0 (pre-release)',
+    importance: 3,
     date: '7 Feb 2026',
     notes: [
       'App inception',

@@ -8,15 +8,28 @@ const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').the
 
 export { RELEASES };
 
+const RELEASE_IMPORTANCE = {
+  1: { label: 'Minor update', className: '' },
+  2: { label: 'Major update', className: ' major' },
+  3: { label: 'Massive update', className: ' massive' },
+};
+
 function ReleaseItem({ r, borderBottom, open, onToggle }: { r: Release; borderBottom: boolean; open: boolean; onToggle: () => void }) {
+  const importance = RELEASE_IMPORTANCE[r.importance ?? 1];
+
   return (
     <div style={{ borderBottom: borderBottom ? '1px solid var(--border)' : 'none', padding: '4px 0' }}>
       <button
-        className="release-summary"
+        className="release-summary release-entry-summary"
         onClick={onToggle}
         aria-expanded={open}
       >
-        <strong>Version {r.version}</strong>
+        <span className="release-version">
+          <strong>Version {r.version}</strong>
+          <span className={`release-importance${importance.className}`}>
+            {importance.label}
+          </span>
+        </span>
         <span className="muted" style={{ fontSize: '0.85rem' }}>{r.date}</span>
       </button>
       <div className={`release-body${open ? ' open' : ''}`}>
@@ -83,6 +96,7 @@ export default function ReleaseNotesPage() {
       <h1 className="mt-0">Release notes</h1>
       <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. View new changes and fixes for mypayindia.sbs, app.mypayindia.com, and <span title="This does not actually exist LOL">MyPayIndia Lite for Android</span>. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
       </p>
+      <p className="mt-0 mb-0"><strong>Disclaimer:</strong> a massive/major update does not always mean a ton of things were added; it is dictated by how much work was put into it. And also sometimes by how much was added.</p>
       <div className="card">
         <div className="row spread" style={{ marginBottom: 12 }}>
           <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
