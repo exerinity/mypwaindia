@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '26a',
+    date: '30 Sep 2026',
+    notes: [
+      'Refreshed most icons to use Material Design icons'
+    ],
+  },
+  {
     version: '26',
     date: '29 Sep 2026',
     notes: [

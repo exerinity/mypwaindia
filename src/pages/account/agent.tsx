@@ -31,7 +31,7 @@ import {
   CopyIcon,
   ExternalIcon,
   LinkIcon,
-  SparkleIcon,
+  AgentIcon,
 } from '../../components/ui/icons.tsx';
 
 const FALLBACK_MAX_LENGTH = 300;
@@ -232,7 +232,7 @@ function AgentAvatar({ avatar, name, small = false }: { avatar?: string; name: s
       className={`agent-avatar agent-avatar--fallback${small ? ' agent-avatar--small' : ''}`}
       aria-hidden="true"
     >
-      <SparkleIcon size={small ? 14 : 20} />
+      <AgentIcon size={small ? 14 : 20} />
     </span>
   );
 }

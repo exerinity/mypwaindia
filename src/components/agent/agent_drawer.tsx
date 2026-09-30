@@ -9,7 +9,7 @@ import {
   getOpenDrawer,
   subscribeDrawers,
 } from '../../utils/drawer_bus.ts';
-import { ChevronDown, CloseIcon, ExternalIcon, SparkleIcon } from '../ui/icons.tsx';
+import { ChevronDown, CloseIcon, ExternalIcon, AgentIcon } from '../ui/icons.tsx';
 import '../../styles/agent_drawer.css';
 
 const CLOSE_MS = 200;
@@ -150,7 +150,7 @@ export function AgentDrawer() {
         aria-hidden={launcherOut}
         tabIndex={launcherOut ? -1 : 0}
       >
-        <SparkleIcon size={22} />
+        <AgentIcon size={22} />
       </button>
 
       {open && !hidden && (
@@ -166,7 +166,7 @@ export function AgentDrawer() {
             className="agent-drawer-header"
             onClick={() => { if (minimized) setMinimized(false); }}
           >
-            <span className="agent-drawer-icon"><SparkleIcon size={17} /></span>
+            <span className="agent-drawer-icon"><AgentIcon size={17} /></span>
             <span className="agent-drawer-title">MyAgentIndia</span>
             <div className="agent-drawer-actions" onClick={(event) => event.stopPropagation()}>
               <button

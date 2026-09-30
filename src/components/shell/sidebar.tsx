@@ -13,6 +13,7 @@ import {
   HistoryIcon,
   LinkIcon,
   TrophyIcon,
+  LeaderboardIcon,
   TeamIcon,
   NotesIcon,
   NewspaperIcon,
@@ -22,7 +23,8 @@ import {
   TerminalIcon,
   ChevronDown,
   ShareIcon,
-  SparkleIcon,
+  MDIcon,
+  AgentIcon,
 } from '../ui/icons.tsx';
 
 const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
@@ -37,7 +39,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/dash', label: 'Dashboard', loggedOutLabel: 'Welcome', end: true, icon: DashboardIcon },
       { to: '/account', label: 'Account info', icon: UserIcon, requireAuth: true },
-      { to: '/i/agent', label: 'Agent', icon: SparkleIcon, hideInScambait: true, requireAuth: true },
+      { to: '/i/agent', label: 'Agent', icon: AgentIcon, hideInScambait: true, requireAuth: true },
       { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon, requireAuth: true },
       { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true, requireAuth: true },
       { to: '/account/links', label: 'Payment links', icon: LinkIcon, hideInScambait: true, requireAuth: true },
@@ -52,7 +54,7 @@ const NAV_GROUPS: NavGroup[] = [
     loggedOutTitle: 'MyPayIndia',
     hideInScambait: true,
     items: [
-      { to: '/i/leaderboard', label: 'Leaderboard', icon: TrophyIcon },
+      { to: '/i/leaderboard', label: 'Leaderboard', icon: LeaderboardIcon },
       { to: '/i/team', label: 'Meet the team', icon: TeamIcon },
       { to: '/i/news', label: 'News', icon: NewspaperIcon },
       { to: '/i/release_notes', label: 'App release notes', icon: NotesIcon },
@@ -63,7 +65,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: 'More from MyPayIndia',
     items: [
       { href: 'https://share.mypayindia.com', label: 'MyShareIndia', icon: ShareIcon, loggedOutOnly: true, external: true },
-      { href: 'https://drive.mypayindia.com', label: 'MyDriveIndia', icon: TeamIcon, loggedOutOnly: true, external: true },
+      { href: 'https://drive.mypayindia.com', label: 'MyDriveIndia', icon: MDIcon, loggedOutOnly: true, external: true },
     ]
   },
   {

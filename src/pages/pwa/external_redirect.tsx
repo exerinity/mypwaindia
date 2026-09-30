@@ -28,21 +28,20 @@ export default function ExternalRedirectPage({ to, schnell }: { to: string; schn
     <Modal
       open
       className="noanim"
-      title={stopped ? '' : 'That is not here'}
       onClose={() => nav('/dash')}
       bgIcon={<div className="app-lock-bg-icon"><ErrorIcon size={666} /></div>}
     >
       {stopped ? (
-        <p className="mt-0">Redirect stopped - if you still want to go there, click Go</p>
+        <p className="mt-0">Have a nice day!</p>
       ) : (
-        <p className="mt-0">The page you've requested does not have a MyPWAIndia version. Taking you to MyPayIndia.com in {secondsLeft} second{secondsLeft === 1 ? '' : 's'}...</p>
+        <p className="mt-0">You've requested a MyPayIndia resource that is not available from the web app. Taking you back to MyPayIndia.com in {secondsLeft} second{secondsLeft === 1 ? '' : 's'}...</p>
       )}
       <div className="modal-actions">
-        <button type="button" onClick={() => nav('/dash')}>Go to dashboard</button>
+        <a className="btn" href={to}>Go to resource <ExternalIcon /></a>
         {stopped ? (
-          <a className="btn secondary" href={to}>Go <ExternalIcon /></a>
+          <button type="button" className="secondary" onClick={() => nav('/dash')}>Go to dashboard</button>
         ) : (
-          <button type="button" className="secondary" onClick={() => setStopped(true)}>No wait</button>
+          <button type="button" className="secondary" onClick={() => setStopped(true)}>Stop countdown</button>
         )}
       </div>
     </Modal>
