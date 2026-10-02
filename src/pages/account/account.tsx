@@ -8,10 +8,12 @@ import { usePageTitle } from '../../hooks/page_title.js';
 import { useToast } from '../../context/toast_ctx.tsx';
 import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
 import { WarningIcon } from '../../components/ui/icons.tsx';
+import { AgeTag } from '../../components/ui/age_tag.tsx';
 
 const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { Modal } from '../../components/ui/modal.tsx';
+import { profile_path } from '../../utils/profiles.ts';
 
 export default function AccountPage() {
   usePageTitle('Account');
@@ -26,7 +28,6 @@ export default function AccountPage() {
   const toast = useToast();
   const [personalDetailsOpen, setPersonalDetailsOpen] = useState(false);
   const [securityCode, setSecurityCode] = useState(['', '', '', '', '']);
-  interface Age { years: number; months: number; weeks: number; days: number }
 
   const {
     userInfo, userInfoLoading, userInfoError,
@@ -37,41 +38,6 @@ export default function AccountPage() {
     [refetchUserInfo, refetchRestrictions],
     { enabled: settings.autoRefresh && !!active }
   );
-
-  function AgeTag({ age }: { age: Age }) {
-    const [hovered, setHovered] = useState(false);
-    return (
-      <span
-        style={{ position: 'relative', display: 'inline-block' }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        <span style={{ color: 'var(--muted)', fontSize: '0.85em', cursor: 'help' }}>
-          ({age.years > 0 ? `${age.years}y` : age.months > 0 ? `${age.months}mo` : age.weeks > 0 ? `${age.weeks}w` : `${age.days}d`})
-        </span>
-        {hovered && (
-          <span style={{
-            position: 'absolute',
-            bottom: 'calc(100% + 6px)',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'var(--surface-2, #222)',
-            color: 'var(--text)',
-            border: '1px solid var(--border)',
-            borderRadius: 6,
-            padding: '5px 10px',
-            fontSize: '0.8rem',
-            whiteSpace: 'nowrap',
-            pointerEvents: 'none',
-            zIndex: 10,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          }}>
-            {age.years} years, {age.months} months, {age.weeks} weeks, {age.days} days
-          </span>
-        )}
-      </span>
-    );
-  }
 
   const u = userInfo;
   const restrictionList = Object.entries(restrictions?.restrictions || {})
@@ -115,7 +81,7 @@ export default function AccountPage() {
                 <div className="row spread">
                   <div>
                     <h3 style={{ margin: 0 }}>{u.first_name} {u.last_name}</h3>
-                    <p className="muted">@{u.username} - {u.role}</p>
+                    <p className="muted">{settings.scambait ? `@${u.username}` : <Link to={profile_path(u.username)}>@{u.username}</Link>} - {u.role}</p>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div className="stat-label">Balance</div>

@@ -25,6 +25,7 @@ import {
   ShareIcon,
   MDIcon,
   AgentIcon,
+  ProfilesIcon,
 } from '../ui/icons.tsx';
 
 const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
@@ -39,6 +40,8 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/dash', label: 'Dashboard', loggedOutLabel: 'Welcome', end: true, icon: DashboardIcon },
       { to: '/account', label: 'Account info', icon: UserIcon, requireAuth: true },
+      { to: '/account/profile', label: 'My profile', icon: ProfilesIcon, hideInScambait: true, requireAuth: true },
+      { to: '/account/shop', label: 'Shop and purchases', icon: StoreIcon, hideInScambait: true, requireAuth: true },
       { to: '/i/agent', label: 'Agent', icon: AgentIcon, hideInScambait: true, requireAuth: true },
       { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon, requireAuth: true },
       { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true, requireAuth: true },
@@ -55,6 +58,7 @@ const NAV_GROUPS: NavGroup[] = [
     hideInScambait: true,
     items: [
       { to: '/i/leaderboard', label: 'Leaderboard', icon: LeaderboardIcon },
+      { to: '/i/profiles', label: 'Profiles', icon: ProfilesIcon },
       { to: '/i/team', label: 'Meet the team', icon: TeamIcon },
       { to: '/i/news', label: 'News', icon: NewspaperIcon },
       { to: '/i/release_notes', label: 'App release notes', icon: NotesIcon },

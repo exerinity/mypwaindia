@@ -1,0 +1,17 @@
+import type { ShopOrder } from '../../api/shop.js';
+import { safe_http_url } from '../../utils/profiles.ts';
+
+export function OrderContent({ order }: { order: ShopOrder }) {
+  if (order.status === 'in_review') return <div className="alert alert-warning">Payment is under review. Delivery will be available after staff approve it. You can cancel this purchase for a full refund in the interim</div>;
+  if (order.status === 'pending') return <div className="alert alert-info">Payment completed. Your order is waiting for the seller to deliver it</div>;
+  if (order.status === 'refunded') return <div className="alert alert-info">This order was refunded</div>;
+  if (order.status !== 'fulfilled') return null;
+  const delivery_url = order.delivery_type === 'url' ? safe_http_url(order.delivery_content) : undefined;
+  const attachment_url = safe_http_url(order.attachment_url);
+  return <div className="mt-2">
+    <h3 className="mt-0">Delivery</h3>
+    {delivery_url ? <a href={delivery_url} target="_blank" rel="noopener noreferrer">Open your delivery</a>
+      : order.delivery_content && <p className="profile_prose">{order.delivery_content}</p>}
+    {attachment_url && <p><a href={attachment_url} target="_blank" rel="noopener noreferrer">Open attachment on MyPayIndia</a></p>}
+  </div>;
+}

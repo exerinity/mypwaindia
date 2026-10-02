@@ -1,8 +1,9 @@
 import { lazy, Suspense, useState, type ReactNode } from 'react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate, type Location } from 'react-router-dom';
 import { Modal } from '../components/ui/modal.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.ts';
+import { profile_path } from '../utils/profiles.ts';
 import {
   abortFlowTask,
   getFlowTask,
@@ -24,6 +25,8 @@ const TransactionModal = lazy(() => import('./transaction_info.tsx'));
 const FlowTestModal = lazy(() => import('./flow_test.tsx'));
 const FlowImageModal = lazy(() => import('./flow_image.tsx'));
 const RestrictionsModal = lazy(() => import('./account_restrictions.tsx'));
+const EditItemModal = lazy(() => import('./edit_item_m.tsx'));
+const ReportProfileModal = lazy(() => import('./reportprofile.tsx'));
 const Flowback = lazy(() => import('./shell_fallback.tsx'));
 
 function isMissingTaskError(error: unknown): boolean {
@@ -184,6 +187,66 @@ function ServerFlow({ task }: { task: string }) {
   return <Modal open onClose={handleClose} title={title}>{flowContent}</Modal>;
 }
 
+function EditItemFlow() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { active } = useAuth();
+  const [busy, set_busy] = useState(false);
+  const state = location.state as {
+    item_id?: number | null; account_id?: number; account_env?: string; backgroundLocation?: Location;
+  } | null;
+  const item_id = state?.item_id ?? null;
+
+  if (!active) return <Navigate to="/i/flow/login" replace state={{ from: { pathname: '/account/shop' } }} />;
+  if ((state?.account_id !== undefined && (state.account_id !== active.id || state.account_env !== active.env)) ||
+    (item_id !== null && (!Number.isSafeInteger(item_id) || item_id < 1))) return <Navigate to="/account/shop" replace />;
+
+  function close() {
+    if (state?.backgroundLocation) navigate(-1);
+    else navigate('/account/shop', { replace: true });
+  }
+
+  function save() {
+    window.dispatchEvent(new Event('shop_items_updated'));
+    close();
+  }
+
+  return <Modal open onClose={() => { if (!busy) close(); }} title={item_id === null ? 'New shop item' : 'Edit shop item'}>
+    <Suspense fallback={<FlowSpinner />}>
+      <EditItemModal key={`${item_id}:${active.env}:${active.token}`} id={item_id} auth={{ token: active.token, env: active.env }} on_save={save} on_busy={set_busy} />
+    </Suspense>
+  </Modal>;
+}
+
+function ReportProfileFlow() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { active } = useAuth();
+  const [busy, set_busy] = useState(false);
+  const state = location.state as {
+    username?: string; account_id?: number; account_env?: string; backgroundLocation?: Location;
+  } | null;
+  const username = typeof state?.username === 'string' ? state.username.trim() : '';
+
+  if (!username) return <Navigate to="/i/profiles" replace />;
+  if (!active) return <Navigate to="/i/flow/login" replace state={{ from: { pathname: profile_path(username) } }} />;
+  if (username.toLowerCase() === active.username.toLowerCase() ||
+    (state?.account_id !== undefined && (state.account_id !== active.id || state.account_env !== active.env))) {
+    return <Navigate to={profile_path(username)} replace />;
+  }
+
+  function close() {
+    if (state?.backgroundLocation) navigate(-1);
+    else navigate(profile_path(username), { replace: true });
+  }
+
+  return <Modal open onClose={() => { if (!busy) close(); }} title={`Report @${username}`}>
+    <Suspense fallback={<FlowSpinner />}>
+      <ReportProfileModal key={`${username}:${active.env}:${active.token}`} username={username} auth={{ token: active.token, env: active.env }} on_sent={close} on_busy={set_busy} />
+    </Suspense>
+  </Modal>;
+}
+
 function FlowRoute() {
   const { pathname } = useLocation();
   const prefix = '/i/flow/';
@@ -199,6 +262,8 @@ export function FlowModals() {
   const location = useLocation();
   return (
     <Routes location={location}>
+      <Route path="/i/flow/edit_item_m" element={<EditItemFlow />} />
+      <Route path="/i/flow/reportprofile" element={<ReportProfileFlow />} />
       <Route path="/i/flow/*" element={<FlowRoute />} />
     </Routes>
   );

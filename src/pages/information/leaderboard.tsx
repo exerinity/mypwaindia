@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { profile_path } from '../../utils/profiles.ts';
 import { useApiCall } from '../../hooks/api_call.js';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { getLeaderboard } from '../../api/flow.ts';
@@ -90,7 +92,7 @@ export default function LeaderboardPage() {
            return (
              <div key={u.username} className="lb-row">
                <span className={`lb-rank top-${rank}`}>#{rank}</span>
-               <span className="lb-username">@{u.username}</span>
+               <Link className="lb-username" to={profile_path(u.username)}>@{u.username}</Link>
                <span className="lb-balance">
                  <AnimatedNumber value={u.balance} format={formatINR} />
                </span>

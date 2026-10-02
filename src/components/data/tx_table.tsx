@@ -11,6 +11,7 @@ export interface Transaction {
   note?: string;
 }
 import { Link, useLocation } from 'react-router-dom';
+import { profile_path } from '../../utils/profiles.ts';
 import { useCurrency } from '../../context/settings_ctx.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { SearchIcon } from '../ui/icons.tsx';
@@ -153,8 +154,8 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
                       {tx.transaction_id}
                     </Link>
                   </td>
-                  <td>{tx.sender?.username || '-'}</td>
-                  <td>{tx.recipient?.username || '-'}</td>
+                  <td>{tx.sender?.username ? <Link to={profile_path(tx.sender.username)}>{tx.sender.username}</Link> : '-'}</td>
+                  <td>{tx.recipient?.username ? <Link to={profile_path(tx.recipient.username)}>{tx.recipient.username}</Link> : '-'}</td>
                   <td style={{ textAlign: 'right', color: outgoing ? 'var(--alert-error)' : 'var(--success)', fontVariantNumeric: 'tabular-nums' }}>
                     {outgoing ? '-' : '+'}{format(tx.amount)}
                   </td>

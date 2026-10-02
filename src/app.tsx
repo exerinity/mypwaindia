@@ -3,12 +3,17 @@ import { useEffect, lazy, Suspense } from 'react';
 import { useSettings } from './context/settings_ctx.tsx';
 import { CardSkeleton } from './components/shell/app_skeleton.tsx';
 import { FlowModals, isFlowModalPath } from './flow/flow_conductor.tsx';
+import { profile_path } from './utils/profiles.ts';
 
 const AppLayout = lazy(() => import('./components/shell/app_layout.tsx').then((m) => ({ default: m.AppLayout })));
 const RequireAuth = lazy(() => import('./components/shell/require_auth.tsx').then((m) => ({ default: m.RequireAuth })));
 const OnboardingPage = lazy(() => import('./flow/pages/onboarding.tsx'));
 const DashboardPage = lazy(() => import('./pages/account/dashboard.tsx'));
 const AccountPage = lazy(() => import('./pages/account/account.tsx'));
+const ProfilesPage = lazy(() => import('./pages/profile/public.tsx'));
+const EditProfilePage = lazy(() => import('./pages/profile/edit.tsx'));
+const ManageShopPage = lazy(() => import('./pages/shop/manage.tsx'));
+const ShopOrderPage = lazy(() => import('./pages/shop/order.tsx'));
 const AgentPage = lazy(() => import('./pages/account/agent.tsx'));
 const CardsPage = lazy(() => import('./pages/scambait/cards.tsx'));
 const TransferPage = lazy(() => import('./pages/transfer/regular.tsx'));
@@ -74,6 +79,14 @@ function SearchRedirect({ to }: { to: string }) {
   return <Navigate to={`${to}${search}`} replace />;
 }
 
+function ProfileRedirect() {
+  const { username, profile_handle } = useParams();
+  const { search, hash } = useLocation();
+  const profile_username = username ?? (profile_handle?.startsWith('@') ? profile_handle.slice(1) : undefined);
+  if (!profile_username) return <NotFoundPage />;
+  return <Navigate to={`${profile_path(profile_username)}${search}${hash}`} replace />;
+}
+
 function MerchantRedirect() {
   const { '*': splat } = useParams();
   return <ExternalRedirectPage to={`https://mypayindia.com/merchant/${splat ?? ''}`} />;
@@ -120,6 +133,10 @@ export default function App() {
           <Route path="/" element={<HomeRedirect />} />
 
           <Route path="/dash" element={<DashboardPage />} />
+          <Route path="/i/profiles" element={<ProfilesPage />} />
+          <Route path="/i/profile/:username" element={<ProfilesPage />} />
+          <Route path="/i/profiles/:username" element={<ProfileRedirect />} />
+          <Route path="/:profile_handle" element={<ProfileRedirect />} />
           <Route path="/i/leaderboard" element={<LeaderboardPage />} />
           <Route path="/i/team" element={<TeamPage />} />
           <Route path="/i/team/globe" element={<TeamMapPage />} />
@@ -144,6 +161,9 @@ export default function App() {
 
           <Route element={<RequireAuth />}>
             <Route path="/account" element={<AccountPage />} />
+            <Route path="/account/profile" element={<EditProfilePage />} />
+            <Route path="/account/shop" element={<ManageShopPage />} />
+            <Route path="/account/shop/order/:id" element={<ShopOrderPage />} />
             <Route path="/i/agent" element={<AgentPage />} />
             <Route path="/agent" element={<Navigate to="/i/agent" replace />} />
             <Route path="/account/transfer" element={<TransferPage />} />

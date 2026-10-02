@@ -1,0 +1,33 @@
+.profile_prose {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.profile_banner {
+  display: block;
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+.profile_avatar {
+  display: block;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile_banner + .profile_avatar {
+  position: relative;
+  margin-top: -64px;
+  margin-left: 8px;
+}
+
+.profile_image {
+  max-width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  border-radius: var(--radius);
+}

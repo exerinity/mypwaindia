@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { ExternalIcon } from '../ui/icons.tsx';
+import { AgeTag } from '../ui/age_tag.tsx';
 import { getSocialSiteLabel, resolveSocialSite, SocialIcon } from '../ui/social_icons.tsx';
 
 const ASSET_HOST = 'https://mypayindia.com';
@@ -11,7 +12,6 @@ export function avatarConductor(avatar?: string): string {
   return `${ASSET_HOST}/${avatar.replace(/^\/+/, '')}`;
 }
 
-export interface Age { years: number; months: number; weeks: number; days: number }
 export interface RoleHistoryEntry { role: string; start_date: string; end_date: string }
 export interface TeamMember {
   name: string;
@@ -73,16 +73,6 @@ export function PrideFlagTag({ flag }: { flag: string }) {
   return (
     <HoverTip tip={tip}>
       <span className={`pride-flag pride-flag--${flag.toLowerCase()}`} style={{ cursor: 'help' }} />
-    </HoverTip>
-  );
-}
-
-export function AgeTag({ age }: { age: Age }) {
-  return (
-    <HoverTip tip={`${age.years} years, ${age.months} months, ${age.weeks} weeks, ${age.days} days`}>
-      <span style={{ color: 'var(--muted)', fontSize: '0.85em', cursor: 'help' }}>
-        ({age.years > 0 ? `${age.years}y` : age.months > 0 ? `${age.months}mo` : age.weeks > 0 ? `${age.weeks}w` : `${age.days}d`})
-      </span>
     </HoverTip>
   );
 }
