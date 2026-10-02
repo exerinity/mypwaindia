@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '27',
+    importance: 2,
+    date: '2 Oct 2026',
+    notes: [
+      'Added pages for profiles and shop, with editors and settings'
+    ],
+  },
+  {
     version: '26a',
     date: '30 Sep 2026',
     notes: [
