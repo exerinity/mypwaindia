@@ -12,8 +12,9 @@ import { Modal } from '../../components/ui/modal.tsx';
 import { Empty, ErrorBox, LoadingRow } from '../../components/ui/status.tsx';
 import { FloatingInput } from '../../components/ui/floating_input.tsx';
 import { formatINR } from '../../utils/money.js';
+import { SavedShopItems } from '../../components/shop/storefront.tsx';
 
-const tabs = ['items', 'orders', 'purchases', 'notifications'] as const;
+const tabs = ['items', 'orders', 'purchases', 'saved', 'notifications'] as const;
 
 export default function ManageShopPage() {
   usePageTitle('Shop and purchases');
@@ -27,11 +28,11 @@ export default function ManageShopPage() {
     <h1 className="mt-0">Shop and purchases</h1>
     <nav className="btn-row mb-2" aria-label="Shop navigation">
       {tabs.map((value) => <button key={value} className={tab === value ? '' : 'secondary'} aria-current={tab === value ? 'page' : undefined} onClick={() => set_search({ tab: value })}>
-        {value === 'items' ? 'My items' : value === 'orders' ? 'Sales orders' : value === 'purchases' ? 'My purchases' : 'Notifications'}
+        {value === 'items' ? 'My items' : value === 'orders' ? 'Sales orders' : value === 'purchases' ? 'My purchases' : value === 'saved' ? 'Saved items' : 'Notifications'}
       </button>)}
     </nav>
     <div key={`${tab}:${active.env}:${active.token}`}>
-      {tab === 'items' ? <MyItems auth={auth} account_id={active.id} /> : tab === 'notifications' ? <Notifications auth={auth} /> : <Orders auth={auth} side={tab} />}
+      {tab === 'items' ? <MyItems auth={auth} account_id={active.id} /> : tab === 'notifications' ? <Notifications auth={auth} /> : tab === 'saved' ? <SavedShopItems auth={auth} /> : <Orders auth={auth} side={tab} />}
     </div>
   </div>;
 }
@@ -74,7 +75,7 @@ function MyItems({ auth, account_id }: { auth: AuthOpts; account_id: number }) {
     {resource.data?.items.length === 0 && <Empty>Nothing!</Empty>}
     {resource.data?.items.map((item) => <article key={item.id} className="card mb-2">
       <h3 className="mt-0">{item.name}</h3>
-      <div className="stat-card"><span className="stat-label">Price</span><span className="stat-value">{formatINR(item.price)}</span></div>
+      <div className="stat-card"><span className="stat-label">{item.pwyw ? 'Pay what you want minimum' : 'Price'}</span><span className="stat-value">{formatINR(item.price)}</span></div>
       <div className="stat-sub">{item.status ?? 'active'} - {item.stock == null ? 'Unlimited stock' : `${item.stock} in stock`} - {item.sold ?? 0} sold</div>
       {item.status !== 'archived' && <div className="btn-row mt-2">
         <button className="secondary" disabled={busy} onClick={() => edit_item(item.id)}>Edit</button>
@@ -135,6 +136,7 @@ function Orders({ auth, side }: { auth: AuthOpts; side: 'orders' | 'purchases' }
       <div className="stat-sub">{order.order_id} - {order.status.replace('_', ' ')}</div>
       {order.total != null && <div className="stat-card mt-2"><span className="stat-label">Total</span><span className="stat-value">{formatINR(order.total)}</span></div>}
       <div className="stat-sub">{side === 'orders' ? `Buyer: @${order.buyer ?? ''}` : `Seller: @${order.seller ?? ''}`}</div>
+      {order.recipient && <div className="stat-sub">{order.side === 'recipient' ? `Gift from @${order.buyer ?? ''}` : `Gift for @${order.recipient}`}</div>}
       <div className="btn-row mt-2"><Link className="btn secondary" to={`/account/shop/order/${order.id}`}>View order and delivery</Link></div>
     </article>)}
     <Pagination page={page} last_page={resource.data?.last_page ?? page} busy={resource.loading} on_page={set_page} />

@@ -1,26 +1,48 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import type { AuthOpts } from '../../api/client.js';
-import { buy_shop_item, list_shop_items } from '../../api/shop.js';
-import type { ShopItem, ShopOrder } from '../../api/shop.js';
+import { buy_shop_item, get_shop_item, list_saved_items, list_shop_items, toggle_saved_item } from '../../api/shop.js';
+import type { ShopItem, ShopListing, ShopOrder } from '../../api/shop.js';
 import { use_profile_resource } from '../../hooks/profile_resource.ts';
 import { useGlobalData } from '../../context/global_data_ctx.tsx';
 import { Empty, ErrorBox, LoadingRow } from '../ui/status.tsx';
 import { FloatingInput } from '../ui/floating_input.tsx';
 import { Modal } from '../ui/modal.tsx';
 import { OrderContent } from './order_content.tsx';
+import { ItemReviews } from './reviews.tsx';
 import { safe_http_url, shop_total, purchase_error } from '../../utils/profiles.ts';
-import { formatINR } from '../../utils/money.js';
+import { formatINR, rupeesToPaisa } from '../../utils/money.js';
 
 export function ProfileShop({ username, auth, owner }: { username: string; auth?: AuthOpts; owner: boolean }) {
-  const resource = use_profile_resource(() => list_shop_items(username, auth), `${username}:${auth?.env}:${auth?.token}`);
-  const [selected, set_selected] = useState<ShopItem | null>(null);
+  return <ShopCatalog username={username} auth={auth} owner={owner} />;
+}
+
+export function SavedShopItems({ auth }: { auth: AuthOpts }) {
+  return <ShopCatalog auth={auth} saved />;
+}
+
+function ShopCatalog({ username, auth, owner = false, saved = false }: { username?: string; auth?: AuthOpts; owner?: boolean; saved?: boolean }) {
+  const resource = use_profile_resource<{ items: ShopListing[] }>(() => saved && auth ? list_saved_items(auth) : list_shop_items(username ?? '', auth), `${saved}:${username}:${auth?.env}:${auth?.token}`);
+  const saved_resource = use_profile_resource(() => auth && !saved ? list_saved_items(auth) : Promise.resolve({ items: [] }), `${saved}:${auth?.env}:${auth?.token}`);
+  const [selected, set_selected] = useState<number | null>(null);
+  const [saving, set_saving] = useState<number | null>(null);
+  const [save_error, set_save_error] = useState<unknown>(null);
+  const saved_ids = new Set((saved ? resource : saved_resource).data?.items.map((item) => item.id) ?? []);
+  async function save_item(id: number) {
+    if (!auth || saving !== null) return;
+    set_saving(id);
+    set_save_error(null);
+    try { await toggle_saved_item(auth, id); if (saved) resource.reload(); else saved_resource.reload(); }
+    catch (error) { set_save_error(error); }
+    finally { set_saving(null); }
+  }
   return <div>
     {owner && <div className="btn-row"><Link to="/account/shop" className="btn secondary">Manage shop</Link></div>}
-    <ErrorBox error={resource.error} />
-    {!!resource.error && <div className="btn-row"><button className="secondary" onClick={resource.reload}>Retry</button></div>}
+    {saved && <><p className="muted">You will be notified when a saved item comes back in stock</p><div className="btn-row"><button className="secondary" disabled={resource.loading} onClick={resource.reload}>Refresh</button></div></>}
+    <ErrorBox error={resource.error || saved_resource.error || save_error} />
+    {!!(resource.error || saved_resource.error) && <div className="btn-row"><button className="secondary" onClick={() => { resource.reload(); saved_resource.reload(); }}>Retry</button></div>}
     {resource.loading && <LoadingRow />}
-    {resource.data?.items.length === 0 && <Empty>No items for sale.</Empty>}
+    {resource.data?.items.length === 0 && <Empty>{saved ? 'No saved items.' : 'No items for sale.'}</Empty>}
     <div className="grid cols-3">
       {resource.data?.items.map((item) => {
         const image_url = safe_http_url(item.image_url);
@@ -29,14 +51,24 @@ export function ProfileShop({ username, auth, owner }: { username: string; auth?
           {image_url && <img className="profile_image" src={image_url} alt={item.name} loading="lazy" />}
           <h3 className="mt-0">{item.name}</h3>
           <p className="profile_prose">{item.description}</p>
-          <div className="stat-card mt-2"><span className="stat-label">Price</span><span className="stat-value">{formatINR(item.price)}</span></div>
-          <div className="stat-sub">{sold_out ? 'Sold out' : item.stock == null ? 'Unlimited stock' : `${item.stock} available`} - {item.delivery === 'instant' ? 'Instant delivery' : 'Manual delivery'}</div>
-          <div className="btn-row mt-2"><button className="secondary" onClick={() => set_selected(item)}>{owner ? 'View item' : 'View and buy'}</button></div>
+          <div className="stat-card mt-2"><span className="stat-label">{item.pwyw ? 'Minimum price' : 'Price'}</span><span className="stat-value">{formatINR(item.price)}</span></div>
+          <div className="stat-sub">{sold_out ? 'Sold out' : item.stock == null ? 'Unlimited stock' : `${item.stock} available`}{item.delivery && ` - ${item.delivery === 'instant' ? 'Instant delivery' : 'Manual delivery'}`}</div>
+          {item.pwyw && <div className="stat-sub">Pay what you want</div>}
+          <div className="btn-row mt-2">
+            <button className="secondary" onClick={() => set_selected(item.id)}>{owner ? 'View item' : 'View and buy'}</button>
+            {auth && !owner && <button className="secondary" disabled={saving !== null || (!saved && !saved_resource.data)} aria-pressed={saved_ids.has(item.id)} onClick={() => save_item(item.id)}>{saved_ids.has(item.id) ? 'Remove saved item' : 'Save item'}</button>}
+          </div>
         </article>;
       })}
     </div>
-    {selected && <BuyItem key={selected.id} item={selected} auth={auth} owner={owner} on_close={() => set_selected(null)} on_purchase={resource.reload} />}
+    {selected !== null && <ShopItemModal key={selected} id={selected} auth={auth} owner={owner} on_close={() => set_selected(null)} on_purchase={resource.reload} />}
   </div>;
+}
+
+function ShopItemModal({ id, auth, owner, on_close, on_purchase }: { id: number; auth?: AuthOpts; owner: boolean; on_close: () => void; on_purchase: () => void }) {
+  const resource = use_profile_resource(() => get_shop_item(id, auth), `${id}:${auth?.env}:${auth?.token}`);
+  if (resource.data) return <BuyItem item={resource.data} auth={auth} owner={owner} on_close={on_close} on_purchase={on_purchase} />;
+  return <Modal open onClose={on_close} title="Shop item"><ErrorBox error={resource.error} />{resource.loading && <LoadingRow />}{!!resource.error && <div className="btn-row"><button className="secondary" onClick={resource.reload}>Retry</button></div>}</Modal>;
 }
 
 function BuyItem({ item, auth, owner, on_close, on_purchase }: {
@@ -44,14 +76,20 @@ function BuyItem({ item, auth, owner, on_close, on_purchase }: {
 }) {
   const [quantity, set_quantity] = useState(1);
   const [answers, set_answers] = useState<Record<string, string | number | boolean>>({});
+  const [amount, set_amount] = useState('');
+  const [discount_code, set_discount_code] = useState('');
+  const [gift_to, set_gift_to] = useState('');
   const [confirming, set_confirming] = useState(false);
   const [busy, set_busy] = useState(false);
   const [error, set_error] = useState<unknown>(null);
   const [order, set_order] = useState<ShopOrder | null>(null);
   const { refetchUserInfo } = useGlobalData();
   const location = useLocation();
-  const total = shop_total(item, quantity, answers);
-  const validation = purchase_error(item, quantity, answers);
+  const unit_amount = item.pwyw && amount.trim() ? rupeesToPaisa(amount) : undefined;
+  const total = shop_total(item, quantity, answers, unit_amount);
+  const minimum = shop_total(item, 1, answers);
+  const recipient = gift_to.trim().replace(/^@/, '');
+  const validation = purchase_error(item, quantity, answers, unit_amount) ?? (gift_to.trim() && !recipient ? 'Enter a gift recipient username.' : undefined);
 
   function set_answer(key: string, value: string | number | boolean | undefined) {
     set_answers((previous) => {
@@ -63,11 +101,14 @@ function BuyItem({ item, auth, owner, on_close, on_purchase }: {
   }
 
   async function buy() {
-    if (!auth || owner || busy || validation || order) return;
+    if (!auth || owner || busy || !confirming || validation || order) return;
     set_busy(true);
     set_error(null);
     try {
-      const result = await buy_shop_item(auth, item.id, quantity, answers);
+      const result = await buy_shop_item(auth, item.id, quantity, answers, {
+        ...(discount_code.trim() ? { discount_code: discount_code.trim() } : {}), ...(recipient ? { gift_to: recipient } : {}),
+        ...(unit_amount === undefined ? {} : { amount: unit_amount }),
+      });
       set_order(result);
       refetchUserInfo().catch(() => {});
       on_purchase();
@@ -80,22 +121,25 @@ function BuyItem({ item, auth, owner, on_close, on_purchase }: {
       <ErrorBox error={error} />
       {order ? <>
         <h3 className="mt-0">{order.order_id ?? `Order ${order.id}`}</h3>
+        {order.total != null && <div className="stat-card mb-2"><span className="stat-label">Charged total</span><span className="stat-value">{formatINR(order.total)}</span></div>}
         <OrderContent order={order} />
         <div className="btn-row"><Link className="btn" to={`/account/shop/order/${order.id}`}>View order</Link></div>
       </> : confirming ? <>
         <h3 className="mt-0">Confirm purchase</h3>
         <p>{quantity} x {item.name}</p>
-        <div className="stat-card"><span className="stat-label">Total</span><span className="stat-value">{formatINR(total)}</span></div>
+        {recipient && <p>Gift for @{recipient}. Only the recipient will see the delivery</p>}
+        <div className="stat-card"><span className="stat-label">{discount_code.trim() ? 'Before discount' : 'Total'}</span><span className="stat-value">{formatINR(total)}</span></div>
+        {discount_code.trim() && <p className="muted">Code: {discount_code.trim()}. The discount is applied at checkout. Your order will show the charged total</p>}
         <div className="btn-row mt-2">
-          <button disabled={busy} onClick={buy}>{busy ? 'Purchasing...' : `Pay ${formatINR(total)}`}</button>
+          <button disabled={busy} onClick={buy}>{busy ? 'Purchasing...' : `${discount_code.trim() ? 'Pay up to' : 'Pay'} ${formatINR(total)}`}</button>
           <button className="secondary" disabled={busy} onClick={() => set_confirming(false)}>Back</button>
         </div>
       </> : <form onSubmit={(event) => { event.preventDefault(); if (!validation) set_confirming(true); }}>
         <p className="profile_prose muted">{item.description}</p>
-        <FloatingInput id="buy_quantity" label="Quantity" type="number" min={1} step={1} max={item.stock ?? undefined} required value={Number.isNaN(quantity) ? '' : quantity} onChange={(event) => set_quantity(event.target.valueAsNumber)} />
+        {item.pwyw ? <p className="stat-sub">Pay what you want purchases have a quantity of 1.</p> : <FloatingInput id="buy_quantity" label="Quantity" type="number" min={1} step={1} max={item.stock ?? undefined} required value={Number.isNaN(quantity) ? '' : quantity} onChange={(event) => set_quantity(event.target.valueAsNumber)} />}
         {(item.options ?? []).map((option, index) => {
           const key = option.key;
-          if (!key) return <p key={index} className="muted">Buy this item on the website to fill in {option.label}</p>;
+          if (!key) return <p key={index} className="muted">Buy this item on MyPayIndia.com to fill in {option.label}</p>;
           const id = `buy_option_${index}`;
           if (option.type === 'checkbox') return <label className="checkbox-row" key={key}>
             <input type="checkbox" required={option.required} checked={answers[key] === true} onChange={(event) => set_answer(key, event.target.checked)} />
@@ -112,10 +156,19 @@ function BuyItem({ item, auth, owner, on_close, on_purchase }: {
             </> : <FloatingInput id={id} label={`${option.label}${option.required ? ' (required)' : ' (optional)'}`} type="text" required={option.required} value={String(answers[key] ?? '')} onChange={(event) => set_answer(key, event.target.value)} />}
           </div>;
         })}
-        <div className="stat-card mt-2"><span className="stat-label">Total</span><span className="stat-value">{Number.isFinite(total) ? formatINR(total) : 'Enter a quantity'}</span></div>
+        {item.pwyw && <>
+          <FloatingInput id="buy_amount" label="Unit amount (INR, optional)" inputMode="decimal" value={amount} onChange={(event) => set_amount(event.target.value)} />
+          <p className="stat-sub">Minimum including options: {formatINR(minimum)}. Leave blank to pay the minimum.</p>
+        </>}
+        {!owner && <>
+          <FloatingInput id="buy_discount" label="Discount code (optional)" value={discount_code} onChange={(event) => set_discount_code(event.target.value)} />
+          <FloatingInput id="buy_gift" label="Gift recipient username (optional)" value={gift_to} onChange={(event) => set_gift_to(event.target.value)} />
+        </>}
+        <div className="stat-card mt-2"><span className="stat-label">{discount_code.trim() ? 'Before discount' : 'Total'}</span><span className="stat-value">{Number.isFinite(total) ? formatINR(total) : 'Enter a valid amount and quantity'}</span></div>
         {validation && <p className="muted">{validation}</p>}
         {owner ? <p className="muted">You can't purchase this item because it is yours</p> : <div className="btn-row mt-2">{auth ? <button disabled={!!validation}>Review purchase</button>
           : <Link className="btn" to="/i/flow/login" state={{ from: location }}>Sign in to buy</Link>}</div>}
+        <ItemReviews id={item.id} auth={auth} />
       </form>}
     </div>
   </Modal>;

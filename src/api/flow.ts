@@ -1,6 +1,6 @@
 import type { AuthOpts, Env } from './client.js';
 import type { ShopItem, ShopOption } from './shop.js';
-import type { ReportReason } from './profile.js';
+import type { ProfileDonation, ReportReason } from './profile.js';
 
 export interface FlowText {
   text: string;
@@ -299,7 +299,7 @@ export interface ShopItemEditorSubtask {
     image_delivery_text: FlowText;
     item: ShopItem | null;
     labels: {
-      name: string; description: string; price: string; stock: string; hidden: string; delivery: string;
+      name: string; description: string; price: string; pwyw: string; stock: string; hidden: string; delivery: string;
       instant_type: string; instant_content: string; buyer_fields: string; option_label: string; option_type: string;
       required: string; extra_price: string; choice_label: string; remove_choice: string; add_choice: string; remove_field: string; add_field: string;
     };
@@ -326,6 +326,24 @@ export interface ProfileReportSubtask {
   subtask_back_navigation: 'hide_explicit_cta';
 }
 
+export interface ProfileDonationSubtask {
+  subtask_id: 'DonateProfile';
+  type: 'profile_donation';
+  profile_donation: {
+    primary_text: FlowText;
+    username: string;
+    minimum: number;
+    message_limit: number;
+    recipient_notice: FlowText;
+    pending_text: FlowText;
+    confirmed_text: FlowText;
+    result: ProfileDonation | null;
+    labels: { amount: string; message: string; public: string; review: string; confirm: string; back: string; done: string; transaction: string };
+    actions: FlowAction<'donate' | 'cancel'>[];
+  };
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
 export interface FlowTaskInput {
   subtask_id: string;
   action_id: string;
@@ -342,6 +360,7 @@ export type FlowSubtask =
   | AccountRestrictionsSubtask
   | ShopItemEditorSubtask
   | ProfileReportSubtask
+  | ProfileDonationSubtask
   | ImageSubtask;
 
 export interface FlowTaskResponse {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { create_profile_update, delete_profile_update, like_profile_update, list_profile_updates } from '../../api/profile.js';
+import { create_profile_update, delete_profile_update, vote_profile_update, list_profile_updates } from '../../api/profile.js';
 import type { AuthOpts } from '../../api/client.js';
 import { use_profile_resource } from '../../hooks/profile_resource.ts';
 import { useToast } from '../../context/toast_ctx.tsx';
@@ -18,7 +18,7 @@ export function ProfileUpdates({ username, auth, owner = false, locked = false }
   const [busy, set_busy] = useState(false);
   const [deleting, set_deleting] = useState<number | null>(null);
   const [error, set_error] = useState<unknown>(null);
-  const [likes, set_likes] = useState<Record<number, { liked: boolean; likes: number }>>({});
+  const [votes, set_votes] = useState<Record<number, { vote: 1 | -1 | 0; score: number }>>({});
   const toast = useToast();
 
   async function create_update(event: React.FormEvent) {
@@ -37,13 +37,13 @@ export function ProfileUpdates({ username, auth, owner = false, locked = false }
     finally { set_busy(false); }
   }
 
-  async function toggle_like(id: number) {
-    if (!auth || busy) return;
+  async function vote_update(id: number, value: 1 | -1) {
+    if (!auth || busy || owner) return;
     set_busy(true);
     set_error(null);
     try {
-      const result = await like_profile_update(auth, id);
-      set_likes((previous) => ({ ...previous, [id]: result }));
+      const result = await vote_profile_update(auth, id, value);
+      set_votes((previous) => ({ ...previous, [id]: result }));
     } catch (next_error) { set_error(next_error); }
     finally { set_busy(false); }
   }
@@ -74,7 +74,7 @@ export function ProfileUpdates({ username, auth, owner = false, locked = false }
     {resource.loading && <LoadingRow />}
     {resource.data?.updates.length === 0 && <Empty>No updates yet.</Empty>}
     {resource.data?.updates.map((update) => {
-      const reaction = likes[update.id] ?? update;
+      const reaction = votes[update.id] ?? { vote: update.vote ?? (update.liked ? 1 : 0), score: update.score ?? update.likes };
       const image_url = safe_http_url(update.image_url);
       const update_link = safe_http_url(update.link);
       return <article className="card mb-2" key={update.id}>
@@ -82,10 +82,12 @@ export function ProfileUpdates({ username, auth, owner = false, locked = false }
         <p className="profile_prose">{update.body}</p>
         {image_url && <img className="profile_image" src={image_url} alt="Update attachment" loading="lazy" />}
         {update_link && <p><a className="profile_prose" href={update_link} target="_blank" rel="noopener noreferrer">{update_link}</a></p>}
-        <div className="btn-row mt-2">
-          {auth ? <button className="secondary" disabled={busy} aria-pressed={reaction.liked === true} onClick={() => toggle_like(update.id)}>
-            {reaction.liked ? 'Unlike' : 'Like'} ({reaction.likes})
-          </button> : <><span className="stat-sub">{update.likes} likes</span><Link className="btn secondary" to="/i/flow/login">Sign in to like</Link></>}
+        <div className="btn-row row mt-2">
+          <span className="stat-sub">{reaction.score} {reaction.score === 1 ? 'like' : 'likes'}</span>
+          {!owner && (auth ? <>
+            <button className="secondary" disabled={busy} aria-pressed={reaction.vote === 1} onClick={() => vote_update(update.id, 1)}>{reaction.vote === 1 ? 'Remove like' : 'Like'}</button>
+            <button className="secondary" disabled={busy} aria-pressed={reaction.vote === -1} onClick={() => vote_update(update.id, -1)}>{reaction.vote === -1 ? 'Remove dislike' : 'Dislike'}</button>
+          </> : <Link className="btn secondary" to="/i/flow/login">Sign in to vote</Link>)}
           {owner && !locked && <button className="secondary" disabled={busy} onClick={() => set_deleting(update.id)}>Delete</button>}
         </div>
       </article>;

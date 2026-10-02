@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { get_my_profile, update_profile, profile_platforms, section_types } from '../../api/profile.js';
-import type { Profile, ProfileLink, ProfileSection, SectionType, ProfilePlatform } from '../../api/profile.js';
+import { get_my_profile, update_profile, profile_platforms, section_types, pride_flags, avatar_accessories, profile_accents } from '../../api/profile.js';
+import type { Profile, ProfileLink, ProfilePatch, ProfileSection, SectionType, ProfilePlatform, PrideFlag, StatusExpiry } from '../../api/profile.js';
 import type { AuthOpts } from '../../api/client.js';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
@@ -10,6 +10,8 @@ import { use_profile_resource } from '../../hooks/profile_resource.ts';
 import { ErrorBox, LoadingRow } from '../../components/ui/status.tsx';
 import { FloatingInput, FloatingTextarea } from '../../components/ui/floating_input.tsx';
 import { ProfileUpdates } from '../../components/profile/updates.tsx';
+import { PrideFlagTag } from '../../components/data/team_member_card.tsx';
+import countries from '../../data/countries.json';
 import { profile_path, profile_web_url, profile_patch, safe_http_url, section_title } from '../../utils/profiles.ts';
 
 export default function EditProfilePage() {
@@ -35,6 +37,14 @@ function ProfileEditor({ auth, username }: { auth: AuthOpts; username: string })
 
 function ProfileForm({ profile, auth, username, on_save }: { profile: Profile; auth: AuthOpts; username: string; on_save: () => void }) {
   const [bio, set_bio] = useState(profile.bio ?? '');
+  const [personalization, set_personalization] = useState<Required<Pick<ProfilePatch, 'pronouns' | 'pride_flags' | 'avatar_flag' | 'avatar_accessory' | 'country' | 'accent'>>>({
+    pronouns: profile.pronouns ?? '', pride_flags: profile.pride_flags ?? [], avatar_flag: profile.avatar_flag ?? '',
+    avatar_accessory: profile.avatar_accessory ?? '', country: profile.country ?? '', accent: profile.accent ?? 'brand',
+  });
+  const [status_emoji, set_status_emoji] = useState(profile.status?.emoji ?? '');
+  const [status_text, set_status_text] = useState(profile.status?.text ?? '');
+  const [status_expiry, set_status_expiry] = useState<StatusExpiry>(profile.status?.expires_at === null ? 'never' : '1d');
+  const [expiry_changed, set_expiry_changed] = useState(false);
   const [visibility, set_visibility] = useState<'public' | 'private'>(profile.visibility === 'private' ? 'private' : 'public');
   const [balance_visible, set_balance_visible] = useState(profile.balance_visible ?? false);
   const [links, set_links] = useState<ProfileLink[]>(profile.links ?? []);
@@ -64,7 +74,7 @@ function ProfileForm({ profile, auth, username, on_save }: { profile: Profile; a
     event.preventDefault();
     if (busy || locked) return;
     if (links.some((link) => !safe_http_url(link.url))) { set_error(new Error('Every social link needs an http or https URL.')); return; }
-    const patch = profile_patch(profile, { bio, visibility, balance_visible, links, layout });
+    const patch = profile_patch(profile, { bio, visibility, balance_visible, links, layout, personalization, status_emoji, status_text, status_expiry, expiry_changed });
     if (!Object.keys(patch).length) { toast.info('No changes to save'); return; }
     set_busy(true);
     set_error(null);
@@ -93,6 +103,44 @@ function ProfileForm({ profile, auth, username, on_save }: { profile: Profile; a
         <div className="btn-row"><a className="btn secondary" href={profile_web_url(username)} target="_blank" rel="noopener noreferrer">Manage images on MyPayIndia.com</a></div>
       </section>
       <section className="card mb-2">
+        <h3 className="mt-0">About you</h3>
+        <FloatingInput id="profile_pronouns" label="Pronouns" disabled={locked || busy} maxLength={40} value={personalization.pronouns} onChange={(event) => set_personalization({ ...personalization, pronouns: event.target.value })} />
+        <label htmlFor="profile_country">Country</label>
+        <select id="profile_country" disabled={locked || busy} value={personalization.country} onChange={(event) => set_personalization({ ...personalization, country: event.target.value })}>
+          {Object.entries(countries).map(([code, name]) => <option key={code} value={code}>{name}</option>)}
+        </select>
+        <h3 className="mt-2">Pride flags</h3>
+        <div className="row" style={{ gap: '4px 20px' }}>
+          {pride_flags.map((flag) => <label className="checkbox-row" key={flag} style={{ margin: 0, padding: '4px 0' }}>
+            <input type="checkbox" disabled={locked || busy} checked={personalization.pride_flags.includes(flag)} onChange={(event) => set_personalization({ ...personalization, pride_flags: event.target.checked ? [...personalization.pride_flags, flag] : personalization.pride_flags.filter((value) => value !== flag) })} />
+            <PrideFlagTag flag={flag} />{section_title(flag)}
+          </label>)}
+        </div>
+        <label htmlFor="profile_avatar_flag">Avatar flag</label>
+        <select id="profile_avatar_flag" disabled={locked || busy} value={personalization.avatar_flag} onChange={(event) => set_personalization({ ...personalization, avatar_flag: event.target.value as PrideFlag | '' })}>
+          <option value="">None</option>{pride_flags.map((flag) => <option key={flag} value={flag}>{section_title(flag)}</option>)}
+        </select>
+        <label htmlFor="profile_avatar_accessory">Avatar accessory</label>
+        <select id="profile_avatar_accessory" disabled={locked || busy} value={personalization.avatar_accessory} onChange={(event) => set_personalization({ ...personalization, avatar_accessory: event.target.value as typeof personalization.avatar_accessory })}>
+          <option value="">None</option>{avatar_accessories.map((accessory) => <option key={accessory} value={accessory}>{section_title(accessory)}</option>)}
+        </select>
+        <label htmlFor="profile_accent">Profile accent</label>
+        <select id="profile_accent" disabled={locked || busy} value={personalization.accent} onChange={(event) => set_personalization({ ...personalization, accent: event.target.value as typeof personalization.accent })}>
+          {profile_accents.map((accent) => <option key={accent} value={accent}>{section_title(accent)}</option>)}
+        </select>
+      </section>
+      <section className="card mb-2">
+        <h3 className="mt-0">Status</h3>
+        <FloatingInput id="profile_status_emoji" label="Status emoji (optional)" disabled={locked || busy} value={status_emoji} onChange={(event) => set_status_emoji(event.target.value)} />
+        <FloatingInput id="profile_status_text" label="Status text" disabled={locked || busy} maxLength={80} value={status_text} onChange={(event) => set_status_text(event.target.value)} />
+        <label htmlFor="profile_status_expiry">Clear changed status after</label>
+        <select id="profile_status_expiry" disabled={locked || busy} value={status_expiry} onChange={(event) => { set_status_expiry(event.target.value as StatusExpiry); set_expiry_changed(true); }}>
+          <option value="1h">1 hour</option><option value="1d">1 day</option><option value="1w">1 week</option><option value="never">Never</option>
+        </select>
+        {profile.status?.expires_at && <p className="stat-sub">Current status clears {new Date(profile.status.expires_at).toLocaleString()}</p>}
+        <div className="btn-row"><button type="button" className="secondary" disabled={locked || busy} onClick={() => { set_status_emoji(''); set_status_text(''); }}>Clear status</button></div>
+      </section>
+      <section className="card mb-2">
         <h3 className="mt-0">Social links</h3>
         {links.map((link, index) => <div className="card compact mb-2" key={index}>
           <label htmlFor={`profile_platform_${index}`}>Platform</label>
@@ -112,6 +160,7 @@ function ProfileForm({ profile, auth, username, on_save }: { profile: Profile; a
           <FloatingInput id={`section_title_${index}`} label="Title" disabled={locked || busy} type="text" value={typeof section.config?.title === 'string' ? section.config.title : section.title ?? ''}
             onChange={(event) => update_section(index, { title: event.target.value, config: { ...section.config, title: event.target.value } })} />
           <label className="checkbox-row"><input type="checkbox" disabled={locked || busy} checked={section.visible} onChange={(event) => update_section(index, { visible: event.target.checked })} />Visible</label>
+          {section.type === 'supporters' && <label className="checkbox-row"><input type="checkbox" disabled={locked || busy} checked={section.config?.include_shop !== false} onChange={(event) => update_section(index, { config: { ...section.config, include_shop: event.target.checked } })} />Include shop customers (minus refunds)</label>}
           <div className="btn-row">
             <button type="button" className="secondary" disabled={locked || busy || index === 0} aria-label={`Move ${section_title(section.type)} up`} onClick={() => move_section(index, -1)}>Move up</button>
             <button type="button" className="secondary" disabled={locked || busy || index === layout.length - 1} aria-label={`Move ${section_title(section.type)} down`} onClick={() => move_section(index, 1)}>Move down</button>

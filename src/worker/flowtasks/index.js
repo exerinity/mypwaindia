@@ -7,6 +7,7 @@ import restrictions from "./restrictions.js";
 import transaction from "./transaction.js";
 import edit_item_m from "./edit_item_m.js";
 import reportprofile from "./reportprofile.js";
+import donateprofile from "./donateprofile.js";
 import { corsJson, flowError } from "./shared.js";
 
 const FLOW_TASKS = [
@@ -18,7 +19,8 @@ const FLOW_TASKS = [
   restrictions,
   transaction,
   edit_item_m,
-  reportprofile
+  reportprofile,
+  donateprofile
 ];
 
 export function runFlowTask(taskName, context) {

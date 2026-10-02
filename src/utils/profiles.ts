@@ -1,5 +1,5 @@
 import type { ShopItem, ShopOrder } from '../api/shop.js';
-import type { Profile, ProfileLink, ProfilePatch, ProfileSection } from '../api/profile.js';
+import type { Profile, ProfileLink, ProfilePatch, ProfileSection, StatusExpiry } from '../api/profile.js';
 
 export function safe_http_url(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
@@ -24,11 +24,24 @@ export function section_title(type: string) {
 
 export function profile_patch(profile: Profile, draft: {
   bio: string; visibility: 'public' | 'private'; balance_visible: boolean; links: ProfileLink[]; layout: ProfileSection[];
+  personalization: Required<Pick<ProfilePatch, 'pronouns' | 'pride_flags' | 'avatar_flag' | 'avatar_accessory' | 'country' | 'accent'>>;
+  status_emoji: string; status_text: string; status_expiry: StatusExpiry; expiry_changed: boolean;
 }): ProfilePatch {
   const patch: ProfilePatch = {};
   if (draft.bio !== (profile.bio ?? '')) patch.bio = draft.bio;
   if (draft.visibility !== (profile.visibility === 'private' ? 'private' : 'public')) patch.visibility = draft.visibility;
   if (draft.balance_visible !== (profile.balance_visible ?? false)) patch.balance_visible = draft.balance_visible;
+  const personalization = draft.personalization;
+  for (const key of ['pronouns', 'avatar_flag', 'avatar_accessory', 'country'] as const) {
+    if (personalization[key] !== (profile[key] ?? '')) Object.assign(patch, { [key]: personalization[key] });
+  }
+  if (personalization.accent !== (profile.accent ?? 'brand')) patch.accent = personalization.accent;
+  if (JSON.stringify(personalization.pride_flags) !== JSON.stringify(profile.pride_flags ?? [])) patch.pride_flags = personalization.pride_flags;
+  if (draft.status_emoji !== (profile.status?.emoji ?? '') || draft.status_text !== (profile.status?.text ?? '') || draft.expiry_changed) {
+    patch.status_emoji = draft.status_emoji;
+    patch.status_text = draft.status_text;
+    patch.status_expiry = draft.status_expiry;
+  }
   const clean_links = draft.links.map(({ platform, url }) => ({ platform, url }));
   if (JSON.stringify(clean_links) !== JSON.stringify((profile.links ?? []).map(({ platform, url }) => ({ platform, url })))) patch.links = clean_links;
   const clean_layout = draft.layout.map(({ type, visible, config }) => ({ type, visible, config }));
@@ -39,11 +52,11 @@ export function profile_patch(profile: Profile, draft: {
 
 export function order_actions(order: ShopOrder, username: string) {
   const seller = order.side === 'seller' || order.seller?.toLowerCase() === username.toLowerCase();
-  const buyer = order.side === 'buyer' || order.buyer?.toLowerCase() === username.toLowerCase();
+  const buyer = order.side === 'buyer' || (!order.side && order.buyer?.toLowerCase() === username.toLowerCase());
   return { fulfill: seller && order.status === 'pending', refund: seller && order.status === 'pending', cancel: buyer && order.status === 'in_review' };
 }
 
-export function shop_total(item: ShopItem, quantity: number, answers: Record<string, string | number | boolean>) {
+export function shop_total(item: ShopItem, quantity: number, answers: Record<string, string | number | boolean>, amount?: number) {
   let unit_price = item.price;
   for (const option of item.options ?? []) {
     if (!option.key) continue;
@@ -51,11 +64,13 @@ export function shop_total(item: ShopItem, quantity: number, answers: Record<str
     if (option.type === 'checkbox' && answer === true) unit_price += option.price ?? 0;
     if (option.type === 'select' && typeof answer === 'number') unit_price += option.choices?.[answer]?.price ?? 0;
   }
-  return unit_price * quantity;
+  return (item.pwyw && amount !== undefined ? amount : unit_price) * quantity;
 }
 
-export function purchase_error(item: ShopItem, quantity: number, answers: Record<string, string | number | boolean>): string | undefined {
+export function purchase_error(item: ShopItem, quantity: number, answers: Record<string, string | number | boolean>, amount?: number): string | undefined {
   if (!Number.isSafeInteger(quantity) || quantity < 1) return 'Enter a whole quantity of at least 1.';
+  if (item.pwyw && quantity !== 1) return 'Pay what you want items must have a quantity of 1.';
+  if (item.pwyw && amount !== undefined && (!Number.isSafeInteger(amount) || amount < shop_total(item, 1, answers))) return 'Enter an amount at least the price plus option extras.';
   if (item.sold_out || (item.stock != null && quantity > item.stock)) return 'There is not enough stock for this quantity!';
   for (const option of item.options ?? []) {
     if (!option.key) return 'This item has an unsupported buyer field. Please buy it on MyPayIndia.com';

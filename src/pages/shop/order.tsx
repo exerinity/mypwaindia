@@ -12,6 +12,8 @@ import { ConfirmModal } from '../../components/ui/confirm_modal.tsx';
 import { ErrorBox, LoadingRow } from '../../components/ui/status.tsx';
 import { FloatingTextarea } from '../../components/ui/floating_input.tsx';
 import { OrderContent } from '../../components/shop/order_content.tsx';
+import { OrderMessages } from '../../components/shop/messages.tsx';
+import { PurchaseReview } from '../../components/shop/reviews.tsx';
 import { formatINR } from '../../utils/money.js';
 import { order_actions, profile_path, safe_http_url } from '../../utils/profiles.ts';
 
@@ -72,7 +74,10 @@ function OrderDetails({ order, auth, username, on_change }: { order: ShopOrder; 
       {order.created && <div><div className="stat-label">Placed</div><time dateTime={order.created}>{new Date(order.created).toLocaleString()}</time></div>}
       {order.buyer && <div><div className="stat-label">Buyer</div><Link to={profile_path(order.buyer)}>@{order.buyer}</Link></div>}
       {order.seller && <div><div className="stat-label">Seller</div><Link to={profile_path(order.seller)}>@{order.seller}</Link></div>}
+      {order.recipient && <div><div className="stat-label">Gift recipient</div><Link to={profile_path(order.recipient)}>@{order.recipient}</Link></div>}
       {order.quantity != null && <div><div className="stat-label">Quantity</div><div>{order.quantity}</div></div>}
+      {order.subtotal != null && <div><div className="stat-label">Subtotal</div><div>{formatINR(order.subtotal)}</div></div>}
+      {order.discount_code && <div><div className="stat-label">Discount ({order.discount_code})</div><div>{formatINR(order.discount_amount ?? 0)}</div></div>}
       {order.total != null && <div className="stat-card"><span className="stat-label">Total</span><span className="stat-value">{formatINR(order.total)}</span></div>}
     </div>
     {order.selections?.map((selection) => <div className="stat-sub" key={selection.key}>{selection.label}: {String(selection.value)} (+{formatINR(selection.price)})</div>)}
@@ -87,13 +92,15 @@ function OrderDetails({ order, auth, username, on_change }: { order: ShopOrder; 
         <option value="text">Text</option><option value="url">URL</option>
       </select>
       <FloatingTextarea id="fulfill_content" label="Delivery content" maxLength={5000} required disabled={busy} value={content} onChange={(event) => set_content(event.target.value)} />
-      <p className="muted">The buyer will be notified and emailed. Image deliveries are available on MyPayIndia.com</p>
+      <p className="muted">{order.recipient ? 'The recipient' : 'The buyer'} will be notified and emailed. Image deliveries are available on MyPayIndia.com</p>
       <div className="btn-row mt-2">
         <button disabled={busy || !content.trim()}>Deliver order</button>
         <button className="secondary" type="button" disabled={busy} onClick={() => set_confirm('refund')}>Refund order</button>
       </div>
     </form>}
     {actions.cancel && <div className="btn-row"><button disabled={busy} onClick={() => set_confirm('cancel')}>Cancel purchase for full refund</button></div>}
+    {order.status === 'fulfilled' && (order.side === 'buyer' || (!order.side && order.buyer?.toLowerCase() === username.toLowerCase())) && <PurchaseReview order={order} auth={auth} />}
+    <OrderMessages id={order.id} auth={auth} />
     <ConfirmModal open={confirm !== null} onClose={() => set_confirm(null)} onConfirm={() => { if (confirm) act(confirm); }}
       title={confirm === 'refund' ? 'Refund order' : 'Cancel purchase'} confirmLabel={confirm === 'refund' ? 'Refund' : 'Cancel purchase'}
       message={confirm === 'refund' ? 'Return the payment to the buyer and restore the stock?' : 'Cancel this purchase under review and return the payment to your balance?'} />

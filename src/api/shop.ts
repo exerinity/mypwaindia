@@ -1,5 +1,6 @@
 import { apiFetch } from './client.js';
 import type { AuthOpts } from './client.js';
+import type { RatingSummary } from './profile.js';
 
 export interface ShopChoice { label: string; price: number }
 export interface ShopOption {
@@ -17,6 +18,7 @@ export interface ShopItem {
   description?: string;
   image_url?: string | null;
   price: number;
+  pwyw?: boolean;
   stock: number | null;
   sold_out?: boolean;
   delivery: 'manual' | 'instant';
@@ -30,6 +32,7 @@ export interface ShopItem {
 export interface ShopItemBody {
   name: string;
   price: number;
+  pwyw?: boolean;
   description?: string;
   stock?: number | null;
   delivery: 'instant' | 'manual';
@@ -38,6 +41,7 @@ export interface ShopItemBody {
   hidden?: boolean;
   options?: ShopOption[];
 }
+export type ShopListing = Pick<ShopItem, 'id' | 'seller' | 'name' | 'price' | 'stock'> & Partial<ShopItem>;
 export type OrderStatus = 'in_review' | 'pending' | 'fulfilled' | 'refunded';
 export interface ShopOrder {
   id: number;
@@ -46,10 +50,14 @@ export interface ShopOrder {
   item_name?: string;
   buyer?: string;
   seller?: string;
-  side?: 'buyer' | 'seller';
+  recipient?: string | null;
+  side?: 'buyer' | 'seller' | 'recipient';
   quantity?: number;
   unit_price?: number;
   total?: number;
+  subtotal?: number;
+  discount_code?: string | null;
+  discount_amount?: number;
   selections?: { key: string; label: string; value: string | boolean; price: number }[];
   delivery?: 'manual' | 'instant';
   status: OrderStatus;
@@ -70,6 +78,9 @@ export interface ShopNotification {
   created: string;
 }
 export interface OrderPage { orders: ShopOrder[]; page: number; last_page: number }
+export interface OrderMessage { id: number; author: string; body: string; created: string }
+export interface ItemReview { id: number; order_id: number; item_id: number; buyer: string; rating: number; body: string; created: string; updated: string }
+export interface PurchaseExtras { discount_code?: string; gift_to?: string; amount?: number }
 
 export function list_shop_items(username: string, auth: Partial<AuthOpts> = {}) {
   return apiFetch<{ items: ShopItem[] }>('/api/v2/shop/items', { ...auth, query: { username } });
@@ -94,8 +105,8 @@ export function restock_shop_item(auth: AuthOpts, id: number, stock: number | nu
 export function archive_shop_item(auth: AuthOpts, id: number) {
   return apiFetch('/api/v2/shop/items/archive', { ...auth, method: 'POST', body: { id } });
 }
-export function buy_shop_item(auth: AuthOpts, item_id: number, quantity: number, options: Record<string, string | number | boolean>) {
-  return apiFetch<ShopOrder>('/api/v2/shop/buy', { ...auth, method: 'POST', body: { item_id, quantity, options } });
+export function buy_shop_item(auth: AuthOpts, item_id: number, quantity: number, options: Record<string, string | number | boolean>, extras: PurchaseExtras = {}) {
+  return apiFetch<ShopOrder>('/api/v2/shop/buy', { ...auth, method: 'POST', body: { item_id, quantity, options, ...extras } });
 }
 export function list_shop_orders(auth: AuthOpts, side: 'orders' | 'purchases', page = 1, status?: OrderStatus) {
   return apiFetch<OrderPage>(`/api/v2/shop/${side}`, {
@@ -121,4 +132,23 @@ export function list_shop_notifications(auth: AuthOpts, page = 1) {
 }
 export function read_shop_notifications(auth: AuthOpts) {
   return apiFetch('/api/v2/shop/notifications/read', { ...auth, method: 'POST' });
+}
+
+export function list_order_messages(auth: AuthOpts, id: number) {
+  return apiFetch<{ messages: OrderMessage[] }>('/api/v2/shop/order/messages', { ...auth, query: { id: String(id) } });
+}
+export function send_order_message(auth: AuthOpts, id: number, body: string) {
+  return apiFetch<OrderMessage>('/api/v2/shop/order/messages/send', { ...auth, method: 'POST', body: { id, body } });
+}
+export function list_item_reviews(id: number, auth: Partial<AuthOpts> = {}, limit = 20) {
+  return apiFetch<{ summary: RatingSummary; reviews: ItemReview[] }>('/api/v2/shop/item/reviews', { ...auth, query: { id: String(id), limit: String(Math.min(50, Math.max(1, limit))) } });
+}
+export function review_purchase(auth: AuthOpts, id: number, rating: number, body: string) {
+  return apiFetch<ItemReview>('/api/v2/shop/purchases/review', { ...auth, method: 'POST', body: { id, rating, body } });
+}
+export function list_saved_items(auth: AuthOpts) {
+  return apiFetch<{ items: ShopListing[] }>('/api/v2/shop/saved', auth);
+}
+export function toggle_saved_item(auth: AuthOpts, id: number) {
+  return apiFetch<{ saved: boolean }>('/api/v2/shop/saved/toggle', { ...auth, method: 'POST', body: { id } });
 }

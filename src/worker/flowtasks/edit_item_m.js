@@ -1,6 +1,6 @@
 import { defineFlowTask, flowError, flowToken, text, request_flow_api, flow_response } from "./shared.js";
 
-const item_fields = ["name", "price", "description", "stock", "delivery", "instant_type", "instant_content", "hidden", "options"];
+const item_fields = ["name", "price", "pwyw", "description", "stock", "delivery", "instant_type", "instant_content", "hidden", "options"];
 
 export default defineFlowTask({
   name: "edit_item_m",
@@ -31,7 +31,7 @@ export default defineFlowTask({
         image_delivery_text: text("This item uses image delivery. Manage its delivery on MyPayIndia.com"),
         item,
         labels: {
-          name: "Name", description: "Description", price: "Unit price (INR)", stock: "Stock (blank for unlimited)",
+          name: "Name", description: "Description", price: "Unit price (INR)", pwyw: "Let buyers pay what they want (price is the minimum)", stock: "Stock (blank for unlimited)",
           hidden: "Hide from my profile", delivery: "Delivery", instant_type: "Delivery type", instant_content: "Content delivered to buyers",
           buyer_fields: "Buyer fields", option_label: "Label", option_type: "Type", required: "Required", extra_price: "Extra price (INR)",
           choice_label: "Choice label", remove_choice: "Remove choice", add_choice: "Add choice", remove_field: "Remove field", add_field: "Add buyer field"

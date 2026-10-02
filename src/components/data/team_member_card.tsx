@@ -72,7 +72,7 @@ export function PrideFlagTag({ flag }: { flag: string }) {
   const tip = PRIDE_FLAG_TIP_OVERRIDES[flag.toLowerCase()] ?? flag;
   return (
     <HoverTip tip={tip}>
-      <span className={`pride-flag pride-flag--${flag.toLowerCase()}`} style={{ cursor: 'help' }} />
+      <span className={`pride-flag pride-flag--${flag.toLowerCase()}`} role="img" aria-label={`${tip} flag`} style={{ cursor: 'help' }} />
     </HoverTip>
   );
 }

@@ -17,6 +17,7 @@ export default function EditItemModal({ subtask, on_submit, on_complete, on_busy
   const [name, set_name] = useState(item?.name ?? '');
   const [description, set_description] = useState(item?.description ?? '');
   const [price, set_price] = useState(item ? (item.price / 100).toFixed(2) : '');
+  const [pwyw, set_pwyw] = useState(item?.pwyw ?? false);
   const [stock, set_stock] = useState(item?.stock == null ? '' : String(item.stock));
   const [hidden, set_hidden] = useState(item?.status === 'hidden');
   const [delivery, set_delivery] = useState<'instant' | 'manual'>(item?.delivery ?? 'manual');
@@ -44,7 +45,7 @@ export default function EditItemModal({ subtask, on_submit, on_complete, on_busy
         set_error(new Error('Give every buyer field and choice a label and a valid nonnegative price')); return;
       }
     }
-    const body: Partial<ShopItemBody> = { name: name.trim(), description, price: paisa, stock: stock_value, hidden, options };
+    const body: Partial<ShopItemBody> = { name: name.trim(), description, price: paisa, pwyw, stock: stock_value, hidden, options };
     if (!image_delivery) {
       body.delivery = delivery;
       if (delivery === 'instant') { body.instant_type = instant_type; body.instant_content = instant_content; }
@@ -53,6 +54,7 @@ export default function EditItemModal({ subtask, on_submit, on_complete, on_busy
       if (body.name === item.name) delete body.name;
       if (body.description === (item.description ?? '')) delete body.description;
       if (body.price === item.price) delete body.price;
+      if (pwyw === (item.pwyw ?? false)) delete body.pwyw;
       if (body.stock === item.stock) delete body.stock;
       if (hidden === (item.status === 'hidden')) delete body.hidden;
       if (JSON.stringify(options) === JSON.stringify(item.options ?? [])) delete body.options;
@@ -78,6 +80,7 @@ export default function EditItemModal({ subtask, on_submit, on_complete, on_busy
       <FloatingInput id="item_name" label={labels.name} type="text" maxLength={data.limits.name} required value={name} onChange={(event) => set_name(event.target.value)} />
       <FloatingTextarea id="item_description" label={labels.description} maxLength={data.limits.description} value={description} onChange={(event) => set_description(event.target.value)} />
       <FloatingInput id="item_price" label={labels.price} type="text" inputMode="decimal" required value={price} onChange={(event) => set_price(event.target.value)} />
+      <label className="checkbox-row"><input type="checkbox" checked={pwyw} onChange={(event) => set_pwyw(event.target.checked)} />{labels.pwyw}</label>
       <FloatingInput id="item_stock" label={labels.stock} type="number" min={0} step={1} value={stock} onChange={(event) => set_stock(event.target.value)} />
       <label className="checkbox-row"><input type="checkbox" checked={hidden} onChange={(event) => set_hidden(event.target.checked)} />{labels.hidden}</label>
       {image_delivery ? <p className="muted">{data.image_delivery_text.text}</p> : <>

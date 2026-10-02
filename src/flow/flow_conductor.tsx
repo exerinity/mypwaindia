@@ -18,6 +18,7 @@ import {
   type TransactionDetailSubtask,
   type ShopItemEditorSubtask,
   type ProfileReportSubtask,
+  type ProfileDonationSubtask,
 } from '../api/flow.ts';
 
 const LoginModal = lazy(() => import('./flow_login.tsx'));
@@ -29,6 +30,7 @@ const FlowImageModal = lazy(() => import('./flow_image.tsx'));
 const RestrictionsModal = lazy(() => import('./account_restrictions.tsx'));
 const EditItemModal = lazy(() => import('./edit_item_m.tsx'));
 const ReportProfileModal = lazy(() => import('./reportprofile.tsx'));
+const DonateProfileModal = lazy(() => import('./donateprofile.tsx'));
 const Flowback = lazy(() => import('./shell_fallback.tsx'));
 
 function isMissingTaskError(error: unknown): boolean {
@@ -54,10 +56,10 @@ function ServerFlow({ task }: { task: string }) {
   const remaining = active ? accounts.filter((account) => account.id !== active.id) : [];
   const nextAccount = remaining.length > 0 ? remaining[remaining.length - 1] : null;
   const flow_state = location.state as { item_id?: number | null; username?: string; account_id?: number; account_env?: string } | null;
-  const form_flow = task === 'edit_item_m' || task === 'reportprofile';
+  const form_flow = task === 'edit_item_m' || task === 'reportprofile' || task === 'donateprofile';
   const params: Record<string, string> = form_flow ? {} : Object.fromEntries(new URLSearchParams(location.search));
   if (task === 'edit_item_m' && flow_state?.item_id != null) params.item_id = String(flow_state.item_id);
-  if (task === 'reportprofile' && flow_state?.username) params.username = flow_state.username;
+  if ((task === 'reportprofile' || task === 'donateprofile') && flow_state?.username) params.username = flow_state.username;
   if (nextAccount) params.next_username = nextAccount.username;
   const { data, loading, error } = useApiCall<FlowTaskResponse>(
     () => {
@@ -84,8 +86,8 @@ function ServerFlow({ task }: { task: string }) {
 
   function handleClose() {
     if (form_busy || aborting || submitting) return;
-    const form_subtask = data?.subtasks.find((candidate) => candidate.type === 'shop_item_editor' || candidate.type === 'profile_report');
-    const form_actions = form_subtask?.type === 'shop_item_editor' ? form_subtask.shop_item_editor.actions : form_subtask?.profile_report.actions;
+    const form_subtask = data?.subtasks.find((candidate) => candidate.type === 'shop_item_editor' || candidate.type === 'profile_report' || candidate.type === 'profile_donation');
+    const form_actions = form_subtask?.type === 'shop_item_editor' ? form_subtask.shop_item_editor.actions : form_subtask?.type === 'profile_report' ? form_subtask.profile_report.actions : form_subtask?.profile_donation.actions;
     const cancel_action = form_actions?.find((action) => action.link_type === 'abort');
     if (form_subtask && cancel_action) {
       void handleAbort(form_subtask.subtask_id, cancel_action.link_id);
@@ -221,7 +223,13 @@ function ServerFlow({ task }: { task: string }) {
     content = <ReportProfileModal key={data?.flow_token} subtask={profile_report} on_submit={handle_form_task} on_complete={close_flow} on_busy={set_form_busy} />;
   }
 
-  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage && !restrictions && !shop_item && !profile_report) {
+  const profile_donation = data?.subtasks.find((candidate): candidate is ProfileDonationSubtask => candidate.type === 'profile_donation');
+  if (profile_donation) {
+    title = profile_donation.profile_donation.primary_text.text;
+    content = <DonateProfileModal key={data?.flow_token} subtask={profile_donation} on_submit={handle_form_task} on_complete={close_flow} on_busy={set_form_busy} />;
+  }
+
+  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage && !restrictions && !shop_item && !profile_report && !profile_donation) {
     title = 'Error';
     content = <Flowback embedded onClose={handleClose} />;
   }
@@ -238,7 +246,7 @@ function FlowRoute() {
   const { active } = useAuth();
   const prefix = '/i/flow/';
   const task = location.pathname.startsWith(prefix) ? location.pathname.slice(prefix.length) : '';
-  const form_flow = task === 'edit_item_m' || task === 'reportprofile';
+  const form_flow = task === 'edit_item_m' || task === 'reportprofile' || task === 'donateprofile';
   return <ServerFlow key={form_flow ? `${task}:${active?.env}:${active?.token}:${location.key}` : task} task={task} />;
 }
 

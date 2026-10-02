@@ -2,10 +2,11 @@ import type { ShopOrder } from '../../api/shop.js';
 import { safe_http_url } from '../../utils/profiles.ts';
 
 export function OrderContent({ order }: { order: ShopOrder }) {
-  if (order.status === 'in_review') return <div className="alert alert-warning">Payment is under review. Delivery will be available after staff approve it. You can cancel this purchase for a full refund in the interim</div>;
+  if (order.status === 'in_review') return <div className="alert alert-warning">Payment is under review. Delivery will be available after staff approve it{order.side === 'buyer' && ' You can cancel this purchase for a full refund in the interim.'}</div>;
   if (order.status === 'pending') return <div className="alert alert-info">Payment completed. Your order is waiting for the seller to deliver it</div>;
   if (order.status === 'refunded') return <div className="alert alert-info">This order was refunded</div>;
   if (order.status !== 'fulfilled') return null;
+  if (order.recipient && order.side !== 'seller' && order.side !== 'recipient') return <div className="alert alert-info">This gift was delivered to @{order.recipient}. Only the recipient and seller can see its delivery.</div>;
   const delivery_url = order.delivery_type === 'url' ? safe_http_url(order.delivery_content) : undefined;
   const attachment_url = safe_http_url(order.attachment_url);
   return <div className="mt-2">
