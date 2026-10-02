@@ -5,6 +5,8 @@ import onboardingWizard from "./onboarding_wizard.js";
 import opsec from "./opsec.js";
 import restrictions from "./restrictions.js";
 import transaction from "./transaction.js";
+import edit_item_m from "./edit_item_m.js";
+import reportprofile from "./reportprofile.js";
 import { corsJson, flowError } from "./shared.js";
 
 const FLOW_TASKS = [
@@ -14,7 +16,9 @@ const FLOW_TASKS = [
   onboardingWizard,
   opsec,
   restrictions,
-  transaction
+  transaction,
+  edit_item_m,
+  reportprofile
 ];
 
 export function runFlowTask(taskName, context) {

@@ -1,9 +1,8 @@
 import { lazy, Suspense, useState, type ReactNode } from 'react';
-import { Routes, Route, Navigate, useLocation, useNavigate, type Location } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Modal } from '../components/ui/modal.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useApiCall } from '../hooks/api_call.ts';
-import { profile_path } from '../utils/profiles.ts';
 import {
   abortFlowTask,
   getFlowTask,
@@ -11,11 +10,14 @@ import {
   type AccountRestrictionsSubtask,
   type FlowTestSubtask,
   type FlowTaskResponse,
+  type FlowTaskInput,
   type ImageSubtask,
   type LoginFormSubtask,
   type OnboardingWizardSubtask,
   type PaymentLinkInterstitialSubtask,
   type TransactionDetailSubtask,
+  type ShopItemEditorSubtask,
+  type ProfileReportSubtask,
 } from '../api/flow.ts';
 
 const LoginModal = lazy(() => import('./flow_login.tsx'));
@@ -48,12 +50,22 @@ function ServerFlow({ task }: { task: string }) {
   const { active, accounts } = useAuth();
   const [aborting, setAborting] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [form_busy, set_form_busy] = useState(false);
   const remaining = active ? accounts.filter((account) => account.id !== active.id) : [];
   const nextAccount = remaining.length > 0 ? remaining[remaining.length - 1] : null;
-  const params = Object.fromEntries(new URLSearchParams(location.search));
+  const flow_state = location.state as { item_id?: number | null; username?: string; account_id?: number; account_env?: string } | null;
+  const form_flow = task === 'edit_item_m' || task === 'reportprofile';
+  const params: Record<string, string> = form_flow ? {} : Object.fromEntries(new URLSearchParams(location.search));
+  if (task === 'edit_item_m' && flow_state?.item_id != null) params.item_id = String(flow_state.item_id);
+  if (task === 'reportprofile' && flow_state?.username) params.username = flow_state.username;
   if (nextAccount) params.next_username = nextAccount.username;
   const { data, loading, error } = useApiCall<FlowTaskResponse>(
-    () => getFlowTask(task, params, active ?? undefined),
+    () => {
+      if (form_flow && flow_state?.account_id !== undefined && (flow_state.account_id !== active?.id || flow_state.account_env !== active?.env)) {
+        return Promise.reject(new Error('This flow belongs to a different account'));
+      }
+      return getFlowTask(task, params, active ?? undefined);
+    },
     [active?.token, active?.env, task, JSON.stringify(params)]
   );
 
@@ -61,7 +73,7 @@ function ServerFlow({ task }: { task: string }) {
     location.state as { backgroundLocation?: unknown } | null
   )?.backgroundLocation;
 
-  function handleClose() {
+  function close_flow() {
     if (backgroundLocation) {
       navigate(-1);
       return;
@@ -70,8 +82,20 @@ function ServerFlow({ task }: { task: string }) {
     navigate(destination, { replace: true });
   }
 
+  function handleClose() {
+    if (form_busy || aborting || submitting) return;
+    const form_subtask = data?.subtasks.find((candidate) => candidate.type === 'shop_item_editor' || candidate.type === 'profile_report');
+    const form_actions = form_subtask?.type === 'shop_item_editor' ? form_subtask.shop_item_editor.actions : form_subtask?.profile_report.actions;
+    const cancel_action = form_actions?.find((action) => action.link_type === 'abort');
+    if (form_subtask && cancel_action) {
+      void handleAbort(form_subtask.subtask_id, cancel_action.link_id);
+      return;
+    }
+    close_flow();
+  }
+
   async function handleAbort(subtaskId: string, actionId: string) {
-    if (aborting || !data?.flow_token) return;
+    if (aborting || submitting || form_busy || !data?.flow_token) return;
     setAborting(true);
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
     try {
@@ -82,7 +106,7 @@ function ServerFlow({ task }: { task: string }) {
     } catch {
       // Fuck
     } finally {
-      handleClose();
+      close_flow();
     }
   }
 
@@ -98,6 +122,16 @@ function ServerFlow({ task }: { task: string }) {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function handle_form_task(input: FlowTaskInput) {
+    if (!data?.flow_token) throw new Error('The flow is not ready');
+    return submitFlowTaskAction(data.flow_token, input, active ?? undefined);
+  }
+
+  function item_saved() {
+    window.dispatchEvent(new Event('shop_items_updated'));
+    close_flow();
   }
 
   let title: string | undefined;
@@ -175,7 +209,19 @@ function ServerFlow({ task }: { task: string }) {
     content = <RestrictionsModal subtask={restrictions} error={error} onAbort={handleAbort} />;
   }
 
-  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage && !restrictions) {
+  const shop_item = data?.subtasks.find((candidate): candidate is ShopItemEditorSubtask => candidate.type === 'shop_item_editor');
+  if (shop_item) {
+    title = shop_item.shop_item_editor.primary_text.text;
+    content = <EditItemModal key={data?.flow_token} subtask={shop_item} on_submit={handle_form_task} on_complete={item_saved} on_busy={set_form_busy} />;
+  }
+
+  const profile_report = data?.subtasks.find((candidate): candidate is ProfileReportSubtask => candidate.type === 'profile_report');
+  if (profile_report) {
+    title = profile_report.profile_report.primary_text.text;
+    content = <ReportProfileModal key={data?.flow_token} subtask={profile_report} on_submit={handle_form_task} on_complete={close_flow} on_busy={set_form_busy} />;
+  }
+
+  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage && !restrictions && !shop_item && !profile_report) {
     title = 'Error';
     content = <Flowback embedded onClose={handleClose} />;
   }
@@ -187,71 +233,13 @@ function ServerFlow({ task }: { task: string }) {
   return <Modal open onClose={handleClose} title={title}>{flowContent}</Modal>;
 }
 
-function EditItemFlow() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { active } = useAuth();
-  const [busy, set_busy] = useState(false);
-  const state = location.state as {
-    item_id?: number | null; account_id?: number; account_env?: string; backgroundLocation?: Location;
-  } | null;
-  const item_id = state?.item_id ?? null;
-
-  if (!active) return <Navigate to="/i/flow/login" replace state={{ from: { pathname: '/account/shop' } }} />;
-  if ((state?.account_id !== undefined && (state.account_id !== active.id || state.account_env !== active.env)) ||
-    (item_id !== null && (!Number.isSafeInteger(item_id) || item_id < 1))) return <Navigate to="/account/shop" replace />;
-
-  function close() {
-    if (state?.backgroundLocation) navigate(-1);
-    else navigate('/account/shop', { replace: true });
-  }
-
-  function save() {
-    window.dispatchEvent(new Event('shop_items_updated'));
-    close();
-  }
-
-  return <Modal open onClose={() => { if (!busy) close(); }} title={item_id === null ? 'New shop item' : 'Edit shop item'}>
-    <Suspense fallback={<FlowSpinner />}>
-      <EditItemModal key={`${item_id}:${active.env}:${active.token}`} id={item_id} auth={{ token: active.token, env: active.env }} on_save={save} on_busy={set_busy} />
-    </Suspense>
-  </Modal>;
-}
-
-function ReportProfileFlow() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { active } = useAuth();
-  const [busy, set_busy] = useState(false);
-  const state = location.state as {
-    username?: string; account_id?: number; account_env?: string; backgroundLocation?: Location;
-  } | null;
-  const username = typeof state?.username === 'string' ? state.username.trim() : '';
-
-  if (!username) return <Navigate to="/i/profiles" replace />;
-  if (!active) return <Navigate to="/i/flow/login" replace state={{ from: { pathname: profile_path(username) } }} />;
-  if (username.toLowerCase() === active.username.toLowerCase() ||
-    (state?.account_id !== undefined && (state.account_id !== active.id || state.account_env !== active.env))) {
-    return <Navigate to={profile_path(username)} replace />;
-  }
-
-  function close() {
-    if (state?.backgroundLocation) navigate(-1);
-    else navigate(profile_path(username), { replace: true });
-  }
-
-  return <Modal open onClose={() => { if (!busy) close(); }} title={`Report @${username}`}>
-    <Suspense fallback={<FlowSpinner />}>
-      <ReportProfileModal key={`${username}:${active.env}:${active.token}`} username={username} auth={{ token: active.token, env: active.env }} on_sent={close} on_busy={set_busy} />
-    </Suspense>
-  </Modal>;
-}
-
 function FlowRoute() {
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { active } = useAuth();
   const prefix = '/i/flow/';
-  const task = pathname.startsWith(prefix) ? pathname.slice(prefix.length) : '';
-  return <ServerFlow key={task} task={task} />;
+  const task = location.pathname.startsWith(prefix) ? location.pathname.slice(prefix.length) : '';
+  const form_flow = task === 'edit_item_m' || task === 'reportprofile';
+  return <ServerFlow key={form_flow ? `${task}:${active?.env}:${active?.token}:${location.key}` : task} task={task} />;
 }
 
 export function isFlowModalPath(pathname: string): boolean {
@@ -262,8 +250,6 @@ export function FlowModals() {
   const location = useLocation();
   return (
     <Routes location={location}>
-      <Route path="/i/flow/edit_item_m" element={<EditItemFlow />} />
-      <Route path="/i/flow/reportprofile" element={<ReportProfileFlow />} />
       <Route path="/i/flow/*" element={<FlowRoute />} />
     </Routes>
   );

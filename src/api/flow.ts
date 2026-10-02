@@ -1,4 +1,6 @@
 import type { AuthOpts, Env } from './client.js';
+import type { ShopItem, ShopOption } from './shop.js';
+import type { ReportReason } from './profile.js';
 
 export interface FlowText {
   text: string;
@@ -288,6 +290,48 @@ export interface AccountRestrictionsSubtask {
   subtask_back_navigation: 'hide_explicit_cta';
 }
 
+export interface ShopItemEditorSubtask {
+  subtask_id: 'EditShopItem';
+  type: 'shop_item_editor';
+  shop_item_editor: {
+    primary_text: FlowText;
+    success_text: FlowText;
+    image_delivery_text: FlowText;
+    item: ShopItem | null;
+    labels: {
+      name: string; description: string; price: string; stock: string; hidden: string; delivery: string;
+      instant_type: string; instant_content: string; buyer_fields: string; option_label: string; option_type: string;
+      required: string; extra_price: string; choice_label: string; remove_choice: string; add_choice: string; remove_field: string; add_field: string;
+    };
+    limits: { name: number; description: number };
+    delivery_options: FlowOption<'manual' | 'instant'>[];
+    instant_options: FlowOption<'text' | 'url'>[];
+    option_types: FlowOption<ShopOption['type']>[];
+    actions: FlowAction<'save' | 'cancel'>[];
+  };
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
+export interface ProfileReportSubtask {
+  subtask_id: 'ReportProfile';
+  type: 'profile_report';
+  profile_report: {
+    primary_text: FlowText;
+    success_text: FlowText;
+    username: string;
+    labels: { reason: string; details: string; required_details: string };
+    reasons: FlowOption<ReportReason>[];
+    actions: FlowAction<'submit' | 'cancel'>[];
+  };
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
+export interface FlowTaskInput {
+  subtask_id: string;
+  action_id: string;
+  values?: Record<string, unknown>;
+}
+
 export type FlowSubtask =
   | TransactionDetailSubtask
   | PaymentLinkInterstitialSubtask
@@ -296,6 +340,8 @@ export type FlowSubtask =
   | LoginSuccessSubtask
   | FlowTestSubtask
   | AccountRestrictionsSubtask
+  | ShopItemEditorSubtask
+  | ProfileReportSubtask
   | ImageSubtask;
 
 export interface FlowTaskResponse {
@@ -332,7 +378,7 @@ export async function abortFlowTask(
 
 export async function submitFlowTaskAction(
   flowToken: string,
-  input: { subtask_id: string; action_id: string },
+  input: FlowTaskInput,
   auth?: AuthOpts
 ): Promise<FlowTaskResponse> {
   const { apiFetch } = await import('./client.js');
