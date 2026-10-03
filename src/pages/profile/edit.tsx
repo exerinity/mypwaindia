@@ -13,6 +13,7 @@ import { ProfileUpdates } from '../../components/profile/updates.tsx';
 import { PrideFlagTag } from '../../components/data/team_member_card.tsx';
 import countries from '../../data/countries.json';
 import { profile_path, profile_web_url, profile_patch, safe_http_url, section_title } from '../../utils/profiles.ts';
+import { InfoIcon } from '../../components/ui/icons.tsx';
 
 export default function EditProfilePage() {
   usePageTitle('My profile');
@@ -28,6 +29,10 @@ function ProfileEditor({ auth, username }: { auth: AuthOpts; username: string })
     <p className="muted" style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
       <Link to={profile_path(username)}>View profile</Link>
     </p>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+            <InfoIcon />
+            <span>Not everything can be edited from here. To edit things like your avatar and banner, please log in to <a href="https://mypayindia.com/account/profile" target="_blank" rel="noopener noreferrer">MyPayIndia.com</a>.</span>
+          </div>
     <ErrorBox error={resource.error} />
     {!!resource.error && <div className="btn-row"><button className="secondary" onClick={resource.reload}>Retry</button></div>}
     {resource.loading && <LoadingRow />}

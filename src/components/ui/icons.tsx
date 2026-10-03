@@ -165,6 +165,14 @@ export function CheckIcon({ size = 16 }: { size?: number }) {
   );
 }
 
+export function VerifiedIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 -960 960 960" fill="#2f8ffc" aria-hidden="true">
+      <path fillRule="evenodd" d="m344-60-76-128-144-32 14-148-98-112 98-112-14-148 144-32 76-128 136 58 136-58 76 128 144 32-14 148 98 112-98 112 14 148-144 32-76 128-136-58-136 58ZM438-338l226-226-56-58-170 170-86-84-56 56 142 142Z" />
+    </svg>
+  );
+}
+
 export function SearchIcon({ size = 15 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
@@ -222,6 +230,14 @@ export function CreditCardIcon({ size = 18 }: { size?: number }) {
       <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.8" />
       <path d="M2 10h20" stroke="currentColor" strokeWidth="1.8" />
       <path d="M6 15h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function WalletIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+      <path d="M200-200v-560 560Zm0 80q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v100h-80v-100H200v560h560v-100h80v100q0 33-23.5 56.5T760-120H200Zm320-160q-33 0-56.5-23.5T440-360v-240q0-33 23.5-56.5T520-680h280q33 0 56.5 23.5T880-600v240q0 33-23.5 56.5T800-280H520Zm280-80v-240H520v240h280Zm-117.5-77.5Q700-455 700-480t-17.5-42.5Q665-540 640-540t-42.5 17.5Q580-505 580-480t17.5 42.5Q615-420 640-420t42.5-17.5Z" />
     </svg>
   );
 }

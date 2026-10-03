@@ -15,7 +15,8 @@
   display: block;
   width: 128px;
   height: 128px;
-  border-radius: 50%;
+  border: 2px solid var(--border);
+  border-radius: inherit;
   object-fit: cover;
   position: relative;
   box-sizing: border-box;
@@ -25,6 +26,7 @@
   position: relative;
   width: 128px;
   height: 128px;
+  border-radius: 24px;
 }
 
 .profile_banner + .profile_avatar_frame {
@@ -39,7 +41,7 @@
   width: 100%;
   height: 100%;
   border: 0;
-  border-radius: 50%;
+  border-radius: inherit;
 }
 
 .profile_avatar_accessory {
@@ -47,9 +49,21 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  transform: translateY(-16%);
+  transform: translateY(-26%);
   overflow: visible;
   pointer-events: none;
+}
+
+.profile_badge {
+  padding: 2px 8px;
+  border-color: color-mix(in srgb, #8b5cf6 30%, var(--border));
+  border-radius: 6px;
+  background: color-mix(in srgb, #8b5cf6 14%, var(--card));
+  color: color-mix(in srgb, #8b5cf6 60%, var(--fg));
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .profile_image {

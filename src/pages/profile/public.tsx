@@ -7,13 +7,11 @@ import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { use_profile_resource } from '../../hooks/profile_resource.ts';
 import { Empty, ErrorBox, LoadingRow } from '../../components/ui/status.tsx';
 import { FloatingInput } from '../../components/ui/floating_input.tsx';
-import { AgeTag } from '../../components/ui/age_tag.tsx';
 import { ProfileUpdates } from '../../components/profile/updates.tsx';
 import { ProfileIdentity, profile_accent_style } from '../../components/profile/identity.tsx';
 import { ConfirmModal } from '../../components/ui/confirm_modal.tsx';
 import { ProfileShop } from '../../components/shop/storefront.tsx';
 import { profile_path, safe_http_url, section_title } from '../../utils/profiles.ts';
-import { formatINR } from '../../utils/money.js';
 
 export default function ProfilesPage() {
   const { username } = useParams();
@@ -100,15 +98,9 @@ function PublicProfile({ username }: { username: string }) {
     </div> : profile && <>
       <div style={profile_accent_style(profile.accent)}>
       <section className="card mb-2">
-        <ProfileIdentity profile={profile} username={username} />
-        {profile.visibility === 'private' && <p className="muted">Only you can see this private profile</p>}
-        {profile.bio && <p className="profile_prose">{profile.bio}</p>}
-        <div className="row mt-2">
-          {(followers ?? profile.followers) != null && <span className="stat-sub">{followers ?? profile.followers} followers</span>}
-          {profile.seller_rating && <span className="stat-sub">{profile.seller_rating.count ? `${profile.seller_rating.average.toFixed(1)}/5 from ${profile.seller_rating.count} reviews` : 'No reviews yet'}</span>}
-        </div>
-        {profile.balance_visible && profile.balance != null && <div className="stat-card mt-2"><span className="stat-label">Balance</span><span className="stat-value">{formatINR(profile.balance)}</span></div>}
-        {profile.member_since && <div className="stat-sub mt-1">Member since {new Date(profile.member_since).toLocaleDateString()}{member_age && <> <AgeTag age={member_age} /></>}</div>}
+        <ProfileIdentity profile={profile} username={username} followers={followers} member_age={member_age} />
+        {profile.visibility === 'private' && <div className="stat-sub mt-2">Only you can see this private profile</div>}
+        {profile.bio && <div className="mt-2"><p className="profile_prose">{profile.bio}</p></div>}
         <div className="btn-row mt-2">
           {(profile.links ?? []).map((link, index) => {
             const url = safe_http_url(link.url);
