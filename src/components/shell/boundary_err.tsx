@@ -28,7 +28,7 @@ export class ChunkErrorBoundary extends Component<Props, State> {
           <p>Something went seriously awry trying to load this page/view and the app was halted to prevent further calamity. The error is:</p>
           <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0 0 20px' }}>
             {isChunkError
-              ? "A required part of the app couldn't be loaded. This usually happens when the app has been updated since this page was opened, or you are intentionally blocking scripts."
+              ? "A required chunk of code failed to load. This is either caused by the app having been redeployed or updated while you were using it, or you are blocking required scripts from loading."
               : (error.message || 'The app crashed for an unknown reason.')}
           </p>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
