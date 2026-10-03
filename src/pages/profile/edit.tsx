@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { get_my_profile, update_profile, profile_platforms, section_types, pride_flags, avatar_accessories, profile_accents } from '../../api/profile.js';
 import type { Profile, ProfileLink, ProfilePatch, ProfileSection, SectionType, ProfilePlatform, PrideFlag, StatusExpiry } from '../../api/profile.js';
@@ -12,8 +12,8 @@ import { FloatingInput, FloatingTextarea } from '../../components/ui/floating_in
 import { ProfileUpdates } from '../../components/profile/updates.tsx';
 import { PrideFlagTag } from '../../components/data/team_member_card.tsx';
 import countries from '../../data/countries.json';
-import { profile_path, profile_web_url, profile_patch, safe_http_url, section_title } from '../../utils/profiles.ts';
-import { InfoIcon } from '../../components/ui/icons.tsx';
+import { profile_path, profile_patch, safe_http_url, section_title } from '../../utils/profiles.ts';
+import { ArrowDownIcon, ArrowUpIcon, ChevronRight, EyeIcon, EyeOffIcon, InfoIcon } from '../../components/ui/icons.tsx';
 
 export default function EditProfilePage() {
   usePageTitle('My profile');
@@ -53,24 +53,30 @@ function ProfileForm({ profile, auth, username, on_save }: { profile: Profile; a
   const [visibility, set_visibility] = useState<'public' | 'private'>(profile.visibility === 'private' ? 'private' : 'public');
   const [balance_visible, set_balance_visible] = useState(profile.balance_visible ?? false);
   const [links, set_links] = useState<ProfileLink[]>(profile.links ?? []);
-  const [layout, set_layout] = useState<ProfileSection[]>(profile.sections ?? []);
+  const [section_rows, set_section_rows] = useState(() => (profile.sections ?? []).map((section, id) => ({ id, section })));
+  const next_section_id = useRef(section_rows.length);
   const [section_type, set_section_type] = useState<SectionType>('shop');
   const [busy, set_busy] = useState(false);
   const [error, set_error] = useState<unknown>(null);
   const toast = useToast();
   const locked = profile.locked === true;
+  const layout = section_rows.map(({ section }) => section);
 
-  function update_section(index: number, patch: Partial<ProfileSection>) {
-    set_layout((previous) => previous.map((section, current) => current === index ? { ...section, ...patch } : section));
+  function update_section(id: number, patch: Partial<ProfileSection>) {
+    set_section_rows((previous) => previous.map((row) => row.id === id ? { ...row, section: { ...row.section, ...patch } } : row));
   }
   function move_section(index: number, direction: number) {
-    set_layout((previous) => {
+    set_section_rows((previous) => {
       const next = [...previous];
       const destination = index + direction;
       if (destination < 0 || destination >= next.length) return previous;
       [next[index], next[destination]] = [next[destination], next[index]];
       return next;
     });
+  }
+  function add_section() {
+    const id = next_section_id.current++;
+    set_section_rows((previous) => [...previous, { id, section: { type: section_type, visible: true, config: { title: section_title(section_type) } } }]);
   }
   function update_link(index: number, patch: Partial<ProfileLink>) {
     set_links((previous) => previous.map((link, current) => current === index ? { ...link, ...patch } : link));
@@ -104,8 +110,6 @@ function ProfileForm({ profile, auth, username, on_save }: { profile: Profile; a
           <option value="public">Public</option><option value="private">Private</option>
         </select>
         <label className="checkbox-row"><input type="checkbox" disabled={locked || busy} checked={balance_visible} onChange={(event) => set_balance_visible(event.target.checked)} />Show my balance</label>
-        <p className="muted">Avatar and banner uploads are available on MyPayIndia.com</p>
-        <div className="btn-row"><a className="btn secondary" href={profile_web_url(username)} target="_blank" rel="noopener noreferrer">Manage images on MyPayIndia.com</a></div>
       </section>
       <section className="card mb-2">
         <h3 className="mt-0">About you</h3>
@@ -159,24 +163,31 @@ function ProfileForm({ profile, auth, username, on_save }: { profile: Profile; a
       </section>
       <section className="card mb-2">
         <h3 className="mt-0">Section layout</h3>
-        <p className="muted mb-2">Sections appear in this order. Additional section content can be edited on MyPayIndia.com</p>
-        {layout.map((section, index) => <div className="card compact mb-2" key={index}>
-          <h3 className="mt-0">{section_title(section.type)}</h3>
-          <FloatingInput id={`section_title_${index}`} label="Title" disabled={locked || busy} type="text" value={typeof section.config?.title === 'string' ? section.config.title : section.title ?? ''}
-            onChange={(event) => update_section(index, { title: event.target.value, config: { ...section.config, title: event.target.value } })} />
-          <label className="checkbox-row"><input type="checkbox" disabled={locked || busy} checked={section.visible} onChange={(event) => update_section(index, { visible: event.target.checked })} />Visible</label>
-          {section.type === 'supporters' && <label className="checkbox-row"><input type="checkbox" disabled={locked || busy} checked={section.config?.include_shop !== false} onChange={(event) => update_section(index, { config: { ...section.config, include_shop: event.target.checked } })} />Include shop customers (minus refunds)</label>}
-          <div className="btn-row">
-            <button type="button" className="secondary" disabled={locked || busy || index === 0} aria-label={`Move ${section_title(section.type)} up`} onClick={() => move_section(index, -1)}>Move up</button>
-            <button type="button" className="secondary" disabled={locked || busy || index === layout.length - 1} aria-label={`Move ${section_title(section.type)} down`} onClick={() => move_section(index, 1)}>Move down</button>
-            <button type="button" className="secondary" disabled={locked || busy} onClick={() => set_layout(layout.filter((_, current) => current !== index))}>Remove section</button>
+        {section_rows.map(({ id, section }, index) => <details className="card compact mb-2" key={id}>
+          <summary className="row spread profile_section_summary">
+            <span className={`row${section.visible ? '' : ' muted'}`}>
+              <span className="row profile_section_chevron"><ChevronRight /></span>
+              {section.visible ? <EyeIcon /> : <EyeOffIcon />}
+              <strong>{section_title(section.type)}</strong>
+            </span>
+            <span className="row tight" onClick={(event) => event.preventDefault()}>
+              <button type="button" className="compact ghost" disabled={locked || busy || index === 0} aria-label={`Move ${section_title(section.type)} up`} title="Move up" onClick={() => move_section(index, -1)}><ArrowUpIcon /></button>
+              <button type="button" className="compact ghost" disabled={locked || busy || index === section_rows.length - 1} aria-label={`Move ${section_title(section.type)} down`} title="Move down" onClick={() => move_section(index, 1)}><ArrowDownIcon /></button>
+              <button type="button" className="compact ghost" disabled={locked || busy} aria-label={`${section.visible ? 'Hide' : 'Show'} ${section_title(section.type)}`} title={section.visible ? 'Hide' : 'Show'} onClick={() => update_section(id, { visible: !section.visible })}>{section.visible ? <EyeOffIcon /> : <EyeIcon />}</button>
+            </span>
+          </summary>
+          <div>
+            <FloatingInput id={`section_title_${id}`} label="Title" disabled={locked || busy} type="text" maxLength={60} value={typeof section.config?.title === 'string' ? section.config.title : section.title ?? ''}
+              onChange={(event) => update_section(id, { title: event.target.value, config: { ...section.config, title: event.target.value } })} />
+            {section.type === 'supporters' && <label className="checkbox-row"><input type="checkbox" disabled={locked || busy} checked={section.config?.include_shop !== false} onChange={(event) => update_section(id, { config: { ...section.config, include_shop: event.target.checked } })} />Include shop customers (minus refunds)</label>}
+            <div className="btn-row mt-2"><button type="button" className="secondary" disabled={locked || busy} onClick={() => set_section_rows((previous) => previous.filter((row) => row.id !== id))}>Remove section</button></div>
           </div>
-        </div>)}
+        </details>)}
         <label htmlFor="new_section">New section</label>
         <select id="new_section" disabled={locked || busy} value={section_type} onChange={(event) => set_section_type(event.target.value as SectionType)}>
           {section_types.map((type) => <option key={type} value={type}>{section_title(type)}</option>)}
         </select>
-        <button type="button" className="secondary mt-2" disabled={locked || busy} onClick={() => set_layout([...layout, { type: section_type, visible: true, config: { title: section_title(section_type) } }])}>Add section</button>
+        <button type="button" className="secondary mt-2" disabled={locked || busy} onClick={add_section}>Add section</button>
       </section>
       <div className="btn-row mb-2"><button disabled={locked || busy}>{busy ? 'Saving...' : 'Save profile'}</button></div>
     </form>

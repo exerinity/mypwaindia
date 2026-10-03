@@ -72,3 +72,16 @@
   object-fit: contain;
   border-radius: var(--radius);
 }
+
+.profile_section_summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.profile_section_summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] > .profile_section_summary .profile_section_chevron {
+  transform: rotate(90deg);
+}

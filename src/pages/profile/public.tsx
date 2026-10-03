@@ -83,6 +83,7 @@ function PublicProfile({ username }: { username: string }) {
     finally { set_busy(false); }
   }
   const member_age = profile?.member_since ? dates_module?.calcAge(profile.member_since) : null;
+  const edit_link = owner && <Link className="btn secondary" to="/account/profile">Edit profile</Link>;
   const report_link = !owner && active && <div className="btn-row">
     <Link className="btn secondary" to="/i/flow/reportprofile" state={{ username, account_id: active.id, account_env: active.env, backgroundLocation: location }}>Report profile</Link>
   </div>;
@@ -94,6 +95,7 @@ function PublicProfile({ username }: { username: string }) {
     {profile && (profile.private || profile.locked) ? <div className="card">
       <h1 className="mt-0">@{username}</h1>
       <Empty>{profile.locked ? 'This profile is unavailable' : 'This profile is private'}</Empty>
+      {edit_link && <div className="btn-row mt-2">{edit_link}</div>}
       {report_link}
     </div> : profile && <>
       <div style={profile_accent_style(profile.accent)}>
@@ -102,6 +104,7 @@ function PublicProfile({ username }: { username: string }) {
         {profile.visibility === 'private' && <div className="stat-sub mt-2">Only you can see this private profile</div>}
         {profile.bio && <div className="mt-2"><p className="profile_prose">{profile.bio}</p></div>}
         <div className="btn-row mt-2">
+          {edit_link}
           {(profile.links ?? []).map((link, index) => {
             const url = safe_http_url(link.url);
             return url && <a key={index} href={url} className="btn secondary" target="_blank" rel="noopener noreferrer">{link.label ?? link.platform}</a>;
