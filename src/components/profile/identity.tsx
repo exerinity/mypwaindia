@@ -54,7 +54,7 @@ export function ProfileIdentity({ profile, username, followers, member_age, on_a
     </div>
     <div className={`row ${stat_classes.sub} mt-1 gap-md ${utility_classes.gap_md} ${utility_classes.row} ${utility_classes.mt_1}`}>
       {profile.pronouns && <span>{profile.pronouns}</span>}
-      {country && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`}>{country_flag && <span aria-hidden="true">{country_flag}</span>}{profile.country_name || country}</span>}
+      {country && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`}>{country_flag && <HoverTip tip={profile.country_name || country}><span role="img" aria-label={profile.country_name || country} style={{ cursor: 'help' }}>{country_flag}</span></HoverTip>}{profile.country_name || country}</span>}
       {follower_count != null && follower_count > 0 && <span>{follower_count} {follower_count === 1 ? 'follower' : 'followers'}</span>}
       {profile.balance_visible && profile.balance != null && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`} title="Balance"><WalletIcon />{formatINR(profile.balance)}</span>}
       {!!profile.pride_flags?.length && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`}>
