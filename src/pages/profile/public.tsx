@@ -15,6 +15,7 @@ import { FloatingInput } from '../../components/ui/floating_input.tsx';
 import { ProfileUpdates } from '../../components/profile/updates.tsx';
 import { ProfileIdentity, profile_accent_style } from '../../components/profile/identity.tsx';
 import { ConfirmModal } from '../../components/ui/confirm_modal.tsx';
+import { Modal } from '../../components/ui/modal.tsx';
 import { ProfileShop } from '../../components/shop/storefront.tsx';
 import { profile_path, safe_http_url, section_title } from '../../utils/profiles.ts';
 
@@ -60,6 +61,7 @@ function PublicProfile({ username }: { username: string }) {
   const [busy, set_busy] = useState(false);
   const [action_error, set_action_error] = useState<unknown>(null);
   const [confirm_block, set_confirm_block] = useState(false);
+  const [selected_avatar, set_selected_avatar] = useState<string | null>(null);
   const dates_module = useLazyModule(() => import('../../utils/dates.js'));
   const profile = resource.data;
   const is_following = following ?? profile?.following;
@@ -94,6 +96,11 @@ function PublicProfile({ username }: { username: string }) {
   </div>;
 
   return <>
+    <Modal className="slide" open={!!selected_avatar} onClose={() => set_selected_avatar(null)} title={`@${username}`}>
+      {selected_avatar && <a href={selected_avatar} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+        <img src={selected_avatar} alt={`@${username}'s avatar`} style={{ maxWidth: '100%', borderRadius: 8, display: 'block', margin: '0 auto' }} />
+      </a>}
+    </Modal>
     {resource.loading && <LoadingRow>Retrieving data...</LoadingRow>}
     <ErrorBox error={resource.error} />
     {!!resource.error && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" onClick={resource.reload}>Retry</button></div>}
@@ -105,7 +112,7 @@ function PublicProfile({ username }: { username: string }) {
     </div> : profile && <>
       <div style={profile_accent_style(profile.accent)}>
       <section className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
-        <ProfileIdentity profile={profile} username={username} followers={followers} member_age={member_age} />
+        <ProfileIdentity profile={profile} username={username} followers={followers} member_age={member_age} on_avatar_click={set_selected_avatar} />
         {profile.visibility === 'private' && <div className={`${stat_classes.sub} mt-2 ${utility_classes.mt_2}`}>Only you can see this private profile</div>}
         {profile.bio && <div className={`mt-2 ${utility_classes.mt_2}`}><p className={`profile_prose ${profile_classes.prose}`}>{profile.bio}</p></div>}
         <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>

@@ -22,8 +22,8 @@ export function profile_accent_style(accent?: ProfileAccent | null): React.CSSPr
   return { '--brand': color, '--brand-dark': darken(color, 0.15), '--brand-text': isLight(color) ? '#000' : '#fff' } as React.CSSProperties;
 }
 
-export function ProfileIdentity({ profile, username, followers, member_age }: {
-  profile: Profile; username: string; followers?: number | null; member_age?: Age | null;
+export function ProfileIdentity({ profile, username, followers, member_age, on_avatar_click }: {
+  profile: Profile; username: string; followers?: number | null; member_age?: Age | null; on_avatar_click?: (avatar_url: string) => void;
 }) {
   const avatar_url = safe_http_url(profile.avatar_url);
   const banner_url = safe_http_url(profile.banner_url);
@@ -44,7 +44,7 @@ export function ProfileIdentity({ profile, username, followers, member_age }: {
         <path d="M87 34 L82 13 L66 29 Z" fill="var(--ear-inner)" />
       </svg>}
       {avatar_flag && <span className={`pride-flag pride-flag--${avatar_flag} ${pride_flag_class(avatar_flag)} profile_avatar_flag ${lbteam_classes.pride_flag_avatar}`} aria-hidden="true" />}
-      <img className={`profile_avatar ${profile_classes.avatar}`} src={avatar_url} alt={`@${username}'s avatar`} style={avatar_flag ? { padding: 6 } : undefined} />
+      <img className={`profile_avatar ${profile_classes.avatar}`} src={avatar_url} alt={`@${username}'s avatar`} style={{ ...(avatar_flag ? { padding: 6 } : {}), ...(on_avatar_click ? { cursor: 'pointer' } : {}) }} onClick={on_avatar_click ? () => on_avatar_click(avatar_url) : undefined} />
     </div>}
     <div className={`row mt-1 ${utility_classes.row} ${utility_classes.mt_1}`}>
       <h1 className={`mt-0 ${utility_classes.mt_0}`} style={{ marginBottom: 0 }}>@{profile.username ?? username}</h1>
