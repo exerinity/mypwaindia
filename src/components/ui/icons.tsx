@@ -133,9 +133,9 @@ export function HamburgerIcon({ size = 20 }: { size?: number }) {
   );
 }
 
-export function CloseIcon({ size = 20 }: { size?: number }) {
+export function CloseIcon({ size = 20, className }: { size?: number; className?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+    <svg className={className} width={size} height={size} viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
       <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
     </svg>
   );
@@ -157,9 +157,9 @@ export function ChevronRight({ size = 16 }: { size?: number }) {
   );
 }
 
-export function CheckIcon({ size = 16 }: { size?: number }) {
+export function CheckIcon({ size = 16, className }: { size?: number; className?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+    <svg className={className} width={size} height={size} viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
       <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
     </svg>
   );

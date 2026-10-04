@@ -1,3 +1,8 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { form_classes } from '../../styles/forms.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { createPortal } from 'react-dom';
@@ -91,34 +96,34 @@ export default function MPTIPage() {
   return (
     <div className="mpi-mpti">
       <Suspense fallback={<ContentSkeleton />}>
-      <h1 className="mt-0">Toys</h1>
-      <p className="mt-0 mb-0">Poke around with various UI components here. Nothing here actually does anything, but you can test interactive components like modals, toasts and buttons. Have fun!</p>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Toys</h1>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>Poke around with various UI components here. Nothing here actually does anything, but you can test interactive components like modals, toasts and buttons. Have fun!</p>
 
       {bannerPortal && createPortal(
         <>
           {showRestrictionsBanner && (
-            <div className="verification-banner banner-error" style={{ display: 'flex', gap: 8 }}>
+            <div className={`verification-banner banner-error ${alert_classes.banner_error}`} style={{ display: 'flex', gap: 8 }}>
               <WarningIcon />Your account has some active restrictions: Account Frozen, Banned from Investment Opportunities™.
               {' '}<Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className="link">More...</Link>
             </div>
           )}
           {showOnboardingBanner && (
-            <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
+            <div className={`verification-banner ${alert_classes.banner}`} style={{ display: 'flex', gap: 8 }}>
               <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/onboarding" className="link">Open...</Link>
             </div>
           )}
           {showSessionExpiredBanner && (
-            <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
+            <div className={`verification-banner ${alert_classes.banner}`} style={{ display: 'flex', gap: 8 }}>
               <WarningIcon /> Your session has expired. <Link to="/i/sessions" className="link">Reinitialize the session...</Link>
             </div>
           )}
           {showFetchFailedBanner && (
-            <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
+            <div className={`verification-banner ${alert_classes.banner}`} style={{ display: 'flex', gap: 8 }}>
               <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/connecttest" className="link">Troubleshoot...</Link>
             </div>
           )}
           {showOfflineBanner && (
-            <div className="verification-banner" style={{ display: 'flex', gap: 8 }}>
+            <div className={`verification-banner ${alert_classes.banner}`} style={{ display: 'flex', gap: 8 }}>
               <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/connecttest" className="link">Diagnose...</Link>
             </div>
           )}
@@ -126,42 +131,42 @@ export default function MPTIPage() {
         bannerPortal
       )}
 
-      <div className="card mb-2">
-        <h2 className="mt-0">Compose a modal</h2>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h2 className={`mt-0 ${utility_classes.mt_0}`}>Compose a modal</h2>
         <label>Title</label>
         <input type="text" value={modalTitle} onChange={(e) => setModalTitle(e.target.value)} />
         <label>Content</label>
         <textarea rows={3} value={modalContent} onChange={(e) => setModalContent(e.target.value)} />
-        <div className="checkbox-row">
+        <div className={`checkbox-row ${form_classes.checkbox_row}`}>
           <input id="dt-modal-fullscreen" type="checkbox" checked={modalFullscreen} onChange={(e) => setModalFullscreen(e.target.checked)} />
           <label htmlFor="dt-modal-fullscreen" style={{ margin: 0 }}>Fullscreen (backdrop becomes opaque)</label>
         </div>
-        <div className="btn-row">
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <button onClick={() => setModalOpen(true)}>Go</button>
         </div>
       </div>
 
-      <div className="card mb-2">
-        <h2 className="mt-0">Open a confirm modal</h2>
-        <div className="checkbox-row">
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h2 className={`mt-0 ${utility_classes.mt_0}`}>Open a confirm modal</h2>
+        <div className={`checkbox-row ${form_classes.checkbox_row}`}>
           <input id="dt-confirm-hold" type="checkbox" checked={confirmHold} onChange={(e) => setConfirmHold(e.target.checked)} />
           <label htmlFor="dt-confirm-hold" style={{ margin: 0 }}>Hold button to confirm</label>
         </div>
-        <div className="btn-row">
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <button onClick={() => setConfirmOpen(true)}>Go</button>
         </div>
       </div>
 
-      <div className="card mb-2">
-        <h2 className="mt-0">Hold button</h2>
-        <p className="mt-0">Confirmed {holdCount} time{holdCount === 1 ? '' : 's'}</p>
-        <div className="btn-row">
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h2 className={`mt-0 ${utility_classes.mt_0}`}>Hold button</h2>
+        <p className={`mt-0 ${utility_classes.mt_0}`}>Confirmed {holdCount} time{holdCount === 1 ? '' : 's'}</p>
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <HoldButton onConfirm={() => setHoldCount((c) => c + 1)}>Hold this button</HoldButton>
         </div>
       </div>
 
-      <div className="card mb-2">
-        <h2 className="mt-0">Loading skeleton</h2>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h2 className={`mt-0 ${utility_classes.mt_0}`}>Loading skeleton</h2>
         <label>Width (px)</label>
         <input
           type="number"
@@ -183,32 +188,32 @@ export default function MPTIPage() {
           onChange={(e) => setSkelRadius(Number(e.target.value) || 0)}
           style={{ maxWidth: 120 }}
         />
-        <div className="btn-row">
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <Skeleton width={skelWidth} height={skelHeight} radius={skelRadius} style={{ display: 'inline-block' }} />
         </div>
       </div>
 
-      <div className="card mb-2">
-        <h2 className="mt-0">Simulate update</h2>
-        <p className="mt-0 mb-0">This simulates when a new version is available; it does not actually update. What this does is falsifies the latest version key and simulates the regular toast flow</p>
-        <div className="btn-row">
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h2 className={`mt-0 ${utility_classes.mt_0}`}>Simulate update</h2>
+        <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>This simulates when a new version is available; it does not actually update. What this does is falsifies the latest version key and simulates the regular toast flow</p>
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <button onClick={simulateUpdater}>Go</button>
         </div>
       </div>
 
-      <div className="card mb-2">
-        <h2 className="mt-0">Show banners</h2>
-         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-warning"><WarningIcon /><span>If you enable them all and have a small screen, you may just not see the app anymore</span></div>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h2 className={`mt-0 ${utility_classes.mt_0}`}>Show banners</h2>
+         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className={`mt-0 mb-0 alert alert-warning ${alert_classes.warning} ${utility_classes.mt_0}`}><WarningIcon /><span>If you enable them all and have a small screen, you may just not see the app anymore</span></div>
         {BANNER_TOGGLES.map(({ id, label, checked, onChange }) => (
-          <div className="checkbox-row" key={id}>
+          <div className={`checkbox-row ${form_classes.checkbox_row}`} key={id}>
             <input id={id} type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />
             <label htmlFor={id} style={{ margin: 0 }}>{label}</label>
           </div>
         ))}
       </div>
 
-      <div className="card mb-2">
-        <h2 className="mt-0">Call a flow task</h2>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h2 className={`mt-0 ${utility_classes.mt_0}`}>Call a flow task</h2>
         <label>Task</label>
         <input
           type="text"
@@ -217,13 +222,13 @@ export default function MPTIPage() {
           onChange={(e) => setFlowPath(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') triggerFlow(); }}
         />
-        <div className="btn-row">
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <button onClick={triggerFlow} disabled={!flowPath.trim()}>Execute</button>
         </div>
       </div>
 
-      <div className="card">
-        <h2 className="mt-0">Compose a toast notification</h2>
+      <div className={`card ${card_classes.card}`}>
+        <h2 className={`mt-0 ${utility_classes.mt_0}`}>Compose a toast notification</h2>
         <label>Message</label>
         <input type="text" value={toastMessage} onChange={(e) => setToastMessage(e.target.value)} />
         <label>Kind</label>
@@ -237,17 +242,17 @@ export default function MPTIPage() {
           onChange={(e) => setToastTimeout(Number(e.target.value) || 0)}
           style={{ maxWidth: 120 }}
         />
-        <div className="checkbox-row">
+        <div className={`checkbox-row ${form_classes.checkbox_row}`}>
           <input id="dt-toast-action" type="checkbox" checked={toastAction} onChange={(e) => setToastAction(e.target.checked)} />
           <label htmlFor="dt-toast-action" style={{ margin: 0 }}>Include action button</label>
         </div>
-        <div className="btn-row">
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <button onClick={fireToast}>Go</button>
         </div>
       </div>
 
-      <div className="card mt-2" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span className="spinner lg" />
+      <div className={`card mt-2 ${card_classes.card} ${utility_classes.mt_2}`} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span className={`spinner lg ${utility_classes.spinner_large}`} />
         <span>Spinner that does nothing</span>
       </div>
 

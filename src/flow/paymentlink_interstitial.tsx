@@ -1,3 +1,7 @@
+import { utility_classes } from '../styles/utils.stylex.ts';
+import { card_classes } from '../styles/cards.stylex.ts';
+import { link_status_class } from '../styles/links.stylex.ts';
+import { stat_classes } from '../styles/stats.stylex.ts';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
@@ -75,11 +79,11 @@ export default function ClaimModal({ subtask, loading, error, embedded = false, 
     <>
       {loading && !data ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="row spread">
+          <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`}>
             <Skeleton width={120} height={18} />
             <Skeleton width={60} height={22} radius={10} />
           </div>
-          <div className="grid cols-2">
+          <div className={`grid cols-2 ${card_classes.grid_two}`}>
             <div>
               <Skeleton width={30} height={11} style={{ marginBottom: 6 }} />
               <Skeleton width={100} height={15} />
@@ -96,28 +100,28 @@ export default function ClaimModal({ subtask, loading, error, embedded = false, 
         <ErrorBox error={error} />
       ) : data && (
         <>
-          <div className="grid cols-2" style={{ marginBottom: 16 }}>
+          <div className={`grid cols-2 ${card_classes.grid_two}`} style={{ marginBottom: 16 }}>
             <div>
-              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.from ?? 'From'}</div>
+              <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.from ?? 'From'}</div>
               <div>@{data.creator?.username ?? '-'}</div>
             </div>
             <div>
-              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.created ?? 'Created'}</div>
+              <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.created ?? 'Created'}</div>
               <div>{formatDate(data.created)}</div>
             </div>
           </div>
 
           <div style={{ marginBottom: data.note ? 16 : 20 }}>
-            <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.amount ?? 'Amount'}</div>
+            <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.amount ?? 'Amount'}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span className="balance-display" style={{ fontSize: '2rem' }}>{formatINR(data.amount)}</span>
-              <span className={`link-status ${data.status}`}>{data.status}</span>
+              <span className={stat_classes.balance_display} style={{ fontSize: '2rem' }}>{formatINR(data.amount)}</span>
+              <span className={`link-status ${data.status} ${link_status_class(data.status)}`}>{data.status}</span>
             </div>
           </div>
 
           {data.note && (
             <div style={{ marginBottom: 20 }}>
-              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.note ?? 'Note'}</div>
+              <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginBottom: 4 }}>{labels?.note ?? 'Note'}</div>
               <div style={{
                 background: 'var(--surface-2, var(--bg))',
                 border: '1px solid var(--border)',
@@ -134,7 +138,7 @@ export default function ClaimModal({ subtask, loading, error, embedded = false, 
           {claimAction && (
             <button onClick={handleClaim} disabled={claiming} style={{ width: '100%' }}>
               {claiming
-                ? <><span className="spinner" /> {claimAction.pending_label ?? 'Claiming...'}</>
+                ? <><span className={`spinner ${utility_classes.spinner}`} /> {claimAction.pending_label ?? 'Claiming...'}</>
                 : active
                   ? `${claimAction.label} ${formatINR(data.amount)}`
                   : (claimAction.logged_out_label ?? 'Log in to claim')}

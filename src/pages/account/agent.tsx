@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { agent_classes } from '../../styles/agent.stylex.ts';
+import { agent_drawer_classes } from '../../styles/agent_drawer.stylex.ts';
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useSettings, useCurrency } from '../../context/settings_ctx.tsx';
@@ -99,6 +102,14 @@ function paymentLinkHref(value: string): string | null {
 
 function statusClass(value: string): string {
   return String(value || 'unknown').toLowerCase().replace(/[^a-z0-9_-]+/g, '-');
+}
+
+function status_tone(value: string): string {
+  const status = statusClass(value);
+  if (['active', 'completed', 'complete', 'paid', 'success', 'done'].includes(status)) return agent_classes.card_status_status_active ?? '';
+  if (['pending', 'ready'].includes(status)) return agent_classes.card_status_status_pending ?? '';
+  if (['failed', 'cancelled', 'declined', 'expired'].includes(status)) return agent_classes.card_status_status_failed ?? '';
+  return agent_classes.card_status ?? '';
 }
 
 function responseHasSuccessfulWrite(state: AgentState): boolean {
@@ -211,7 +222,7 @@ function weatherEmoji(icon: string | number, label: string): string {
   return '🌤️';
 }
 
-function AgentAvatar({ avatar, name, small = false }: { avatar?: string; name: string; small?: boolean }) {
+function AgentAvatar({ avatar, name, small = false, large = false }: { avatar?: string; name: string; small?: boolean; large?: boolean }) {
   const [failed, setFailed] = useState(false);
 
   useEffect(() => setFailed(false), [avatar]);
@@ -219,7 +230,7 @@ function AgentAvatar({ avatar, name, small = false }: { avatar?: string; name: s
   if (avatar && !failed) {
     return (
       <img
-        className={`agent-avatar${small ? ' agent-avatar--small' : ''}`}
+        className={`agent-avatar ${small ? agent_classes.avatar__small : large ? agent_classes.empty_avatar : agent_classes.avatar}${small ? ' agent-avatar--small' : ''}`}
         src={avatar}
         alt={small ? '' : `${name} avatar`}
         onError={() => setFailed(true)}
@@ -229,7 +240,7 @@ function AgentAvatar({ avatar, name, small = false }: { avatar?: string; name: s
 
   return (
     <span
-      className={`agent-avatar agent-avatar--fallback${small ? ' agent-avatar--small' : ''}`}
+      className={`agent-avatar agent-avatar--fallback ${small ? agent_classes.avatar_fallback_small : large ? agent_classes.avatar_fallback_large : agent_classes.avatar__fallback}${small ? ' agent-avatar--small' : ''}`}
       aria-hidden="true"
     >
       <AgentIcon size={small ? 14 : 20} />
@@ -249,30 +260,30 @@ function PaymentLinkCard({
   const location = useLocation();
   const href = paymentLinkHref(card.url);
   return (
-    <article className="agent-data-card agent-payment-card">
-      <div className="agent-data-card-icon"><LinkIcon size={18} /></div>
-      <div className="agent-data-card-main">
-        <div className="agent-data-card-heading">
-          <strong>{amountLabel(card.amount, formatCurrency)}</strong>
-          <span className={`agent-card-status status-${statusClass(card.status)}`}>{card.status}</span>
+    <article className={`agent-data-card ${agent_classes.data_card} agent-payment-card ${agent_classes.payment_card}`}>
+      <div className={`agent-data-card-icon ${agent_classes.data_card_icon}`}><LinkIcon size={18} /></div>
+      <div className={`agent-data-card-main ${agent_classes.data_card_main}`}>
+        <div className={`agent-data-card-heading ${agent_classes.payment_heading}`}>
+          <strong className={agent_classes.heading_child}>{amountLabel(card.amount, formatCurrency)}</strong>
+          <span className={`agent-card-status ${agent_classes.heading_child} ${status_tone(card.status)} status-${statusClass(card.status)}`}>{card.status}</span>
         </div>
-        {card.note && <div className="agent-data-card-note">{card.note}</div>}
-        <div className="agent-data-card-meta">
-          <span className="mono" title={card.token}>{card.token}</span>
+        {card.note && <div className={`agent-data-card-note ${agent_classes.data_card_note}`}>{card.note}</div>}
+        <div className={`agent-data-card-meta ${agent_classes.data_card_meta}`}>
+          <span className={`mono ${agent_classes.meta_mono} ${utility_classes.mono}`} title={card.token}>{card.token}</span>
           <span>{dateLabel(card.created)}</span>
         </div>
       </div>
-      <div className="agent-card-actions">
+      <div className={`agent-card-actions ${agent_classes.card_actions} ${agent_classes.payment_card_actions}`}>
         {card.url && (
-          <button type="button" className="ghost compact" onClick={() => onCopy(card.url)} aria-label="Copy payment link">
+          <button type="button" className={`ghost compact ${agent_classes.card_action} ${agent_classes.card_action_button}`} onClick={() => onCopy(card.url)} aria-label="Copy payment link">
             <CopyIcon size={14} />
           </button>
         )}
         {href?.startsWith('/') && (
-          <Link className="btn ghost compact" to={href} state={{ backgroundLocation: location }}>Open</Link>
+          <Link className={`btn ghost compact ${agent_classes.card_action}`} to={href} state={{ backgroundLocation: location }}>Open</Link>
         )}
         {href && !href.startsWith('/') && (
-          <a className="btn ghost compact" href={href} target="_blank" rel="noopener noreferrer">
+          <a className={`btn ghost compact ${agent_classes.card_action}`} href={href} target="_blank" rel="noopener noreferrer">
             Open <ExternalIcon size={13} />
           </a>
         )}
@@ -289,43 +300,43 @@ function TransactionCard({ card, formatCurrency }: {
   const id = String(card.id);
   const reference = String(card.reference);
   return (
-    <article className="agent-data-card agent-transaction-card">
-      <span className={`agent-transaction-direction${card.sent ? ' sent' : ' received'}`} aria-hidden="true">
+    <article className={`agent-data-card ${agent_classes.data_card} agent-transaction-card`}>
+      <span className={`agent-transaction-direction ${card.sent ? `sent ${agent_classes.transaction_direction_sent}` : `received ${agent_classes.transaction_direction_received}`}`} aria-hidden="true">
         {card.sent ? '↑' : '↓'}
       </span>
-      <div className="agent-data-card-main">
-        <div className="agent-data-card-heading">
+      <div className={`agent-data-card-main ${agent_classes.data_card_main}`}>
+        <div className={`agent-data-card-heading ${agent_classes.data_card_heading}`}>
           <Link
-            className="agent-transaction-party"
+            className={`agent-transaction-party ${agent_classes.transaction_party} ${agent_classes.heading_child}`}
             to={`/i/flow/transaction/${encodeURIComponent(id)}`}
             state={{ backgroundLocation: location }}
           >
             {partyLabel(card.other_party)}
           </Link>
-          <strong className={card.sent ? 'agent-amount-sent' : 'agent-amount-received'}>
+          <strong className={`${agent_classes.heading_child} ${card.sent ? `agent-amount-sent ${agent_classes.amount_sent}` : `agent-amount-received ${agent_classes.amount_received}`}`}>
             {card.sent ? '−' : '+'}{amountLabel(card.amount, formatCurrency)}
           </strong>
         </div>
-        <div className="agent-data-card-meta">
-          <span><span className="agent-meta-label">ID</span> <span className="mono" title={id}>{id}</span></span>
-          <span><span className="agent-meta-label">Reference</span> <span className="mono" title={reference}>{reference}</span></span>
+        <div className={`agent-data-card-meta ${agent_classes.data_card_meta}`}>
+          <span><span className={`agent-meta-label ${agent_classes.meta_label}`}>ID</span> <span className={`mono ${agent_classes.meta_mono} ${utility_classes.mono}`} title={id}>{id}</span></span>
+          <span><span className={`agent-meta-label ${agent_classes.meta_label}`}>Reference</span> <span className={`mono ${agent_classes.meta_mono} ${utility_classes.mono}`} title={reference}>{reference}</span></span>
           <span>{dateLabel(card.created)}</span>
-          <span className={`agent-card-status status-${statusClass(card.status)}`}>{card.status}</span>
+          <span className={`agent-card-status ${status_tone(card.status)} status-${statusClass(card.status)}`}>{card.status}</span>
         </div>
       </div>
     </article>
   );
 }
 
-function WeatherDay({ day }: { day: WeatherAgentDay }) {
+function WeatherDay({ day, after }: { day: WeatherAgentDay; after: boolean }) {
   return (
-    <div className="agent-weather-day" title={`${day.date}: ${day.label}`}>
-      <div className="agent-weather-day-name">{forecastDayLabel(day.date)}</div>
-      <div className="agent-weather-day-icon" aria-hidden="true">{weatherEmoji(day.icon, day.label)}</div>
-      <div className="agent-weather-day-temperatures">
+    <div className={`agent-weather-day ${after ? agent_classes.weather_day_after : agent_classes.weather_day}`} title={`${day.date}: ${day.label}`}>
+      <div className={`agent-weather-day-name ${agent_classes.weather_day_name}`}>{forecastDayLabel(day.date)}</div>
+      <div className={`agent-weather-day-icon ${agent_classes.weather_day_icon}`} aria-hidden="true">{weatherEmoji(day.icon, day.label)}</div>
+      <div className={`agent-weather-day-temperatures ${agent_classes.weather_day_temperatures}`}>
         {forecastTemperature(day.high)} / {forecastTemperature(day.low)}
       </div>
-      <div className="agent-weather-day-label">{day.label}</div>
+      <div className={`agent-weather-day-label ${agent_classes.weather_day_label}`}>{day.label}</div>
     </div>
   );
 }
@@ -338,28 +349,28 @@ function WeatherCard({ card, summary }: { card: WeatherAgentCard; summary?: stri
   const conversationalSummary = summary?.trim() || `It's ${temperature} in ${place} right now, with ${condition}.`;
 
   return (
-    <div className="agent-weather-response">
-      <div className="agent-weather-summary">
+    <div className={`agent-weather-response ${agent_classes.weather_response}`}>
+      <div className={`agent-weather-summary ${agent_classes.weather_summary}`}>
         {conversationalSummary}
       </div>
-      <article className="agent-data-card agent-weather-card">
-        <div className="agent-weather-current">
-          <div className="agent-weather-icon" aria-hidden="true">
+      <article className={`agent-data-card ${agent_classes.data_card} agent-weather-card ${agent_classes.weather_card}`}>
+        <div className={`agent-weather-current ${agent_classes.weather_current}`}>
+          <div className={`agent-weather-icon ${agent_classes.weather_icon}`} aria-hidden="true">
             {weatherEmoji(card.icon, card.label)}
           </div>
           <div>
-            <strong className="agent-weather-temperature">{temperature}</strong>
-            <div className="agent-weather-label">{card.label}</div>
+            <strong className={`agent-weather-temperature ${agent_classes.weather_temperature}`}>{temperature}</strong>
+            <div className={`agent-weather-label ${agent_classes.weather_label}`}>{card.label}</div>
           </div>
         </div>
-        <div className="agent-weather-details">
-          <span><span aria-hidden="true">🌡️</span> Feels like {temperatureLabel(card.feels_like)}</span>
-          <span><span aria-hidden="true">💧</span> {weatherValue(card.humidity, '%')} humidity</span>
-          {wind && <span><span aria-hidden="true">💨</span> {wind} wind</span>}
+        <div className={`agent-weather-details ${agent_classes.weather_details}`}>
+          <span className={agent_classes.weather_detail}><span aria-hidden="true">🌡️</span> Feels like {temperatureLabel(card.feels_like)}</span>
+          <span className={agent_classes.weather_detail}><span aria-hidden="true">💧</span> {weatherValue(card.humidity, '%')} humidity</span>
+          {wind && <span className={agent_classes.weather_detail}><span aria-hidden="true">💨</span> {wind} wind</span>}
         </div>
         {!!card.days?.length && (
-          <div className="agent-weather-forecast" aria-label={`Five-day forecast for ${card.place}`}>
-            {card.days.map((day) => <WeatherDay key={day.date} day={day} />)}
+          <div className={`agent-weather-forecast ${agent_classes.weather_forecast}`} aria-label={`Five-day forecast for ${card.place}`}>
+            {card.days.map((day, index) => <WeatherDay key={day.date} day={day} after={index > 0} />)}
           </div>
         )}
       </article>
@@ -378,7 +389,7 @@ function AgentResultView({
 }) {
   if (result.kind && result.cards?.length) {
     return (
-      <div className="agent-card-list">
+      <div className={`agent-card-list ${agent_classes.card_list}`}>
         {result.kind === 'payment-links' && result.cards.map((card, index) => (
           <PaymentLinkCard key={`${(card as PaymentLinkAgentCard).token}-${index}`} card={card as PaymentLinkAgentCard} formatCurrency={formatCurrency} onCopy={onCopy} />
         ))}
@@ -398,8 +409,8 @@ function AgentResultView({
 
   if (!result.message) return null;
   return (
-    <div className={`agent-result${result.ok ? ' ok' : ' failed'}`}>
-      {result.ok ? <CheckIcon size={16} /> : <CloseIcon size={16} />}
+    <div className={`agent-result ${result.ok ? `ok ${agent_classes.result_ok}` : `failed ${agent_classes.result_failed}`}`}>
+      {result.ok ? <CheckIcon size={16} className={`${agent_classes.result_icon} ${agent_classes.result_icon_ok}`} /> : <CloseIcon size={16} className={`${agent_classes.result_icon} ${agent_classes.result_icon_failed}`} />}
       <AgentText text={result.message} />
     </div>
   );
@@ -408,15 +419,15 @@ function AgentResultView({
 function AgentSteps({ message }: { message: AgentMessage }) {
   if (!message.steps?.length) return null;
   return (
-    <div className="agent-step-list">
+    <div className={`agent-step-list ${agent_classes.step_list}`}>
       {message.steps.map((step, index) => (
-        <div className="agent-step" key={`${step.label}-${index}`}>
-          <div className="agent-step-head">
+        <div className={`agent-step ${agent_classes.step}`} key={`${step.label}-${index}`}>
+          <div className={`agent-step-head ${agent_classes.step_head}`}>
             <strong>{step.label}</strong>
-            <span className={`agent-step-status status-${statusClass(step.status)}`}>{step.status}</span>
+            <span className={`agent-step-status ${status_tone(step.status)} status-${statusClass(step.status)}`}>{step.status}</span>
           </div>
-          <div className="agent-step-description">{step.description}</div>
-          {step.note && <div className="agent-step-note">{step.note}</div>}
+          <div className={`agent-step-description ${agent_classes.step_description}`}>{step.description}</div>
+          {step.note && <div className={`agent-step-note ${agent_classes.step_note}`}>{step.note}</div>}
         </div>
       ))}
     </div>
@@ -446,38 +457,40 @@ function ConversationMessage({
 }) {
   if (message.role === 'user') {
     return (
-      <div className="agent-message-row user">
-        <span className="agent-sender">You</span>
-        <div className="agent-msg user"><AgentText text={message.text} /></div>
+      <div className={`agent-message-row ${agent_classes.message_row} ${agent_classes.message_row_user} user`}>
+        <span className={`agent-sender ${agent_classes.sender}`}>You</span>
+        <div className={`agent-msg ${agent_classes.msg_user} user`}><AgentText text={message.text} link_class_name={agent_classes.user_link} /></div>
       </div>
     );
   }
 
   const hasContent = Boolean(message.text || message.steps?.length || message.results?.length || pendingConfirmation);
   if (!hasContent) return null;
+  const has_weather = message.results?.some((result) => result.kind === 'weather' && result.cards?.length);
+  const has_cards = message.results?.some((result) => result.cards?.length);
 
   return (
-    <div className="agent-message-row agent">
-      <span className="agent-sender">{agentName}</span>
+    <div className={`agent-message-row ${agent_classes.message_row} agent`}>
+      <span className={`agent-sender ${agent_classes.sender}`}>{agentName}</span>
       <AgentAvatar avatar={avatar} name={agentName} small />
-      <div className="agent-msg agent">
-        {message.text && <AgentText text={message.text} className="agent-message-text" />}
+      <div className={`agent-msg ${has_weather ? agent_classes.msg_agent_weather : has_cards ? agent_classes.msg_agent_card : agent_classes.msg_agent} agent`}>
+        {message.text && <AgentText text={message.text} className={`agent-message-text ${agent_classes.message_text}`} />}
         <AgentSteps message={message} />
         {message.results?.map((result, index) => (
           <AgentResultView key={index} result={result} formatCurrency={formatCurrency} onCopy={onCopy} />
         ))}
         {message.confirmable && (
           pendingConfirmation ? (
-            <div className="agent-confirm-actions">
-              <button type="button" className="compact" onClick={onConfirm} disabled={busy}>
+            <div className={`agent-confirm-actions ${agent_classes.confirm_actions}`}>
+              <button type="button" className={`compact ${agent_classes.confirm_action_button}`} onClick={onConfirm} disabled={busy}>
                 <CheckIcon size={14} /> Confirm
               </button>
-              <button type="button" className="secondary compact" onClick={onDecline} disabled={busy}>
+              <button type="button" className={`secondary compact ${agent_classes.confirm_action_button}`} onClick={onDecline} disabled={busy}>
                 <CloseIcon size={14} /> Decline
               </button>
             </div>
           ) : (
-            <div className="agent-confirm-state">This request has been resolved.</div>
+            <div className={`agent-confirm-state ${agent_classes.confirm_state}`}>This request has been resolved.</div>
           )
         )}
       </div>
@@ -487,13 +500,13 @@ function ConversationMessage({
 
 function ConversationSkeleton() {
   return (
-    <div className="agent-loading" aria-label="Loading conversation">
-      <div className="agent-skeleton-row">
+    <div className={`agent-loading ${agent_classes.loading}`} aria-label="Loading conversation">
+      <div className={`agent-skeleton-row ${agent_classes.skeleton_row}`}>
         <Skeleton width={32} height={32} radius={16} />
         <Skeleton width="58%" height={72} radius={14} />
       </div>
-      <div className="agent-skeleton-row user"><Skeleton width="42%" height={44} radius={14} /></div>
-      <div className="agent-skeleton-row">
+      <div className={`agent-skeleton-row ${agent_classes.skeleton_row} ${agent_classes.skeleton_row_user} user`}><Skeleton width="42%" height={44} radius={14} /></div>
+      <div className={`agent-skeleton-row ${agent_classes.skeleton_row}`}>
         <Skeleton width={32} height={32} radius={16} />
         <Skeleton width="66%" height={58} radius={14} />
       </div>
@@ -727,7 +740,7 @@ export function AgentChat({
 
   const isDrawer = variant === 'drawer';
 
-  if (settings.scambait) return isDrawer ? null : <h1 className="mt-0">Page unavailable</h1>;
+  if (settings.scambait) return isDrawer ? null : <h1 className={`mt-0 ${utility_classes.mt_0}`}>Page unavailable</h1>;
 
   const transcript = conversation?.transcript ?? [];
   const maxLength = conversation?.max_length ?? FALLBACK_MAX_LENGTH;
@@ -741,6 +754,10 @@ export function AgentChat({
     && !conversation?.awaiting_confirmation
     && !conversation?.awaiting_answer
     && Boolean(conversation?.suggestions.length);
+  const character_count_near_limit = input.length >= maxLength * 0.8;
+  const character_count_class = showSuggestionMenu
+    ? character_count_near_limit ? agent_classes.character_count_near_limit_with_menu : agent_classes.character_count_with_menu
+    : character_count_near_limit ? agent_classes.character_count_near_limit : agent_classes.character_count;
   let pendingConfirmationIndex = -1;
   if (conversation?.awaiting_confirmation) {
     for (let index = transcript.length - 1; index >= 0; index -= 1) {
@@ -760,21 +777,21 @@ export function AgentChat({
         : `${agentName} is thinking...`;
 
   return (
-    <div className={`agent-page${isDrawer ? ' agent-page--drawer' : ''}`}>
+    <div className={`agent-page ${isDrawer ? `agent-page--drawer ${agent_classes.page_drawer}` : agent_classes.page}`}>
       {!isDrawer && (
-        <header className="agent-page-header">
-          <div className="agent-identity">
+        <header className={`agent-page-header ${agent_classes.page_header}`}>
+          <div className={`agent-identity ${agent_classes.identity}`}>
             <AgentAvatar avatar={avatar} name={agentName} />
             <div>
-              <h1>MyAgentIndia</h1>
-              <div className="agent-identity-name" title={fullAgentName}>
-                {loading ? <><span className="spinner" /> Retrieving data...</> : `You're chatting with ${agentName}.`}
+              <h1 className={agent_classes.identity_heading}>MyAgentIndia</h1>
+              <div className={`agent-identity-name ${agent_classes.identity_name}`} title={fullAgentName}>
+                {loading ? <><span className={`spinner ${utility_classes.spinner} ${agent_classes.identity_spinner}`} /> Retrieving data...</> : `You're chatting with ${agentName}.`}
               </div>
             </div>
           </div>
           <button
             type="button"
-            className="ghost compact"
+            className={`ghost compact ${agent_classes.reset_button}`}
             onClick={() => setResetOpen(true)}
             disabled={loading || Boolean(busy) || transcript.length === 0}
           >
@@ -783,12 +800,12 @@ export function AgentChat({
         </header>
       )}
 
-      <section className={`agent-shell${isDrawer ? ' agent-shell--drawer' : ''}`} aria-label={`Conversation with ${agentName}`}>
-        <div className="agent-scroll" ref={scrollRef} role="log" aria-live="polite" aria-relevant="additions text" aria-busy={loading || Boolean(busy)}>
+      <section className={`agent-shell ${isDrawer ? `agent-shell--drawer ${agent_classes.shell_drawer}` : agent_classes.shell}`} aria-label={`Conversation with ${agentName}`}>
+        <div className={`agent-scroll ${agent_classes.scroll}`} ref={scrollRef} role="log" aria-live="polite" aria-relevant="additions text" aria-busy={loading || Boolean(busy)}>
           {loading && (
             isDrawer ? (
-              <div className="agent-drawer-loading" role="status" aria-label="Loading conversation">
-                <span className="spinner" />
+              <div className={`agent-drawer-loading ${agent_drawer_classes.loading}`} role="status" aria-label="Loading conversation">
+                <span className={`spinner ${utility_classes.spinner} ${agent_drawer_classes.loading_spinner}`} />
               </div>
             ) : (
               <ConversationSkeleton />
@@ -796,21 +813,21 @@ export function AgentChat({
           )}
 
           {!loading && Boolean(loadError) && (
-            <div className="agent-load-error">
-              <ErrorBox error={loadError} />
+            <div className={`agent-load-error ${agent_classes.load_error}`}>
+              <div className={agent_classes.load_error_alert}><ErrorBox error={loadError} /></div>
               <button type="button" className="secondary" onClick={() => void loadConversation()}>Retry</button>
             </div>
           )}
 
           {!loading && !loadError && transcript.length === 0 && !pendingUser && (
-            <div className="agent-empty">
-              <AgentAvatar avatar={avatar} name={agentName} />
-              <h2>{agentName}</h2>
-              {conversation?.greeting && <AgentText text={conversation.greeting} className="agent-greeting" />}
+            <div className={`agent-empty ${agent_classes.empty}`}>
+              <AgentAvatar avatar={avatar} name={agentName} large />
+              <h2 className={agent_classes.empty_heading}>{agentName}</h2>
+              {conversation?.greeting && <AgentText text={conversation.greeting} className={`agent-greeting ${agent_classes.greeting}`} />}
               {!conversation?.awaiting_answer && !!conversation?.suggestions.length && (
-                <div className="agent-suggestions" aria-label="Suggested messages">
+                <div className={`agent-suggestions ${agent_classes.suggestions}`} aria-label="Suggested messages">
                   {conversation.suggestions.map((suggestion) => (
-                    <button key={suggestion} type="button" className="agent-suggestion" onClick={() => void send(suggestion)} disabled={Boolean(busy)}>
+                    <button key={suggestion} type="button" className={`agent-suggestion ${agent_classes.suggestion}`} onClick={() => void send(suggestion)} disabled={Boolean(busy)}>
                       {suggestion}
                     </button>
                   ))}
@@ -835,20 +852,21 @@ export function AgentChat({
           ))}
 
           {pendingUser && (
-            <div className="agent-message-row user agent-message-pending">
-              <span className="agent-sender">You</span>
-              <div className="agent-msg user"><AgentText text={pendingUser} /></div>
+            <div className={`agent-message-row ${agent_classes.message_row} ${agent_classes.message_row_user} user agent-message-pending ${agent_classes.message_pending}`}>
+              <span className={`agent-sender ${agent_classes.sender}`}>You</span>
+              <div className={`agent-msg ${agent_classes.msg_user} user`}><AgentText text={pendingUser} link_class_name={agent_classes.user_link} /></div>
             </div>
           )}
 
           {busy && busy !== 'reset' && (
-            <div className="agent-thinking"><span className="spinner" /> {thinkingLabel}</div>
+            <div className={`agent-thinking ${agent_classes.thinking}`}><span className={`spinner ${utility_classes.spinner} ${agent_classes.thinking_spinner}`} /> {thinkingLabel}</div>
           )}
         </div>
 
-        <form className="agent-composer" onSubmit={(event) => { event.preventDefault(); void send(input); }}>
-          <div className="agent-composer-input">
+        <form className={`agent-composer ${agent_classes.composer}`} onSubmit={(event) => { event.preventDefault(); void send(input); }}>
+          <div className={`agent-composer-input ${agent_classes.composer_input}`}>
             <textarea
+              className={showSuggestionMenu ? agent_classes.composer_textarea_with_menu : agent_classes.composer_textarea}
               ref={inputRef}
               value={input}
               onChange={(event) => setInput(event.target.value)}
@@ -874,15 +892,15 @@ export function AgentChat({
               aria-label={`Message ${agentName}`}
               aria-describedby={characterCountId}
             />
-            <span id={characterCountId} className={`agent-character-count${input.length >= maxLength * 0.8 ? ' near-limit' : ''}`}>
+            <span id={characterCountId} className={`agent-character-count ${character_count_near_limit ? 'near-limit ' : ''}${character_count_class}`}>
               {input.length}/{maxLength}
             </span>
             {showSuggestionMenu && (
-              <div className="agent-suggestion-menu" ref={suggestionMenuRef}>
+              <div className={`agent-suggestion-menu ${agent_classes.suggestion_menu}`} ref={suggestionMenuRef}>
                 <button
                   ref={suggestionTriggerRef}
                   type="button"
-                  className="agent-suggestion-trigger secondary"
+                  className={`agent-suggestion-trigger ${agent_classes.suggestion_trigger} secondary`}
                   onClick={() => setSuggestionsOpen((open) => !open)}
                   disabled={composerDisabled}
                   aria-label={suggestionsOpen ? 'Hide suggested messages' : 'Show suggested messages'}
@@ -896,7 +914,7 @@ export function AgentChat({
                 {suggestionsOpen && (
                   <div
                     id={suggestionMenuId}
-                    className="agent-suggestion-flyout"
+                    className={`agent-suggestion-flyout ${agent_classes.suggestion_flyout}`}
                     role="menu"
                     aria-label="Suggested messages"
                     onKeyDown={(event) => {
@@ -920,7 +938,7 @@ export function AgentChat({
                         key={suggestion}
                         type="button"
                         role="menuitem"
-                        className="agent-suggestion-option"
+                        className={`agent-suggestion-option ${agent_classes.suggestion_option}`}
                         onClick={() => {
                           setSuggestionsOpen(false);
                           void send(suggestion);
@@ -934,8 +952,8 @@ export function AgentChat({
               </div>
             )}
           </div>
-          <button type="submit" disabled={composerDisabled || !input.trim()}>
-            {busy === 'message' ? <><span className="spinner" /></> : 'Send'}
+          <button type="submit" className={agent_classes.submit_button} disabled={composerDisabled || !input.trim()}>
+            {busy === 'message' ? <><span className={`spinner ${utility_classes.spinner} ${agent_classes.submit_spinner}`} /></> : 'Send'}
           </button>
         </form>
       </section>

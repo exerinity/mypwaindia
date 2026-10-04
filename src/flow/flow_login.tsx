@@ -1,3 +1,6 @@
+import { utility_classes } from '../styles/utils.stylex.ts';
+import { alert_classes } from '../styles/alerts.stylex.ts';
+import { form_classes } from '../styles/forms.stylex.ts';
 import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import type { Env } from '../api/client.js';
 import {
@@ -168,7 +171,7 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
           <ErrorBox error={taskError} />
         ) : form && (
           <>
-            <h2 className="mt-0">{form.primary_text.text}</h2>
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>{form.primary_text.text}</h2>
 
             <form
               ref={formRef}
@@ -224,26 +227,26 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
               )}
               <details className="login-advanced" style={{ marginTop: '12px' }}>
                 <summary style={{ cursor: 'pointer', color: 'var(--muted)' }}>{form.advanced.summary}</summary>
-                <div className="row spread" style={{ alignItems: 'center', marginTop: '12px' }}>
+                <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'center', marginTop: '12px' }}>
                   <div><strong>{form.advanced.prefill_totp_label}</strong></div>
-                  <label className="toggle-switch">
+                  <label className={`toggle-switch ${form_classes.toggle_switch}`}>
                     <input
                       type="checkbox"
                       checked={prefill2fa}
                       onChange={(event) => setPrefill2fa(event.target.checked)}
                       disabled={busy}
                     />
-                    <span className="toggle-track" />
+                    <span className={`toggle-track ${form_classes.toggle_track}`} />
                   </label>
                 </div>
               </details>
               {atCapacity && (
-                <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div className={`alert alert-error ${alert_classes.error}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <WarningIcon /><span>Too many accounts are logged in ({maxAccounts})</span>
                 </div>
               )}
               {(clientError || form.error_text) && (
-                <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div className={`alert alert-error ${alert_classes.error}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <ErrorIcon /><span>{clientError ?? form.error_text?.text}</span>
                 </div>
               )}
@@ -262,7 +265,7 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
                   }}
                 >
                   {busy
-                    ? <><span className="spinner" /> {stagingLogin ? (nextAction.staging_pending_label ?? nextAction.pending_label) : nextAction.pending_label}</>
+                    ? <><span className={`spinner ${utility_classes.spinner}`} /> {stagingLogin ? (nextAction.staging_pending_label ?? nextAction.pending_label) : nextAction.pending_label}</>
                     : nextAction.label}
                 </button>
               )}
@@ -280,9 +283,9 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
             </form>
 
             {cancelAction && (
-              <div className="mt-2 center">
+              <div className={`mt-2 center ${utility_classes.center} ${utility_classes.mt_2}`}>
                 <button
-                  className="muted"
+                  className={`muted ${utility_classes.muted}`}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'inherit', font: 'inherit', padding: 0 }}
                   onClick={handleCancel}
                 >

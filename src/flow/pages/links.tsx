@@ -1,3 +1,9 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { link_classes, link_status_class } from '../../styles/links.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { form_classes } from '../../styles/forms.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -190,13 +196,13 @@ export default function LinksPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <h1 className="mt-0">Payment links</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Payment links</h1>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">Compose a payment link</h3>
-        <div className="preset-stack">
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>Compose a payment link</h3>
+        <div className={`preset-stack ${link_classes.preset_stack}`}>
           <input
-            className="preset-stack-display"
+            className={`preset-stack-display ${link_classes.preset_stack_input}`}
             type="text"
             inputMode="decimal"
             value={editingAmount ? rawInput : formatINR(stackPaisa)}
@@ -206,7 +212,7 @@ export default function LinksPage() {
             disabled={creating}
             aria-label="Payment amount"
           />
-          <div className="preset-stack-row">
+          <div className={`preset-stack-row ${link_classes.preset_stack_row}`}>
             {PRESETS_PAISA.map((p) => (
               <button key={p} type="button" className="secondary compact" onClick={() => bump(p)} disabled={creating}>
                 +{formatINR(p)}
@@ -227,31 +233,31 @@ export default function LinksPage() {
           />
           <div>
             <button onClick={create} disabled={creating || stackPaisa <= 0}>
-              {creating ? <><span className="spinner" /> Creating payment link...</> : `Go `}
+              {creating ? <><span className={`spinner ${utility_classes.spinner}`} /> Creating payment link...</> : `Go `}
             </button>
           </div>
-          <div className="row spread" style={{ alignItems: 'center' }}>
+          <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'center' }}>
             <span style={{ fontSize: '0.9rem' }}>Copy the link to my clipboard when it's created</span>
-            <label className="toggle-switch">
+            <label className={`toggle-switch ${form_classes.toggle_switch}`}>
               <input
                 type="checkbox"
                 checked={settings.copyLinkOnCreate}
                 onChange={(e) => update({ copyLinkOnCreate: e.target.checked })}
                 disabled={creating}
               />
-              <span className="toggle-track" />
+              <span className={`toggle-track ${form_classes.toggle_track}`} />
             </label>
           </div>
           {balance !== null && stackPaisa > balance && (
-            <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className={`alert alert-warning ${alert_classes.warning}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <WarningIcon /><span>You don't have that much ({formatINR(balance)} available). The server will reject it. I'm warning you in advance...</span>
             </div>
           )}
         </div>
       </div>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">Claim a payment link</h3>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>Claim a payment link</h3>
         <FloatingInput
           label="Paste a link or token"
           type="text"
@@ -266,7 +272,7 @@ export default function LinksPage() {
         </div>
       </div>
 
-      <div className="row" style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem', marginBottom: '0.75rem' }}>
+      <div className={`row ${utility_classes.row}`} style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem', marginBottom: '0.75rem' }}>
         <h3 style={{ margin: 0 }}>Live payment links ({activeLinks.length})</h3>
         {activeLinks.length > 0 && (
           <button
@@ -275,24 +281,24 @@ export default function LinksPage() {
             disabled={!!cancelAllProgress}
           >
             {cancelAllProgress
-              ? <><span className="spinner" /> Cancelling {cancelAllProgress.done}/{cancelAllProgress.total}...</>
+              ? <><span className={`spinner ${utility_classes.spinner}`} /> Cancelling {cancelAllProgress.done}/{cancelAllProgress.total}...</>
               : 'Cancel all'}
           </button>
         )}
       </div>
       {linksQ.loading && !linksQ.data ? (
-        <div className="grid" style={{ gap: 10 }}>
+        <div className={`grid ${card_classes.grid}`} style={{ gap: 10 }}>
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="card link-card compact">
-              <div className="link-info">
-                <div className="row gap-sm" style={{ marginBottom: 6 }}>
+            <div key={i} className={`card link-card compact ${link_classes.card} ${card_classes.compact}`}>
+              <div className={`link-info ${link_classes.info}`}>
+                <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginBottom: 6 }}>
                   <Skeleton width={88} height={16} />
                   <Skeleton width={52} height={16} radius={999} />
                 </div>
                 <Skeleton width={`${140 + (i % 2) * 40}px`} height={11} style={{ marginBottom: 4 }} />
                 <Skeleton width={200} height={10} />
               </div>
-              <div className="row gap-sm">
+              <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}>
                 <Skeleton width={82} height={30} radius={6} />
                 <Skeleton width={70} height={30} radius={6} />
                 <Skeleton width={62} height={30} radius={6} />
@@ -303,21 +309,21 @@ export default function LinksPage() {
       ) :
         linksQ.error ? <ErrorBox error={linksQ.error} /> :
           activeLinks.length === 0 ? <Empty>No active links. Create one above?</Empty> :
-            <div className="grid" style={{ gap: 10 }}>
+            <div className={`grid ${card_classes.grid}`} style={{ gap: 10 }}>
               {activeLinks.map((l) => (
-                <div key={l.id} className="card link-card compact">
-                  <div className="link-info">
-                    <div className="row gap-sm">
+                <div key={l.id} className={`card link-card compact ${link_classes.card} ${card_classes.compact}`}>
+                  <div className={`link-info ${link_classes.info}`}>
+                    <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}>
                       <strong>{formatINR(l.amount)}</strong>
-                      <span className="link-status active">active</span>
+                      <span className={`link-status active ${link_classes.status_active}`}>active</span>
                     </div>
-                    {l.note && <div className="muted">{l.note}</div>}
-                    <div className="link-token">{l.token}</div>
-                    <div className="muted" style={{ fontSize: '0.78rem' }}>{formatDate(l.created)}</div>
+                    {l.note && <div className={`muted ${utility_classes.muted}`}>{l.note}</div>}
+                    <div className={`link-token ${link_classes.token}`}>{l.token}</div>
+                    <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem' }}>{formatDate(l.created)}</div>
                   </div>
-                  <div className="row gap-sm">
-                    <button className="secondary copy-btn" onClick={() => copyUrl(l.url)}>Copy URL</button>
-                    <button className="secondary copy-btn" onClick={() => copyUrl(sbsUrl(l.url, l.token))}>Copy URL (PWA)</button>
+                  <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}>
+                    <button className={`secondary copy-btn ${button_classes.copy_button}`} onClick={() => copyUrl(l.url)}>Copy URL</button>
+                    <button className={`secondary copy-btn ${button_classes.copy_button}`} onClick={() => copyUrl(sbsUrl(l.url, l.token))}>Copy URL (PWA)</button>
                     <button className="secondary compact" onClick={() => inspectLink(l.token)}>Open</button>
                     <button className="compact danger" onClick={() => setCancelTarget(l)}>Cancel</button>
                   </div>
@@ -326,19 +332,19 @@ export default function LinksPage() {
             </div>
       }
 
-      <h3 className="mt-3" style={{ marginBottom: '0.75rem' }}>Void payment links ({otherLinks.length})</h3>
+      <h3 className={`mt-3 ${utility_classes.mt_3}`} style={{ marginBottom: '0.75rem' }}>Void payment links ({otherLinks.length})</h3>
       {otherLinks.length === 0 ? <Empty>Nothing here yet...</Empty> :
-        <div className="grid" style={{ gap: 10 }}>
+        <div className={`grid ${card_classes.grid}`} style={{ gap: 10 }}>
           {otherLinks.map((l) => (
-            <div key={l.id} className="card link-card compact">
-              <div className="link-info">
-                <div className="row gap-sm">
+            <div key={l.id} className={`card link-card compact ${link_classes.card} ${card_classes.compact}`}>
+              <div className={`link-info ${link_classes.info}`}>
+                <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}>
                   <strong>{formatINR(l.amount)}</strong>
-                  <span className={`link-status ${l.status}`}>{l.status}</span>
+                  <span className={`link-status ${l.status} ${link_status_class(l.status)}`}>{l.status}</span>
                 </div>
-                {l.note && <div className="muted">{l.note}</div>}
-                <div className="link-token">{l.token}</div>
-                <div className="muted" style={{ fontSize: '0.78rem' }}>{formatDate(l.created)}</div>
+                {l.note && <div className={`muted ${utility_classes.muted}`}>{l.note}</div>}
+                <div className={`link-token ${link_classes.token}`}>{l.token}</div>
+                <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem' }}>{formatDate(l.created)}</div>
               </div>
             </div>
           ))}

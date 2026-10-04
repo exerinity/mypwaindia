@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Flowback from '../shell_fallback.tsx';
@@ -94,9 +97,9 @@ export default function ThemeApplyPage() {
 
   return (
     <div className="mpi-themeap">
-      <h1 className="mt-0">Apply this theme?</h1>
-      <p className="mt-0 mb-0"><Link to="/settings/appearance">You can modify it further in settings</Link>. You can also create links just like this there too!</p>
-      <div className="card" style={{ maxWidth: 480 }}>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Apply this theme?</h1>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}><Link to="/settings/appearance">You can modify it further in settings</Link>. You can also create links just like this there too!</p>
+      <div className={`card ${card_classes.card}`} style={{ maxWidth: 480 }}>
         <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', marginBottom: 20 }}>
           {entries.map(([key, value], i) => (
             <div
@@ -120,13 +123,13 @@ export default function ThemeApplyPage() {
                   border: '1px solid var(--border)',
                   flexShrink: 0,
                 }} />
-                <span className="mono" style={{ fontSize: '0.78rem' }}>{value}</span>
+                <span className={`mono ${utility_classes.mono}`} style={{ fontSize: '0.78rem' }}>{value}</span>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="btn-row">
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <button onClick={handleApply}>Yes</button>
           <button
             className="secondary"

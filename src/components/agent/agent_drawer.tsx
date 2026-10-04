@@ -10,7 +10,7 @@ import {
   subscribeDrawers,
 } from '../../utils/drawer_bus.ts';
 import { ChevronDown, CloseIcon, ExternalIcon, AgentIcon } from '../ui/icons.tsx';
-import '../../styles/agent_drawer.css';
+import { agent_drawer_classes } from '../../styles/agent_drawer.stylex.ts';
 
 const CLOSE_MS = 200;
 const PANEL_ID = 'agent-drawer-panel';
@@ -141,7 +141,7 @@ export function AgentDrawer() {
       <button
         ref={launcherRef}
         type="button"
-        className={`agent-launcher${stackAboveCli ? ' agent-launcher--stacked' : ''}${launcherOut ? ' agent-launcher--out' : ''}`}
+        className={`${stackAboveCli ? ' agent-launcher--stacked' : ''}${launcherOut ? ' agent-launcher--out' : ''} ${stackAboveCli ? (launcherOut ? agent_drawer_classes.launcher_stacked_out : agent_drawer_classes.launcher_stacked) : (launcherOut ? agent_drawer_classes.launcher_out : agent_drawer_classes.launcher)}`}
         onClick={openDrawer}
         title="Open MyAgentIndia"
         aria-label="Open MyAgentIndia"
@@ -157,21 +157,21 @@ export function AgentDrawer() {
         <div
           ref={panelRef}
           id={PANEL_ID}
-          className={`agent-drawer${minimized ? ' agent-drawer--min' : ''}${closing ? ' agent-drawer--closing' : ''}`}
+          className={`agent-drawer${minimized ? ' agent-drawer--min' : ''}${closing ? ' agent-drawer--closing' : ''} ${closing ? agent_drawer_classes.drawer_closing : agent_drawer_classes.drawer}`}
           role="region"
           aria-label="MyAgentIndia drawer"
           tabIndex={-1}
         >
           <div
-            className="agent-drawer-header"
+            className={`agent-drawer-header ${minimized ? agent_drawer_classes.header_minimized : agent_drawer_classes.header}`}
             onClick={() => { if (minimized) setMinimized(false); }}
           >
-            <span className="agent-drawer-icon"><AgentIcon size={17} /></span>
-            <span className="agent-drawer-title">MyAgentIndia</span>
-            <div className="agent-drawer-actions" onClick={(event) => event.stopPropagation()}>
+            <span className={`agent-drawer-icon ${agent_drawer_classes.icon}`}><AgentIcon size={17} /></span>
+            <span className={`agent-drawer-title ${agent_drawer_classes.title}`}>MyAgentIndia</span>
+            <div className={`agent-drawer-actions ${agent_drawer_classes.actions}`} onClick={(event) => event.stopPropagation()}>
               <button
                 type="button"
-                className="agent-drawer-btn agent-drawer-btn--text"
+                className={`agent-drawer-btn agent-drawer-btn--text ${agent_drawer_classes.button_text}`}
                 onClick={() => {
                   setMinimized(false);
                   setResetRequest((request) => request + 1);
@@ -184,7 +184,7 @@ export function AgentDrawer() {
               </button>
               <button
                 type="button"
-                className="agent-drawer-btn"
+                className={`agent-drawer-btn ${agent_drawer_classes.button}`}
                 onClick={openFullPage}
                 disabled={chatBusy}
                 title="Open the full page"
@@ -194,7 +194,7 @@ export function AgentDrawer() {
               </button>
               <button
                 type="button"
-                className={`agent-drawer-btn${minimized ? ' agent-drawer-btn--flip' : ''}`}
+                className={`agent-drawer-btn${minimized ? ' agent-drawer-btn--flip' : ''} ${minimized ? agent_drawer_classes.button_flip : agent_drawer_classes.button}`}
                 onClick={() => setMinimized((value) => !value)}
                 title={minimized ? 'Expand' : 'Minimize'}
                 aria-label={minimized ? 'Expand' : 'Minimize'}
@@ -205,7 +205,7 @@ export function AgentDrawer() {
               </button>
               <button
                 type="button"
-                className="agent-drawer-btn"
+                className={`agent-drawer-btn ${agent_drawer_classes.button}`}
                 onClick={() => closeDrawer()}
                 title="Close"
                 aria-label="Close"
@@ -214,7 +214,7 @@ export function AgentDrawer() {
               </button>
             </div>
           </div>
-          <div id={BODY_ID} className="agent-drawer-body" aria-hidden={minimized}>
+          <div id={BODY_ID} className={`agent-drawer-body ${minimized ? agent_drawer_classes.body_minimized : agent_drawer_classes.body}`} aria-hidden={minimized}>
             <AgentChat
               variant="drawer"
               visible={!minimized && !closing}

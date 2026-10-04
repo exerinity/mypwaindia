@@ -1,3 +1,7 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { form_classes } from '../../styles/forms.stylex.ts';
+import { lbteam_classes } from '../../styles/lbteam.stylex.ts';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Globe from 'react-globe.gl';
@@ -13,6 +17,9 @@ import { hexToRgb, normalizeHex } from '../../utils/colors.js';
 import countries from '../../data/world_countries.json';
 import centroids from '../../data/country_centroids.json';
 import { InfoIcon } from '../../components/ui/icons.tsx';
+
+const globe_country_label_class = `globe-country-label ${lbteam_classes.globe_country_label}`;
+const globe_country_label_hidden_class = `globe-country-label is-hidden ${lbteam_classes.globe_country_label_is_hidden}`;
 
 type Rgb = { r: number; g: number; b: number };
 function mix(a: Rgb, b: Rgb, t: number): Rgb {
@@ -243,14 +250,14 @@ export default function TeamMapPage() {
       for (const d of labelsRef.current) {
         const el = d.el;
         if (!el) continue;
-        if (vis <= 0.01 || el.dataset.front === '0') { el.classList.add('is-hidden'); continue; }
+        if (vis <= 0.01 || el.dataset.front === '0') { el.className = globe_country_label_hidden_class; continue; }
         const sc = g.getScreenCoords(d.lat, d.lng, 0.008);
         const w = el.offsetWidth || d.text.length * 6;
         const h = el.offsetHeight || 12;
         const box = { x: sc.x - w / 2, y: sc.y - h / 2, w, h };
         const hit = boxes.some((b) => box.x < b.x + b.w && box.x + box.w > b.x && box.y < b.y + b.h && box.y + box.h > b.y);
-        if (hit) { el.classList.add('is-hidden'); }
-        else { el.classList.remove('is-hidden'); boxes.push(box); }
+        if (hit) { el.className = globe_country_label_hidden_class; }
+        else { el.className = globe_country_label_class; boxes.push(box); }
       }
     };
     c.addEventListener('change', update);
@@ -290,21 +297,21 @@ export default function TeamMapPage() {
     <>
       <Modal className="slide" open={!!selected} onClose={() => setSelected(null)} title={selected?.name ?? ''}>
         {selected && (
-          <div className="team-card team-card--modal">
+          <div className={`team-card team-card--modal ${lbteam_classes.team_card__modal}`}>
             <TeamMemberCard m={selected} />
           </div>
         )}
       </Modal>
 
-      <div className="team-heading-row">
-        <h1 className="mt-0">Team globe</h1>
+      <div className={`team-heading-row ${lbteam_classes.team_heading_row}`}>
+        <h1 className={`mt-0 ${lbteam_classes.team_heading_title} ${utility_classes.mt_0}`}>Team globe</h1>
         <Link to="/i/team" className="btn secondary compact">Go back...</Link>
       </div>
       {ranksSentence && (
-        <p className="mt-0 mb-0 muted"><i>{ranksSentence}</i></p>
+        <p className={`mt-0 mb-0 muted ${utility_classes.muted} ${utility_classes.mt_0}`}><i>{ranksSentence}</i></p>
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-info"><InfoIcon /><span>Dots are scattered randomly within each member's country (for better clarity and space) and don't reflect anyone's actual location. If you refresh the page, the dots will be somewhere new</span></div>
-      <div className="checkbox-row">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className={`mt-0 mb-0 alert alert-info ${alert_classes.info} ${utility_classes.mt_0}`}><InfoIcon /><span>Dots are scattered randomly within each member's country (for better clarity and space) and don't reflect anyone's actual location. If you refresh the page, the dots will be somewhere new</span></div>
+      <div className={`checkbox-row ${form_classes.checkbox_row}`}>
         <input
           id="team-globe-connect-dots"
           type="checkbox"
@@ -317,9 +324,9 @@ export default function TeamMapPage() {
 
       {error ? <ErrorBox error={error} /> :
        (!loading && team.length === 0) ? <Empty>N</Empty> :
-       <div className="team-globe-wrap" ref={wrapRef}>
+       <div className={`team-globe-wrap ${lbteam_classes.team_globe_wrap}`} ref={wrapRef}>
          {(loading && !data) && (
-           <div className="team-globe-loading"><Skeleton width={220} height={220} radius={999} /></div>
+           <div className={`team-globe-loading ${lbteam_classes.team_globe_loading}`}><Skeleton width={220} height={220} radius={999} /></div>
          )}
          {dims.w > 0 && data && (
            <Globe
@@ -342,7 +349,7 @@ export default function TeamMapPage() {
              htmlAltitude={0.008}
              htmlElement={(d: any) => {
                const el = document.createElement('div');
-               el.className = 'globe-country-label';
+               el.className = globe_country_label_class;
                el.textContent = d.text;
                d.el = el;
                return el;
@@ -358,7 +365,7 @@ export default function TeamMapPage() {
              pointAltitude={0.02}
              pointRadius={(d: any) => d.radius}
              pointsMerge={false}
-             pointLabel={(d: any) => `<div class="team-globe-tip">${d.member.name} ${d.member.country_flag ?? ''}<br><span>${d.member.role}</span></div>`}
+             pointLabel={(d: any) => `<div class="team-globe-tip ${lbteam_classes.team_globe_tip}">${d.member.name} ${d.member.country_flag ?? ''}<br><span class="${lbteam_classes.team_globe_tip_role}">${d.member.role}</span></div>`}
              onPointClick={(d: any) => setSelected(d.member)}
              arcsData={connections}
              arcStartLat={(d: any) => d.start.lat}

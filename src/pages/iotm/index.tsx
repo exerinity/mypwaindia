@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { ExternalIcon, ChevronRight } from '../../components/ui/icons.tsx';
@@ -20,7 +23,7 @@ type GameEntry = { label: string; href: string; to?: never } | { label: string; 
 
 function GameList({ games }: { games: GameEntry[] }) {
   return (
-    <div className="btn-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+    <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ flexDirection: 'column', alignItems: 'stretch' }}>
       {games.map((game) => game.to ? (
         <Link key={game.to} to={game.to} className="btn secondary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>{game.label}<ChevronRight /></Link>
       ) : (
@@ -38,15 +41,15 @@ export default function InvestPage() {
 
   return (
     <>
-      <h1 className="mt-0">MyPayIndia Investment Opportunities™</h1>
-      <p className="mt-0 mb-0">You may have at some point when using our service asked yourself "How the hell do I make money in this thing??". Here you can pick out multiple ways to earn money using our top of the line Investment Opportunities™ system. Enjoy!</p>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>MyPayIndia Investment Opportunities™</h1>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>You may have at some point when using our service asked yourself "How the hell do I make money in this thing??". Here you can pick out multiple ways to earn money using our top of the line Investment Opportunities™ system. Enjoy!</p>
 
-      <div className="card mb-2">
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
         <h3 style={{ margin: '0 0 12px' }}>Skill-based Investments</h3>
         <GameList games={SKILL_GAMES} />
       </div>
 
-      <div className="card">
+      <div className={`card ${card_classes.card}`}>
         <h3 style={{ margin: '0 0 12px' }}>Luck-based Investments</h3>
         <GameList games={LUCK_GAMES} />
       </div>

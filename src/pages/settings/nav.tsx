@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { form_classes } from '../../styles/forms.stylex.ts';
 import { useState, lazy } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSettings, BOTTOM_NAV_MAX, DEFAULT_BOTTOM_NAV_ITEMS, normalizeBottomNavItems } from '../../context/settings_ctx.tsx';
@@ -32,13 +35,13 @@ export function NavSettings() {
 
   return (
     <>
-      <h3 className="mt-0">Bottom navigation bar</h3>
-      <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Bottom navigation bar</h3>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
         Configure the navigation bar pinned to the bottom of the screen. It can have up to 6 customized buttons and only shows on small screens (unless you manually show it)
       </p>
-      <div className="row spread" style={{ alignItems: 'center' }}>
+      <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'center' }}>
         <span style={{ fontSize: '0.9rem' }}>Show the bottom navigation bar</span>
-        <label className="toggle-switch">
+        <label className={`toggle-switch ${form_classes.toggle_switch}`}>
           <input
             type="checkbox"
             checked={bottomNavOn}
@@ -49,29 +52,29 @@ export function NavSettings() {
               setBottomNavForceOpen(true);
             }}
           />
-          <span className="toggle-track" />
+          <span className={`toggle-track ${form_classes.toggle_track}`} />
         </label>
       </div>
       {bottomNavOn && (
-        <div className="row spread" style={{ alignItems: 'center', marginTop: 12 }}>
+        <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'center', marginTop: 12 }}>
           <span style={{ fontSize: '0.9rem' }}>Show labels under the icons</span>
-          <label className="toggle-switch">
+          <label className={`toggle-switch ${form_classes.toggle_switch}`}>
             <input
               type="checkbox"
               checked={settings.bottomNavLabels}
               onChange={(e) => update({ bottomNavLabels: e.target.checked })}
             />
-            <span className="toggle-track" />
+            <span className={`toggle-track ${form_classes.toggle_track}`} />
           </label>
         </div>
       )}
 
       <hr style={{ margin: '16px 0', borderColor: 'var(--border)' }} />
-      <h3 className="mt-0">Edit navigation buttons</h3>
-      <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Edit navigation buttons</h3>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
         You can have up to {BOTTOM_NAV_MAX} destinations.
       </p>
-      <p className="muted" style={{ fontSize: '0.8rem', fontStyle: 'italic', margin: '0 0 6px' }}>Preview</p>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', fontStyle: 'italic', margin: '0 0 6px' }}>Preview</p>
       <div style={{ marginBottom: 16 }}>
         <BottomNavPreview items={preview} labels={settings.bottomNavLabels} />
       </div>
@@ -79,7 +82,7 @@ export function NavSettings() {
         const dest = findDestination(route);
         const listed = options.some((opt) => opt.route === route);
         return (
-          <div key={route} className="row gap-sm" style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
+          <div key={route} className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
             <select
               value={route}
               style={{ flex: 1, minWidth: 0 }}
@@ -126,10 +129,10 @@ export function NavSettings() {
           </div>
         );
       })}
-      <div className="row gap-sm" style={{ marginTop: 10 }}>
+      <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginTop: 10 }}>
         {items.length < BOTTOM_NAV_MAX && firstUnused && (
           <button
-            className="btn secondary row gap-sm"
+            className={`btn secondary row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}
             onClick={() => setItems([...items, firstUnused.route])}
           >
             <PlusIcon size={16} /> Add item
@@ -143,7 +146,7 @@ export function NavSettings() {
         </button>
       </div>
       {!active && items.some((r) => findDestination(r)?.requireAuth) && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className={`alert alert-info ${alert_classes.info}`}>
           <InfoIcon />
           <span>Some selected destinations need you to be logged in. They will be hidden until you <Link to="/i/flow/login" state={{ backgroundLocation: location }}>log in</Link></span>
         </div>

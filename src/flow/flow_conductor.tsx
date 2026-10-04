@@ -1,3 +1,4 @@
+import { utility_classes } from '../styles/utils.stylex.ts';
 import { lazy, Suspense, useState, type ReactNode } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Modal } from '../components/ui/modal.tsx';
@@ -41,7 +42,7 @@ function isMissingTaskError(error: unknown): boolean {
 function FlowSpinner() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
-      <span className="spinner lg" />
+      <span className={`spinner lg ${utility_classes.spinner_large}`} />
     </div>
   );
 }

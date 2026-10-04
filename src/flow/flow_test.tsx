@@ -1,3 +1,7 @@
+import { utility_classes } from '../styles/utils.stylex.ts';
+import { table_classes } from '../styles/tables.stylex.ts';
+import { button_classes } from '../styles/buttons.stylex.ts';
+import { form_classes } from '../styles/forms.stylex.ts';
 import type { FlowTestSubtask } from '../api/flow.ts';
 import { useNavigate } from 'react-router-dom';
 
@@ -42,36 +46,36 @@ export default function FlowTest({ subtask, onAbort, onTask }: FlowTestProps) {
 
   return (
     <>
-      <h3 className="mt-0">Context</h3>
-      <div className="table-wrap">
-        <table className="table">
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Context</h3>
+      <div className={`table-wrap ${table_classes.wrap}`}>
+        <table className={`table ${table_classes.table}`}>
           <tbody>
-            <tr><th scope="row">Username</th><td className="mono">{display(data.logged_in_as?.username)}</td></tr>
-            <tr><th scope="row">ID</th><td className="mono">{display(data.logged_in_as?.id)}</td></tr>
-            <tr><th scope="row">Role</th><td className="mono">{display(data.logged_in_as?.role)}</td></tr>
-            <tr><th scope="row">State</th><td className="mono">{data.auth_state}</td></tr>
-            <tr><th scope="row">ID error</th><td className="mono">{display(data.identity_error)}</td></tr>
-            <tr><th scope="row">Rendered</th><td className="mono">{data.rendered_at}</td></tr>
-            <tr><th scope="row">Flow ID</th><td className="mono">{data.flow_id}</td></tr>
-            <tr><th scope="row">Subtask ID</th><td className="mono">{subtask.subtask_id}</td></tr>
-            <tr><th scope="row">Type</th><td className="mono">{subtask.type}</td></tr>
-            <tr><th scope="row">Back nav</th><td className="mono">{subtask.subtask_back_navigation}</td></tr>
+            <tr><th scope="row">Username</th><td className={`mono ${utility_classes.mono}`}>{display(data.logged_in_as?.username)}</td></tr>
+            <tr><th scope="row">ID</th><td className={`mono ${utility_classes.mono}`}>{display(data.logged_in_as?.id)}</td></tr>
+            <tr><th scope="row">Role</th><td className={`mono ${utility_classes.mono}`}>{display(data.logged_in_as?.role)}</td></tr>
+            <tr><th scope="row">State</th><td className={`mono ${utility_classes.mono}`}>{data.auth_state}</td></tr>
+            <tr><th scope="row">ID error</th><td className={`mono ${utility_classes.mono}`}>{display(data.identity_error)}</td></tr>
+            <tr><th scope="row">Rendered</th><td className={`mono ${utility_classes.mono}`}>{data.rendered_at}</td></tr>
+            <tr><th scope="row">Flow ID</th><td className={`mono ${utility_classes.mono}`}>{data.flow_id}</td></tr>
+            <tr><th scope="row">Subtask ID</th><td className={`mono ${utility_classes.mono}`}>{subtask.subtask_id}</td></tr>
+            <tr><th scope="row">Type</th><td className={`mono ${utility_classes.mono}`}>{subtask.type}</td></tr>
+            <tr><th scope="row">Back nav</th><td className={`mono ${utility_classes.mono}`}>{subtask.subtask_back_navigation}</td></tr>
           </tbody>
         </table>
       </div>
 
       <h3>Text</h3>
-      <div className="table-wrap">
-        <table className="table">
+      <div className={`table-wrap ${table_classes.wrap}`}>
+        <table className={`table ${table_classes.table}`}>
           <thead>
             <tr><th>Label</th><th>Text</th><th>Entities</th></tr>
           </thead>
           <tbody>
             {texts.map(({ label, value }) => (
               <tr key={label}>
-                <td className="mono">{label}</td>
+                <td className={`mono ${utility_classes.mono}`}>{label}</td>
                 <td>{value.text}</td>
-                <td className="mono">
+                <td className={`mono ${utility_classes.mono}`}>
                   {value.entities.length === 0
                     ? '[]'
                     : value.entities.map((entity) => {
@@ -86,8 +90,8 @@ export default function FlowTest({ subtask, onAbort, onTask }: FlowTestProps) {
       </div>
 
       <h3>Options</h3>
-      <div className="table-wrap">
-        <table className="table">
+      <div className={`table-wrap ${table_classes.wrap}`}>
+        <table className={`table ${table_classes.table}`}>
           <thead>
             <tr><th>Label</th><th>Value</th></tr>
           </thead>
@@ -95,7 +99,7 @@ export default function FlowTest({ subtask, onAbort, onTask }: FlowTestProps) {
             {data.options.map((option) => (
               <tr key={option.value}>
                 <td>{option.label}</td>
-                <td className="mono">{option.value}</td>
+                <td className={`mono ${utility_classes.mono}`}>{option.value}</td>
               </tr>
             ))}
           </tbody>
@@ -103,16 +107,16 @@ export default function FlowTest({ subtask, onAbort, onTask }: FlowTestProps) {
       </div>
 
       <h3>Flags</h3>
-      <div className="table-wrap">
-        <table className="table">
+      <div className={`table-wrap ${table_classes.wrap}`}>
+        <table className={`table ${table_classes.table}`}>
           <thead>
             <tr><th>Flag</th><th>Value</th></tr>
           </thead>
           <tbody>
             {Object.entries(data.flags).map(([flag, value]) => (
               <tr key={flag}>
-                <td className="mono">{flag}</td>
-                <td className="mono">{display(value)}</td>
+                <td className={`mono ${utility_classes.mono}`}>{flag}</td>
+                <td className={`mono ${utility_classes.mono}`}>{display(value)}</td>
               </tr>
             ))}
           </tbody>
@@ -156,7 +160,7 @@ export default function FlowTest({ subtask, onAbort, onTask }: FlowTestProps) {
 
       <h3>Checkboxes</h3>
       {data.checkboxes.map((checkbox) => (
-        <label className="checkbox-row" key={checkbox.input_id}>
+        <label className={`checkbox-row ${form_classes.checkbox_row}`} key={checkbox.input_id}>
           <input type="checkbox" defaultChecked={checkbox.checked} disabled={checkbox.disabled} />
           <span>{checkbox.label}</span>
         </label>
@@ -164,17 +168,17 @@ export default function FlowTest({ subtask, onAbort, onTask }: FlowTestProps) {
 
       <h3>Toggles</h3>
       {data.toggles.map((toggle) => (
-        <div className="row gap-sm" key={toggle.input_id}>
-          <label className="toggle-switch">
+        <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} key={toggle.input_id}>
+          <label className={`toggle-switch ${form_classes.toggle_switch}`}>
             <input type="checkbox" defaultChecked={toggle.checked} disabled={toggle.disabled} />
-            <span className="toggle-track" />
+            <span className={`toggle-track ${form_classes.toggle_track}`} />
           </label>
           <span>{toggle.label}</span>
         </div>
       ))}
 
       <h3>Buttons</h3>
-      <div className="btn-row">
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
         {data.buttons.map((button) => (
           <button
             key={button.button_id}
@@ -184,8 +188,8 @@ export default function FlowTest({ subtask, onAbort, onTask }: FlowTestProps) {
           >
             {button.style === 'option' ? (
               <>
-                <span className="option-label">{button.label}</span>
-                {button.description && <span className="option-desc">{button.description}</span>}
+                <span className={`option-label ${button_classes.option_label}`}>{button.label}</span>
+                {button.description && <span className={`option-desc ${button_classes.option_desc}`}>{button.description}</span>}
               </>
             ) : button.label}
           </button>
@@ -193,8 +197,8 @@ export default function FlowTest({ subtask, onAbort, onTask }: FlowTestProps) {
       </div>
 
       <h3>Actions</h3>
-      <div className="table-wrap">
-        <table className="table">
+      <div className={`table-wrap ${table_classes.wrap}`}>
+        <table className={`table ${table_classes.table}`}>
           <thead>
             <tr>
               <th>Type</th>
@@ -210,20 +214,20 @@ export default function FlowTest({ subtask, onAbort, onTask }: FlowTestProps) {
           <tbody>
             {data.actions.map((action) => (
               <tr key={action.link_id}>
-                <td className="mono">{action.link_type}</td>
-                <td className="mono">{action.link_id}</td>
+                <td className={`mono ${utility_classes.mono}`}>{action.link_type}</td>
+                <td className={`mono ${utility_classes.mono}`}>{action.link_id}</td>
                 <td>{action.label}</td>
                 <td>{display(action.logged_out_label)}</td>
                 <td>{display(action.pending_label)}</td>
                 <td>{display(action.staging_pending_label)}</td>
                 <td>{display(action.at_capacity_label)}</td>
-                <td className="mono">{display(action.url)}</td>
+                <td className={`mono ${utility_classes.mono}`}>{display(action.url)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <div className="btn-row">
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
         {data.actions.map((action) => (
           <button
             key={action.link_id}

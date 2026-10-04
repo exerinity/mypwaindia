@@ -1,3 +1,10 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { table_classes } from '../../styles/tables.stylex.ts';
+import { link_classes } from '../../styles/links.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { modal_classes } from '../../styles/modal.stylex.ts';
+import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
 import React, { useState, useMemo, useRef, lazy } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
@@ -39,7 +46,7 @@ function SessionRow({ s, onTerminate, formatDate }: { s: Session; onTerminate: (
     <tr key={s.id}>
       <td>{s.device_info || '-'}{s.current && <strong> (current)</strong>}</td>
       <td
-        className="mono"
+        className={`mono ${utility_classes.mono}`}
         onMouseEnter={() => setRevealed(true)}
         onMouseLeave={() => setRevealed(false)}
         style={{
@@ -54,7 +61,7 @@ function SessionRow({ s, onTerminate, formatDate }: { s: Session; onTerminate: (
       <td>{formatDate(s.created_at)}</td>
       <td>{formatDate(s.last_active)}</td>
       <td>
-        <span className={`link-status ${s.invalidated ? 'cancelled' : 'active'}`}>
+        <span className={`link-status ${s.invalidated ? 'cancelled' : 'active'} ${s.invalidated ? link_classes.status_cancelled : link_classes.status_active}`}>
           {s.invalidated ? 'terminated' : 'active'}
         </span>
       </td>
@@ -282,53 +289,53 @@ export default function SessionsPage() {
 
   return (
     <>
-      <h1 className="mt-0">List of sessions</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>List of sessions</h1>
       {backTarget && (
-        <p className="mt-0 mb-0" style={{ marginBottom: 20 }}>
+        <p className={`mt-0 mb-0 ${utility_classes.mt_0}`} style={{ marginBottom: 20 }}>
           <Link to={backTarget.to} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
             <ArrowLeftIcon /> Back to {backTarget.label}
           </Link>
         </p>
       )}
 
-      <div className="alert alert-info mt-0" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className={`alert alert-info mt-0 ${alert_classes.info} ${utility_classes.mt_0}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <InfoIcon />
         <span>Sessions are managed in both the client and server: your browser saves your account and session token; the server dictates whether that session is valid.</span>
       </div>
 
       {!active && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className={`alert alert-info ${alert_classes.info}`}>
           <InfoIcon />
           <span>To view sessions, <Link to="/i/flow/login" state={{ backgroundLocation: location }}>please log in</Link></span>
         </div>
       )}
       {active && (
         <>
-          <h3 className="mt-0">Reinitialize session</h3>
+          <h3 className={`mt-0 ${utility_classes.mt_0}`}>Reinitialize session</h3>
           <p style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
             {(sessionsQ.error as { code?: unknown })?.code === 1001
               ? 'Your session has expired. Pressing Reinitialize session will tell the server to log you back in using the app saved credentials'
               : 'If something feels stuck or out of sync, you can tell the server to log you out and back in using your saved credentials'}
           </p>
-          <div className="row spread" style={{ alignItems: 'center', marginBottom: 20 }}>
+          <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'center', marginBottom: 20 }}>
             <button
               className="compact"
               disabled={!active.password || reinitStage !== null || reinit2faOpen}
               onClick={doReinitializeSession}
             >
-              {reinitStage === 'identify' && <><span className="spinner" /> Retrieving data...</>}
-              {reinitStage === 'logout' && <><span className="spinner" /> Logging out...</>}
-              {reinitStage === 'login' && <><span className="spinner" /> Logging in...</>}
-              {reinitStage === 'verify' && <><span className="spinner" /> Retrieving data...</>}
-              {reinitStage === 'cleanup' && <><span className="spinner" /> Terminating old session...</>}
+              {reinitStage === 'identify' && <><span className={`spinner ${utility_classes.spinner}`} /> Retrieving data...</>}
+              {reinitStage === 'logout' && <><span className={`spinner ${utility_classes.spinner}`} /> Logging out...</>}
+              {reinitStage === 'login' && <><span className={`spinner ${utility_classes.spinner}`} /> Logging in...</>}
+              {reinitStage === 'verify' && <><span className={`spinner ${utility_classes.spinner}`} /> Retrieving data...</>}
+              {reinitStage === 'cleanup' && <><span className={`spinner ${utility_classes.spinner}`} /> Terminating old session...</>}
               {reinitStage === null && (reinit2faOpen ? 'Waiting for 2FA code...' : 'Reinitialize session')}
             </button>
             {!active.password && (
-              <span className="muted" style={{ fontSize: '0.85rem' }}>No saved password for this account, so this can't be done</span>
+              <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>No saved password for this account, so this can't be done</span>
             )}
           </div>
           <hr style={{ margin: '0 0 20px', borderColor: 'var(--border)' }} />
-          <h3 className="mt-0">Server logout</h3>
+          <h3 className={`mt-0 ${utility_classes.mt_0}`}>Server logout</h3>
           <p style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>This will tell the server to log out, but it leaves the app alone. For debugging purposes only - this will cause problems</p>
           <div>
             <button className="compact danger" onClick={doServerLogout}>Log out server side</button>
@@ -351,22 +358,22 @@ export default function SessionsPage() {
         </>
       ) : sessionsQ.error ? <ErrorBox error={sessionsQ.error} /> : (
         <>
-          <div className="row gap-sm" style={{ marginBottom: 14, flexWrap: 'wrap' }}>
+          <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginBottom: 14, flexWrap: 'wrap' }}>
             {(() => {
               const total = sortedSessions.length;
               const active = sortedSessions.filter((s) => !s.invalidated).length;
               const terminated = sortedSessions.filter((s) => s.invalidated).length;
               return (
                 <>
-                  <span className="link-status active">{active} active</span>
-                  <span className="link-status cancelled">{terminated} terminated</span>
-                  <span className="muted" style={{ fontSize: '0.875rem', alignSelf: 'center' }}>{total} total</span>
+                  <span className={`link-status active ${link_classes.status_active}`}>{active} active</span>
+                  <span className={`link-status cancelled ${link_classes.status_cancelled}`}>{terminated} terminated</span>
+                  <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.875rem', alignSelf: 'center' }}>{total} total</span>
                 </>
               );
             })()}
           </div>
-          <div className="table-wrap">
-            <table className="table">
+          <div className={`table-wrap ${table_classes.wrap}`}>
+            <table className={`table ${table_classes.table}`}>
               <thead>
                 <tr>
                   <th onClick={() => toggleSessionCol('device')} style={{ cursor: 'pointer' }}>Device{sessionColIndicator('device')}</th>
@@ -407,7 +414,7 @@ export default function SessionsPage() {
         title="Terminate session"
         message={killTarget && (
           <div>
-            <p className="mt-0" style={{ color: 'var(--muted)' }}>
+            <p className={`mt-0 ${utility_classes.mt_0}`} style={{ color: 'var(--muted)' }}>
               This will immediately sign out and invalidate the following session:
             </p>
             <div style={{
@@ -421,19 +428,19 @@ export default function SessionsPage() {
               marginBottom: 20,
             }}>
               <div>
-                <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Device</div>
+                <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.75rem', marginBottom: 5 }}>Device</div>
                 <div style={{ fontSize: '0.9rem' }}>{killTarget.device_info || '-'}</div>
               </div>
               <div>
-                <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>IP address</div>
-                <div className="mono" style={{ fontSize: '0.9rem' }}>{killTarget.ip}</div>
+                <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.75rem', marginBottom: 5 }}>IP address</div>
+                <div className={`mono ${utility_classes.mono}`} style={{ fontSize: '0.9rem' }}>{killTarget.ip}</div>
               </div>
               <div>
-                <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Created</div>
+                <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.75rem', marginBottom: 5 }}>Created</div>
                 <div style={{ fontSize: '0.9rem' }}>{formatDate(killTarget.created_at)}</div>
               </div>
               <div>
-                <div className="muted" style={{ fontSize: '0.75rem', marginBottom: 5 }}>Last active</div>
+                <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.75rem', marginBottom: 5 }}>Last active</div>
                 <div style={{ fontSize: '0.9rem' }}>{formatDate(killTarget.last_active)}</div>
               </div>
             </div>
@@ -453,16 +460,16 @@ export default function SessionsPage() {
 
       <Modal
         className="slide"
-        bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
+        bgIcon={<div className={`app-lock-bg-icon ${app_lock_classes.bg_icon}`}><LockIcon size={666} /></div>}
         open={!!terminatingProgress}
         onClose={() => { terminateStopRef.current = true; }}
         title="Terminating sessions..."
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 0, marginBottom: 16 }}>
-          <span className="spinner" />
+          <span className={`spinner ${utility_classes.spinner}`} />
           <span>Terminating {terminatingProgress?.current} of {terminatingProgress?.total} session{terminatingProgress?.total === 1 ? '' : 's'}, please wait...</span>
         </div>
-        <div className="btn-row">
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <button className="danger" onClick={() => { terminateStopRef.current = true; }}>
             Stop
           </button>
@@ -472,13 +479,13 @@ export default function SessionsPage() {
       <Modal
         fullscreen
         className="slide"
-        bgIcon={<div className="app-lock-bg-icon"><LockIcon size={666} /></div>}
+        bgIcon={<div className={`app-lock-bg-icon ${app_lock_classes.bg_icon}`}><LockIcon size={666} /></div>}
         open={reinit2faOpen}
         onClose={cancelReinit2fa}
         title="You need a 2FA code"
       >
         <form onSubmit={(e) => { e.preventDefault(); submitReinit2fa(); }}>
-          <p className="mt-0" style={{ color: 'var(--muted)' }}>
+          <p className={`mt-0 ${utility_classes.mt_0}`} style={{ color: 'var(--muted)' }}>
             Enter the two-factor code for <strong>{reinitRef.current?.account.username}</strong> to finish...
           </p>
           <FloatingInput
@@ -493,11 +500,11 @@ export default function SessionsPage() {
             disabled={reinitStage === 'login'}
           />
           {reinit2faError && (
-            <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className={`alert alert-error ${alert_classes.error}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <ErrorIcon /><span>{reinit2faError}</span>
             </div>
           )}
-          <div className="modal-actions">
+          <div className={`modal-actions ${modal_classes.actions}`}>
             <button
               type="button"
               className="secondary"
@@ -507,7 +514,7 @@ export default function SessionsPage() {
               Cancel
             </button>
             <button type="submit" disabled={reinitStage === 'login' || !reinit2faCode}>
-              {reinitStage === 'login' ? <><span className="spinner" /> Logging in...</> : 'Continue'}
+              {reinitStage === 'login' ? <><span className={`spinner ${utility_classes.spinner}`} /> Logging in...</> : 'Continue'}
             </button>
           </div>
         </form>

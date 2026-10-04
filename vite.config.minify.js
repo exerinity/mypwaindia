@@ -11,6 +11,7 @@
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import stylex from '@stylexjs/unplugin';
 import { VitePWA } from 'vite-plugin-pwa';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
@@ -35,7 +36,7 @@ function umamiAnalytics() {
 }
 
 export default defineConfig({
-  plugins: [react(), VitePWA({ disable: true }), viteSingleFile(), umamiAnalytics()],
+  plugins: [stylex.vite({ classNamePrefix: 'r-' }), react(), VitePWA({ disable: true }), viteSingleFile(), umamiAnalytics()],
   build: {
     outDir: 'dist-minify',
     emptyOutDir: true,

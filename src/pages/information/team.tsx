@@ -1,3 +1,7 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { animation_classes } from '../../styles/animations.stylex.ts';
+import { lbteam_classes } from '../../styles/lbteam.stylex.ts';
 import { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useCachedQuery } from '../../hooks/cached_query.js';
@@ -45,14 +49,14 @@ export default function TeamPage() {
   }, []);
 
   const renderGrid = (members: TeamMember[]) => (
-    <div className="grid cols-team">
+    <div className={`grid cols-team ${card_classes.grid_team}`}>
       {members.map((m) => {
         const highlighted = !!highlight && m.name.trim().toLowerCase() === highlight;
         return (
           <div
             key={m.name}
             ref={highlighted ? highlightRef : undefined}
-            className={`card team-card${highlighted ? ' team-card--highlight' : ''}`}
+            className={`card team-card ${highlighted ? `team-card--highlight ${lbteam_classes.team_card__highlight}` : lbteam_classes.team_card} ${card_classes.card}`}
           >
             <TeamMemberCard m={m} onAvatarClick={setSelectedMember} twitterAsX={shiftHeld} />
           </div>
@@ -74,22 +78,22 @@ export default function TeamPage() {
           </a>
         )}
       </Modal>
-      <div className="team-heading-row">
-        <h1 className="mt-0">Meet the team</h1>
+      <div className={`team-heading-row ${lbteam_classes.team_heading_row}`}>
+        <h1 className={`mt-0 ${lbteam_classes.team_heading_title} ${utility_classes.mt_0}`}>Meet the team</h1>
         <Link to="/i/team/globe" className="btn secondary compact">Open globe...</Link>
       </div>
-      <p className="mt-0 mb-0">Get to know the people behind MyPayIndia, the future of online banking!</p>
-      <p className="mt-0 mb-0 muted"><i>Currently our team consists of <strong>{current.length || (
-        <span className="skeleton" style={{ display: 'inline-block', width: 24, height: '1.2em', borderRadius: 3, verticalAlign: 'middle' }} />
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>Get to know the people behind MyPayIndia, the future of online banking!</p>
+      <p className={`mt-0 mb-0 muted ${utility_classes.muted} ${utility_classes.mt_0}`}><i>Currently our team consists of <strong>{current.length || (
+        <span className={`skeleton ${animation_classes.skeleton}`} style={{ display: 'inline-block', width: 24, height: '1.2em', borderRadius: 3, verticalAlign: 'middle' }} />
       )}</strong> people:</i></p>
 
       {loading && !data ? (
-        <div className="grid cols-team">
+        <div className={`grid cols-team ${card_classes.grid_team}`}>
           {Array.from({ length: 20 }).map((_, i) => (
-            <div key={i} className="card team-card">
-              <div className="team-header">
+            <div key={i} className={`card team-card ${lbteam_classes.team_card} ${card_classes.card}`}>
+              <div className={`team-header ${lbteam_classes.team_header}`}>
                 <Skeleton width={72} height={72} radius={50} />
-                <div className="team-header-info">
+                <div className={`team-header-info ${lbteam_classes.team_header_info}`}>
                   <Skeleton width={110} height={16} />
                   <Skeleton width={80} height={13} style={{ marginTop: 6 }} />
                 </div>
@@ -105,13 +109,13 @@ export default function TeamPage() {
         {renderGrid(current)}
         {past.length > 0 && (
           <>
-            <h2 className="team-status-heading">Past members</h2>
+            <h2 className={`team-status-heading ${lbteam_classes.team_status_heading}`}>Past members</h2>
             {renderGrid(past)}
           </>
         )}
         {specialThanks.length > 0 && (
           <>
-            <h2 className="team-status-heading">Special thanks</h2>
+            <h2 className={`team-status-heading ${lbteam_classes.team_status_heading}`}>Special thanks</h2>
             {renderGrid(specialThanks)}
           </>
         )}

@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { table_classes } from '../../styles/tables.stylex.ts';
+import { link_status_class } from '../../styles/links.stylex.ts';
 import { useMemo, useState } from 'react';
 
 export interface Transaction {
@@ -91,13 +94,13 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
   const sliced = limit === 'all' ? sorted : sorted.slice(0, Number(limit));
 
   if (!transactions || !transactions.length) {
-    return <div className="empty">Nothing yet</div>;
+    return <div className={`empty ${utility_classes.empty}`}>Nothing yet</div>;
   }
 
   return (
     <>
-      <div className="table-controls">
-        <div className="search-field">
+      <div className={`table-controls ${table_classes.controls}`}>
+        <div className={`search-field ${table_classes.search_field}`}>
           <SearchIcon />
           <input
             type="search"
@@ -124,13 +127,13 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
             {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         </label>
-        <span className="muted" style={{ marginLeft: 'auto' }}>
+        <span className={`muted ${utility_classes.muted}`} style={{ marginLeft: 'auto' }}>
           {sliced.length} of {sorted.length}
         </span>
       </div>
 
-      <div className="table-wrap">
-        <table className="table">
+      <div className={`table-wrap ${table_classes.wrap}`}>
+        <table className={`table ${table_classes.table}`}>
           <thead>
             <tr>
               <th>Transaction</th>
@@ -143,14 +146,14 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
           </thead>
           <tbody>
             {!sliced.length && (
-              <tr><td colSpan={6} className="empty">Nope!</td></tr>
+              <tr><td colSpan={6} className={`empty ${utility_classes.empty}`}>Nope!</td></tr>
             )}
             {sliced.map((tx) => {
               const outgoing = currentUserId != null && tx.sender?.id === currentUserId;
               return (
                 <tr key={tx.id}>
                   <td>
-                    <Link to={`/i/flow/transaction/${tx.transaction_id}`} state={{ backgroundLocation: location }} className="mono">
+                    <Link to={`/i/flow/transaction/${tx.transaction_id}`} state={{ backgroundLocation: location }} className={`mono ${utility_classes.mono}`}>
                       {tx.transaction_id}
                     </Link>
                   </td>
@@ -161,7 +164,7 @@ export function TransactionTable({ transactions, currentUserId, hideLimitControl
                   </td>
                   <td>{formatDate(tx.created)}</td>
                   <td>
-                    <span className={`link-status ${tx.status}`}>{tx.status}</span>
+                    <span className={`link-status ${tx.status} ${link_status_class(tx.status)}`}>{tx.status}</span>
                   </td>
                 </tr>
               );

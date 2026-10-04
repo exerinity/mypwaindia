@@ -1,3 +1,5 @@
+import { utility_classes } from '../styles/utils.stylex.ts';
+import { button_classes } from '../styles/buttons.stylex.ts';
 import { useState } from 'react';
 import type { FlowTaskInput, FlowTaskResponse, ProfileReportSubtask } from '../api/flow.ts';
 import type { ReportReason } from '../api/profile.js';
@@ -37,6 +39,6 @@ export default function ReportProfileModal({ subtask, on_submit, on_complete, on
       {data.reasons.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
     </select>
     <FloatingTextarea id="report_details" label={reason === 'other' ? data.labels.required_details : data.labels.details} disabled={busy} required={reason === 'other'} value={details} onChange={(event) => set_details(event.target.value)} />
-    <div className="btn-row mt-2"><button disabled={busy || !submit_action || (reason === 'other' && !details.trim())}>{busy ? submit_action?.pending_label : submit_action?.label}</button></div>
+    <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}><button disabled={busy || !submit_action || (reason === 'other' && !details.trim())}>{busy ? submit_action?.pending_label : submit_action?.label}</button></div>
   </form>;
 }

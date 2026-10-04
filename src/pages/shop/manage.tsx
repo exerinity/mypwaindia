@@ -1,3 +1,9 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { table_classes } from '../../styles/tables.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { form_classes } from '../../styles/forms.stylex.ts';
+import { stat_classes } from '../../styles/stats.stylex.ts';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import type { AuthOpts } from '../../api/client.js';
@@ -25,8 +31,8 @@ export default function ManageShopPage() {
   if (!active) return null;
   const auth = { token: active.token, env: active.env };
   return <div>
-    <h1 className="mt-0">Shop and purchases</h1>
-    <nav className="btn-row mb-2" aria-label="Shop navigation">
+    <h1 className={`mt-0 ${utility_classes.mt_0}`}>Shop and purchases</h1>
+    <nav className={`btn-row mb-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mb_2}`} aria-label="Shop navigation">
       {tabs.map((value) => <button key={value} className={tab === value ? '' : 'secondary'} aria-current={tab === value ? 'page' : undefined} onClick={() => set_search({ tab: value })}>
         {value === 'items' ? 'My items' : value === 'orders' ? 'Sales orders' : value === 'purchases' ? 'My purchases' : value === 'saved' ? 'Saved items' : 'Notifications'}
       </button>)}
@@ -69,15 +75,15 @@ function MyItems({ auth, account_id }: { auth: AuthOpts; account_id: number }) {
   }
 
   return <div>
-    <div className="btn-row mb-2"><button onClick={() => edit_item(null)} disabled={busy}>New item</button><button className="secondary" onClick={resource.reload} disabled={busy || resource.loading}>Refresh</button></div>
+    <div className={`btn-row mb-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mb_2}`}><button onClick={() => edit_item(null)} disabled={busy}>New item</button><button className="secondary" onClick={resource.reload} disabled={busy || resource.loading}>Refresh</button></div>
     <ErrorBox error={error || resource.error} />
     {resource.loading && <LoadingRow />}
     {resource.data?.items.length === 0 && <Empty>Nothing!</Empty>}
-    {resource.data?.items.map((item) => <article key={item.id} className="card mb-2">
-      <h3 className="mt-0">{item.name}</h3>
-      <div className="stat-card"><span className="stat-label">{item.pwyw ? 'Pay what you want minimum' : 'Price'}</span><span className="stat-value">{formatINR(item.price)}</span></div>
-      <div className="stat-sub">{item.status ?? 'active'} - {item.stock == null ? 'Unlimited stock' : `${item.stock} in stock`} - {item.sold ?? 0} sold</div>
-      {item.status !== 'archived' && <div className="btn-row mt-2">
+    {resource.data?.items.map((item) => <article key={item.id} className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>{item.name}</h3>
+      <div className={stat_classes.card}><span className={stat_classes.label}>{item.pwyw ? 'Pay what you want minimum' : 'Price'}</span><span className={stat_classes.value}>{formatINR(item.price)}</span></div>
+      <div className={stat_classes.sub}>{item.status ?? 'active'} - {item.stock == null ? 'Unlimited stock' : `${item.stock} in stock`} - {item.sold ?? 0} sold</div>
+      {item.status !== 'archived' && <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>
         <button className="secondary" disabled={busy} onClick={() => edit_item(item.id)}>Edit</button>
         <button className="secondary" disabled={busy} onClick={() => set_restocking(item)}>Stock and visibility</button>
         <button className="secondary" disabled={busy} onClick={() => set_archiving(item)}>Archive</button>
@@ -109,8 +115,8 @@ function Restock({ item, auth, on_close, on_save }: { item: ShopItem; auth: Auth
     <form onSubmit={save}>
       <ErrorBox error={error} />
       <FloatingInput id="restock_stock" label="Stock (blank for unlimited)" type="number" min={0} step={1} disabled={busy} value={stock} onChange={(event) => set_stock(event.target.value)} />
-      <label className="checkbox-row"><input type="checkbox" disabled={busy} checked={hidden} onChange={(event) => set_hidden(event.target.checked)} />Hide from my profile</label>
-      <div className="btn-row"><button disabled={busy}>{busy ? 'Saving...' : 'Save'}</button></div>
+      <label className={`checkbox-row ${form_classes.checkbox_row}`}><input type="checkbox" disabled={busy} checked={hidden} onChange={(event) => set_hidden(event.target.checked)} />Hide from my profile</label>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button disabled={busy}>{busy ? 'Saving...' : 'Save'}</button></div>
     </form>
   </Modal>;
 }
@@ -120,7 +126,7 @@ function Orders({ auth, side }: { auth: AuthOpts; side: 'orders' | 'purchases' }
   const [status, set_status] = useState<OrderStatus | ''>('');
   const resource = use_profile_resource(() => list_shop_orders(auth, side, page, status || undefined), `${side}:${page}:${status}:${auth.env}:${auth.token}`);
   return <div>
-    <div className="table-controls">
+    <div className={`table-controls ${table_classes.controls}`}>
       <label htmlFor="order_status">Filter by status
         <select id="order_status" value={status} onChange={(event) => { set_status(event.target.value as OrderStatus | ''); set_page(1); }}>
           <option value="">All statuses</option>{['in_review', 'pending', 'fulfilled', 'refunded'].map((value) => <option key={value} value={value}>{value.replace('_', ' ')}</option>)}
@@ -131,13 +137,13 @@ function Orders({ auth, side }: { auth: AuthOpts; side: 'orders' | 'purchases' }
     <ErrorBox error={resource.error} />
     {resource.loading && <LoadingRow />}
     {resource.data?.orders.length === 0 && <Empty>Nothing!</Empty>}
-    {resource.data?.orders.map((order) => <article className="card mb-2" key={order.id}>
-      <h3 className="mt-0">{order.item_name ?? `Order ${order.id}`}</h3>
-      <div className="stat-sub">{order.order_id} - {order.status.replace('_', ' ')}</div>
-      {order.total != null && <div className="stat-card mt-2"><span className="stat-label">Total</span><span className="stat-value">{formatINR(order.total)}</span></div>}
-      <div className="stat-sub">{side === 'orders' ? `Buyer: @${order.buyer ?? ''}` : `Seller: @${order.seller ?? ''}`}</div>
-      {order.recipient && <div className="stat-sub">{order.side === 'recipient' ? `Gift from @${order.buyer ?? ''}` : `Gift for @${order.recipient}`}</div>}
-      <div className="btn-row mt-2"><Link className="btn secondary" to={`/account/shop/order/${order.id}`}>View order and delivery</Link></div>
+    {resource.data?.orders.map((order) => <article className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} key={order.id}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>{order.item_name ?? `Order ${order.id}`}</h3>
+      <div className={stat_classes.sub}>{order.order_id} - {order.status.replace('_', ' ')}</div>
+      {order.total != null && <div className={`${stat_classes.card} mt-2 ${utility_classes.mt_2}`}><span className={stat_classes.label}>Total</span><span className={stat_classes.value}>{formatINR(order.total)}</span></div>}
+      <div className={stat_classes.sub}>{side === 'orders' ? `Buyer: @${order.buyer ?? ''}` : `Seller: @${order.seller ?? ''}`}</div>
+      {order.recipient && <div className={stat_classes.sub}>{order.side === 'recipient' ? `Gift from @${order.buyer ?? ''}` : `Gift for @${order.recipient}`}</div>}
+      <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}><Link className="btn secondary" to={`/account/shop/order/${order.id}`}>View order and delivery</Link></div>
     </article>)}
     <Pagination page={page} last_page={resource.data?.last_page ?? page} busy={resource.loading} on_page={set_page} />
   </div>;
@@ -157,19 +163,19 @@ function Notifications({ auth }: { auth: AuthOpts }) {
     finally { set_busy(false); }
   }
   return <div>
-    <div className="btn-row row mb-2"><span className="stat-sub">{resource.data?.unread ?? 0} unread</span><button disabled={busy || resource.loading || !resource.data?.unread} onClick={mark_read}>Mark all as read</button><button className="secondary" disabled={busy || resource.loading} onClick={resource.reload}>Refresh</button></div>
+    <div className={`btn-row row mb-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mb_2}`}><span className={stat_classes.sub}>{resource.data?.unread ?? 0} unread</span><button disabled={busy || resource.loading || !resource.data?.unread} onClick={mark_read}>Mark all as read</button><button className="secondary" disabled={busy || resource.loading} onClick={resource.reload}>Refresh</button></div>
     <ErrorBox error={error || resource.error} />
     {resource.loading && <LoadingRow />}
     {resource.data?.notifications.length === 0 && <Empty>Nothing!</Empty>}
-    {resource.data?.notifications.map((notification) => <article className="card mb-2" key={notification.id}>
+    {resource.data?.notifications.map((notification) => <article className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} key={notification.id}>
       <p>{!notification.read && <strong>Unread: </strong>}{notification.message}</p>
-      <div className="stat-sub mt-1"><time dateTime={notification.created}>{new Date(notification.created).toLocaleString()}</time></div>
-      {notification.order_id != null && <div className="btn-row"><Link className="btn secondary" to={`/account/shop/order/${notification.order_id}`}>View order</Link></div>}
+      <div className={`${stat_classes.sub} mt-1 ${utility_classes.mt_1}`}><time dateTime={notification.created}>{new Date(notification.created).toLocaleString()}</time></div>
+      {notification.order_id != null && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><Link className="btn secondary" to={`/account/shop/order/${notification.order_id}`}>View order</Link></div>}
     </article>)}
     <Pagination page={page} last_page={resource.data?.last_page ?? page} busy={resource.loading || busy} on_page={set_page} />
   </div>;
 }
 
 function Pagination({ page, last_page, busy, on_page }: { page: number; last_page: number; busy: boolean; on_page: (page: number) => void }) {
-  return <div className="row mt-2"><button className="secondary" disabled={busy || page <= 1} onClick={() => on_page(page - 1)}>Previous</button><span className="stat-sub">Page {page} of {Math.max(1, last_page)}</span><button className="secondary" disabled={busy || page >= last_page} onClick={() => on_page(page + 1)}>Next</button></div>;
+  return <div className={`row mt-2 ${utility_classes.row} ${utility_classes.mt_2}`}><button className="secondary" disabled={busy || page <= 1} onClick={() => on_page(page - 1)}>Previous</button><span className={stat_classes.sub}>Page {page} of {Math.max(1, last_page)}</span><button className="secondary" disabled={busy || page >= last_page} onClick={() => on_page(page + 1)}>Next</button></div>;
 }

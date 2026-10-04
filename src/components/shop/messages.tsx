@@ -1,3 +1,8 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { profile_classes } from '../../styles/profiles.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { stat_classes } from '../../styles/stats.stylex.ts';
 import { useState } from 'react';
 import type { AuthOpts } from '../../api/client.js';
 import { list_order_messages, send_order_message } from '../../api/shop.js';
@@ -19,22 +24,22 @@ export function OrderMessages({ id, auth }: { id: number; auth: AuthOpts }) {
     catch (error) { set_error(error); }
     finally { set_busy(false); }
   }
-  return <section className="mt-2">
+  return <section className={`mt-2 ${utility_classes.mt_2}`}>
     <h3>Order messages</h3>
-    <p className="stat-sub">The buyer, seller, and gift recipient can read these messages</p>
+    <p className={stat_classes.sub}>The buyer, seller, and gift recipient can read these messages</p>
     <ErrorBox error={error || resource.error} />
-    <div className="btn-row"><button className="secondary" disabled={resource.loading || busy} onClick={resource.reload}>Refresh messages</button></div>
+    <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" disabled={resource.loading || busy} onClick={resource.reload}>Refresh messages</button></div>
     {resource.loading && <LoadingRow />}
     {resource.data?.messages.length === 0 && <Empty>No messages yet.</Empty>}
-    {resource.data?.messages.map((message) => <article className="card compact mb-2" key={message.id}>
+    {resource.data?.messages.map((message) => <article className={`card compact mb-2 ${card_classes.compact} ${utility_classes.mb_2}`} key={message.id}>
       <strong>@{message.author}</strong>
-      <p className="profile_prose">{message.body}</p>
-      <time className="stat-sub" dateTime={message.created}>{new Date(message.created).toLocaleString()}</time>
+      <p className={`profile_prose ${profile_classes.prose}`}>{message.body}</p>
+      <time className={stat_classes.sub} dateTime={message.created}>{new Date(message.created).toLocaleString()}</time>
     </article>)}
     <form onSubmit={send}>
       <FloatingTextarea id="order_message" label="Message" required maxLength={1000} disabled={busy} value={body} onChange={(event) => set_body(event.target.value)} />
-      <div className="stat-sub">{body.length}/1000</div>
-      <div className="btn-row"><button disabled={busy || !body.trim()}>{busy ? 'Sending...' : 'Send message'}</button></div>
+      <div className={stat_classes.sub}>{body.length}/1000</div>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button disabled={busy || !body.trim()}>{busy ? 'Sending...' : 'Send message'}</button></div>
     </form>
   </section>;
 }

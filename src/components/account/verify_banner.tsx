@@ -1,3 +1,4 @@
+import { alert_classes } from '../../styles/alerts.stylex.ts';
 import { useState } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useGlobalData } from '../../context/global_data_ctx.tsx';
@@ -26,7 +27,7 @@ export function VerificationBanner() {
   }
 
   return (
-    <div className="verification-banner">
+    <div className={`verification-banner ${alert_classes.banner}`}>
       Please verify your email address. Once you do, your account will be fully activated and you can do everything!
       <button onClick={send} disabled={sending}>
         {sending ? 'Sending...' : 'Send email'}

@@ -1,4 +1,7 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
+import { animation_classes } from '../../styles/animations.stylex.ts';
 import React, { useState, lazy, Suspense } from 'react';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { RELEASES } from './release_notes_notes.tsx';
@@ -20,22 +23,22 @@ function ReleaseItem({ r, borderBottom, open, onToggle }: { r: Release; borderBo
   return (
     <div style={{ borderBottom: borderBottom ? '1px solid var(--border)' : 'none', padding: '4px 0' }}>
       <button
-        className="release-summary release-entry-summary"
+        className={`release-summary release-entry-summary ${animation_classes.release_entry_summary}`}
         onClick={onToggle}
         aria-expanded={open}
       >
-        <span className="release-version">
+        <span className={`release-version ${animation_classes.release_version}`}>
           <strong>Version {r.version}</strong>
-          <span className={`release-importance${importance.className}`}>
+          <span className={`release-importance${importance.className} ${r.importance === 3 ? animation_classes.release_massive : r.importance === 2 ? animation_classes.release_major : animation_classes.release_importance}`}>
             {importance.label}
           </span>
         </span>
-        <span className="muted" style={{ fontSize: '0.85rem' }}>{r.date}</span>
+        <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>{r.date}</span>
       </button>
-      <div className={`release-body${open ? ' open' : ''}`}>
-        <div className="release-body-inner">
+      <div className={`release-body${open ? ' open' : ''} ${open ? animation_classes.release_body_open : animation_classes.release_body}`}>
+        <div className={`release-body-inner ${open ? animation_classes.release_body_inner_open : animation_classes.release_body_inner}`}>
           {r.disclaimer && (
-            <p className="muted" style={{ fontSize: '0.8rem', margin: '6px 0 4px' }}>{r.disclaimer}</p>
+            <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', margin: '6px 0 4px' }}>{r.disclaimer}</p>
           )}
           {(() => {
             const out: React.ReactNode[] = [];
@@ -93,13 +96,13 @@ export default function ReleaseNotesPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <h1 className="mt-0">Release notes</h1>
-      <p className="mt-0 mb-0">See what's happening on the MyPayIndia PWA. View new changes and fixes for mypayindia.sbs, app.mypayindia.com, and <span title="This does not actually exist LOL">MyPayIndia Lite for Android</span>. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Release notes</h1>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>See what's happening on the MyPayIndia PWA. View new changes and fixes for mypayindia.sbs, app.mypayindia.com, and <span title="This does not actually exist LOL">MyPayIndia Lite for Android</span>. We're constantly working to make the MyPayIndia PWA a world-class experience. We hope you enjoy reading about our work!
       </p>
-      <p className="mt-0 mb-0"><strong>Disclaimer:</strong> a massive/major update does not always mean a ton of things were added; it is dictated by how much work was put into it. And also sometimes by how much was added.</p>
-      <div className="card">
-        <div className="row spread" style={{ marginBottom: 12 }}>
-          <p className="mt-0 mb-0">There are {RELEASES.length} releases to show:</p>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}><strong>Disclaimer:</strong> a massive/major update does not always mean a ton of things were added; it is dictated by how much work was put into it. And also sometimes by how much was added.</p>
+      <div className={`card ${card_classes.card}`}>
+        <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ marginBottom: 12 }}>
+          <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>There are {RELEASES.length} releases to show:</p>
           <button className="compact secondary" onClick={toggleAll}>
             {allExpanded ? 'Close all' : 'Open all'}
           </button>

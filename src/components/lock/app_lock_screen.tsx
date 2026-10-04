@@ -1,4 +1,8 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { modal_classes } from '../../styles/modal.stylex.ts';
 import { lazy, Suspense, useState } from 'react';
+import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
 import { verifyAppLock, setAppLock, disableAppLock, recordAppLockUnlock, minLength, type AppLockMethod } from '../../utils/app_lock.ts';
 import { AppLockInput } from './app_lock_input.tsx';
 import { LockIcon, EyeIcon, EyeOffIcon } from '../ui/icons.tsx';
@@ -97,13 +101,13 @@ export function AppLockScreen({ method, onUnlock }: AppLockScreenProps) {
   }
 
   return (
-    <div className="app-lock-screen">
-      <div className="app-lock-bg-icon"><LockIcon size={666} /></div>
-      <div className="app-lock-card">
+    <div className={`app-lock-screen ${app_lock_classes.screen}`}>
+      <div className={`app-lock-bg-icon ${app_lock_classes.bg_icon}`}><LockIcon size={666} /></div>
+      <div className={`app-lock-card ${app_lock_classes.card}`}>
         {step === 'unlock' && (
           <>
-            <h2 className="mt-0">MyPayIndia is locked</h2>
-            <p className="muted" style={{ marginTop: -4 }}>Enter your {METHOD_LABEL[method]} to continue</p>
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>MyPayIndia is locked</h2>
+            <p className={`muted ${utility_classes.muted}`} style={{ marginTop: -4 }}>Enter your {METHOD_LABEL[method]} to continue</p>
 
             <form onSubmit={(e) => { e.preventDefault(); submit(); }}>
               <AppLockInput method={method} value={value} onChange={setValue} autoFocus />
@@ -123,8 +127,8 @@ export function AppLockScreen({ method, onUnlock }: AppLockScreenProps) {
 
         {step === 'rescueVerify' && (
           <>
-            <h2 className="mt-0">Confirmation required</h2>
-            <p className="muted" style={{ marginTop: -4 }}>
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>Confirmation required</h2>
+            <p className={`muted ${utility_classes.muted}`} style={{ marginTop: -4 }}>
               Enter the account password for <strong>{active?.username}</strong> to modify app lock
             </p>
             <form onSubmit={(e) => { e.preventDefault(); submitRescueVerify(); }}>
@@ -148,7 +152,7 @@ export function AppLockScreen({ method, onUnlock }: AppLockScreenProps) {
                   }
                 />
               </Suspense>
-              <div className="modal-actions">
+              <div className={`modal-actions ${modal_classes.actions}`}>
                 <button type="button" className="secondary" onClick={() => setStep('unlock')}>Back</button>
                 <button type="submit" disabled={!accountPassword}>
                   Continue
@@ -160,8 +164,8 @@ export function AppLockScreen({ method, onUnlock }: AppLockScreenProps) {
 
         {step === 'rescueChoice' && (
           <>
-            <h2 className="mt-0">Modify app lock</h2>
-            <div className="btn-row" style={{ flexDirection: 'column', marginTop: 14 }}>
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>Modify app lock</h2>
+            <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ flexDirection: 'column', marginTop: 14 }}>
               <button type="button" onClick={startSetNew}>Set a new lock</button>
               <button type="button" className="secondary danger" onClick={turnOff}>Turn off app lock</button>
               <button type="button" className="secondary" onClick={() => setStep('rescueVerify')}>Back</button>
@@ -171,8 +175,8 @@ export function AppLockScreen({ method, onUnlock }: AppLockScreenProps) {
 
         {step === 'rescueNew' && (
           <>
-            <h2 className="mt-0">Choose your new {newMethod}</h2>
-            <div className="btn-row" style={{ flexWrap: 'wrap', marginBottom: 12 }}>
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>Choose your new {newMethod}</h2>
+            <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ flexWrap: 'wrap', marginBottom: 12 }}>
               {(['pin', 'pattern', 'password'] as const).map((m) => (
                 <button
                   key={m}
@@ -185,7 +189,7 @@ export function AppLockScreen({ method, onUnlock }: AppLockScreenProps) {
               ))}
             </div>
             <AppLockInput method={newMethod} value={newValue} onChange={setNewValue} autoFocus />
-            <div className="modal-actions">
+            <div className={`modal-actions ${modal_classes.actions}`}>
               <button type="button" className="secondary" onClick={() => setStep('rescueChoice')}>Back</button>
               <button type="button" onClick={continueNew} disabled={!newValue}>Continue</button>
             </div>
@@ -194,9 +198,9 @@ export function AppLockScreen({ method, onUnlock }: AppLockScreenProps) {
 
         {step === 'rescueConfirm' && (
           <>
-            <h2 className="mt-0">Confirm your new {newMethod}</h2>
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>Confirm your new {newMethod}</h2>
             <AppLockInput method={newMethod} value={newConfirmValue} onChange={setNewConfirmValue} autoFocus />
-            <div className="modal-actions">
+            <div className={`modal-actions ${modal_classes.actions}`}>
               <button type="button" className="secondary" onClick={() => { setStep('rescueNew'); setNewConfirmValue(''); }}>Back</button>
               <button type="button" onClick={finishNew} disabled={!newConfirmValue}>Save</button>
             </div>

@@ -1,4 +1,11 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { table_classes } from '../../styles/tables.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
+import * as stylex from '@stylexjs/stylex';
+import { button_styles } from '../../styles/iotm_button.stylex.ts';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
@@ -87,7 +94,7 @@ function SlotBalance({ value }: { value: string }) {
         return (
           <span key={i} style={{ overflow: 'hidden', height: '1em' }}>
             {isDigit
-              ? <span key={char} style={{ display: 'block', animation: 'slot-roll 0.22s cubic-bezier(0.2, 0, 0.2, 1)' }}>{char}</span>
+              ? <span key={char} {...stylex.props(button_styles.slot_digit)}>{char}</span>
               : char
             }
           </span>
@@ -310,27 +317,27 @@ function UnlockModal({ open, onClose, onUnlock, onSubscribe, subscribing }: {
     <Modal open={open} onClose={handleClose} className="slide">
       {step === 'choice' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <button className="option" onClick={startMath} style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <button className={`option ${button_classes.option}`} onClick={startMath} style={{ flexDirection: 'row', alignItems: 'center' }}>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <span className="option-label">Answer 5 math questions</span>
-              <span className="option-desc">for this session only</span>
+              <span className={`option-label ${button_classes.option_label}`}>Answer 5 math questions</span>
+              <span className={`option-desc ${button_classes.option_desc}`}>for this session only</span>
             </div>
             <ChevronRight />
           </button>
-          <button className="option" onClick={onSubscribe} disabled={subscribing} style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <button className={`option ${button_classes.option}`} onClick={onSubscribe} disabled={subscribing} style={{ flexDirection: 'row', alignItems: 'center' }}>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <span className="option-label">Subscribe for 50 INR every 2 weeks</span>
-              <span className="option-desc">{subscribing ? 'Taking you to MyPayIndia...' : 'That\'s just 0.0025 INR a minute! You\'ll make it back through the button!'}</span>
+              <span className={`option-label ${button_classes.option_label}`}>Subscribe for 50 INR every 2 weeks</span>
+              <span className={`option-desc ${button_classes.option_desc}`}>{subscribing ? 'Taking you to MyPayIndia...' : 'That\'s just 0.0025 INR a minute! You\'ll make it back through the button!'}</span>
             </div>
             <ExternalIcon />
           </button>
         </div>
       ) : (
         <div>
-          <p className="muted" style={{ marginTop: 0, fontSize: '0.875rem' }}>
+          <p className={`muted ${utility_classes.muted}`} style={{ marginTop: 0, fontSize: '0.875rem' }}>
             Solve all 5 questions to unlock the autoclicker. You get {QUESTION_SECONDS} seconds per question, and a single wrong answer (or running out of time) restarts everything. If you try cheating, you also restart. You cannot open DevTools or select the equation with this modal open. If the page loses focus (e.g., opening a calculator), 15 seconds are shaved off. Oh, and if you leave the button, you have to do this again. Have fun!
           </p>
-          <div className="row spread" style={{ alignItems: 'center', marginBottom: 8 }}>
+          <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--muted)' }}>
               Question {current + 1} of {questions.length}
             </span>
@@ -366,11 +373,11 @@ function UnlockModal({ open, onClose, onUnlock, onSubscribe, subscribing }: {
               />
             </Suspense>
             {error && (
-              <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className={`alert alert-error ${alert_classes.error}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <ErrorIcon /><span>{error}</span>
               </div>
             )}
-            <div className="btn-row">
+            <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
               <button type="button" className="secondary" onClick={reset}>
                 Go back and subscribe
               </button>
@@ -733,9 +740,9 @@ export default function IotmButtonPage() {
 
   return (
     <>
-      <h1 className="mt-0">Button</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Button</h1>
 
-      <div className="card" style={{ marginBottom: '1rem' }}>
+      <div className={`card ${card_classes.card}`} style={{ marginBottom: '1rem' }}>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <Skeleton height={14} style={{ width: '30%' }} />
@@ -823,8 +830,8 @@ export default function IotmButtonPage() {
             </div>
 
             <button
-              className="primary the_button"
-              style={{ '--payout-percentage': `${payoutPct}%`, width: '100%', padding: '14px 0', fontSize: '1.1rem' } as React.CSSProperties}
+              {...stylex.props(button_styles.button)}
+              style={{ '--payout-percentage': `${payoutPct}%`, padding: '14px 0', fontSize: '1.1rem' } as React.CSSProperties}
               onClick={handleButtonClick}
             >
               Button
@@ -833,13 +840,13 @@ export default function IotmButtonPage() {
             {(() => {
               if (connectionLost) return (
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span className="spinner" />
+                  <span className={`spinner ${utility_classes.spinner}`} />
                   Connection lost, waiting for reconnection...
                 </p>
               );
               if (desync) return (
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '12px 0 0', display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span className="spinner" />
+                  <span className={`spinner ${utility_classes.spinner}`} />
                   Syncing with the server... one moment
                 </p>
               );
@@ -909,7 +916,7 @@ export default function IotmButtonPage() {
       </div>
 
       {!loading && !error && (
-        <div className="card">
+        <div className={`card ${card_classes.card}`}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
             <h3 style={{ marginTop: 0, marginBottom: 0 }}>Clickerboard</h3>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
@@ -944,7 +951,7 @@ export default function IotmButtonPage() {
             <p style={{ fontSize: '0.875rem', color: 'var(--muted)', margin: '0 0 12px' }}>
               Active clickers:{' '}
               {activeUsers.size === 0
-                ? <span className="spinner" style={{ width: 13, height: 13, borderWidth: 2, verticalAlign: 'middle' }} />
+                ? <span className={`spinner ${utility_classes.spinner}`} style={{ width: 13, height: 13, borderWidth: 2, verticalAlign: 'middle' }} />
                 : <strong style={{ color: 'var(--fg)' }}>{activeUsers.size}</strong>
               }
             </p>
@@ -961,7 +968,7 @@ export default function IotmButtonPage() {
           )}
 
           <Modal open={showDotModal} onClose={() => setShowDotModal(false)} title="Active indicator">
-            <p className="mt-0 mb-0">A faint red dot appears between a user's rank and name when they are likely currently clicking.</p>
+            <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>A faint red dot appears between a user's rank and name when they are likely currently clicking.</p>
             <p>Activity is tracked across the last 5 snapshots. A new snapshot is taken automatically every 10 seconds or every 10 clicks you make. If someone's click count is higher in the most recent snapshot, they get the dot.</p>
             <p style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>The dot fades away automatically if their count stops increasing.<br></br>Like almost every gizmo in this page, it's all just an estimation.</p>
             <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
@@ -975,8 +982,8 @@ export default function IotmButtonPage() {
           </Modal>
 
           {leaderboard && leaderboard.entries.length > 0 ? (
-            <div className="table-wrap">
-              <table className="table">
+            <div className={`table-wrap ${table_classes.wrap}`}>
+              <table className={`table ${table_classes.table}`}>
                 <thead>
                   <tr>
                     <th>Rank</th>
@@ -1048,7 +1055,7 @@ export default function IotmButtonPage() {
           message={subQ.data?.subscribed
             ? 'The autoclicker does not run in the background.'
             : (
-              <p className="mt-0">
+              <p className={`mt-0 ${utility_classes.mt_0}`}>
                 The autoclicker is currently active! Your access will be forfeited, and you'll have to do all the math equations again.{' '}
                 <span
                   style={{ cursor: 'pointer', textDecoration: 'underline' }}
@@ -1069,14 +1076,14 @@ export default function IotmButtonPage() {
         onClose={() => { hideSet('iotm_welcome'); setShowWelcomeModal(false); }}
         title="Welcome to the MyPWAIndia button"
       >
-        <p className="mt-0">The MyPWAIndia button is a more polished and interactive version of the original. As in, more numbers and things flying around. <strong>Keep in mind:</strong></p>
+        <p className={`mt-0 ${utility_classes.mt_0}`}>The MyPWAIndia button is a more polished and interactive version of the original. As in, more numbers and things flying around. <strong>Keep in mind:</strong></p>
         <ul>
           <li>This is based on the same logic and players as the original</li>
           <li>All calculations, like time to surpass, active clickers, and distance are completely estimated - the server may differ</li>
           <li>An autoclicker is available to subscribers, or by solving 5 math equations</li>
         </ul>
         <p className="mb-0">Happy clicking!</p>
-        <div className="btn-row" style={{ marginTop: 16 }}>
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ marginTop: 16 }}>
           <button className="primary" onClick={() => { hideSet('iotm_welcome'); setShowWelcomeModal(false); }}>
             Okay
           </button>

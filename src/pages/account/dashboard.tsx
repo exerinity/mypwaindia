@@ -1,3 +1,9 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { table_classes } from '../../styles/tables.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { stat_classes } from '../../styles/stats.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useMemo, useState, useEffect, lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -27,7 +33,7 @@ function DisplayName({ account, mode }: { account: Account | null; mode: string 
   const displayMod = useLazyModule(() => import('../../utils/display.js'));
   return displayMod
     ? <>{displayMod.getDisplayName(account, mode)}</>
-    : <span className="spinner" style={{ verticalAlign: 'middle' }} />;
+    : <span className={`spinner ${utility_classes.spinner}`} style={{ verticalAlign: 'middle' }} />;
 }
 
 export default function DashboardPage() {
@@ -97,14 +103,14 @@ export default function DashboardPage() {
   if (!active) {
     return (
       <Suspense fallback={<ContentSkeleton />}>
-        <h1 className="mt-0">Welcome to the MyPayIndia PWA</h1>
-        <p className="mt-0 mb-0">You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
+        <h1 className={`mt-0 ${utility_classes.mt_0}`}>Welcome to the MyPayIndia PWA</h1>
+        <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
           You can navigate the app logged out, but to actually do anything, please <Link to="/i/flow/login" state={{ backgroundLocation: location }}>log in</Link>.
           If you don't have an account, you can <a href="https://mypayindia.com/auth/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
-        <div className="alert alert-info mb-2" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+        <div className={`alert alert-info mb-2 ${alert_classes.info} ${utility_classes.mb_2}`} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
           <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><BulbIcon /></span>
           <span style={{ flex: 1 }}>
-            <strong className="stat-label">Tip</strong><br></br>MyPWAIndia understands (most) MyPayIndia.com URL paths - so coming from <strong>mypayindia.com/account/transfers</strong> and replacing <strong>.com</strong> with <strong>.sbs</strong> will automatically take you to the right page!
+            <strong className={stat_classes.label}>Tip</strong><br></br>MyPWAIndia understands (most) MyPayIndia.com URL paths - so coming from <strong>mypayindia.com/account/transfers</strong> and replacing <strong>.com</strong> with <strong>.sbs</strong> will automatically take you to the right page!
           </span>
         </div>
         <AppFooter version={RELEASES[0].version} />
@@ -121,49 +127,49 @@ export default function DashboardPage() {
   const linksLoading = linksQ.loading && !linksQ.data;
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <h1 className="mt-0">{scambait ? 'Hello' : 'Welcome back'}, <DisplayName account={active} mode={settings.displayName} />{scambait ? '' : '!'}</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>{scambait ? 'Hello' : 'Welcome back'}, <DisplayName account={active} mode={settings.displayName} />{scambait ? '' : '!'}</h1>
 
-      <div className="grid cols-3 mb-2">
-        <div className="card stat-card">
-          <span className="stat-label">Balance</span>
-          <span className="stat-value">
+      <div className={`grid cols-3 mb-2 ${card_classes.grid_three} ${utility_classes.mb_2}`}>
+        <div className={`card ${stat_classes.card} ${card_classes.card}`}>
+          <span className={stat_classes.label}>Balance</span>
+          <span className={stat_classes.value}>
             {balanceLoading
-              ? <span className="spinner" style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
+              ? <span className={`spinner ${utility_classes.spinner}`} style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
               : format(balanceValue ?? 0)}
           </span>
-          <span className="stat-sub" style={{ color: weekChange > 0 ? 'var(--success)' : weekChange < 0 ? 'var(--alert-error)' : undefined }}>
+          <span className={stat_classes.sub} style={{ color: weekChange > 0 ? 'var(--success)' : weekChange < 0 ? 'var(--alert-error)' : undefined }}>
             {txLoading
-              ? <span className="spinner" style={{ width: 12, height: 12, borderWidth: 2, verticalAlign: 'middle' }} />
+              ? <span className={`spinner ${utility_classes.spinner}`} style={{ width: 12, height: 12, borderWidth: 2, verticalAlign: 'middle' }} />
               : `${weekChange > 0 ? '+' : weekChange < 0 ? '-' : ''}${format(Math.abs(weekChange))} this week`}
           </span>
         </div>
 
-        <div className="card stat-card">
-          <span className="stat-label">Transactions</span>
-          <span className="stat-value">
+        <div className={`card ${stat_classes.card} ${card_classes.card}`}>
+          <span className={stat_classes.label}>Transactions</span>
+          <span className={stat_classes.value}>
             {scambait
               ? 150 + ((Number(active?.id) * 31 + 127) % 850)
               : txLoading
-                ? <span className="spinner" style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
+                ? <span className={`spinner ${utility_classes.spinner}`} style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
                 : transactions.length}
           </span>
-          <span className="stat-sub">{scambait ? 'since 2017' : `with ${uniqueUserCount} different users`}</span>
+          <span className={stat_classes.sub}>{scambait ? 'since 2017' : `with ${uniqueUserCount} different users`}</span>
         </div>
 
-        <div className="card stat-card">
-          <span className="stat-label">{scambait ? 'Pending' : 'Active links'}</span>
-          <span className="stat-value">
+        <div className={`card ${stat_classes.card} ${card_classes.card}`}>
+          <span className={stat_classes.label}>{scambait ? 'Pending' : 'Active links'}</span>
+          <span className={stat_classes.value}>
             {scambait
               ? (Number(active?.id) * 13 + 3) % 6
               : linksLoading
-                ? <span className="spinner" style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
+                ? <span className={`spinner ${utility_classes.spinner}`} style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
                 : activeLinks.length}
           </span>
-          <span className="stat-sub">{scambait ? 'awaiting clearance' : `${links.length} total created`}</span>
+          <span className={stat_classes.sub}>{scambait ? 'awaiting clearance' : `${links.length} total created`}</span>
         </div>
       </div>
 
-      <div className="btn-row mb-2">
+      <div className={`btn-row mb-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mb_2}`}>
         {scambait ? (
           <>
             <Link to="/account/transfer" className="btn secondary">Transfer funds</Link>
@@ -182,10 +188,10 @@ export default function DashboardPage() {
       </div>
 
       {!hdHidden && !scambait && (
-        <div className="alert mb-2" style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+        <div className={`alert mb-2 ${alert_classes.alert} ${utility_classes.mb_2}`} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
           <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><BulbIcon /></span>
           <span style={{ flex: 1 }}>
-            <strong className="stat-label">Tip</strong><br></br>MyPWAIndia understands (most) MyPayIndia.com URL paths - so coming from <strong>mypayindia.com/account/transfers</strong> and replacing <strong>.com</strong> with <strong>.sbs</strong> will automatically take you to the right page!
+            <strong className={stat_classes.label}>Tip</strong><br></br>MyPWAIndia understands (most) MyPayIndia.com URL paths - so coming from <strong>mypayindia.com/account/transfers</strong> and replacing <strong>.com</strong> with <strong>.sbs</strong> will automatically take you to the right page!
           </span>
           <button
             className="btn ghost"
@@ -197,11 +203,11 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="card">
+      <div className={`card ${card_classes.card}`}>
         <h3 style={{ margin: '0 0 12px' }}>Recent activity</h3>
         {scambait ? (
-          <div className="table-wrap">
-            <table className="table">
+          <div className={`table-wrap ${table_classes.wrap}`}>
+            <table className={`table ${table_classes.table}`}>
               <thead>
                 <tr>
                   <th>Date</th>

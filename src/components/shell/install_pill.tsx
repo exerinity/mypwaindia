@@ -1,3 +1,4 @@
+import { shell_classes } from '../../styles/shell.stylex.ts';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
@@ -18,8 +19,8 @@ export function InstallPill() {
   if (settings.scambait || hidden || installed) return null;
 
   return (
-    <Link to="/i/how_pwa" className="pill clickable" style={{ textDecoration: 'none', color: 'inherit' }}>
-      <span className="pill-label">Install app</span>
+    <Link to="/i/how_pwa" className={`pill clickable ${shell_classes.pill_clickable}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <span className={`pill-label ${shell_classes.pill_label}`}>Install app</span>
     </Link>
   );
 }

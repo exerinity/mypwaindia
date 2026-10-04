@@ -1,4 +1,8 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
 import { useState, lazy, Suspense } from 'react';
+import { animation_classes } from '../../styles/animations.stylex.ts';
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
@@ -75,15 +79,15 @@ function GuideItem({ guide, borderBottom, open, onToggle }: { guide: Guide; bord
   return (
     <div style={{ borderBottom: borderBottom ? '1px solid var(--border)' : 'none', padding: '4px 0' }}>
       <button
-        className="release-summary"
+        className={`release-summary ${animation_classes.release_summary}`}
         onClick={onToggle}
         aria-expanded={open}
       >
         <strong>{guide.browser}</strong>
-        {guide.note && <span className="muted" style={{ fontSize: '0.85rem' }}>{guide.note}</span>}
+        {guide.note && <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>{guide.note}</span>}
       </button>
-      <div className={`release-body${open ? ' open' : ''}`}>
-        <div className="release-body-inner">
+      <div className={`release-body${open ? ' open' : ''} ${open ? animation_classes.release_body_open : animation_classes.release_body}`}>
+        <div className={`release-body-inner ${open ? animation_classes.release_body_inner_open : animation_classes.release_body_inner}`}>
           {guide.steps && (
             <ol style={{ marginTop: 6, marginBottom: 4 }}>
               {guide.steps.map((step, i) => <li key={i}>{step}</li>)}
@@ -129,19 +133,19 @@ export default function HowPwaPage() {
 
   return (
     <>
-      <h1 className="mt-0">Install the MyPayIndia PWA</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Install the MyPayIndia PWA</h1>
 
-      {installed && <p className="alert alert-success mt-0">You're already using the app as an installed PWA.</p>}
+      {installed && <p className={`alert alert-success mt-0 ${alert_classes.success} ${utility_classes.mt_0}`}>You're already using the app as an installed PWA.</p>}
 
-      <p className="mt-0 mb-0">The MyPayIndia PWA works best when installed as an app. Of course, you don't need to, but here are some general instructions on how depending on your browser/device:</p>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>The MyPayIndia PWA works best when installed as an app. Of course, you don't need to, but here are some general instructions on how depending on your browser/device:</p>
 
-      <p className="mt-0 mb-0">
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>
         <button type="button" onClick={handleTry}>Trigger install prompt</button>
-        {!available && <span className="muted" style={{ marginLeft: 8, fontSize: '0.875rem' }}>probably won't work</span>}
+        {!available && <span className={`muted ${utility_classes.muted}`} style={{ marginLeft: 8, fontSize: '0.875rem' }}>probably won't work</span>}
       </p>
 
-      <div className="card">
-        <p className="mt-0 mb-0">{GUIDES.length} instruction entries</p>
+      <div className={`card ${card_classes.card}`}>
+        <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>{GUIDES.length} instruction entries</p>
         {GUIDES.map((guide, i) => (
           <GuideItem
             key={guide.browser}
@@ -153,7 +157,7 @@ export default function HowPwaPage() {
         ))}
       </div>
       <h3>Already installed / don't care?</h3>
-      <p className="mt-0 mb-0">
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>
         <button className="secondary" onClick={hide} disabled={hidden}>
           Hide the install pill
         </button>
@@ -161,9 +165,9 @@ export default function HowPwaPage() {
 
       <Suspense fallback={null}>
         <Modal open={hideNotice} onClose={() => navigate('/')} title="Hidden">
-          <p className="mt-0 mb-0">The install pill is now hidden - to unhide it, go to <Link to="/settings/data">Settings &gt; Data control &gt; Hide stuff</Link></p>
+          <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>The install pill is now hidden - to unhide it, go to <Link to="/settings/data">Settings &gt; Data control &gt; Hide stuff</Link></p>
           <p>To return to this page, go to <a href="https://mypayindia.sbs/i/how_pwa" target="_blank" rel="noopener noreferrer">mypayindia.sbs/i/how_pwa</a></p>
-          <p className="mt-0 mb-0">
+          <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>
             <button onClick={() => navigate('/')}>Go home</button>
           </p>
         </Modal>

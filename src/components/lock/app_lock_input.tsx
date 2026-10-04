@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
 import type { AppLockMethod } from '../../utils/app_lock.ts';
 import { EyeIcon, EyeOffIcon } from '../ui/icons.tsx';
 
@@ -38,17 +39,17 @@ export function AppLockInput({ method, value, onChange, autoFocus }: AppLockInpu
     }
     return (
       <div className="app-lock-pin">
-        <div className="app-lock-pin-dots">
+        <div className={`app-lock-pin-dots ${app_lock_classes.pin_dots}`}>
           {Array.from({ length: Math.max(4, value.length) }).map((_, i) => (
-            <span key={i} className={`app-lock-pin-dot${i < value.length ? ' filled' : ''}`} />
+            <span key={i} className={`app-lock-pin-dot${i < value.length ? ' filled' : ''} ${i < value.length ? app_lock_classes.pin_dot_filled : app_lock_classes.pin_dot}`} />
           ))}
         </div>
-        <div className="app-lock-keypad">
+        <div className={`app-lock-keypad ${app_lock_classes.keypad}`}>
           {PAD_KEYS.map((k, i) => (
             <button
               key={i}
               type="button"
-              className={`app-lock-key${k === 'C' ? ' app-lock-key-clear' : ''}`}
+              className={`app-lock-key${k === 'C' ? ' app-lock-key-clear' : ''} ${k === 'C' ? app_lock_classes.key_clear : app_lock_classes.key}`}
               onClick={() => pressKey(k)}
               aria-label={k === 'C' ? 'Clear' : undefined}
             >
@@ -68,12 +69,12 @@ export function AppLockInput({ method, value, onChange, autoFocus }: AppLockInpu
     }
     return (
       <div className="app-lock-pattern">
-        <div className="app-lock-pattern-grid">
+        <div className={`app-lock-pattern-grid ${app_lock_classes.pattern_grid}`}>
           {PATTERN_DOTS.map((i) => (
             <button
               key={i}
               type="button"
-              className={`app-lock-pattern-dot${sequence.includes(i) ? ' active' : ''}`}
+              className={`app-lock-pattern-dot${sequence.includes(i) ? ' active' : ''} ${sequence.includes(i) ? app_lock_classes.pattern_dot_active : app_lock_classes.pattern_dot}`}
               onClick={() => toggleDot(i)}
               aria-label={`Pattern point ${i + 1}`}
             />

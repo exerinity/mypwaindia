@@ -1,3 +1,5 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { shell_classes } from '../../styles/shell.stylex.ts';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Account } from '../../context/auth_ctx.tsx';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
@@ -14,7 +16,7 @@ function DisplayName({ account, mode }: { account: Account | null; mode: string 
   const displayMod = useLazyModule(() => import('../../utils/display.js'));
   return displayMod
     ? <>{displayMod.getDisplayName(account, mode)}</>
-    : <span className="spinner" style={{ verticalAlign: 'middle' }} />;
+    : <span className={`spinner ${utility_classes.spinner}`} style={{ verticalAlign: 'middle' }} />;
 }
 
 export function AccountPill() {
@@ -28,6 +30,7 @@ export function AccountPill() {
   const [closing, setClosing] = useState(false);
   const [switching, setSwitching] = useState(false);
   const [removeTarget, setRemoveTarget] = useState<Account | null>(null);
+  const [hovered_account_id, set_hovered_account_id] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const dragStart = useRef<{ x: number; y: number } | null>(null);
   const suppressPillClick = useRef(false);
@@ -111,16 +114,16 @@ export function AccountPill() {
   if (!active) {
     return (
       <>
-        <Link to="/i/flow/login" state={{ backgroundLocation: location }} className="pill clickable" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <span className="pill-label">Not logged in - log in here</span>
+        <Link to="/i/flow/login" state={{ backgroundLocation: location }} className={`pill clickable ${shell_classes.pill_clickable}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <span className={`pill-label ${shell_classes.pill_label}`}>Not logged in - log in here</span>
         </Link>
         <a href="https://mypayindia.com/auth/register" target="_blank" rel="noopener noreferrer"
-          className="pill clickable" style={{ textDecoration: 'none', color: 'inherit', gap: '6px' }}>
-          <span className="pill-label">Sign up</span><ExternalIcon />
+          className={`pill clickable ${shell_classes.pill_clickable}`} style={{ textDecoration: 'none', color: 'inherit', gap: '6px' }}>
+          <span className={`pill-label ${shell_classes.pill_label}`}>Sign up</span><ExternalIcon />
         </a>
         <a href="https://mypayindia.com/" target="_blank" rel="noopener noreferrer"
-          className="pill clickable" style={{ textDecoration: 'none', color: 'inherit', gap: '6px' }}>
-          <span className="pill-label">Home</span><ExternalIcon />
+          className={`pill clickable ${shell_classes.pill_clickable}`} style={{ textDecoration: 'none', color: 'inherit', gap: '6px' }}>
+          <span className={`pill-label ${shell_classes.pill_label}`}>Home</span><ExternalIcon />
         </a>
       </>
     );
@@ -131,9 +134,9 @@ export function AccountPill() {
 
   return (
     <>
-      <div className="acct-dropdown" ref={ref}>
+      <div className={`acct-dropdown ${shell_classes.acct_dropdown}`} ref={ref}>
         <button
-          className="pill clickable"
+          className={`pill clickable ${shell_classes.pill_clickable}`}
           onMouseDown={(e) => {
             if (e.button !== 0 || (open && !closing)) return;
             dragStart.current = { x: e.clientX, y: e.clientY };
@@ -149,44 +152,45 @@ export function AccountPill() {
           aria-haspopup="menu"
           aria-expanded={open}
         >
-          <span className="pill-label">Logged in as</span>
+          <span className={`pill-label ${shell_classes.pill_label}`}>Logged in as</span>
           <strong><DisplayName account={active} mode={settings.displayName} /></strong>
-          <span className={`acct-chevron${open && !closing ? ' acct-chevron-open' : ''}`}><ChevronDown /></span>
+          <span className={`acct-chevron ${open && !closing ? `acct-chevron-open ${shell_classes.acct_chevron_open}` : shell_classes.acct_chevron}`}><ChevronDown /></span>
         </button>
 
         {(open || closing) && (
           <div
-            className={`acct-dropdown-menu${closing ? ' acct-dropdown-closing' : ''}`}
+            className={`acct-dropdown-menu ${closing ? `acct-dropdown-closing ${shell_classes.acct_dropdown_closing}` : shell_classes.acct_dropdown_menu}`}
             role="menu"
-            onAnimationEnd={() => { if (closing) { setClosing(false); setOpen(false); } }}
+            onAnimationEnd={() => { if (closing) { setClosing(false); setOpen(false); set_hovered_account_id(null); } }}
           >
-            <div className="acct-list">
+            <div className={`acct-list ${shell_classes.acct_list}`}>
               {accounts.map((acc) => {
                 const isActive = acc.id === active.id;
                 const balance = formatBalance(acc.lastBalance);
+                const show_check = isActive && hovered_account_id !== acc.id;
                 return (
-                  <div key={acc.id} className={`acct-item ${isActive ? 'active' : ''}`}>
+                  <div key={acc.id} className={`acct-item ${isActive ? `active ${shell_classes.acct_item_active}` : shell_classes.acct_item}`} onMouseEnter={() => set_hovered_account_id(acc.id)} onMouseLeave={() => set_hovered_account_id(null)}>
                     <button
-                      className="acct-switch-btn"
+                      className={`acct-switch-btn ${shell_classes.acct_switch_btn}`}
                       data-account-id={acc.id}
                       disabled={switching}
                       onClick={() => selectAccount(acc.id)}
                     >
-                      <span className="acct-info">
-                        <span className="acct-name">
+                      <span className={`acct-info ${shell_classes.acct_info}`}>
+                        <span className={`acct-name ${shell_classes.acct_name}`}>
                           {acc.firstName || acc.lastName
-                            ? <>{`${acc.firstName || ''} ${acc.lastName || ''}`.trim()}<span className="acct-handle"> @{acc.username}</span></>
+                            ? <>{`${acc.firstName || ''} ${acc.lastName || ''}`.trim()}<span className={`acct-handle ${shell_classes.acct_handle}`}> @{acc.username}</span></>
                             : acc.username}
                         </span>
-                        <span className="acct-meta">
-                          {acc.role && <span className="acct-badge">{acc.role}</span>}
-                          {acc.env === 'staging' && <span className="acct-badge acct-badge-staging">staging</span>}
-                          {balance && <span className="acct-balance">{balance}</span>}
+                        <span className={`acct-meta ${shell_classes.acct_meta}`}>
+                          {acc.role && <span className={`acct-badge ${shell_classes.acct_badge}`}>{acc.role}</span>}
+                          {acc.env === 'staging' && <span className={`acct-badge acct-badge-staging ${shell_classes.acct_badge_staging}`}>staging</span>}
+                          {balance && <span className={`acct-balance ${shell_classes.acct_balance}`}>{balance}</span>}
                         </span>
                       </span>
                     </button>
                     <button
-                      className={`acct-remove${isActive ? ' acct-remove-active' : ''}`}
+                      className={`acct-remove ${isActive ? `acct-remove-active ${shell_classes.acct_remove_active}` : shell_classes.acct_remove}`}
                       data-account-id={acc.id}
                       onClick={() => requestRemoveAccount(acc.id)}
                       aria-label={isOnlyAccount ? 'Log out' : `Remove ${acc.username}`}
@@ -194,8 +198,8 @@ export function AccountPill() {
                     >
                       {isOnlyAccount ? <LogoutIcon size={13} /> : (
                         <>
-                          <span className="acct-icon-check"><CheckIcon size={13} /></span>
-                          <span className="acct-icon-x"><CloseIcon size={13} /></span>
+                          <span className={`acct-icon-check ${show_check ? shell_classes.acct_icon_visible : shell_classes.acct_icon_hidden}`}><CheckIcon size={13} /></span>
+                          <span className={`acct-icon-x ${show_check ? shell_classes.acct_icon_hidden : shell_classes.acct_icon_visible}`}><CloseIcon size={13} /></span>
                         </>
                       )}
                     </button>
@@ -203,17 +207,17 @@ export function AccountPill() {
                 );
               })}
             </div>
-            <div className="acct-footer">
+            <div className={`acct-footer ${shell_classes.acct_footer}`}>
               {canAdd ? (
-                <Link to="/login" data-drag-route="/login" className="acct-add-btn" onClick={closeDropdown}>
+                <Link to="/login" data-drag-route="/login" className={`acct-add-btn ${shell_classes.acct_add_btn}`} onClick={closeDropdown}>
                   <PlusIcon size={13} /> Add an account
                 </Link>
               ) : (
-                <span className="acct-add-btn" style={{ color: 'var(--muted)', cursor: 'default' }}>
+                <span className={`acct-add-btn ${shell_classes.acct_add_btn}`} style={{ color: 'var(--muted)', cursor: 'default' }}>
                   Account limit at capacity ({maxAccounts})
                 </span>
               )}
-              <Link to="/logout" data-drag-route="/logout" className="acct-add-btn" onClick={closeDropdown}>
+              <Link to="/logout" data-drag-route="/logout" className={`acct-add-btn ${shell_classes.acct_add_btn}`} onClick={closeDropdown}>
                 Log out <LogoutIcon size={13} />
               </Link>
             </div>

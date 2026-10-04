@@ -1,3 +1,5 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
 import { Link } from 'react-router-dom';
 import { ExternalIcon } from '../../components/ui/icons.js';
 import { usePageTitle } from '../../hooks/page_title.js';
@@ -96,7 +98,7 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
 interface Package { name: string; version?: number; license?: string; url?: string }
 function PackageList({ packages }: { packages: Package[] }) {
   return (
-    <div className="card mb-2" style={{ padding: 0 }}>
+    <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} style={{ padding: 0 }}>
       {packages.map((pkg, i) => (
         <div
           key={pkg.name}
@@ -105,14 +107,14 @@ function PackageList({ packages }: { packages: Package[] }) {
             padding: '12px 16px',
           }}
         >
-          <div className="row spread" style={{ alignItems: 'baseline', gap: 8 }}>
+          <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'baseline', gap: 8 }}>
             <strong>
               {pkg.url
                 ? <a href={pkg.url} target="_blank" rel="noopener noreferrer">{pkg.name}</a>
                 : pkg.name}
-              {pkg.version && <>{' '}<span className="muted" style={{ fontWeight: 400, fontSize: '0.85rem' }}>v{pkg.version}</span></>}
+              {pkg.version && <>{' '}<span className={`muted ${utility_classes.muted}`} style={{ fontWeight: 400, fontSize: '0.85rem' }}>v{pkg.version}</span></>}
             </strong>
-            {pkg.license && <span className="muted" style={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}>{pkg.license}</span>}
+            {pkg.license && <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}>{pkg.license}</span>}
           </div>
         </div>
       ))}
@@ -124,14 +126,14 @@ export default function AcknowledgementsPage() {
   usePageTitle('Acknowledgements');
   return (
     <>
-      <h1 className="mt-0">Acknowledgements, about and credits</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Acknowledgements, about and credits</h1>
 
-      <p className="mt-0 mb-0">The second incarnation of the MyPayIndia PWA ("MyPWAIndia", "MyReactPWAIndia") is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (excl <Link to="/iotm/button">the button</Link>). The first incarnation was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 debuted. <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>View the source for this app <ExternalIcon size={12} /></a></p>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>The second incarnation of the MyPayIndia PWA ("MyPWAIndia", "MyReactPWAIndia") is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (excl <Link to="/iotm/button">the button</Link>). The first incarnation was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 debuted. <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>View the source for this app <ExternalIcon size={12} /></a></p>
 
-      <p className="mt-0 mb-0">This is a list of everything and everybody who made it possible:</p>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>This is a list of everything and everybody who made it possible:</p>
 
       <h2>This app is programmed entirely by...</h2>
-      <div className="card mb-2" style={{ padding: 0 }}>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} style={{ padding: 0 }}>
         {DEVELOPERS.map((dev, i) => (
           <div
             key={dev.name}
@@ -150,7 +152,7 @@ export default function AcknowledgementsPage() {
       </div>
 
       <h2>with thanks to...</h2>
-      <div className="card mb-2" style={{ padding: 0 }}>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} style={{ padding: 0 }}>
         {THX.map((person, i) => (
           <div
             key={person.name}
@@ -164,13 +166,13 @@ export default function AcknowledgementsPage() {
                 ? <a href={person.url} target="_blank" rel="noopener noreferrer">{person.name}</a>
                 : person.name}
             </strong>
-            <p className="muted" style={{ margin: '4px 0 0', fontSize: '0.875rem' }}>{person.idea}</p>
+            <p className={`muted ${utility_classes.muted}`} style={{ margin: '4px 0 0', fontSize: '0.875rem' }}>{person.idea}</p>
           </div>
         ))}
       </div>
 
       <h2>taking inspiration from...</h2>
-      <div className="card mb-2" style={{ padding: 0 }}>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} style={{ padding: 0 }}>
         {INSPIRATIONS.map((person, i) => (
           <div
             key={person.name}
@@ -184,7 +186,7 @@ export default function AcknowledgementsPage() {
                 ? <a href={person.url} target="_blank" rel="noopener noreferrer">{person.name}</a>
                 : person.name}
             </strong>
-            <p className="muted" style={{ margin: '4px 0 0', fontSize: '0.875rem' }}>{person.idea}</p>
+            <p className={`muted ${utility_classes.muted}`} style={{ margin: '4px 0 0', fontSize: '0.875rem' }}>{person.idea}</p>
           </div>
         ))}
       </div>
@@ -196,7 +198,7 @@ export default function AcknowledgementsPage() {
           <PackageList packages={group.packages} />
         </div>
       ))}
-      <p className="mt-0 mb-0"><a href="https://github.com/exerinity/mypwaindia/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>MyPWAIndia is open-source under the MIT license <ExternalIcon size={12} /></a></p>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}><a href="https://github.com/exerinity/mypwaindia/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>MyPWAIndia is open-source under the MIT license <ExternalIcon size={12} /></a></p>
       <a href="/i/exquisite_imagery/IMG_5620.JPEG" target="_blank" rel="noopener noreferrer">
         <img src="/i/exquisite_imagery/IMG_5620.JPEG" style={{ maxWidth: '30%' }} />
       </a>

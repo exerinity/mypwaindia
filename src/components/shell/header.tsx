@@ -1,3 +1,4 @@
+import { shell_classes } from '../../styles/shell.stylex.ts';
 import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { HamburgerIcon } from '../ui/icons.tsx';
@@ -9,19 +10,19 @@ const InstallPill = lazy(() => import('./install_pill.tsx').then((m) => ({ defau
 
 export function Header({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   return (
-    <header className="mpi-header">
-      <div className="mpi-header-row">
+    <header className={`mpi-header ${shell_classes.mpi_header}`}>
+      <div className={`mpi-header-row ${shell_classes.mpi_header_row}`}>
         <button
-          className="hamburger-btn"
+          className={`hamburger-btn ${shell_classes.hamburger_btn}`}
           onClick={onToggleSidebar}
           aria-label="Open navigation menu"
         >
           <HamburgerIcon />
         </button>
-        <Link to="/dash" aria-label="Go to dashboard"><Suspense fallback={null}><Logo /></Suspense></Link>
-        <div className="mpi-header-spacer" />
+        <Link to="/dash" aria-label="Go to dashboard"><Suspense fallback={null}><Logo className={`mpi-header-logo ${shell_classes.mpi_header_logo}`} /></Suspense></Link>
+        <div className={`mpi-header-spacer ${shell_classes.mpi_header_spacer}`} />
       </div>
-      <div className="mpi-pills" role="status" aria-live="polite">
+      <div className={`mpi-pills ${shell_classes.mpi_pills}`} role="status" aria-live="polite">
         <Suspense fallback={null}>
           <AccountPill />
           <BalancePill />

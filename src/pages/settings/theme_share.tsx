@@ -2,6 +2,7 @@ import { useSettings, CUSTOM_VAR_KEYS } from '../../context/settings_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
 import { normalizeHex } from '../../utils/colors.js';
 import { effectivePalette } from './theme_presets.ts';
+import { theme_panel_classes } from '../../styles/theme_panel.stylex.ts';
 
 export function ThemeShareRow() {
   const { settings, update } = useSettings();
@@ -60,10 +61,10 @@ export function ThemeShareRow() {
   }
 
   return (
-    <div className="btn-row">
-      <button className="secondary compact" onClick={exportFile}>Export file</button>
-      <button className="secondary compact" onClick={importFile}>Import file</button>
-      <button className="secondary compact" onClick={generateLink}>Generate link</button>
+    <div className={`btn-row ${theme_panel_classes.tp_share_row}`}>
+      <button className={`secondary compact ${theme_panel_classes.tp_share_button}`} onClick={exportFile}>Export file</button>
+      <button className={`secondary compact ${theme_panel_classes.tp_share_button}`} onClick={importFile}>Import file</button>
+      <button className={`secondary compact ${theme_panel_classes.tp_share_button}`} onClick={generateLink}>Generate link</button>
     </div>
   );
 }

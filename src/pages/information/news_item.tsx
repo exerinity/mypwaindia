@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { news_classes } from '../../styles/news.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
 import { Link, useParams } from 'react-router-dom';
 import { useCachedQuery } from '../../hooks/cached_query.js';
 import { usePageTitle } from '../../hooks/page_title.js';
@@ -17,12 +20,12 @@ export default function NewsItemPage() {
 
   return (
     <>
-      <p className="mt-0 mb-0">
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>
         <Link to="/i/news" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><ArrowLeftIcon /> Back to news</Link>
       </p>
 
       {loading && !data ? (
-        <div className="card mb-2">
+        <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
           <Skeleton width={280} height={26} />
           <Skeleton width={120} height={13} style={{ marginTop: 10 }} />
           <Skeleton width="100%" height={100} style={{ marginTop: 16 }} />
@@ -32,14 +35,14 @@ export default function NewsItemPage() {
       ) : !item ? (
         <Flowback />
       ) : (
-        <div className="card mb-2">
-          <div className="row spread" style={{ alignItems: 'baseline', gap: 8 }}>
+        <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+          <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'baseline', gap: 8 }}>
             <h1 style={{ margin: 0 }}>{item.title}</h1>
-            {item.pubDate && <span className="muted" style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>{formatNewsDate(item.pubDate)}</span>}
+            {item.pubDate && <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>{formatNewsDate(item.pubDate)}</span>}
           </div>
-          <RichHtml className="news-body" html={item.description} />
+          <RichHtml className={`news-body ${news_classes.body}`} html={item.description} />
           {item.link && (
-            <a href={item.link} target="_blank" rel="noopener noreferrer" className="muted" style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: '0.8rem', marginTop: 4 }}>
+            <a href={item.link} target="_blank" rel="noopener noreferrer" className={`muted ${utility_classes.muted}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: '0.8rem', marginTop: 4 }}>
               View on MyPayIndia.com <ExternalIcon size={12} />
             </a>
           )}

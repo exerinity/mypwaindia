@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
+import { alert_classes } from '../styles/alerts.stylex.ts';
+import { toast_classes } from '../styles/toasts.stylex.ts';
 import type { ReactNode } from 'react';
 import { CloseIcon, InfoIcon, SuccessIcon, ErrorIcon, WarningIcon } from '../components/ui/icons.tsx';
 
@@ -123,20 +125,20 @@ function ToastContainer({ toasts, onClose, onPause, onResume }: {
 }) {
   if (!toasts.length) return null;
   return (
-    <div className="toast-container" role="status" aria-live="polite">
+    <div className={`toast-container ${toast_classes.container}`} role="status" aria-live="polite">
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`alert alert-${t.kind} toast${t.leaving ? ' toast-leaving' : ''}`}
+          className={`alert alert-${t.kind} toast${t.leaving ? ' toast-leaving' : ''} ${alert_classes[t.kind]} ${t.leaving ? toast_classes.toast_leaving : toast_classes.toast}`}
           onMouseEnter={() => onPause(t.id)}
           onMouseLeave={() => onResume(t.id)}
         >
           {(() => { const Icon = KIND_ICON[t.kind]; return <Icon size={16} />; })()}
           <span>{t.message}</span>
           {t.action && (
-            <button className="toast-action" onClick={t.action.onClick}>{t.action.label}</button>
+            <button className={`toast-action ${toast_classes.action}`} onClick={t.action.onClick}>{t.action.label}</button>
           )}
-          <button className="toast-x" onClick={() => onClose(t.id)} aria-label="Close"><CloseIcon size={14} /></button>
+          <button className={`toast-x ${toast_classes.close}`} onClick={() => onClose(t.id)} aria-label="Close"><CloseIcon size={14} /></button>
         </div>
       ))}
     </div>

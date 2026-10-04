@@ -1,3 +1,5 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { modal_classes } from '../../styles/modal.stylex.ts';
 import type { ReactNode } from 'react';
 import { lazy, Suspense } from 'react';
 
@@ -27,8 +29,8 @@ export function ConfirmModal({
     <Suspense fallback={null}>
       <Modal open={open} onClose={onClose} title={title} fullscreen={fullscreen} className={className}>
         <div>
-          {typeof message === 'string' ? <p className="mt-0">{message}</p> : message}
-          <div className="modal-actions">
+          {typeof message === 'string' ? <p className={`mt-0 ${utility_classes.mt_0}`}>{message}</p> : message}
+          <div className={`modal-actions ${modal_classes.actions}`}>
             <button className="secondary" onClick={onClose}>{cancelLabel}</button>
             {holdConfirm ? (
               <Suspense fallback={<button className={danger ? 'danger' : ''} disabled>{confirmLabel}</button>}>

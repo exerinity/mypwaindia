@@ -5,7 +5,7 @@ import { CliTerminal } from './cli_terminal.tsx';
 import { TerminalIcon, ChevronDown, CloseIcon, ExternalIcon } from '../ui/icons.tsx';
 import { clearLines, consumeDrawerOpenRequest, CLI_DRAWER_OPEN_EVENT } from '../../utils/cli_store.ts';
 import { announceDrawerOpen, announceDrawerClosed, subscribeDrawers, getOpenDrawer } from '../../utils/drawer_bus.ts';
-import '../../styles/cli_drawer.css';
+import { cli_drawer_classes } from '../../styles/cli_drawer.stylex.ts';
 
 const CLOSE_MS = 200;
 
@@ -87,7 +87,7 @@ export function CliDrawer() {
   return (
     <>
       <button
-        className={`cli-launcher${launcherOut ? ' cli-launcher--out' : ''}`}
+        className={`cli-launcher${launcherOut ? ' cli-launcher--out' : ''} ${launcherOut ? cli_drawer_classes.launcher_out : cli_drawer_classes.launcher}`}
         onClick={openDrawer}
         title="Open MyCLiIndia"
         aria-label="Open MyCLiIndia"
@@ -98,19 +98,19 @@ export function CliDrawer() {
       </button>
 
       {open && !hidden && (
-        <div className={`cli-drawer${minimized ? ' cli-drawer--min' : ''}${closing ? ' cli-drawer--closing' : ''}`}>
+        <div className={`cli-drawer${minimized ? ' cli-drawer--min' : ''}${closing ? ' cli-drawer--closing' : ''} ${closing ? cli_drawer_classes.drawer_closing : cli_drawer_classes.drawer}`}>
           <div
-            className="cli-drawer-header"
+            className={`cli-drawer-header ${minimized ? cli_drawer_classes.header_minimized : cli_drawer_classes.header}`}
             onClick={() => { if (minimized) setMinimized(false); }}
           >
-            <span className="cli-drawer-icon"><TerminalIcon size={17} /></span>
-            <span className="cli-drawer-title">MyCLiIndia</span>
-            <div className="cli-drawer-actions" onClick={(e) => e.stopPropagation()}>
-              <button className="cli-drawer-btn cli-drawer-btn--text" onClick={clearLines} title="Clear terminal history">
+            <span className={`cli-drawer-icon ${cli_drawer_classes.icon}`}><TerminalIcon size={17} /></span>
+            <span className={`cli-drawer-title ${cli_drawer_classes.title}`}>MyCLiIndia</span>
+            <div className={`cli-drawer-actions ${cli_drawer_classes.actions}`} onClick={(e) => e.stopPropagation()}>
+              <button className={`cli-drawer-btn cli-drawer-btn--text ${cli_drawer_classes.button_text}`} onClick={clearLines} title="Clear terminal history">
                 CLEAR
               </button>
               <button
-                className="cli-drawer-btn"
+                className={`cli-drawer-btn ${cli_drawer_classes.button}`}
                 onClick={() => { closeDrawer(); navigate('/i/command'); }}
                 title="Open the full page"
                 aria-label="Open the full page"
@@ -118,7 +118,7 @@ export function CliDrawer() {
                 <ExternalIcon size={16} />
               </button>
               <button
-                className={`cli-drawer-btn${minimized ? ' cli-drawer-btn--flip' : ''}`}
+                className={`cli-drawer-btn${minimized ? ' cli-drawer-btn--flip' : ''} ${minimized ? cli_drawer_classes.button_flip : cli_drawer_classes.button}`}
                 onClick={() => setMinimized((m) => !m)}
                 title={minimized ? 'Expand' : 'Minimize'}
                 aria-label={minimized ? 'Expand' : 'Minimize'}
@@ -126,7 +126,7 @@ export function CliDrawer() {
                 <ChevronDown size={18} />
               </button>
               <button
-                className="cli-drawer-btn"
+                className={`cli-drawer-btn ${cli_drawer_classes.button}`}
                 onClick={closeDrawer}
                 title="Close"
                 aria-label="Close"
@@ -135,7 +135,7 @@ export function CliDrawer() {
               </button>
             </div>
           </div>
-          <div className="cli-drawer-body">
+          <div className={`cli-drawer-body ${minimized ? cli_drawer_classes.body_minimized : cli_drawer_classes.body}`}>
             <CliTerminal variant="drawer" active={!minimized && !closing} onExit={closeDrawer} />
           </div>
         </div>

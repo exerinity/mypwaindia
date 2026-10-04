@@ -1,3 +1,7 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { animation_classes } from '../../styles/animations.stylex.ts';
+import { shell_classes } from '../../styles/shell.stylex.ts';
 import { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
@@ -11,6 +15,8 @@ import { THEME_PANEL_OPEN_EVENT } from '../../utils/theme_panel_store.ts';
 import { RELEASES } from '../../pages/information/release_notes.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { HeaderSkeleton, SidebarSkeleton } from './app_skeleton.tsx';
+import { agent_classes } from '../../styles/agent.stylex.ts';
+import { layout_classes } from '../../styles/layout.stylex.ts';
 
 const Header = lazy(() => import('./header.tsx').then((m) => ({ default: m.Header })));
 const Sidebar = lazy(() => import('./sidebar.tsx').then((m) => ({ default: m.Sidebar })));
@@ -178,44 +184,44 @@ export function AppLayout() {
 
   return (
     <>
-    <div className="mpi-shell">
+    <div className={`${location.pathname.startsWith('/settings/') ? shell_classes.mpi_shell_settings : shell_classes.mpi_shell}`}>
       {settings.swEnabled && (
         <ServiceWorkerUpdater autoUpdate={settings.autoUpdate} toast={toast} syncLastVersion={syncLastVersion} />
       )}
-      <div className="mpi-sticky-top" ref={stickyTopRef}>
+      <div className={`mpi-sticky-top ${shell_classes.mpi_sticky_top}`} ref={stickyTopRef}>
         <Suspense fallback={<HeaderSkeleton />}>
           <Header onToggleSidebar={() => setOpen((o) => !o)} />
-          <div className="verification-banner-stack">
+          <div className={`verification-banner-stack ${shell_classes.verification_banner_stack}`}>
             {switchingTo && (
-              <div className="verification-banner banner-elev" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span className="spinner" /> Switching to {displayMod ? displayMod.getDisplayName(switchingTo, settings.displayName) : switchingTo.username}, one moment...
+              <div className={`verification-banner banner-elev ${alert_classes.banner_elev}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span className={`spinner ${utility_classes.spinner}`} /> Switching to {displayMod ? displayMod.getDisplayName(switchingTo, settings.displayName) : switchingTo.username}, one moment...
               </div>
             )}
             <VerificationBanner />
             {restrictionList.length > 0 && (
-              <div className="verification-banner banner-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className={`verification-banner banner-error ${alert_classes.banner_error}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <WarningIcon />Your account is currently restricted:{' '}
                 {restrictionsMod ? restrictionList.map(([k]) => restrictionsMod.getRestrictionInfo(k).title).join(', ') : ''}.
                 {' '}<Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className="link">More...</Link>
               </div>
             )}
             {active && !settings.scambait && storageGet<number>(KEYS.ONBOARD, 0) !== 1 && (
-              <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className={`verification-banner ${alert_classes.banner}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <WarningIcon /> Please read and accept the onboarding message. Once you do, this message will be hidden. <Link to="/i/onboarding" className="link">Open...</Link>
               </div>
             )}
             {sessionExpired && (
-              <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className={`verification-banner ${alert_classes.banner}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <LoginIcon /> Your session has expired. <Link to="/i/sessions" className="link">Reinitialize the session...</Link> <Link to="/logout" state={{ backgroundLocation: location }}>Log out of the app...</Link>
               </div>
             )}
             {fetchFailed && (
-              <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className={`verification-banner ${alert_classes.banner}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <WarningIcon /> Retrieving data failed: either the server did not respond or your session has expired. Data displayed may be out of date. <Link to="/i/connecttest" className="link">Troubleshoot...</Link> <a href="https://status.mypayindia.com" target="_blank">Status page...</a>
               </div>
             )}
             {!isOnline && (
-              <div className="verification-banner" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div className={`verification-banner ${alert_classes.banner}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <WarningIcon /> You are offline. To do most things, you need to be connected to the internet. <Link to="/i/connecttest" className="link">Diagnose...</Link>
               </div>
             )}
@@ -223,18 +229,18 @@ export function AppLayout() {
           </div>
         </Suspense>
       </div>
-      <div className="mpi-body">
+      <div className={`mpi-body ${location.pathname.startsWith('/settings/') ? layout_classes.body_settings : layout_classes.body}`}>
         <Suspense fallback={<SidebarSkeleton />}>
           <Sidebar open={open} onClose={() => setOpen(false)} />
         </Suspense>
-        <main className="mpi-main">
-          <div className="mpi-wrap">
+        <main className={`mpi-main ${location.pathname.startsWith('/settings/') ? layout_classes.main_settings : layout_classes.main}${location.pathname === '/i/agent' ? ` ${agent_classes.layout_container}` : ''}`}>
+          <div className={`mpi-wrap ${location.pathname.startsWith('/settings/') ? layout_classes.wrap_settings : layout_classes.wrap}${location.pathname === '/i/agent' ? ` ${agent_classes.layout_container}` : ''}`}>
             <Suspense fallback={
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>
-                <span className="skeleton" style={{ height: 28, width: '38%', borderRadius: 6 }} />
-                <span className="skeleton" style={{ height: 16, width: '65%' }} />
-                <span className="skeleton" style={{ height: 16, width: '50%' }} />
-                <span className="skeleton" style={{ height: 16, width: '58%', marginTop: 8 }} />
+                <span className={`skeleton ${animation_classes.skeleton}`} style={{ height: 28, width: '38%', borderRadius: 6 }} />
+                <span className={`skeleton ${animation_classes.skeleton}`} style={{ height: 16, width: '65%' }} />
+                <span className={`skeleton ${animation_classes.skeleton}`} style={{ height: 16, width: '50%' }} />
+                <span className={`skeleton ${animation_classes.skeleton}`} style={{ height: 16, width: '58%', marginTop: 8 }} />
               </div>
             }><Outlet /></Suspense>
           </div>
@@ -250,7 +256,7 @@ export function AppLayout() {
           danger={false}
           confirmLabel="Continue"
           message={
-            <p className="mt-0">
+            <p className={`mt-0 ${utility_classes.mt_0}`}>
               You are about to enable scambait mode. Please read this properly so you know what you're walking into.<br /><br />Enabling scambait mode will transform the app into a more legitimate-looking app for... scambaiting. It hides certain unrealistic things a scammer may raise an eyebrow to and changes other things completely.
               <br /><br />
               If you do not intend on convincing phone scammers that you are attempting to use MyPayIndia for payments and having them connect to your computer nor are doing any scambaiting, you should leave this setting alone.

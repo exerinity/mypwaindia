@@ -1,3 +1,4 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';
@@ -30,8 +31,8 @@ export default function SimpleHistoryPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <h1 className="mt-0">Simple history</h1>
-      <p className="muted" style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Simple history</h1>
+      <p className={`muted ${utility_classes.muted}`} style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
         Back to <Link to="/account/history">transaction history</Link>?
       </p>
 

@@ -2,6 +2,7 @@ import type { ComponentType } from 'react';
 import { lazy, Suspense, useState, useSyncExternalStore } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
+import { layout_classes } from '../../styles/layout.stylex.ts';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import {
@@ -86,6 +87,7 @@ const NAV_GROUPS: NavGroup[] = [
 
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const location = useLocation();
+  const settings_layout = location.pathname.startsWith('/settings/');
   const { settings } = useSettings();
   const { active } = useAuth();
   const scambait = settings.scambait;
@@ -104,16 +106,16 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
   return (
     <>
       <div
-        className={`mpi-sidebaroverlay ${open ? 'open' : ''}`}
+        className={`mpi-sidebaroverlay ${open ? `open ${layout_classes.overlay_open}` : layout_classes.overlay}`}
         onClick={onClose}
         aria-hidden="true"
       />
-      <aside className={`mpi-sidebar ${open ? 'open' : ''}`} aria-label="Main navigation">
-        <div className="mpi-sidebarmobile-header">
+      <aside className={`mpi-sidebar ${open ? 'open ' : ''}${settings_layout ? (open ? layout_classes.sidebar_settings_open : layout_classes.sidebar_settings) : (open ? layout_classes.sidebar_open : layout_classes.sidebar)}`} aria-label="Main navigation">
+        <div className={`mpi-sidebarmobile-header ${layout_classes.mobile_header}`}>
           <Suspense fallback={null}>
-            <Logo height={32} className="mpi-sidebarlogo" />
+            <Logo height={32} className={`mpi-sidebarlogo ${layout_classes.sidebar_logo}`} />
           </Suspense>
-          <button className="mpi-sidebarclose-btn" onClick={onClose} aria-label="Close menu">
+          <button className={`mpi-sidebarclose-btn ${layout_classes.close_btn}`} onClick={onClose} aria-label="Close menu">
             <CloseIcon />
           </button>
         </div>
@@ -137,16 +139,16 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
             <div key={group.title}>
               <button
                 type="button"
-                className="mpi-sidebar-group-toggle"
+                className={`mpi-sidebar-group-toggle ${layout_classes.group_toggle}`}
                 onClick={() => toggleGroup(group.title)}
                 aria-expanded={!isCollapsed}
               >
-                <h4>{displayTitle}</h4>
-                <span className={`mpi-sidebar-group-chevron${isCollapsed ? ' collapsed' : ''}`}>
+                <h4 className={layout_classes.group_title}>{displayTitle}</h4>
+                <span className={`mpi-sidebar-group-chevron ${isCollapsed ? `collapsed ${layout_classes.group_chevron_collapsed}` : layout_classes.group_chevron}`}>
                   <ChevronDown size={13} />
                 </span>
               </button>
-              <div className={`links${isCollapsed ? ' mpi-sidebar-group-links--collapsed' : ''}`}>
+              <div className={`links ${isCollapsed ? `mpi-sidebar-group-links--collapsed ${layout_classes.links_collapsed}` : layout_classes.links}`}>
                 {visibleItems.map((item) => {
                   const Icon = item.icon;
                   const label = !active && item.loggedOutLabel ? item.loggedOutLabel : item.label;
@@ -159,6 +161,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={onClose}
+                        className={layout_classes.link}
                       >
                         {iconNode}
                         <span>{label}</span>
@@ -173,8 +176,8 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                       end={item.end}
                       onClick={onClose}
                       className={({ isActive }) => {
-                        if (!isActive) return '';
-                        return location.pathname === item.to ? 'active' : 'active active-parent';
+                        if (!isActive) return layout_classes.link;
+                        return location.pathname === item.to ? `active ${layout_classes.link_active}` : `active active-parent ${layout_classes.link_active_parent}`;
                       }}
                     >
                       {iconNode}

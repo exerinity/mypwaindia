@@ -1,3 +1,7 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { stat_classes } from '../../styles/stats.stylex.ts';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
@@ -30,9 +34,9 @@ export default function ShopOrderPage() {
 function OrderView({ id, auth, username }: { id: number; auth: AuthOpts; username: string }) {
   const resource = use_profile_resource(() => get_shop_order(auth, id), `${id}:${auth.env}:${auth.token}`);
   return <div>
-    <h1 className="mt-0">Shop order</h1>
+    <h1 className={`mt-0 ${utility_classes.mt_0}`}>Shop order</h1>
     <ErrorBox error={resource.error} />
-    <div className="btn-row"><button className="secondary" disabled={resource.loading} onClick={resource.reload}>Refresh order</button></div>
+    <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" disabled={resource.loading} onClick={resource.reload}>Refresh order</button></div>
     {resource.loading && <LoadingRow />}
     {resource.data && <OrderDetails key={JSON.stringify(resource.data)} order={resource.data} auth={auth} username={username} on_change={resource.reload} />}
   </div>;
@@ -65,40 +69,40 @@ function OrderDetails({ order, auth, username, on_change }: { order: ShopOrder; 
     finally { set_busy(false); }
   }
 
-  return <article className="card mb-2">
+  return <article className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
     <ErrorBox error={error} />
-    <h3 className="mt-0">{order.item_name ?? `Order ${order.id}`}</h3>
-    <div className="stat-sub">{order.order_id ?? `Order ${order.id}`}</div>
-    <div className="grid cols-2 mt-2 mb-2">
-      <div><div className="stat-label">Status</div><div>{order.status.replace('_', ' ')}</div></div>
-      {order.created && <div><div className="stat-label">Placed</div><time dateTime={order.created}>{new Date(order.created).toLocaleString()}</time></div>}
-      {order.buyer && <div><div className="stat-label">Buyer</div><Link to={profile_path(order.buyer)}>@{order.buyer}</Link></div>}
-      {order.seller && <div><div className="stat-label">Seller</div><Link to={profile_path(order.seller)}>@{order.seller}</Link></div>}
-      {order.recipient && <div><div className="stat-label">Gift recipient</div><Link to={profile_path(order.recipient)}>@{order.recipient}</Link></div>}
-      {order.quantity != null && <div><div className="stat-label">Quantity</div><div>{order.quantity}</div></div>}
-      {order.subtotal != null && <div><div className="stat-label">Subtotal</div><div>{formatINR(order.subtotal)}</div></div>}
-      {order.discount_code && <div><div className="stat-label">Discount ({order.discount_code})</div><div>{formatINR(order.discount_amount ?? 0)}</div></div>}
-      {order.total != null && <div className="stat-card"><span className="stat-label">Total</span><span className="stat-value">{formatINR(order.total)}</span></div>}
+    <h3 className={`mt-0 ${utility_classes.mt_0}`}>{order.item_name ?? `Order ${order.id}`}</h3>
+    <div className={stat_classes.sub}>{order.order_id ?? `Order ${order.id}`}</div>
+    <div className={`grid cols-2 mt-2 mb-2 ${card_classes.grid_two} ${utility_classes.mt_2} ${utility_classes.mb_2}`}>
+      <div><div className={stat_classes.label}>Status</div><div>{order.status.replace('_', ' ')}</div></div>
+      {order.created && <div><div className={stat_classes.label}>Placed</div><time dateTime={order.created}>{new Date(order.created).toLocaleString()}</time></div>}
+      {order.buyer && <div><div className={stat_classes.label}>Buyer</div><Link to={profile_path(order.buyer)}>@{order.buyer}</Link></div>}
+      {order.seller && <div><div className={stat_classes.label}>Seller</div><Link to={profile_path(order.seller)}>@{order.seller}</Link></div>}
+      {order.recipient && <div><div className={stat_classes.label}>Gift recipient</div><Link to={profile_path(order.recipient)}>@{order.recipient}</Link></div>}
+      {order.quantity != null && <div><div className={stat_classes.label}>Quantity</div><div>{order.quantity}</div></div>}
+      {order.subtotal != null && <div><div className={stat_classes.label}>Subtotal</div><div>{formatINR(order.subtotal)}</div></div>}
+      {order.discount_code && <div><div className={stat_classes.label}>Discount ({order.discount_code})</div><div>{formatINR(order.discount_amount ?? 0)}</div></div>}
+      {order.total != null && <div className={stat_classes.card}><span className={stat_classes.label}>Total</span><span className={stat_classes.value}>{formatINR(order.total)}</span></div>}
     </div>
-    {order.selections?.map((selection) => <div className="stat-sub" key={selection.key}>{selection.label}: {String(selection.value)} (+{formatINR(selection.price)})</div>)}
-    <div className="btn-row">
+    {order.selections?.map((selection) => <div className={stat_classes.sub} key={selection.key}>{selection.label}: {String(selection.value)} (+{formatINR(selection.price)})</div>)}
+    <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
       {order.transaction_id && <Link className="btn secondary" to={`/i/flow/transaction/${encodeURIComponent(order.transaction_id)}`}>Payment transaction</Link>}
       {order.refund_transaction_id && <Link className="btn secondary" to={`/i/flow/transaction/${encodeURIComponent(order.refund_transaction_id)}`}>Refund transaction</Link>}
     </div>
     <OrderContent order={order} />
-    {actions.fulfill && <form className="mt-2" onSubmit={(event) => { event.preventDefault(); act('fulfill'); }}>
-      <h3 className="mt-0">Deliver this order</h3>
+    {actions.fulfill && <form className={`mt-2 ${utility_classes.mt_2}`} onSubmit={(event) => { event.preventDefault(); act('fulfill'); }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Deliver this order</h3>
       <label htmlFor="fulfill_type">Delivery type</label><select id="fulfill_type" value={type} disabled={busy} onChange={(event) => set_type(event.target.value as 'text' | 'url')}>
         <option value="text">Text</option><option value="url">URL</option>
       </select>
       <FloatingTextarea id="fulfill_content" label="Delivery content" maxLength={5000} required disabled={busy} value={content} onChange={(event) => set_content(event.target.value)} />
-      <p className="muted">{order.recipient ? 'The recipient' : 'The buyer'} will be notified and emailed. Image deliveries are available on MyPayIndia.com</p>
-      <div className="btn-row mt-2">
+      <p className={`muted ${utility_classes.muted}`}>{order.recipient ? 'The recipient' : 'The buyer'} will be notified and emailed. Image deliveries are available on MyPayIndia.com</p>
+      <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>
         <button disabled={busy || !content.trim()}>Deliver order</button>
         <button className="secondary" type="button" disabled={busy} onClick={() => set_confirm('refund')}>Refund order</button>
       </div>
     </form>}
-    {actions.cancel && <div className="btn-row"><button disabled={busy} onClick={() => set_confirm('cancel')}>Cancel purchase for full refund</button></div>}
+    {actions.cancel && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button disabled={busy} onClick={() => set_confirm('cancel')}>Cancel purchase for full refund</button></div>}
     {order.status === 'fulfilled' && (order.side === 'buyer' || (!order.side && order.buyer?.toLowerCase() === username.toLowerCase())) && <PurchaseReview order={order} auth={auth} />}
     <OrderMessages id={order.id} auth={auth} />
     <ConfirmModal open={confirm !== null} onClose={() => set_confirm(null)} onConfirm={() => { if (confirm) act(confirm); }}

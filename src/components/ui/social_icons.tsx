@@ -1,3 +1,5 @@
+import { lbteam_classes } from '../../styles/lbteam.stylex.ts';
+
 /*
  * Icons from Font Awesome
  * Copyright 2026 Fonticons, Inc.
@@ -117,7 +119,7 @@ export function SocialIcon({
 
   return (
     <svg
-      className="team-social-icon"
+      className={`team-social-icon ${lbteam_classes.team_social_icon}`}
       width={size}
       height={size}
       viewBox="0 0 640 640"

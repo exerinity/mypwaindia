@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { animation_classes } from '../../styles/animations.stylex.ts';
 import React, { useState, useEffect } from 'react';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { Link } from 'react-router-dom';
@@ -7,7 +10,7 @@ type CheckState = 'loading' | 'success' | 'fail' | 'down';
 
 function StatusBadge({ state, label, reason }: { state: CheckState; label: string; reason?: string | null }) {
   if (state === 'loading') {
-    return <span className="skeleton" style={{ display: 'inline-block', width: 120, height: '1em', verticalAlign: 'middle', borderRadius: 4 }} />;
+    return <span className={`skeleton ${animation_classes.skeleton}`} style={{ display: 'inline-block', width: 120, height: '1em', verticalAlign: 'middle', borderRadius: 4 }} />;
   }
   const colors: Record<Exclude<CheckState, 'loading'>, string> = {
     success: 'var(--alert-success)',
@@ -104,10 +107,10 @@ export default function ConnectionPage() {
 
   return (
     <>
-      <h1 className="mt-0">Connection check</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Connection check</h1>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">You</h3>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>You</h3>
         <p style={{ margin: 0 }}>
           <strong>Online (via navigator.onLine):</strong>{' '}
           <span style={{ color: onLine ? 'var(--alert-success)' : 'var(--alert-error)', fontWeight: 600 }}>
@@ -116,18 +119,18 @@ export default function ConnectionPage() {
         </p>
       </div>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">PWA backend/proxy</h3>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>PWA backend/proxy</h3>
         <StatusBadge state={bastionState} label="bastion" reason={bastionReason} />
       </div>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">mypayindia.com</h3>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>mypayindia.com</h3>
         <StatusBadge state={mpiState} label="mypayindia.com" reason={mpiReason} />
       </div>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">Conclusion</h3>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>Conclusion</h3>
         <p style={{ margin: 0 }}>{conclusion}</p>
       </div>
     </>

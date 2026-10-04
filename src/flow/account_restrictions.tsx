@@ -1,3 +1,6 @@
+import { card_classes } from '../styles/cards.stylex.ts';
+import { utility_classes } from '../styles/utils.stylex.ts';
+import { alert_classes } from '../styles/alerts.stylex.ts';
 import type { AccountRestrictionsSubtask } from '../api/flow.ts';
 import { WarningIcon, SuccessIcon } from '../components/ui/icons.tsx';
 import { ErrorBox } from '../components/ui/status.tsx';
@@ -19,13 +22,13 @@ export default function AccountRestrictions({ subtask, error, onAbort }: {
       {error ? (
         <ErrorBox error={error} />
       ) : detail.restrictions.length === 0 ? (
-        <div className="mt-0 mb-0 alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className={`mt-0 mb-0 alert alert-success ${alert_classes.success} ${utility_classes.mt_0}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <SuccessIcon /><span>{detail.empty_text.text}</span>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {detail.restrictions.map((restriction) => (
-            <div key={restriction.restriction_id} className="card">
+            <div key={restriction.restriction_id} className={`card ${card_classes.card}`}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, color: 'var(--alert-error)' }}>
                 <WarningIcon size={22} />
                 <h3 style={{ margin: 0, fontSize: '1.15rem' }}>{restriction.primary_text.text}</h3>
@@ -43,7 +46,7 @@ export default function AccountRestrictions({ subtask, error, onAbort }: {
                   : detail.labels.no_expiration}
               </div>
               {restriction.value != null && (
-                <pre style={{
+                <pre className={utility_classes.pre} style={{
                   margin: '12px 0 0', fontSize: '0.78rem',
                   color: 'var(--muted)', background: 'var(--bg-elev)',
                   padding: '8px 12px', borderRadius: 6, overflow: 'auto',

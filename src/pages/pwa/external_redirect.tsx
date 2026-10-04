@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { modal_classes } from '../../styles/modal.stylex.ts';
+import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../../components/ui/modal.tsx';
@@ -29,14 +32,14 @@ export default function ExternalRedirectPage({ to, schnell }: { to: string; schn
       open
       className="noanim"
       onClose={() => nav('/dash')}
-      bgIcon={<div className="app-lock-bg-icon"><ErrorIcon size={666} /></div>}
+      bgIcon={<div className={`app-lock-bg-icon ${app_lock_classes.bg_icon}`}><ErrorIcon size={666} /></div>}
     >
       {stopped ? (
-        <p className="mt-0">Have a nice day!</p>
+        <p className={`mt-0 ${utility_classes.mt_0}`}>Have a nice day!</p>
       ) : (
-        <p className="mt-0">You've requested a MyPayIndia resource that is not available from the web app. Taking you back to MyPayIndia.com in {secondsLeft} second{secondsLeft === 1 ? '' : 's'}...</p>
+        <p className={`mt-0 ${utility_classes.mt_0}`}>You've requested a MyPayIndia resource that is not available from the web app. Taking you back to MyPayIndia.com in {secondsLeft} second{secondsLeft === 1 ? '' : 's'}...</p>
       )}
-      <div className="modal-actions">
+      <div className={`modal-actions ${modal_classes.actions}`}>
         <a className="btn" href={to}>Go to resource <ExternalIcon /></a>
         {stopped ? (
           <button type="button" className="secondary" onClick={() => nav('/dash')}>Go to dashboard</button>

@@ -1,3 +1,5 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal } from '../../components/ui/modal.tsx';
@@ -53,19 +55,19 @@ export function DownloadSettings() {
 
   return (
     <>
-      <p className="mt-0 mb-0">
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>
         Download the MyPayIndia app. It's free.
       </p>
 
-      <div className="btn-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-        <button type="button" className="option" onClick={() => setAndroidModalOpen(true)}>
-          <span className="option-label">Android</span>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+        <button type="button" className={`option ${button_classes.option}`} onClick={() => setAndroidModalOpen(true)}>
+          <span className={`option-label ${button_classes.option_label}`}>Android</span>
         </button>
-        <button type="button" className="option" disabled>
-          <span className="option-label">iOS</span>
+        <button type="button" className={`option ${button_classes.option}`} disabled>
+          <span className={`option-label ${button_classes.option_label}`}>iOS</span>
         </button>
-        <Link className="option" to="/i/how_pwa">
-          <span className="option-label">PWA</span>
+        <Link className={`option ${button_classes.option}`} to="/i/how_pwa">
+          <span className={`option-label ${button_classes.option_label}`}>PWA</span>
         </Link>
       </div>
 
@@ -74,7 +76,7 @@ export function DownloadSettings() {
         onClose={() => setAndroidModalOpen(false)}
         title="Select where to download Android app"
       >
-        <div className="btn-row">
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <a className="btn" href={OBTAINIUM_URL} target="_blank" rel="noopener noreferrer">
             Obtanium <ExternalIcon></ExternalIcon>
           </a>

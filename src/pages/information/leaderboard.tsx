@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { lbteam_classes } from '../../styles/lbteam.stylex.ts';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { profile_path } from '../../utils/profiles.ts';
@@ -76,10 +79,10 @@ export default function LeaderboardPage() {
 
   return (
     <>
-      <h1 className="mt-0">Leaderboard</h1>
-      <div className="card compact">
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Leaderboard</h1>
+      <div className={`card compact ${card_classes.compact}`}>
         {loading && !data ? Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="lb-row">
+          <div key={i} className={`lb-row ${lbteam_classes.lb_row}`}>
             <Skeleton width={28} height={14} />
             <div style={{ flex: 1, padding: '0 12px' }}><Skeleton height={14} style={{ width: `${45 + (i % 4) * 12}%` }} /></div>
             <Skeleton width={72} height={14} />
@@ -90,10 +93,10 @@ export default function LeaderboardPage() {
          board.map((u, i) => {
            const rank = i + 1;
            return (
-             <div key={u.username} className="lb-row">
-               <span className={`lb-rank top-${rank}`}>#{rank}</span>
-               <Link className="lb-username" to={profile_path(u.username)}>@{u.username}</Link>
-               <span className="lb-balance">
+             <div key={u.username} className={`lb-row ${lbteam_classes.lb_row}`}>
+               <span className={`lb-rank top-${rank} ${rank === 1 ? lbteam_classes.lb_rank_top_1 : rank === 2 ? lbteam_classes.lb_rank_top_2 : rank === 3 ? lbteam_classes.lb_rank_top_3 : lbteam_classes.lb_rank}`}>#{rank}</span>
+               <Link className={`lb-username ${lbteam_classes.lb_username}`} to={profile_path(u.username)}>@{u.username}</Link>
+               <span className={`lb-balance ${lbteam_classes.lb_balance}`}>
                  <AnimatedNumber value={u.balance} format={formatINR} />
                </span>
              </div>

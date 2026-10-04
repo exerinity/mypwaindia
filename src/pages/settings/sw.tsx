@@ -1,3 +1,7 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { form_classes } from '../../styles/forms.stylex.ts';
 import type { ChangeEvent } from 'react';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
@@ -55,43 +59,43 @@ export function SwSettings() {
 
   return (
     <>
-      <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
         Manage the service worker. The service worker makes the app work offline and could speed up navigation, but it could also contribute to stale caches
       </p>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className={`alert alert-info ${alert_classes.info}`}>
         <InfoIcon />
         If you don't know what a service worker is, or are not experiencing any issues with updating/data, you should leave these settings alone.
       </div>
 
       {!('serviceWorker' in navigator) && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className={`alert alert-info ${alert_classes.info}`}>
           <InfoIcon />
           <span>Your browser doesn't support service workers, so these settings won't do anything</span>
         </div>
       )}
 
-      <div className="row spread" style={{ alignItems: 'center', padding: '10px 0' }}>
+      <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'center', padding: '10px 0' }}>
         <div>
           <strong>Use service worker</strong>
-          <p className="muted" style={{ margin: '2px 0 0', fontSize: '0.875rem' }}>
+          <p className={`muted ${utility_classes.muted}`} style={{ margin: '2px 0 0', fontSize: '0.875rem' }}>
             {settings.swEnabled ? 'Enabled' : 'Disabled (any active service worker will be stopped)'}
           </p>
         </div>
-        <label className="toggle-switch">
+        <label className={`toggle-switch ${form_classes.toggle_switch}`}>
           <input
             type="checkbox"
             checked={settings.swEnabled}
             onChange={handleSwToggle}
           />
-          <span className="toggle-track" />
+          <span className={`toggle-track ${form_classes.toggle_track}`} />
         </label>
       </div>
 
       <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
-      <h3 className="mt-0">Actions</h3>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Actions</h3>
 
-      <div className="btn-row" style={{ marginTop: 4 }}>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ marginTop: 4 }}>
         <button className="secondary" onClick={handleReloadSw}>
           Reload service worker
         </button>
@@ -102,7 +106,7 @@ export function SwSettings() {
           Delete service worker
         </button>
       </div>
-      <p className="muted" style={{ fontSize: '0.85rem', marginTop: 12 }}>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem', marginTop: 12 }}>
         <strong>Reload</strong> checks for and installs an updated service worker<br></br>
         <strong>Do not register</strong> stops the active service worker and prevents it from
         registering again<br></br>

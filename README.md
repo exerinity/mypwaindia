@@ -29,7 +29,7 @@ src/
 ├─ hooks/           api calls, cached queries, page titles, refresh timers
 ├─ api/             one module per API surface, all going through client.ts
 ├─ worker/          the Cloudflare Worker: bastion proxy, news, button subscribe
-├─ styles/          one stylesheet per area, stitched together by index.css
+├─ styles/          StyleX files and global CSS
 └─ data/            world countries & centroids for the globe
 ```
 
@@ -42,13 +42,11 @@ Everything the Worker answers for sits under `/i/`, and anything it doesn't reco
 
 - **/i/api**, **/i/api/pwa**, **/i/accountservices**, **/i/iotm**, **/i/staging** - proxied to the bastion with the `/i` stripped
 - **/i/api/buttonac/** - button autoclicker subscriptions
-- **/i/pwa/meta/news** - fetches MyPayIndia's news feed, decodes it and rewrites its links so they resolve, which is what [/i/news](https://mypayindia.sbs/i/news) renders
+- **/i/api/pwa/meta/news** - fetches MyPayIndia's news feed, decodes it and rewrites its links so they resolve, which is what [/i/news](https://mypayindia.sbs/i/news) renders
 
 **Sessions live in two places:** a cookie on the bastion side and a session token on the frontend. Deleting the cookie won't log you out (the app still remembers you via the token), so to clear both, use [/i/flow/logout](https://mypayindia.sbs/i/flow/logout).
 
 ## Bundling & loading
-The app is built with Vite. The output is deliberately **unminified** (no sourcemaps either)
-
 ### Bundling
 The entry point is `/i/scripts/mypwaindia_index-[hash].js` and everything else is split into named chunks (`/i/scripts/mpi_[name]-[hash].js`). Chunking is done artisanally in [vite.config.js](vite.config.js) via `manualChunks`, matching on file paths:
 
@@ -69,9 +67,6 @@ The PWA side uses Workbox ([sw.ts](src/sw.ts) via vite-plugin-pwa's `injectManif
 - Runtime requests for pages, scripts and styles are network-first with a 4 second timeout, then fall back to cache
 - If a navigation fails entirely, the precached `index.html` is served, so the app still boots offline
 - Updates use a prompt & the new worker waits until you confirm rather than automatic
-
-### Side builder: a single index.html 
-`npm run minify` runs a second config ([vite.config.minify.js](vite.config.minify.js)) that inlines the entire app (scripts, styles, assets) into one `index.html` in `dist-minify/`, minified with esbuild and with the PWA disabled. That's just an experiment... please don't ever use that
 
 ## "Scambait" mode
 Scambait mode transforms this app into a more convincing-looking interface for use in... scambaiting. Phone scammers often instruct their targets to install remote access software and navigate a banking app - but to their dismay, that geriatric geezer on the other end is using a mysterious online bank: MyPayIndia.

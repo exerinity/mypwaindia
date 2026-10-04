@@ -5,6 +5,7 @@ import { useAuth } from '../../context/auth_ctx.tsx';
 import { resolveNavItems, activeNavRoute } from './nav_catalog.tsx';
 import type { NavDestination } from './nav_catalog.tsx';
 import { useMediaQuery } from '../../hooks/media_query.ts';
+import { bottom_nav_classes } from '../../styles/bottom_nav.stylex.ts';
 
 export const BOTTOM_NAV_QUERY = '(max-width: 900px)';
 
@@ -14,16 +15,16 @@ interface PillBox { x: number; y: number; width: number; height: number; instant
 
 export function BottomNavPreview({ items, labels = true }: { items: NavDestination[]; labels?: boolean }) {
   return (
-    <div className={`mpi-bottom-nav-preview${labels ? '' : ' mpi-bottom-nav--bare'}`} aria-hidden="true">
+    <div className={`mpi-bottom-nav-preview${labels ? '' : ' mpi-bottom-nav--bare'} ${bottom_nav_classes.preview}`} aria-hidden="true">
       {items.length === 0 ? (
-        <span className="mpi-bottom-nav-preview-empty">Nothing to show</span>
+        <span className={`mpi-bottom-nav-preview-empty ${bottom_nav_classes.preview_empty}`}>Nothing to show</span>
       ) : (
         items.map((item, i) => {
           const Icon = item.icon;
           return (
-            <span key={item.route} className={`mpi-bottom-nav-item${i === 0 ? ' active' : ''}`}>
-              <span className="mpi-bottom-nav-icon"><Icon size={22} /></span>
-              {labels && <span className="mpi-bottom-nav-label">{item.short}</span>}
+            <span key={item.route} className={`mpi-bottom-nav-item${i === 0 ? ' active' : ''} ${i === 0 ? bottom_nav_classes.item_preview_active : bottom_nav_classes.item_preview}`}>
+              <span className={`mpi-bottom-nav-icon ${i === 0 ? (labels ? bottom_nav_classes.icon_preview_active : bottom_nav_classes.icon_preview_active_bare) : labels ? bottom_nav_classes.icon : bottom_nav_classes.icon_bare}`}><Icon size={22} /></span>
+              {labels && <span className={`mpi-bottom-nav-label ${bottom_nav_classes.label}`}>{item.short}</span>}
             </span>
           );
         })
@@ -95,12 +96,12 @@ export function BottomNav() {
   return (
     <nav
       ref={navRef}
-      className={`mpi-bottom-nav${leaving ? ' mpi-bottom-nav--leaving' : ''}${settings.bottomNavLabels ? '' : ' mpi-bottom-nav--bare'}`}
+      className={`mpi-bottom-nav${leaving ? ' mpi-bottom-nav--leaving' : ''}${settings.bottomNavLabels ? '' : ' mpi-bottom-nav--bare'} ${leaving ? bottom_nav_classes.nav_leaving : bottom_nav_classes.nav}`}
       aria-label="Quick navigation"
     >
       {pill && (
         <span
-          className={`mpi-bottom-nav-pill${pill.instant ? ' mpi-bottom-nav-pill--instant' : ''}`}
+          className={`mpi-bottom-nav-pill${pill.instant ? ' mpi-bottom-nav-pill--instant' : ''} ${pill.instant ? bottom_nav_classes.pill_instant : bottom_nav_classes.pill}`}
           style={{ transform: `translate(${pill.x}px, ${pill.y}px)`, width: pill.width, height: pill.height }}
           aria-hidden="true"
         />
@@ -112,12 +113,12 @@ export function BottomNav() {
           <NavLink
             key={item.route}
             to={item.route}
-            className={() => `mpi-bottom-nav-item${isCurrent ? ' active' : ''}`}
+            className={() => `mpi-bottom-nav-item${isCurrent ? ' active' : ''} ${isCurrent ? bottom_nav_classes.item_active : bottom_nav_classes.item}`}
             aria-current={isCurrent ? 'page' : undefined}
             title={item.label}
           >
-            <span className="mpi-bottom-nav-icon"><Icon size={22} /></span>
-            {settings.bottomNavLabels && <span className="mpi-bottom-nav-label">{item.short}</span>}
+            <span className={`mpi-bottom-nav-icon ${settings.bottomNavLabels ? bottom_nav_classes.icon : bottom_nav_classes.icon_bare}`}><Icon size={22} /></span>
+            {settings.bottomNavLabels && <span className={`mpi-bottom-nav-label ${bottom_nav_classes.label}`}>{item.short}</span>}
           </NavLink>
         );
       })}

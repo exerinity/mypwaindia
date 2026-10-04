@@ -1,3 +1,7 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { table_classes } from '../../styles/tables.stylex.ts';
+import { stat_classes } from '../../styles/stats.stylex.ts';
 import { useMemo, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
@@ -55,7 +59,7 @@ export default function StatementsPage() {
     return (
       <>
         <Modal open onClose={() => navigate(-1)} title="Enable scambait mode first" fullscreen>
-          <div className="center">
+          <div className={`center ${utility_classes.center}`}>
             This page is a scambait mode-only page. <Link to="/settings/scambait">Would you like to enable it?</Link>
           </div>
         </Modal>
@@ -65,23 +69,23 @@ export default function StatementsPage() {
 
   return (
     <>
-      <h1 className="mt-0">Bank statements</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Bank statements</h1>
 
-      <div className="grid cols-2 mb-2">
-        <div className="card stat-card">
-          <span className="stat-label">Total credits</span>
-          <span className="stat-value" style={{ color: 'var(--success)' }}>+{format(totalCredits)}</span>
-          <span className="stat-sub">since 2017</span>
+      <div className={`grid cols-2 mb-2 ${card_classes.grid_two} ${utility_classes.mb_2}`}>
+        <div className={`card ${stat_classes.card} ${card_classes.card}`}>
+          <span className={stat_classes.label}>Total credits</span>
+          <span className={stat_classes.value} style={{ color: 'var(--success)' }}>+{format(totalCredits)}</span>
+          <span className={stat_classes.sub}>since 2017</span>
         </div>
-        <div className="card stat-card">
-          <span className="stat-label">Total debits</span>
-          <span className="stat-value" style={{ color: 'var(--alert-error)' }}>{format(Math.abs(totalDebits))}</span>
-          <span className="stat-sub">since 2017</span>
+        <div className={`card ${stat_classes.card} ${card_classes.card}`}>
+          <span className={stat_classes.label}>Total debits</span>
+          <span className={stat_classes.value} style={{ color: 'var(--alert-error)' }}>{format(Math.abs(totalDebits))}</span>
+          <span className={stat_classes.sub}>since 2017</span>
         </div>
       </div>
 
-      <div className="card">
-        <div className="table-controls">
+      <div className={`card ${card_classes.card}`}>
+        <div className={`table-controls ${table_classes.controls}`}>
           <label>
             Show
             <select value={limit} onChange={(e) => setLimit(e.target.value === 'all' ? 'all' : Number(e.target.value))}>
@@ -97,13 +101,13 @@ export default function StatementsPage() {
               {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
             </select>
           </label>
-          <span className="muted" style={{ marginLeft: 'auto' }}>
+          <span className={`muted ${utility_classes.muted}`} style={{ marginLeft: 'auto' }}>
             {sliced.length} of {sorted.length}
           </span>
         </div>
 
-        <div className="table-wrap">
-          <table className="table">
+        <div className={`table-wrap ${table_classes.wrap}`}>
+          <table className={`table ${table_classes.table}`}>
             <thead>
               <tr>
                 <th>Date</th>

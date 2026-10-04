@@ -1,4 +1,9 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { link_status_class } from '../../styles/links.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
+import * as stylex from '@stylexjs/stylex';
+import { subscription_styles } from '../../styles/subscriptions.stylex.ts';
 import { useState, useMemo, lazy, Suspense } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
@@ -100,9 +105,9 @@ export default function SubscriptionsPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <h1 className="mt-0">Subscriptions</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Subscriptions</h1>
 
-      <div className="sub-filters mb-2">
+      <div className={`mb-2 ${stylex.props(subscription_styles.filters).className} ${utility_classes.mb_2}`}>
         {FILTERS.map((f) => (
           <button
             key={f.value || 'all'}
@@ -116,11 +121,11 @@ export default function SubscriptionsPage() {
       </div>
 
       {subsQ.loading && !subsQ.data ? (
-        <div className="grid" style={{ gap: 10 }}>
+        <div className={`grid ${card_classes.grid}`} style={{ gap: 10 }}>
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="card sub-card compact">
-              <div className="sub-info">
-                <div className="row gap-sm" style={{ marginBottom: 6 }}>
+            <div key={i} className={`card compact ${stylex.props(subscription_styles.card).className} ${card_classes.compact}`}>
+              <div {...stylex.props(subscription_styles.info)}>
+                <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginBottom: 6 }}>
                   <Skeleton width={140} height={16} />
                   <Skeleton width={52} height={16} radius={999} />
                 </div>
@@ -134,37 +139,41 @@ export default function SubscriptionsPage() {
       ) :
         subsQ.error ? <ErrorBox error={subsQ.error} /> :
           subscriptions.length === 0 ? <Empty>No subscriptions{filter ? ` with ${filter}` : ''}</Empty> :
-            <div className="grid" style={{ gap: 10 }}>
+            <div className={`grid ${card_classes.grid}`} style={{ gap: 10 }}>
               {subscriptions.map((s) => {
                 const pending = s.cancel_at_period_end;
                 const canCancel = !pending && ['active', 'trialing', 'past_due'].includes(s.status);
                 const working = busy === s.subscription_id;
+                const status_style = stylex.props(
+                  s.status === 'trialing' && subscription_styles.trialing,
+                  s.status === 'past_due' && subscription_styles.past_due
+                ).className ?? '';
                 return (
-                  <div key={s.subscription_id} className="card sub-card compact">
-                    <div className="sub-info">
-                      <div className="row gap-sm" style={{ alignItems: 'center' }}>
+                  <div key={s.subscription_id} className={`card compact ${stylex.props(subscription_styles.card).className} ${card_classes.compact}`}>
+                    <div {...stylex.props(subscription_styles.info)}>
+                      <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ alignItems: 'center' }}>
                         <strong>{s.plan_name}</strong>
-                        <span className={`link-status ${s.status}`}>{s.status.replace('_', ' ')}</span>
+                        <span className={`link-status ${s.status} ${link_status_class(s.status)} ${status_style}`}>{s.status.replace('_', ' ')}</span>
                       </div>
-                      <div className="muted">{s.business_name}</div>
+                      <div className={`muted ${utility_classes.muted}`}>{s.business_name}</div>
                       <div>{formatINR(s.amount)} ({formatInterval(s.interval, s.interval_count)})</div>
-                      <div className="muted" style={{ fontSize: '0.78rem' }}>
+                      <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem' }}>
                         Current period: {formatDateShort(s.current_period_start)} to {formatDateShort(s.current_period_end)}
                       </div>
                       {pending && (
-                        <div className="muted" style={{ fontSize: '0.78rem' }}>
+                        <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem' }}>
                           Cancels on {formatDateShort(s.current_period_end)}
                         </div>
                       )}
                     </div>
-                    <div className="row gap-sm">
+                    <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}>
                       {pending ? (
                         <button className="compact" onClick={() => doResume(s)} disabled={working}>
-                          {working ? <><span className="spinner" /> Resuming...</> : 'Resume'}
+                          {working ? <><span className={`spinner ${utility_classes.spinner}`} /> Resuming...</> : 'Resume'}
                         </button>
                       ) : canCancel ? (
                         <button className="compact danger" onClick={() => setCancelTarget(s)} disabled={working}>
-                          {working ? <><span className="spinner" /> Cancelling...</> : 'Cancel'}
+                          {working ? <><span className={`spinner ${utility_classes.spinner}`} /> Cancelling...</> : 'Cancel'}
                         </button>
                       ) : null}
                     </div>

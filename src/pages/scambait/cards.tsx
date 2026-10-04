@@ -1,3 +1,5 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
@@ -205,7 +207,7 @@ export default function CardsPage() {
     return (
       <>
         <Modal open onClose={() => navigate(-1)} title="Enable scambait mode first" fullscreen>
-          <div className="center">
+          <div className={`center ${utility_classes.center}`}>
             This page is a scambait mode-only page. <Link to="/settings/scambait">Would you like to enable it?</Link>
           </div>
         </Modal>
@@ -215,8 +217,8 @@ export default function CardsPage() {
 
   return (
     <>
-      <h1 className="mt-0">Cards</h1>
-      <div className="grid cols-2">
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Cards</h1>
+      <div className={`grid cols-2 ${card_classes.grid_two}`}>
         {cards.map((card) => (
           <CreditCard key={card.type} card={card} />
         ))}

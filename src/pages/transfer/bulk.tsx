@@ -1,3 +1,8 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { link_classes } from '../../styles/links.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { form_classes } from '../../styles/forms.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import React, { useState, useId, useMemo, lazy, Suspense } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
@@ -193,19 +198,19 @@ export default function BulkTransferPage() {
         <img src={noModalImage} alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
 
-      <h1 className="mt-0">Bulk transfer</h1>
-      <p className="muted" style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Bulk transfer</h1>
+      <p className={`muted ${utility_classes.muted}`} style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
         Changed your mind? <Link to="/account/transfer">Single transfer...</Link>
       </p>
-      <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className={`alert alert-info ${alert_classes.info}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <InfoIcon /><span>Please note that transfers above a certain amount are subject to manual review by our team.</span>
       </div>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">Amount</h3>
-        <div className="preset-stack">
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>Amount</h3>
+        <div className={`preset-stack ${link_classes.preset_stack}`}>
           <input
-            className="preset-stack-display"
+            className={`preset-stack-display ${link_classes.preset_stack_input}`}
             type="text"
             inputMode="decimal"
             value={editingAmount ? rawInput : format(stackPaisa)}
@@ -215,7 +220,7 @@ export default function BulkTransferPage() {
             disabled={sending}
             aria-label="Transfer amount"
           />
-          <div className="preset-stack-row">
+          <div className={`preset-stack-row ${link_classes.preset_stack_row}`}>
             {PRESETS_PAISA.map((p) => (
               <button key={p} type="button" className="secondary compact" onClick={() => bump(p)} disabled={sending}>
                 +{format(p)}
@@ -226,15 +231,15 @@ export default function BulkTransferPage() {
             </button>
           </div>
           {overBalance && (
-            <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className={`alert alert-warning ${alert_classes.warning}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <WarningIcon /><span>That's more than you have ({format(balance)}). The server will reject it. I'm warning you in advance...</span>
             </div>
           )}
         </div>
       </div>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">Compose</h3>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>Compose</h3>
         <FloatingInput
           label="Recipient"
           type="text"
@@ -244,8 +249,8 @@ export default function BulkTransferPage() {
         />
         {txQ.loading ? (
           <>
-            <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
-            <div className="preset-stack-row">
+            <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
+            <div className={`preset-stack-row ${link_classes.preset_stack_row}`}>
               {[72, 56, 88, 64].map((w, i) => (
                 <Skeleton key={i} width={w} height={31} radius={10} />
               ))}
@@ -253,8 +258,8 @@ export default function BulkTransferPage() {
           </>
         ) : recentRecipients.length > 0 && (
           <>
-            <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
-            <div className="preset-stack-row">
+            <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
+            <div className={`preset-stack-row ${link_classes.preset_stack_row}`}>
               {recentRecipients.map((u) => (
                 <button
                   key={u}
@@ -277,11 +282,11 @@ export default function BulkTransferPage() {
           maxLength={200}
         />
         <div style={{ display: 'flex', gap: 20, marginTop: 12 }}>
-          <label className="checkbox-row" style={{ padding: 0, marginBottom: 0, marginTop: 0, fontSize: '0.875rem', color: 'var(--fg)', cursor: 'pointer' }}>
+          <label className={`checkbox-row ${form_classes.checkbox_row}`} style={{ padding: 0, marginBottom: 0, marginTop: 0, fontSize: '0.875rem', color: 'var(--fg)', cursor: 'pointer' }}>
             <input type="checkbox" checked={keepAmount} onChange={(e) => setKeepAmount(e.target.checked)} disabled={sending} />
             Keep amount
           </label>
-          <label className="checkbox-row" style={{ padding: 0, marginBottom: 0, marginTop: 0, fontSize: '0.875rem', color: 'var(--fg)', cursor: 'pointer' }}>
+          <label className={`checkbox-row ${form_classes.checkbox_row}`} style={{ padding: 0, marginBottom: 0, marginTop: 0, fontSize: '0.875rem', color: 'var(--fg)', cursor: 'pointer' }}>
             <input type="checkbox" checked={keepNote} onChange={(e) => setKeepNote(e.target.checked)} disabled={sending} />
             Keep note
           </label>
@@ -294,10 +299,10 @@ export default function BulkTransferPage() {
       </div>
 
       {queue.length > 0 && (
-        <div className="card mb-2">
-          <h3 className="mt-0" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+          <h3 className={`mt-0 ${utility_classes.mt_0}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
             <span>Queue ({queue.length})</span>
-            <span className="muted" style={{ fontSize: '0.9rem', fontWeight: 400 }}>Total: {format(totalPaisa)}</span>
+            <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.9rem', fontWeight: 400 }}>Total: {format(totalPaisa)}</span>
           </h3>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
@@ -306,20 +311,20 @@ export default function BulkTransferPage() {
               return (
                 <div
                   key={item.id}
-                  className="card compact"
+                  className={`card compact ${card_classes.compact}`}
                   style={{ display: 'flex', alignItems: 'center', gap: 12, opacity: status === 'done' ? 0.55 : 1 }}
                 >
                   <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                     <strong>{item.recipient}</strong>
                     <span>{format(item.amountPaisa)}</span>
                     {item.note && (
-                      <span className="muted" style={{ fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 200 }}>
+                      <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 200 }}>
                         {item.note}
                       </span>
                     )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                    {status === 'sending' && <span className="spinner" />}
+                    {status === 'sending' && <span className={`spinner ${utility_classes.spinner}`} />}
                     {status === 'done' && <span style={{ color: 'var(--success, #4caf50)', fontSize: '0.85rem' }}>Sent</span>}
                     {status === 'error' && <span style={{ color: 'var(--danger, #e53935)', fontSize: '0.85rem' }}>Failed</span>}
                     {(status === 'pending' || status === 'error') && !sending && (
@@ -336,11 +341,11 @@ export default function BulkTransferPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {totalHighValue ? (
               <HoldButton onConfirm={sendAll} disabled={!canSend} type="button">
-                {sending ? <><span className="spinner" /> Sending...</> : allDone ? 'All sent' : `Send all ${format(totalPaisa)} (hold)`}
+                {sending ? <><span className={`spinner ${utility_classes.spinner}`} /> Sending...</> : allDone ? 'All sent' : `Send all ${format(totalPaisa)} (hold)`}
               </HoldButton>
             ) : (
               <button type="button" onClick={sendAll} disabled={!canSend}>
-                {sending ? <><span className="spinner" /> Sending...</> : allDone ? 'All sent' : `Send all (${format(totalPaisa)})`}
+                {sending ? <><span className={`spinner ${utility_classes.spinner}`} /> Sending...</> : allDone ? 'All sent' : `Send all (${format(totalPaisa)})`}
               </button>
             )}
             {anyError && !sending && (

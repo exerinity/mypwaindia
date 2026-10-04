@@ -1,3 +1,5 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { modal_classes } from '../../styles/modal.stylex.ts';
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
@@ -37,14 +39,14 @@ export default function LogoutPage() {
 
   return (
     <Modal open className="noanim" onClose={handleClose}>
-      <h2 className="mt-0">Log out of @{active.username}?</h2>
-      <p className={nextAccount ? undefined : 'mt-0 mb-0'}>
+      <h2 className={`mt-0 ${utility_classes.mt_0}`}>Log out of @{active.username}?</h2>
+      <p className={nextAccount ? undefined : `mt-0 mb-0 ${utility_classes.mt_0} ${utility_classes.mb_2}`}>
         {nextAccount
           ? "This will only apply to this account, and you'll still be logged in to your other accounts. You'll be switched to "
           : <>You can always log back in at any time. If you just want to switch accounts, you can do that <Link to="/i/flow/login">by adding an existing account</Link>.</>}
         {nextAccount && <strong>@{nextAccount.username}.</strong>}
       </p>
-      <div className="modal-actions">
+      <div className={`modal-actions ${modal_classes.actions}`}>
         <button className="secondary" onClick={handleClose} disabled={isSubmitting}>Cancel</button>
         <button
           onClick={handleLogout}

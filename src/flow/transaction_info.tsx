@@ -1,3 +1,5 @@
+import { utility_classes } from '../styles/utils.stylex.ts';
+import { stat_classes } from '../styles/stats.stylex.ts';
 import { useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
@@ -45,7 +47,7 @@ function CopyButton({ value }: { value: string }) {
 function Field({ label, value, display, style, showCopy = false }: { label: string; value: string; display?: React.ReactNode; style?: React.CSSProperties; showCopy?: boolean }) {
   return (
     <div style={style}>
-      <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>{label}</div>
+      <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginBottom: 3 }}>{label}</div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
         <span>{display ?? value}</span>
         {showCopy && <CopyButton value={value} />}
@@ -161,10 +163,10 @@ export default function TransactionModal({ subtask, loading, error, embedded = f
         <ErrorBox error={error} />
       ) : data && (
         <>
-          <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>{labels?.amount ?? 'Amount'}</div>
+          <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginBottom: 3 }}>{labels?.amount ?? 'Amount'}</div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 20 }}>
             <div
-              className="balance-display"
+              className={stat_classes.balance_display}
               style={{ color: outgoing ? 'var(--alert-error)' : 'var(--success)', marginBottom: 0 }}
             >
               {outgoing ? '-' : '+'}{format(data.amount)}
@@ -196,9 +198,9 @@ export default function TransactionModal({ subtask, loading, error, embedded = f
             <Field label={labels?.from ?? 'From'} value={`@${data.sender?.username}`} display={<strong>@{data.sender?.username}</strong>} showCopy />
             <Field label={labels?.when ?? 'When'} value={formatDate(data.created)} />
             <Field label={labels?.to ?? 'To'} value={`@${data.recipient?.username}`} display={<strong>@{data.recipient?.username}</strong>} showCopy />
-            <Field label={labels?.id ?? 'ID'} value={`#${data.id}`} display={<span className="mono">#{data.id}</span>} showCopy />
+            <Field label={labels?.id ?? 'ID'} value={`#${data.id}`} display={<span className={`mono ${utility_classes.mono}`}>#{data.id}</span>} showCopy />
             <div style={{ gridColumn: '1' }}>
-              <div className="muted" style={{ fontSize: '0.8rem', marginBottom: 3 }}>{labels?.deeplinks ?? 'Deeplinks'}</div>
+              <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginBottom: 3 }}>{labels?.deeplinks ?? 'Deeplinks'}</div>
               {detail?.deeplinks.map((link) => (
                 <div key={link.url} style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
                   <a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>
@@ -206,7 +208,7 @@ export default function TransactionModal({ subtask, loading, error, embedded = f
                 </div>
               ))}
             </div>
-            <Field label={labels?.transaction_id ?? 'Transaction ID'} value={data.transaction_id} display={<span className="mono">{data.transaction_id}</span>} style={{ gridColumn: '2' }} showCopy />
+            <Field label={labels?.transaction_id ?? 'Transaction ID'} value={data.transaction_id} display={<span className={`mono ${utility_classes.mono}`}>{data.transaction_id}</span>} style={{ gridColumn: '2' }} showCopy />
           </div>
 
           {data.note && (
@@ -228,7 +230,7 @@ export default function TransactionModal({ subtask, loading, error, embedded = f
                 disabled={returning || returned}
               >
                 {returning ? (
-                  <><span className="spinner" /> Returning...</>
+                  <><span className={`spinner ${utility_classes.spinner}`} /> Returning...</>
                 ) : returned ? (
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><SuccessIcon size={15} /> Returned</span>
                 ) : returnAction.label}
@@ -239,7 +241,7 @@ export default function TransactionModal({ subtask, loading, error, embedded = f
             </button>
           </div>
           {!outgoing && !returned && (
-            <div className="muted" style={{ marginTop: 8, fontSize: '0.75rem' }}>
+            <div className={`muted ${utility_classes.muted}`} style={{ marginTop: 8, fontSize: '0.75rem' }}>
               Tip: Hold shift while pressing Return to fast-return
             </div>
           )}

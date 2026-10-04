@@ -1,3 +1,5 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
 import { useState, lazy } from 'react';
 import { useSettings, HOME_PAGE_OPTIONS, DEFAULT_DASHBOARD_BUTTONS, DASHBOARD_BUTTON_STYLES } from '../../context/settings_ctx.tsx';
 import type { DashboardButtonStyle, DashboardHistory } from '../../context/settings_ctx.tsx';
@@ -17,12 +19,12 @@ export function HomeSettings() {
 
   return (
     <>
-      <h3 className="mt-0">Default page</h3>
-      <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Default page</h3>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
         Change what page is loaded when you open the app
       </p>
       <label htmlFor="home-page-select">Home page</label>
-      <div className="row gap-sm" style={{ marginTop: 6 }}>
+      <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginTop: 6 }}>
         <select
           id="home-page-select"
           value={selectValue}
@@ -53,18 +55,18 @@ export function HomeSettings() {
           style={{ maxWidth: 240 }}
         />
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="alert alert-info">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className={`alert alert-info ${alert_classes.info}`}>
         <InfoIcon />
         <span>This will not execute if you visit a page, obviously</span>
       </div>
 
       <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
-      <h3 className="mt-0">Speed dial</h3>
-      <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Speed dial</h3>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
         Customize the action buttons shown on your dashboard (up to 5)
       </p>
       {settings.dashboardButtons.map((btn, i) => (
-        <div key={i} className="row gap-sm" style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
+        <div key={i} className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
           <select
             value={btn.route}
             style={{ flex: 1, minWidth: 0 }}
@@ -102,10 +104,10 @@ export function HomeSettings() {
           </button>
         </div>
       ))}
-      <div className="row gap-sm" style={{ marginTop: 10 }}>
+      <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginTop: 10 }}>
         {settings.dashboardButtons.length < 5 && (
           <button
-            className="btn secondary row gap-sm"
+            className={`btn secondary row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}
             onClick={() => update({ dashboardButtons: [...settings.dashboardButtons, { route: HOME_PAGE_OPTIONS[0].value, style: 'secondary' }] })}
           >
             <PlusIcon size={16} /> Add button
@@ -120,13 +122,13 @@ export function HomeSettings() {
       </div>
 
       <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
-      <h3 className="mt-0">Recent activity</h3>
-      <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Recent activity</h3>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.9rem', marginBottom: 12, marginTop: 0 }}>
         Choose how transaction history appears on your dashboard. This setting is mostly intended for mobile
         users who don't want a massive table on their dashboard (and really, so is the entire "simple history" thing)
       </p>
       <label htmlFor="dashboard-history-select">Transaction history style</label>
-      <div className="row gap-sm" style={{ marginTop: 6 }}>
+      <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginTop: 6 }}>
         <select
           id="dashboard-history-select"
           value={settings.dashboardHistory}

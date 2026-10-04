@@ -13,7 +13,7 @@ import {
   isSudoGranted, touchSudo, requestDrawerOpen, CLI_SUDO_SEEN_KEY,
 } from '../../utils/cli_store.ts';
 import type { CliLine } from '../../utils/cli_store.ts';
-import '../../styles/cli.css';
+import { cli_classes } from '../../styles/cli.stylex.ts';
 
 type ApiAny = any;
 
@@ -974,29 +974,29 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
 
   return (
     <div
-      className={`cli-wrap${fullscreen ? ' cli-wrap--fullscreen' : ''}${drawer ? ' cli-wrap--drawer' : ''}`}
+      className={`cli-wrap${fullscreen ? ' cli-wrap--fullscreen' : ''}${drawer ? ' cli-wrap--drawer' : ''} ${fullscreen ? cli_classes.wrap_fullscreen : drawer ? cli_classes.wrap_drawer : cli_classes.wrap}`}
       onClick={handleWrapClick}
     >
       {!drawer && (
-        <div className="cli-topbar">
-          <button className="cli-clear-btn" onClick={clearLines} title="Clear terminal history">CLEAR</button>
-          <button className="cli-clear-btn" onClick={() => navigate(fullscreen ? '/i/command' : '/i/command/focus')} title={fullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}>
+        <div className={`cli-topbar ${cli_classes.topbar}`}>
+          <button className={`cli-clear-btn ${cli_classes.clear_button}`} onClick={clearLines} title="Clear terminal history">CLEAR</button>
+          <button className={`cli-clear-btn ${cli_classes.clear_button}`} onClick={() => navigate(fullscreen ? '/i/command' : '/i/command/focus')} title={fullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}>
             {fullscreen ? 'EXIT FS' : 'FS'}
           </button>
         </div>
       )}
-      <div className="cli-output" ref={outputRef}>
+      <div className={`cli-output ${drawer ? cli_classes.output_drawer : cli_classes.output}`} ref={outputRef}>
         {lines.map(l =>
           l.type === 'sep'
-            ? <div key={l.id} className="cli-line cli-line-sep" />
-            : <div key={l.id} className={`cli-line cli-line-${l.type}`}>{l.text}</div>
+            ? <div key={l.id} className={`cli-line cli-line-sep ${cli_classes.line_sep}`} />
+            : <div key={l.id} className={`cli-line cli-line-${l.type} ${cli_classes[`line_${l.type}` as keyof typeof cli_classes] ?? cli_classes.line}`}>{l.text}</div>
         )}
-        <form className="cli-input-line" onSubmit={handleSubmit} autoComplete="off" spellCheck={false}>
-        <span className="cli-prompt">[{username}@mypayindia ~]$</span>
-        <span className="cli-input-field">
+        <form className={`cli-input-line ${cli_classes.input_line}`} onSubmit={handleSubmit} autoComplete="off" spellCheck={false}>
+        <span className={`cli-prompt ${cli_classes.prompt}`}>[{username}@mypayindia ~]$</span>
+        <span className={`cli-input-field ${cli_classes.input_field}`}>
           <input
             ref={inputRef}
-            className="cli-input"
+            className={`cli-input ${cli_classes.input}`}
             type={promptMode === 'password' ? 'password' : undefined}
             value={input}
             onChange={e => { setInput(e.target.value); setHistIdx(-1); markTyping(); syncCaret(); }}
@@ -1019,7 +1019,7 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
             aria-label="Command input"
           />
           <span
-            className={`cli-cursor cli-cursor--${loading ? 'busy' : typing ? 'typing' : !focused ? 'hollow' : 'idle'}`}
+            className={`cli-cursor cli-cursor--${loading ? 'busy' : typing ? 'typing' : !focused ? 'hollow' : 'idle'} ${loading ? cli_classes.cursor_busy : typing ? cli_classes.cursor_typing : !focused ? cli_classes.cursor_hollow : cli_classes.cursor_idle}`}
             style={{ left: `calc(${caretPos}ch - ${scrollLeft}px)` }}
             aria-hidden="true"
           />

@@ -1,3 +1,4 @@
+import { lbteam_classes, pride_flag_class } from '../../styles/lbteam.stylex.ts';
 import { useState } from 'react';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { ExternalIcon } from '../ui/icons.tsx';
@@ -72,7 +73,7 @@ export function PrideFlagTag({ flag }: { flag: string }) {
   const tip = PRIDE_FLAG_TIP_OVERRIDES[flag.toLowerCase()] ?? flag;
   return (
     <HoverTip tip={tip}>
-      <span className={`pride-flag pride-flag--${flag.toLowerCase()}`} role="img" aria-label={`${tip} flag`} style={{ cursor: 'help' }} />
+      <span className={`pride-flag pride-flag--${flag.toLowerCase()} ${pride_flag_class(flag)}`} role="img" aria-label={`${tip} flag`} style={{ cursor: 'help' }} />
     </HoverTip>
   );
 }
@@ -106,12 +107,13 @@ export function TeamMemberCard({
 }) {
   const datesMod = useLazyModule(() => import('../../utils/dates.js'));
   const calcAge = (d: string) => datesMod ? datesMod.calcAge(d) : null;
+  const [roles_expanded, set_roles_expanded] = useState(false);
 
   return (
     <>
-      <div className="team-header">
+      <div className={`team-header ${lbteam_classes.team_header}`}>
         <img
-          className="team-avatar"
+          className={`team-avatar ${lbteam_classes.team_avatar}`}
           src={avatarConductor(m.avatar)}
           alt={m.name}
           width={72}
@@ -120,8 +122,8 @@ export function TeamMemberCard({
           style={onAvatarClick ? undefined : { cursor: 'default' }}
           onError={(e) => { e.currentTarget.style.opacity = '0.4'; }}
         />
-        <div className="team-header-info">
-          <div className="team-name">
+        <div className={`team-header-info ${lbteam_classes.team_header_info}`}>
+          <div className={`team-name ${lbteam_classes.team_name}`}>
             <span>{m.name}</span>
             {m.country_flag && (
               <HoverTip tip={m.country_name ?? ''}>
@@ -129,53 +131,52 @@ export function TeamMemberCard({
               </HoverTip>
             )}
           </div>
-          {m.role && m.role !== '-' && <div className="team-role">{m.role}</div>}
+          {m.role && m.role !== '-' && <div className={`team-role ${lbteam_classes.team_role}`}>{m.role}</div>}
           {!!m.pride_flags?.length && (
-            <div className="team-pride-flags">
+            <div className={`team-pride-flags ${lbteam_classes.team_pride_flags}`}>
               {m.pride_flags.map((f) => <PrideFlagTag key={f} flag={f} />)}
             </div>
           )}
           {m.status !== 'special_thanks' && (
-            <div className="team-joined">
+            <div className={`team-joined ${lbteam_classes.team_joined}`}>
               joined {formatJoinDate(m.joined)}
               {m.joined && (() => { const a = calcAge(m.joined); return a ? <> <AgeTag age={a} /></> : null; })()}
             </div>
           )}
         </div>
       </div>
-      {m.quote && <p className="team-quote">"{m.quote}"</p>}
+      {m.quote && <p className={`team-quote ${lbteam_classes.team_quote}`}>"{m.quote}"</p>}
       {!!m.role_history?.length && (
         <>
-          <div className="team-section-label">Role history</div>
-          <input type="checkbox" id={`roles-${m.name}`} className="roles-toggle" />
-          <ul className="team-timeline">
+          <div className={`team-section-label ${lbteam_classes.team_section_label} ${lbteam_classes.team_align_stretch}`}>Role history</div>
+          <input type="checkbox" id={`roles-${m.name}`} className={`roles-toggle ${lbteam_classes.roles_toggle}`} checked={roles_expanded} onChange={(event) => set_roles_expanded(event.target.checked)} />
+          <ul className={`team-timeline ${lbteam_classes.team_timeline} ${lbteam_classes.team_align_stretch}`}>
             {m.role_history.map((h, i) => (
-              <li key={i} className="timeline-item">
-                <div className="timeline-heading">{h.role}</div>
-                <div className="timeline-date">
+              <li key={i} className={`timeline-item ${!roles_expanded && i >= 2 ? lbteam_classes.timeline_item_hidden : !roles_expanded && i === 1 ? lbteam_classes.timeline_item_collapsed_last : lbteam_classes.timeline_item}`}>
+                <div className={`timeline-heading ${lbteam_classes.timeline_heading}`}>{h.role}</div>
+                <div className={`timeline-date ${lbteam_classes.timeline_date}`}>
                   {formatMonthYear(h.start_date)} - {h.end_date ? formatMonthYear(h.end_date) : 'Present'}
                 </div>
               </li>
             ))}
           </ul>
           {m.role_history.length > 2 && (
-            <label htmlFor={`roles-${m.name}`} className="roles-toggle-label">
-              <span className="more-text">...more?</span>
-              <span className="less-text">...less?</span>
+            <label htmlFor={`roles-${m.name}`} className={`roles-toggle-label ${lbteam_classes.roles_toggle_label} ${lbteam_classes.team_align_stretch}`}>
+              {roles_expanded ? '...less?' : '...more?'}
             </label>
           )}
         </>
       )}
       {!!m.contributions?.length && (
         <>
-          <div className="team-section-label">Notable contributions</div>
-          <ul className="team-contributions">
-            {m.contributions.map((c) => <li key={c}>{c}</li>)}
+          <div className={`team-section-label ${lbteam_classes.team_section_label} ${lbteam_classes.team_align_stretch}`}>Notable contributions</div>
+          <ul className={`team-contributions ${lbteam_classes.team_contributions} ${lbteam_classes.team_align_stretch}`}>
+            {m.contributions.map((c) => <li key={c} className={lbteam_classes.team_contribution_item}>{c}</li>)}
           </ul>
         </>
       )}
       {m.socials && Object.keys(m.socials).length > 0 && (
-        <div className="team-socials" role="group" aria-label={`${m.name}'s links`}>
+        <div className={`team-socials ${lbteam_classes.team_socials}`} role="group" aria-label={`${m.name}'s links`}>
           {Object.entries(m.socials).map(([key, url]) => {
             const site = resolveSocialSite(key, url);
             const label = site ? getSocialSiteLabel(site) : key;
@@ -186,7 +187,7 @@ export function TeamMemberCard({
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`btn secondary compact${site ? ' team-social-link' : ''}`}
+                className={`btn secondary compact${site ? ` team-social-link ${lbteam_classes.team_social_link_btn}` : ''}`}
                 aria-label={`Open ${label} for ${m.name}`}
                 title={label}
               >

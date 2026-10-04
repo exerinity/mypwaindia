@@ -1,3 +1,7 @@
+import { utility_classes } from '../styles/utils.stylex.ts';
+import { button_classes } from '../styles/buttons.stylex.ts';
+import { modal_classes } from '../styles/modal.stylex.ts';
+import { form_classes } from '../styles/forms.stylex.ts';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { OnboardingWizardSubtask } from '../api/flow.ts';
@@ -58,9 +62,9 @@ export default function FinetunePage({ subtask, loading, error, embedded = false
       case 'theme_picker':
         return (
           <>
-            <h2 className="mt-0">{currentStep.primary_text.text}</h2>
-            <p className="muted" style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
-            <div className="btn-row">
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>{currentStep.primary_text.text}</h2>
+            <p className={`muted ${utility_classes.muted}`} style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
+            <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
               {currentStep.theme_options.map((option) => (
                 <button
                   key={option.value}
@@ -71,8 +75,8 @@ export default function FinetunePage({ subtask, loading, error, embedded = false
                 </button>
               ))}
             </div>
-            <label className="mt-2">{currentStep.accent_label}</label>
-            <div className="row gap-sm">
+            <label className={`mt-2 ${utility_classes.mt_2}`}>{currentStep.accent_label}</label>
+            <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}>
               <input
                 type="color"
                 value={normalizeHex(accentInput) || currentStep.accent_placeholder}
@@ -94,10 +98,10 @@ export default function FinetunePage({ subtask, loading, error, embedded = false
         const firstRoute = currentStep.route_options[0]?.value;
         return (
           <>
-            <h2 className="mt-0">{currentStep.primary_text.text}</h2>
-            <p className="muted" style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>{currentStep.primary_text.text}</h2>
+            <p className={`muted ${utility_classes.muted}`} style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
             {settings.dashboardButtons.map((button, index) => (
-              <div key={index} className="row gap-sm" style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
+              <div key={index} className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginTop: 6, alignItems: 'center', flexWrap: 'nowrap' }}>
                 <select
                   value={button.route}
                   style={{ flex: 1, minWidth: 0 }}
@@ -138,10 +142,10 @@ export default function FinetunePage({ subtask, loading, error, embedded = false
                 </button>
               </div>
             ))}
-            <div className="row gap-sm" style={{ marginTop: 10 }}>
+            <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} style={{ marginTop: 10 }}>
               {firstRoute && settings.dashboardButtons.length < currentStep.max_buttons && (
                 <button
-                  className="btn secondary row gap-sm"
+                  className={`btn secondary row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}
                   onClick={() => update({
                     dashboardButtons: [...settings.dashboardButtons, { route: firstRoute, style: 'secondary' }],
                   })}
@@ -163,8 +167,8 @@ export default function FinetunePage({ subtask, loading, error, embedded = false
       case 'default_page':
         return (
           <>
-            <h2 className="mt-0">{currentStep.primary_text.text}</h2>
-            <p className="muted" style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>{currentStep.primary_text.text}</h2>
+            <p className={`muted ${utility_classes.muted}`} style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
             <select
               value={settings.homePage}
               onChange={(event) => update({ homePage: event.target.value })}
@@ -180,9 +184,9 @@ export default function FinetunePage({ subtask, loading, error, embedded = false
         const inputId = `onboarding-${currentStep.setting}`;
         return (
           <>
-            <h2 className="mt-0">{currentStep.primary_text.text}</h2>
-            <p className="muted" style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
-            <div className="checkbox-row">
+            <h2 className={`mt-0 ${utility_classes.mt_0}`}>{currentStep.primary_text.text}</h2>
+            <p className={`muted ${utility_classes.muted}`} style={{ marginTop: 0 }}>{currentStep.secondary_text.text}</p>
+            <div className={`checkbox-row ${form_classes.checkbox_row}`}>
               <input
                 type="checkbox"
                 id={inputId}
@@ -207,7 +211,7 @@ export default function FinetunePage({ subtask, loading, error, embedded = false
           <Skeleton width={140} height={14} />
           <Skeleton width={200} height={26} />
           <Skeleton width="100%" height={72} />
-          <div className="modal-actions">
+          <div className={`modal-actions ${modal_classes.actions}`}>
             <Skeleton width={90} height={38} radius={6} />
             <Skeleton width={90} height={38} radius={6} />
           </div>
@@ -216,9 +220,9 @@ export default function FinetunePage({ subtask, loading, error, embedded = false
         <ErrorBox error={error} />
       ) : detail && !done && currentStep ? (
         <>
-          <div className="row spread" style={{ marginBottom: 4 }}>
-            <span className="muted" style={{ fontSize: '0.85rem' }}>Step {step + 1} of {totalSteps}</span>
-            <span className="muted" style={{ fontSize: '0.85rem' }}>{currentStep.progress_label}</span>
+          <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ marginBottom: 4 }}>
+            <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>Step {step + 1} of {totalSteps}</span>
+            <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>{currentStep.progress_label}</span>
           </div>
           <div style={{ height: 4, background: 'var(--border)', borderRadius: 2, marginBottom: 20, overflow: 'hidden' }}>
             <div style={{
@@ -231,18 +235,18 @@ export default function FinetunePage({ subtask, loading, error, embedded = false
 
           {renderStep()}
 
-          <div className="modal-actions">
-            <button className="secondary row gap-sm" onClick={back} disabled={step === 0}>
+          <div className={`modal-actions ${modal_classes.actions}`}>
+            <button className={`secondary row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} onClick={back} disabled={step === 0}>
               <ArrowLeftIcon size={16} /> {detail.navigation.back_label}
             </button>
-            <button className="row gap-sm" onClick={next}>
+            <button className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`} onClick={next}>
               {step === totalSteps - 1 ? detail.navigation.finish_label : detail.navigation.next_label}
               <ChevronRight size={16} />
             </button>
           </div>
         </>
       ) : detail && done ? (
-        <div className="center" style={{ textAlign: 'center', padding: '12px 0' }}>
+        <div className={`center ${utility_classes.center}`} style={{ textAlign: 'center', padding: '12px 0' }}>
           <SuccessIcon size={40} />
           <h2>{detail.completion.primary_text.text}</h2>
           <p>{detail.completion.secondary_text.text}</p>

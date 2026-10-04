@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
@@ -78,23 +81,23 @@ export function PortSettings() {
 
   return (
     <>
-      <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.9rem', marginBottom: 16, marginTop: 0 }}>
         Export, import and share your settings. This can be done in 4 methods; the first and third are the easiest.
       </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="mt-0 mb-0 alert alert-warning"><WarningIcon /><span>These are for the app settings, they have nothing to do with your MyPayIndia account. <a href="https://mypayindia.com/account/settings" target="_blank">Log in to MyPayIndia.com to change those...</a></span></div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className={`mt-0 mb-0 alert alert-warning ${alert_classes.warning} ${utility_classes.mt_0}`}><WarningIcon /><span>These are for the app settings, they have nothing to do with your MyPayIndia account. <a href="https://mypayindia.com/account/settings" target="_blank">Log in to MyPayIndia.com to change those...</a></span></div>
 
-      <h3 className="mt-0">Save to your account</h3>
-      <p className="muted" style={{ fontSize: '0.85rem', marginTop: 0, marginBottom: 8 }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Save to your account</h3>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem', marginTop: 0, marginBottom: 8 }}>
         {active
           ? 'Your settings will be saved and tied to your account ID'
           : 'Log in to save your settings against your MyPayIndia account'}
       </p>
       {remoteSavedAt && (
-        <p className="muted" style={{ fontSize: '0.8rem', marginTop: 0, marginBottom: 8 }}>
+        <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginTop: 0, marginBottom: 8 }}>
           Last saved {formatRelative(remoteSavedAt)}
         </p>
       )}
-      <div className="btn-row" style={{ marginTop: 4 }}>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ marginTop: 4 }}>
         <button className="secondary compact" disabled={!active || syncBusy !== null} onClick={saveToAccount}>
           {syncBusy === 'save' ? 'Saving data...' : 'Save to account'}
         </button>
@@ -107,8 +110,8 @@ export function PortSettings() {
       </div>
 
       <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
-      <h3 className="mt-0">Copy &amp; paste</h3>
-      <div className="btn-row" style={{ marginTop: 4 }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Copy &amp; paste</h3>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ marginTop: 4 }}>
         <button className="secondary compact" onClick={async () => {
           const { collectSettingsExport } = await import('../../utils/settings_io.ts');
           const json = JSON.stringify(collectSettingsExport(settings), null, 2);
@@ -120,7 +123,7 @@ export function PortSettings() {
           Copy settings in JSON
         </button>
       </div>
-      <label htmlFor="settings-import-json" className="mt-2">Paste that JSON here:</label>
+      <label htmlFor="settings-import-json" className={`mt-2 ${utility_classes.mt_2}`}>Paste that JSON here:</label>
       <textarea
         id="settings-import-json"
         value={importJson}
@@ -128,15 +131,15 @@ export function PortSettings() {
         placeholder='{ "settings": { ... } }'
         style={{ marginTop: 6, minHeight: 120, fontFamily: 'ui-monospace, Menlo, monospace', fontSize: '0.8rem' }}
       />
-      <div className="btn-row" style={{ marginTop: 6 }}>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ marginTop: 6 }}>
         <button className="secondary compact" disabled={!importJson.trim()} onClick={() => applyJson(importJson)}>
           Apply pasted JSON
         </button>
       </div>
 
       <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
-      <h3 className="mt-0">JSON file</h3>
-      <div className="btn-row" style={{ marginTop: 4 }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>JSON file</h3>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ marginTop: 4 }}>
         <button className="secondary compact" onClick={async () => {
           const { collectSettingsExport } = await import('../../utils/settings_io.ts');
           const json = JSON.stringify(collectSettingsExport(settings), null, 2);
@@ -168,11 +171,11 @@ export function PortSettings() {
       </div>
 
       <hr style={{ margin: '20px 0', borderColor: 'var(--border)' }} />
-      <h3 className="mt-0">Shareable link (recommended)</h3>
-      <p className="muted" style={{ fontSize: '0.85rem', marginTop: 0, marginBottom: 8 }}>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Shareable link (recommended)</h3>
+      <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem', marginTop: 0, marginBottom: 8 }}>
         With this, you are able to choose what incoming settings are applied before accepting
       </p>
-      <div className="btn-row" style={{ marginTop: 4 }}>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`} style={{ marginTop: 4 }}>
         <button className="secondary compact" onClick={async () => {
           const { collectSettingsExport, settingsToSearchParams } = await import('../../utils/settings_io.ts');
           const url = `https://mypayindia.sbs/i/sharedsett?${settingsToSearchParams(collectSettingsExport(settings))}`;

@@ -1,3 +1,7 @@
+import { utility_classes } from '../styles/utils.stylex.ts';
+import { card_classes } from '../styles/cards.stylex.ts';
+import { button_classes } from '../styles/buttons.stylex.ts';
+import { form_classes } from '../styles/forms.stylex.ts';
 import { useEffect, useRef, useState } from 'react';
 import type { FlowTaskInput, FlowTaskResponse, ShopItemEditorSubtask } from '../api/flow.ts';
 import type { ShopItemBody, ShopOption } from '../api/shop.js';
@@ -80,10 +84,10 @@ export default function EditItemModal({ subtask, on_submit, on_complete, on_busy
       <FloatingInput id="item_name" label={labels.name} type="text" maxLength={data.limits.name} required value={name} onChange={(event) => set_name(event.target.value)} />
       <FloatingTextarea id="item_description" label={labels.description} maxLength={data.limits.description} value={description} onChange={(event) => set_description(event.target.value)} />
       <FloatingInput id="item_price" label={labels.price} type="text" inputMode="decimal" required value={price} onChange={(event) => set_price(event.target.value)} />
-      <label className="checkbox-row"><input type="checkbox" checked={pwyw} onChange={(event) => set_pwyw(event.target.checked)} />{labels.pwyw}</label>
+      <label className={`checkbox-row ${form_classes.checkbox_row}`}><input type="checkbox" checked={pwyw} onChange={(event) => set_pwyw(event.target.checked)} />{labels.pwyw}</label>
       <FloatingInput id="item_stock" label={labels.stock} type="number" min={0} step={1} value={stock} onChange={(event) => set_stock(event.target.value)} />
-      <label className="checkbox-row"><input type="checkbox" checked={hidden} onChange={(event) => set_hidden(event.target.checked)} />{labels.hidden}</label>
-      {image_delivery ? <p className="muted">{data.image_delivery_text.text}</p> : <>
+      <label className={`checkbox-row ${form_classes.checkbox_row}`}><input type="checkbox" checked={hidden} onChange={(event) => set_hidden(event.target.checked)} />{labels.hidden}</label>
+      {image_delivery ? <p className={`muted ${utility_classes.muted}`}>{data.image_delivery_text.text}</p> : <>
         <label htmlFor="item_delivery">{labels.delivery}</label><select id="item_delivery" value={delivery} onChange={(event) => set_delivery(event.target.value as 'instant' | 'manual')}>
           {data.delivery_options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
         </select>
@@ -95,7 +99,7 @@ export default function EditItemModal({ subtask, on_submit, on_complete, on_busy
         </>}
       </>}
       <OptionsEditor data={data} options={options} on_change={set_options} />
-      <div className="btn-row mt-2"><button disabled={busy || !name.trim() || !save_action}>{busy ? save_action?.pending_label : save_action?.label}</button></div>
+      <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}><button disabled={busy || !name.trim() || !save_action}>{busy ? save_action?.pending_label : save_action?.label}</button></div>
     </fieldset>
   </form>;
 }
@@ -105,9 +109,9 @@ function OptionsEditor({ data, options, on_change }: { data: ShopItemEditorSubta
   function update_option(index: number, patch: Partial<ShopOption>) {
     on_change(options.map((option, current) => current === index ? { ...option, ...patch } : option));
   }
-  return <div className="mt-2 mb-2">
-    <h3 className="mt-0">{labels.buyer_fields}</h3>
-    {options.map((option, index) => <div key={index} className="card compact mb-2">
+  return <div className={`mt-2 mb-2 ${utility_classes.mt_2} ${utility_classes.mb_2}`}>
+    <h3 className={`mt-0 ${utility_classes.mt_0}`}>{labels.buyer_fields}</h3>
+    {options.map((option, index) => <div key={index} className={`card compact mb-2 ${card_classes.compact} ${utility_classes.mb_2}`}>
       <FloatingInput id={`option_label_${index}`} label={labels.option_label} type="text" required value={option.label} onChange={(event) => update_option(index, { label: event.target.value })} />
       <label htmlFor={`option_type_${index}`}>{labels.option_type}</label><select id={`option_type_${index}`} value={option.type} onChange={(event) => {
         const type = event.target.value as ShopOption['type'];
@@ -116,20 +120,20 @@ function OptionsEditor({ data, options, on_change }: { data: ShopItemEditorSubta
         if (type === 'checkbox') next.price = 0;
         on_change(options.map((current, current_index) => current_index === index ? next : current));
       }}>{data.option_types.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}</select>
-      <label className="checkbox-row"><input type="checkbox" checked={option.required} onChange={(event) => update_option(index, { required: event.target.checked })} />{labels.required}</label>
+      <label className={`checkbox-row ${form_classes.checkbox_row}`}><input type="checkbox" checked={option.required} onChange={(event) => update_option(index, { required: event.target.checked })} />{labels.required}</label>
       {option.type === 'checkbox' && <OptionPrice id={`option_price_${index}`} label={labels.extra_price} value={option.price ?? 0} on_change={(price) => update_option(index, { price })} />}
       {option.type === 'select' && <>
-        {(option.choices ?? []).map((choice, choice_index) => <div className="mb-2" key={choice_index}>
+        {(option.choices ?? []).map((choice, choice_index) => <div className={`mb-2 ${utility_classes.mb_2}`} key={choice_index}>
           <FloatingInput id={`choice_${index}_${choice_index}`} label={labels.choice_label} type="text" required value={choice.label}
             onChange={(event) => update_option(index, { choices: option.choices?.map((current, current_index) => current_index === choice_index ? { ...current, label: event.target.value } : current) })} />
           <OptionPrice id={`choice_price_${index}_${choice_index}`} label={labels.extra_price} value={choice.price} on_change={(price) => update_option(index, { choices: option.choices?.map((current, current_index) => current_index === choice_index ? { ...current, price } : current) })} />
-          <div className="btn-row"><button className="secondary" type="button" onClick={() => update_option(index, { choices: option.choices?.filter((_, current) => current !== choice_index) })}>{labels.remove_choice}</button></div>
+          <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" type="button" onClick={() => update_option(index, { choices: option.choices?.filter((_, current) => current !== choice_index) })}>{labels.remove_choice}</button></div>
         </div>)}
-        <div className="btn-row"><button className="secondary" type="button" onClick={() => update_option(index, { choices: [...(option.choices ?? []), { label: '', price: 0 }] })}>{labels.add_choice}</button></div>
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" type="button" onClick={() => update_option(index, { choices: [...(option.choices ?? []), { label: '', price: 0 }] })}>{labels.add_choice}</button></div>
       </>}
-      <div className="btn-row"><button className="secondary" type="button" onClick={() => on_change(options.filter((_, current) => current !== index))}>{labels.remove_field}</button></div>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" type="button" onClick={() => on_change(options.filter((_, current) => current !== index))}>{labels.remove_field}</button></div>
     </div>)}
-    <div className="btn-row"><button className="secondary" type="button" onClick={() => on_change([...options, { label: '', type: 'text', required: false }])}>{labels.add_field}</button></div>
+    <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" type="button" onClick={() => on_change([...options, { label: '', type: 'text', required: false }])}>{labels.add_field}</button></div>
   </div>;
 }
 

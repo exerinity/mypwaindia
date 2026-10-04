@@ -1,3 +1,9 @@
+import { utility_classes } from '../styles/utils.stylex.ts';
+import { profile_classes } from '../styles/profiles.stylex.ts';
+import { button_classes } from '../styles/buttons.stylex.ts';
+import { alert_classes } from '../styles/alerts.stylex.ts';
+import { form_classes } from '../styles/forms.stylex.ts';
+import { stat_classes } from '../styles/stats.stylex.ts';
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import type { FlowTaskInput, FlowTaskResponse, ProfileDonationSubtask } from '../api/flow.ts';
@@ -41,30 +47,30 @@ export default function DonateProfileModal({ subtask, on_submit, on_complete, on
   return <div>
     <ErrorBox error={error} />
     {data.result ? <>
-      <div className={`alert ${data.result.status === 'pending' ? 'alert-warning' : 'alert-success'}`}>{data.result.status === 'pending' ? data.pending_text.text : data.confirmed_text.text}</div>
-      <div className="stat-card mt-2"><span className="stat-label">Donation to @{data.username}</span><span className="stat-value">{formatINR(data.result.amount)}</span></div>
-      <p className="stat-sub">{data.result.public ? 'Your name is shown in supporters once confirmed.' : 'Your name is hidden in supporters.'}</p>
-      <div className="btn-row">
+      <div className={`alert ${data.result.status === 'pending' ? 'alert-warning' : 'alert-success'} ${data.result.status === 'pending' ? alert_classes.warning : alert_classes.success}`}>{data.result.status === 'pending' ? data.pending_text.text : data.confirmed_text.text}</div>
+      <div className={`${stat_classes.card} mt-2 ${utility_classes.mt_2}`}><span className={stat_classes.label}>Donation to @{data.username}</span><span className={stat_classes.value}>{formatINR(data.result.amount)}</span></div>
+      <p className={stat_classes.sub}>{data.result.public ? 'Your name is shown in supporters once confirmed.' : 'Your name is hidden in supporters.'}</p>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
         <Link className="btn secondary" replace to={`/i/flow/transaction/${encodeURIComponent(data.result.transaction_id)}`} state={location.state}>{data.labels.transaction}</Link>
         <button onClick={on_complete}>{data.labels.done}</button>
       </div>
     </> : reviewing ? <>
-      <h3 className="mt-0">{data.labels.confirm}</h3>
-      <div className="stat-card"><span className="stat-label">To @{data.username}</span><span className="stat-value">{formatINR(paisa)}</span></div>
-      {message && <p className="profile_prose">{message}</p>}
-      <p className="muted">{public_name ? 'Your name will be shown in supporters.' : 'Your name will be hidden in supporters.'}</p>
-      <p className="stat-sub">{data.recipient_notice.text}</p>
-      <div className="btn-row">
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>{data.labels.confirm}</h3>
+      <div className={stat_classes.card}><span className={stat_classes.label}>To @{data.username}</span><span className={stat_classes.value}>{formatINR(paisa)}</span></div>
+      {message && <p className={`profile_prose ${profile_classes.prose}`}>{message}</p>}
+      <p className={`muted ${utility_classes.muted}`}>{public_name ? 'Your name will be shown in supporters.' : 'Your name will be hidden in supporters.'}</p>
+      <p className={stat_classes.sub}>{data.recipient_notice.text}</p>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
         <button disabled={busy || !valid} onClick={donate}>{busy ? action?.pending_label : `${action?.label} ${formatINR(paisa)}`}</button>
         <button className="secondary" disabled={busy} onClick={() => set_reviewing(false)}>{data.labels.back}</button>
       </div>
     </> : <form onSubmit={(event) => { event.preventDefault(); if (valid) { set_error(null); set_reviewing(true); } }}>
       <FloatingInput id="donation_amount" label={data.labels.amount} inputMode="decimal" required value={amount} onChange={(event) => set_amount(event.target.value)} />
-      <p className="stat-sub">Minimum {formatINR(data.minimum)}</p>
+      <p className={stat_classes.sub}>Minimum {formatINR(data.minimum)}</p>
       <FloatingTextarea id="donation_message" label={data.labels.message} maxLength={data.message_limit} value={message} onChange={(event) => set_message(event.target.value)} />
-      <label className="checkbox-row"><input type="checkbox" checked={public_name} onChange={(event) => set_public_name(event.target.checked)} />{data.labels.public}</label>
-      <p className="stat-sub">{data.recipient_notice.text}</p>
-      <div className="btn-row"><button disabled={!valid || !action}>{data.labels.review}</button></div>
+      <label className={`checkbox-row ${form_classes.checkbox_row}`}><input type="checkbox" checked={public_name} onChange={(event) => set_public_name(event.target.checked)} />{data.labels.public}</label>
+      <p className={stat_classes.sub}>{data.recipient_notice.text}</p>
+      <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button disabled={!valid || !action}>{data.labels.review}</button></div>
     </form>}
   </div>;
 }

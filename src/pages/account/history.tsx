@@ -1,3 +1,5 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useMemo, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
@@ -52,43 +54,43 @@ export default function HistoryPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <h1 className="mt-0">Transaction history</h1>
-      <p className="muted" style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Transaction history</h1>
+      <p className={`muted ${utility_classes.muted}`} style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
         <Link to="/account/history/simple">Simple history...</Link>
       </p>
 
       {!settings.scambait && stats && (
-        <div className="card" style={{ marginBottom: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px 24px' }}>
+        <div className={`card ${card_classes.card}`} style={{ marginBottom: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px 24px' }}>
           <div>
-            <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total transactions to list</div>
+            <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total transactions to list</div>
             <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{stats.total}</div>
           </div>
           <div>
-            <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total outgoing</div>
+            <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total outgoing</div>
             <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--alert-error)' }}>{format(stats.outgoing)}</div>
           </div>
           <div>
-            <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total incoming</div>
+            <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total incoming</div>
             <div style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--success)' }}>{format(stats.incoming)}</div>
           </div>
           {stats.topSent && (
             <div>
-              <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Largest receiver</div>
+              <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem', marginBottom: 4 }}>Largest receiver</div>
               <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{stats.topSent[0]}</div>
-              <div className="muted" style={{ fontSize: '0.8rem' }}>{format(stats.topSent[1])} sent</div>
+              <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem' }}>{format(stats.topSent[1])} sent</div>
             </div>
           )}
           {stats.topReceived && (
             <div>
-              <div className="muted" style={{ fontSize: '0.78rem', marginBottom: 4 }}>Largest donor</div>
+              <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem', marginBottom: 4 }}>Largest donor</div>
               <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{stats.topReceived[0]}</div>
-              <div className="muted" style={{ fontSize: '0.8rem' }}>{format(stats.topReceived[1])} received</div>
+              <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem' }}>{format(stats.topReceived[1])} received</div>
             </div>
           )}
         </div>
       )}
 
-      <div className="card">
+      <div className={`card ${card_classes.card}`}>
         {loading && !data ? (
           <div>
             {Array.from({ length: 6 }).map((_, i) => (

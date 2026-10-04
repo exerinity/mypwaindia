@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
 import { useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Flowback from '../shell_fallback.tsx';
@@ -65,8 +68,8 @@ export default function SettingsApplyPage() {
 
   return (
     <div className="mpi-themeap">
-      <h1 className="mt-0">Apply these settings?</h1>
-      <div className="card" style={{ maxWidth: 520 }}>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Apply these settings?</h1>
+      <div className={`card ${card_classes.card}`} style={{ maxWidth: 520 }}>
         <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', marginBottom: 20 }}>
           {fields.map((f, i) => (
             <label key={f.key} style={{ ...rowStyle(i), cursor: 'pointer' }}>
@@ -79,7 +82,7 @@ export default function SettingsApplyPage() {
                 />
                 <span>{f.label}</span>
               </div>
-              <span className="mono" style={{ fontSize: '0.78rem', color: 'var(--muted)', textAlign: 'right', wordBreak: 'break-word', maxWidth: '55%' }}>
+              <span className={`mono ${utility_classes.mono}`} style={{ fontSize: '0.78rem', color: 'var(--muted)', textAlign: 'right', wordBreak: 'break-word', maxWidth: '55%' }}>
                 {settingsIo.describeSettingValue(f.key, payload.settings[f.key])}
               </span>
             </label>
@@ -95,14 +98,14 @@ export default function SettingsApplyPage() {
                 />
                 <span>Elements</span>
               </div>
-              <span className="mono" style={{ fontSize: '0.78rem', color: 'var(--muted)', textAlign: 'right', wordBreak: 'break-word', maxWidth: '55%' }}>
+              <span className={`mono ${utility_classes.mono}`} style={{ fontSize: '0.78rem', color: 'var(--muted)', textAlign: 'right', wordBreak: 'break-word', maxWidth: '55%' }}>
                 {settingsIo.describeHide(payload)}
               </span>
             </label>
           )}
         </div>
 
-        <div className="btn-row">
+        <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           <button onClick={handleApply}>Apply</button>
           <button className="secondary" onClick={() => navigate('/dash')}>No</button>
         </div>

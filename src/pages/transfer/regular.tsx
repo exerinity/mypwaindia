@@ -1,3 +1,9 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { table_classes } from '../../styles/tables.stylex.ts';
+import { link_classes } from '../../styles/links.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
@@ -180,7 +186,7 @@ export default function TransferPage() {
         <img src={noModalImage} alt="" style={{ display: 'block', maxWidth: '100%' }} />
       </Modal>
       <Modal open={showRecents} onClose={() => setShowRecents(false)}>
-        <div className="table-controls">
+        <div className={`table-controls ${table_classes.controls}`}>
           <label>
             Sort by
             <select value={recentSort} onChange={(e) => setRecentSort(e.target.value as 'recent' | 'amount')}>
@@ -197,31 +203,31 @@ export default function TransferPage() {
               <button
                 key={tx.id}
                 type="button"
-                className="option"
+                className={`option ${button_classes.option}`}
                 onClick={() => reperform(tx)}
                 disabled={busy}
                 style={{ minWidth: 0 }}
               >
-                <span className="option-label" style={TRUNCATE}>{format(tx.amount)} to {tx.recipient!.username}</span>
-                <span className="option-desc" style={TRUNCATE}>{note ? `${note} (${when})` : when}</span>
+                <span className={`option-label ${button_classes.option_label}`} style={TRUNCATE}>{format(tx.amount)} to {tx.recipient!.username}</span>
+                <span className={`option-desc ${button_classes.option_desc}`} style={TRUNCATE}>{note ? `${note} (${when})` : when}</span>
               </button>
             );
           })}
         </div>
       </Modal>
-      <h1 className="mt-0">Transfer funds</h1>
-      <p className="muted" style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Transfer funds</h1>
+      <p className={`muted ${utility_classes.muted}`} style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
         Sending to multiple people? <Link to="/account/transfer/bulk">Bulk transfer...</Link>
       </p>
-      <div className="alert alert-info" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className={`alert alert-info ${alert_classes.info}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <InfoIcon /><span>Please note that transfers above a certain amount are subject to manual review by our team.</span>
       </div>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">Amount</h3>
-        <div className="preset-stack">
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>Amount</h3>
+        <div className={`preset-stack ${link_classes.preset_stack}`}>
           <input
-            className="preset-stack-display"
+            className={`preset-stack-display ${link_classes.preset_stack_input}`}
             type="text"
             inputMode="decimal"
             value={editingAmount ? rawInput : format(stackPaisa)}
@@ -231,7 +237,7 @@ export default function TransferPage() {
             disabled={busy}
             aria-label="Transfer amount"
           />
-          <div className="preset-stack-row">
+          <div className={`preset-stack-row ${link_classes.preset_stack_row}`}>
             {PRESETS_PAISA.map((p) => (
               <button key={p} type="button" className="secondary compact" onClick={() => bump(p)} disabled={busy}>
                 +{format(p)}
@@ -242,27 +248,27 @@ export default function TransferPage() {
             </button>
           </div>
           {(txQ.loading || recentTransfers.length > 0) && (
-            <div className="preset-stack-row">
+            <div className={`preset-stack-row ${link_classes.preset_stack_row}`}>
               <button
                 type="button"
                 className="ghost"
                 onClick={() => setShowRecents(true)}
                 disabled={busy || txQ.loading}
               >
-                {txQ.loading ? <><span className="spinner" /> Retrieving data...</> : 'Open recents'}
+                {txQ.loading ? <><span className={`spinner ${utility_classes.spinner}`} /> Retrieving data...</> : 'Open recents'}
               </button>
             </div>
           )}
           {overBalance && (
-            <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className={`alert alert-warning ${alert_classes.warning}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <WarningIcon /><span>That's more than you have ({format(balance)}). The server will reject it. I'm warning you in advance...</span>
             </div>
           )}
         </div>
       </div>
 
-      <div className="card mb-2">
-        <h3 className="mt-0">Compose</h3>
+      <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>Compose</h3>
         <FloatingInput
           label="Recipient"
           type="text"
@@ -272,8 +278,8 @@ export default function TransferPage() {
         />
         {txQ.loading ? (
           <>
-            <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
-            <div className="preset-stack-row">
+            <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
+            <div className={`preset-stack-row ${link_classes.preset_stack_row}`}>
               {[72, 56, 88, 64].map((w, i) => (
                 <Skeleton key={i} width={w} height={31} radius={10} />
               ))}
@@ -281,8 +287,8 @@ export default function TransferPage() {
           </>
         ) : recentRecipients.length > 0 && (
           <>
-            <div className="muted" style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
-            <div className="preset-stack-row">
+            <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem', marginTop: 10, marginBottom: 6 }}>Recent recipients</div>
+            <div className={`preset-stack-row ${link_classes.preset_stack_row}`}>
               {recentRecipients.map((u) => (
                 <button
                   key={u}
@@ -309,11 +315,11 @@ export default function TransferPage() {
         <div style={{ marginTop: 8 }}>
           {isHighValue ? (
             <HoldButton onConfirm={doTransfer} disabled={busy} type="button">
-              {busy ? <><span className="spinner" /> Sending...</> : `Send ${format(stackPaisa)} (hold)`}
+              {busy ? <><span className={`spinner ${utility_classes.spinner}`} /> Sending...</> : `Send ${format(stackPaisa)} (hold)`}
             </HoldButton>
           ) : (
             <button type="button" onClick={doTransfer} disabled={busy}>
-              {busy ? <><span className="spinner" /> Sending...</> : `Send ${stackPaisa > 0 ? format(stackPaisa) : ''}`}
+              {busy ? <><span className={`spinner ${utility_classes.spinner}`} /> Sending...</> : `Send ${stackPaisa > 0 ? format(stackPaisa) : ''}`}
             </button>
           )}
         </div>

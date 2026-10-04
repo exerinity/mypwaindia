@@ -1,6 +1,10 @@
-import { defineConfig } from 'vite';
+import { defineConfig, transformWithEsbuild } from 'vite';
 import react from '@vitejs/plugin-react';
+import stylex from '@stylexjs/unplugin';
 import { VitePWA } from 'vite-plugin-pwa';
+import { minify as minifyHtml } from 'html-minifier-terser';
+import { readFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
 function umami() {
   return {
@@ -22,10 +26,61 @@ function umami() {
   };
 }
 
+function minify_html() {
+  return {
+    name: 'minify-html',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html) {
+        return minifyHtml(html, {
+          collapseWhitespace: true,
+          removeComments: true,
+          minifyCSS: true,
+          minifyJS: true
+        });
+      }
+    }
+  };
+}
+
+function minify_css_assets() {
+  let output_dir;
+  let css_files = [];
+  return {
+    name: 'minify-css-assets',
+    apply: 'build',
+    configResolved(config) {
+      output_dir = resolve(config.root, config.build.outDir);
+    },
+    writeBundle(_options, bundle) {
+      css_files = Object.values(bundle)
+        .filter((asset) => asset.type === 'asset' && asset.fileName.endsWith('.css'))
+        .map((asset) => asset.fileName);
+    },
+    async closeBundle() {
+      for (const file_name of css_files) {
+        const file_path = resolve(output_dir, file_name);
+        const source = await readFile(file_path, 'utf8');
+        const result = await transformWithEsbuild(source, file_name, {
+          loader: 'css',
+          minify: true,
+          legalComments: 'none'
+        });
+        if (!result.code.trim() && source.trim()) throw new Error(`CSS minification removed ${file_name}`);
+        await writeFile(file_path, result.code);
+      }
+    }
+  };
+}
+
 export default defineConfig({
   plugins: [
+    stylex.vite({ classNamePrefix: 'r-' }),
     react(),
     umami(),
+    minify_html(),
+    minify_css_assets(),
     VitePWA({
       registerType: 'prompt',
       manifestFilename: 'mypayindia.webmanifest',
@@ -85,8 +140,8 @@ export default defineConfig({
   },
   build: {
     modulePreload: false,
-    minify: false,
-    cssMinify: false,
+    minify: 'esbuild',
+    cssMinify: 'esbuild',
     cssCodeSplit: false,
     sourcemap: false,
     target: 'esnext',

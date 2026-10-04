@@ -1,3 +1,8 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { profile_classes } from '../../styles/profiles.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { stat_classes } from '../../styles/stats.stylex.ts';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { block_profile, follow_profile, get_public_profile } from '../../api/profile.js';
@@ -26,15 +31,15 @@ function ProfileSearch() {
   const navigate = useNavigate();
   const [username, set_username] = useState('');
   return <>
-    <h1 className="mt-0">Profiles</h1>
-    <form className="card" style={{ maxWidth: 480 }} onSubmit={(event) => {
+    <h1 className={`mt-0 ${utility_classes.mt_0}`}>Profiles</h1>
+    <form className={`card ${card_classes.card}`} style={{ maxWidth: 480 }} onSubmit={(event) => {
       event.preventDefault();
       const value = username.trim().replace(/^@/, '');
       if (value) navigate(profile_path(value));
     }}>
-      <h3 className="mt-0">Find a profile</h3>
+      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Find a profile</h3>
       <FloatingInput id="profile_search" label="Username" type="text" required value={username} onChange={(event) => set_username(event.target.value)} />
-      <div className="btn-row mt-2">
+      <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>
         <button disabled={!username.trim().replace(/^@/, '')}>View profile</button>
         {active && <Link to={profile_path(active.username)} className="btn secondary">My profile</Link>}
       </div>
@@ -84,26 +89,26 @@ function PublicProfile({ username }: { username: string }) {
   }
   const member_age = profile?.member_since ? dates_module?.calcAge(profile.member_since) : null;
   const edit_link = owner && <Link className="btn secondary" to="/account/profile">Edit profile</Link>;
-  const report_link = !owner && active && <div className="btn-row">
+  const report_link = !owner && active && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
     <Link className="btn secondary" to="/i/flow/reportprofile" state={{ username, account_id: active.id, account_env: active.env, backgroundLocation: location }}>Report profile</Link>
   </div>;
 
   return <>
     {resource.loading && <LoadingRow>Retrieving data...</LoadingRow>}
     <ErrorBox error={resource.error} />
-    {!!resource.error && <div className="btn-row"><button className="secondary" onClick={resource.reload}>Retry</button></div>}
-    {profile && (profile.private || profile.locked) ? <div className="card">
-      <h1 className="mt-0">@{username}</h1>
+    {!!resource.error && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" onClick={resource.reload}>Retry</button></div>}
+    {profile && (profile.private || profile.locked) ? <div className={`card ${card_classes.card}`}>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>@{username}</h1>
       <Empty>{profile.locked ? 'This profile is unavailable' : 'This profile is private'}</Empty>
-      {edit_link && <div className="btn-row mt-2">{edit_link}</div>}
+      {edit_link && <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>{edit_link}</div>}
       {report_link}
     </div> : profile && <>
       <div style={profile_accent_style(profile.accent)}>
-      <section className="card mb-2">
+      <section className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
         <ProfileIdentity profile={profile} username={username} followers={followers} member_age={member_age} />
-        {profile.visibility === 'private' && <div className="stat-sub mt-2">Only you can see this private profile</div>}
-        {profile.bio && <div className="mt-2"><p className="profile_prose">{profile.bio}</p></div>}
-        <div className="btn-row mt-2">
+        {profile.visibility === 'private' && <div className={`${stat_classes.sub} mt-2 ${utility_classes.mt_2}`}>Only you can see this private profile</div>}
+        {profile.bio && <div className={`mt-2 ${utility_classes.mt_2}`}><p className={`profile_prose ${profile_classes.prose}`}>{profile.bio}</p></div>}
+        <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>
           {edit_link}
           {(profile.links ?? []).map((link, index) => {
             const url = safe_http_url(link.url);
@@ -112,7 +117,7 @@ function PublicProfile({ username }: { username: string }) {
         </div>
         {report_link}
         <ErrorBox error={action_error} />
-        {!owner && <div className="btn-row">
+        {!owner && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
           {active ? <>
             <button className="secondary" disabled={busy || is_blocked === true} onClick={() => toggle_relationship('follow')}>{is_following == null ? 'Follow / unfollow' : is_following ? 'Unfollow' : 'Follow'}</button>
             <button className="secondary" disabled={busy} onClick={() => set_confirm_block(true)}>{is_blocked == null ? 'Block / unblock' : is_blocked ? 'Unblock' : 'Block'}</button>
@@ -120,8 +125,8 @@ function PublicProfile({ username }: { username: string }) {
           </> : <Link className="btn secondary" to="/i/flow/login" state={{ from: location }}>Sign in to follow or donate</Link>}
         </div>}
       </section>
-      {(profile.sections ?? []).filter((section) => section.visible && (section.type === 'shop' || section.type === 'updates')).map((section, index) => <section className="card mb-2" key={`${section.type}:${index}`}>
-        <h3 className="mt-0">{section.title || (typeof section.config?.title === 'string' ? section.config.title : section_title(section.type))}</h3>
+      {(profile.sections ?? []).filter((section) => section.visible && (section.type === 'shop' || section.type === 'updates')).map((section, index) => <section className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} key={`${section.type}:${index}`}>
+        <h3 className={`mt-0 ${utility_classes.mt_0}`}>{section.title || (typeof section.config?.title === 'string' ? section.config.title : section_title(section.type))}</h3>
         {section.type === 'updates' ? <ProfileUpdates username={username} auth={auth} owner={owner} />
           : <ProfileShop username={username} auth={auth} owner={owner} />}
       </section>)}

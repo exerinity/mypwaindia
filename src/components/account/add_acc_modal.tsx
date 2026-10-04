@@ -1,3 +1,6 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Modal } from '../ui/modal.tsx';
@@ -62,30 +65,30 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
       {step === 'choice' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {atCapacity && (
-            <div className="alert alert-warning" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className={`alert alert-warning ${alert_classes.warning}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <WarningIcon /><span>You can only have {maxAccounts} accounts saved</span>
             </div>
           )}
-          <button className="option" onClick={() => setStep('save-creds')} disabled={atCapacity} style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <button className={`option ${button_classes.option}`} onClick={() => setStep('save-creds')} disabled={atCapacity} style={{ flexDirection: 'row', alignItems: 'center' }}>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <span className="option-label">Just save credentials</span>
-              <span className="option-desc">for logging in later</span>
+              <span className={`option-label ${button_classes.option_label}`}>Just save credentials</span>
+              <span className={`option-desc ${button_classes.option_desc}`}>for logging in later</span>
             </div>
             <ChevronRight />
           </button>
           {atCapacity ? (
-            <button className="option" disabled style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <button className={`option ${button_classes.option}`} disabled style={{ flexDirection: 'row', alignItems: 'center' }}>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <span className="option-label">Log in</span>
-                <span className="option-desc">through the full login flow</span>
+                <span className={`option-label ${button_classes.option_label}`}>Log in</span>
+                <span className={`option-desc ${button_classes.option_desc}`}>through the full login flow</span>
               </div>
               <ExternalIcon />
             </button>
           ) : (
-            <Link to="/i/flow/login" state={{ backgroundLocation: location }} className="option" onClick={handleClose} style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Link to="/i/flow/login" state={{ backgroundLocation: location }} className={`option ${button_classes.option}`} onClick={handleClose} style={{ flexDirection: 'row', alignItems: 'center' }}>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <span className="option-label">Log in</span>
-                <span className="option-desc">through the full login flow</span>
+                <span className={`option-label ${button_classes.option_label}`}>Log in</span>
+                <span className={`option-desc ${button_classes.option_desc}`}>through the full login flow</span>
               </div>
               <ExternalIcon />
             </Link>
@@ -93,7 +96,7 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
         </div>
       ) : (
         <form onSubmit={handleSaveCreds}>
-          <p className="muted" style={{ marginTop: 0, fontSize: '0.875rem' }}>
+          <p className={`muted ${utility_classes.muted}`} style={{ marginTop: 0, fontSize: '0.875rem' }}>
             These details will be saved but a session will not be initiated. You can switch to it any time in the account switcher and its information (like name and balance) will then be populated
           </p>
           <FloatingInput
@@ -113,11 +116,11 @@ export function AddAccountModal({ open, onClose }: AddAccountModalProps) {
             required
           />
           {error && (
-            <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className={`alert alert-error ${alert_classes.error}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <ErrorIcon /><span>{error}</span>
             </div>
           )}
-          <div className="btn-row">
+          <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>
             <button type="button" className="secondary" onClick={() => { setError(null); setStep('choice'); }}>
               Back
             </button>

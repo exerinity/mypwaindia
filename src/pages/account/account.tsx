@@ -1,3 +1,8 @@
+import { utility_classes } from '../../styles/utils.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.ts';
+import { button_classes } from '../../styles/buttons.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { stat_classes } from '../../styles/stats.stylex.ts';
 import { useState, lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
@@ -45,12 +50,12 @@ export default function AccountPage() {
 
   return (
     <>
-      <h1 className="mt-0">Account</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Account</h1>
 
       {userInfoLoading && !u ? (
         <>
-          <div className="card mb-2">
-            <div className="row spread">
+          <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+            <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`}>
               <div>
                 <Skeleton width={180} height={20} style={{ marginBottom: 8 }} />
                 <Skeleton width={130} height={14} />
@@ -61,7 +66,7 @@ export default function AccountPage() {
               </div>
             </div>
             <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '16px 0' }} />
-            <div className="grid cols-2">
+            <div className={`grid cols-2 ${card_classes.grid_two}`}>
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i}>
                   <Skeleton width={50} height={11} style={{ marginBottom: 6 }} />
@@ -70,32 +75,32 @@ export default function AccountPage() {
               ))}
             </div>
           </div>
-          <div className="card mb-2"><Skeleton width={160} height={32} radius={6} /></div>
-          <div className="card"><Skeleton width={120} height={18} /></div>
+          <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}><Skeleton width={160} height={32} radius={6} /></div>
+          <div className={`card ${card_classes.card}`}><Skeleton width={120} height={18} /></div>
         </>
       ) :
         userInfoError ? <ErrorBox error={userInfoError} /> :
           u && (
             <>
-              <div className="card mb-2">
-                <div className="row spread">
+              <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+                <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`}>
                   <div>
                     <h3 style={{ margin: 0 }}>{u.first_name} {u.last_name}</h3>
-                    <p className="muted">{settings.scambait ? `@${u.username}` : <Link to={profile_path(u.username)}>@{u.username}</Link>} - {u.role}</p>
+                    <p className={`muted ${utility_classes.muted}`}>{settings.scambait ? `@${u.username}` : <Link to={profile_path(u.username)}>@{u.username}</Link>} - {u.role}</p>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div className="stat-label">Balance</div>
-                    <div className="balance-display">{formatBalance(u.balance)}</div>
+                    <div className={stat_classes.label}>Balance</div>
+                    <div className={stat_classes.balance_display}>{formatBalance(u.balance)}</div>
                   </div>
                 </div>
                 <hr style={{ border: 0, borderTop: '1px solid var(--border)', margin: '16px 0' }} />
-                <div className="grid cols-2">
+                <div className={`grid cols-2 ${card_classes.grid_two}`}>
                   <div>
-                    <div className="muted" style={{ fontSize: '0.8rem' }}>Email</div>
+                    <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem' }}>Email</div>
                     <div>{u.email}</div>
                   </div>
                   <div>
-                    <div className="muted" style={{ fontSize: '0.8rem' }}>Date of birth</div>
+                    <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem' }}>Date of birth</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       {u.date_of_birth || '-'}
                       {u.date_of_birth && (() => {
@@ -107,7 +112,7 @@ export default function AccountPage() {
                   </div>
                   {!settings.scambait && (
                     <div>
-                      <div className="muted" style={{ fontSize: '0.8rem' }}>Member since</div>
+                      <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem' }}>Member since</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         {formatDate(u.created)}
                         {u.created && (() => {
@@ -119,31 +124,31 @@ export default function AccountPage() {
                     </div>
                   )}
                   <div>
-                    <div className="muted" style={{ fontSize: '0.8rem' }}>2FA</div>
+                    <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem' }}>2FA</div>
                     <div>{u.mfa_enabled ? 'yes' : 'no'}</div>
                   </div>
                 </div>
               </div>
 
               {restrictionList.length > 0 && (
-                <div className="card mb-2">
-                  <div className="row spread" style={{ marginBottom: 12 }}>
-                    <h3 className="mt-0" style={{ margin: 0 }}>Restrictions</h3>
-                    <Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className="muted" style={{ fontSize: '0.85rem' }}>View details</Link>
+                <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+                  <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ marginBottom: 12 }}>
+                    <h3 className={`mt-0 ${utility_classes.mt_0}`} style={{ margin: 0 }}>Restrictions</h3>
+                    <Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>View details</Link>
                   </div>
                   {restrictionList.map(([key, val]) => {
                     const info = restrictionsMod ? restrictionsMod.getRestrictionInfo(key) : { title: key, description: '', longDescription: null };
                     return (
-                      <div key={key} className="alert alert-warning">
+                      <div key={key} className={`alert alert-warning ${alert_classes.warning}`}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><WarningIcon /><strong>{info.title}</strong></div>
                         <p style={{ margin: '4px 0 0' }}>{info.description}</p>
                         {val.expires_at && (
-                          <p className="muted" style={{ margin: '4px 0 0', fontSize: '0.85rem' }}>
+                          <p className={`muted ${utility_classes.muted}`} style={{ margin: '4px 0 0', fontSize: '0.85rem' }}>
                             Expires {formatDate(val.expires_at)}
                           </p>
                         )}
                         {val.value != null && (
-                          <p className="muted mono" style={{ margin: '4px 0 0', fontSize: '0.8rem' }}>
+                          <p className={`muted mono ${utility_classes.mono} ${utility_classes.muted}`} style={{ margin: '4px 0 0', fontSize: '0.8rem' }}>
                             {JSON.stringify(val.value)}
                           </p>
                         )}
@@ -153,10 +158,10 @@ export default function AccountPage() {
                 </div>
               )}
 
-              <div className="card mb-2">
-                <div className="row spread" style={{ alignItems: 'center' }}>
+              <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`}>
+                <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`} style={{ alignItems: 'center' }}>
                   <div>
-                    <h3 className="mt-0" style={{ margin: 0 }}>List of sessions</h3>
+                    <h3 className={`mt-0 ${utility_classes.mt_0}`} style={{ margin: 0 }}>List of sessions</h3>
                   </div>
                   <Link to="/i/sessions" state={{ from: 'account' }} className="btn secondary">Open</Link>
                 </div>
@@ -164,7 +169,7 @@ export default function AccountPage() {
 
               <Suspense fallback={null}><RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={settings.autoRefresh} /></Suspense>
 
-              <div className="btn-row mt-2">
+              <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>
                 <Link to="/account/transfer" className="btn">Transfer funds</Link>
                 <Link to="/account/history" className="btn secondary">Transaction history</Link>
                 <Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className="btn secondary">See restrictions</Link>
@@ -182,7 +187,7 @@ export default function AccountPage() {
                   Your bank will call you shortly on your registered number to verify your identity.
                   Once connected, the agent will provide you with a <strong>5-digit security code</strong> - please have it ready to enter here.
                 </p>
-                <p className="muted" style={{ fontSize: '0.85rem' }}>
+                <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>
                   Do not share this code with anyone other than your bank representative.
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>

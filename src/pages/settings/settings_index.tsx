@@ -1,4 +1,5 @@
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
+import { settings_classes } from '../../styles/settings.stylex.ts';
 import { useState, useMemo, lazy, Suspense } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { RELEASES } from '../information/release_notes.tsx';
@@ -61,14 +62,14 @@ export default function SettingsPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <div className="mpi-settings-layout">
+      <div className={`mpi-settings-layout ${settings_classes.layout}`}>
 
-        <div className={`mpi-settings-nav${mobileShowDetail ? ' mpi-settings-nav--hidden' : ''}`}>
-          <div className="mpi-settings-nav-header">
-            <h1>Settings</h1>
+        <div className={`mpi-settings-nav${mobileShowDetail ? ' mpi-settings-nav--hidden' : ''} ${mobileShowDetail ? settings_classes.nav_hidden : settings_classes.nav}`}>
+          <div className={`mpi-settings-nav-header ${settings_classes.nav_header}`}>
+            <h1 className={settings_classes.nav_heading}>Settings</h1>
           </div>
 
-          <div className="mpi-settings-nav-list">
+          <div className={`mpi-settings-nav-list ${settings_classes.nav_list}`}>
             {visibleCategories.length === 0 && (
               <p style={{ padding: '16px 20px', color: 'var(--muted)', fontSize: '0.9rem', margin: 0 }}>
                 No results
@@ -81,39 +82,39 @@ export default function SettingsPage() {
                   href={cat.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mpi-settings-nav-item"
+                  className={`mpi-settings-nav-item ${settings_classes.nav_item}`}
                   title={cat.desc}
                 >
-                  <span className="mpi-settings-nav-item-label">{cat.label}</span>
-                  <span className="mpi-settings-nav-item-chevron"><ExternalIcon size={14} /></span>
+                  <span className={`mpi-settings-nav-item-label ${settings_classes.nav_item_label}`}>{cat.label}</span>
+                  <span className={`mpi-settings-nav-item-chevron ${settings_classes.nav_item_chevron}`}><ExternalIcon size={14} /></span>
                 </a>
               ) : (
                 <Link
                   key={cat.id}
                   to={cat.to ?? `/settings/${cat.id}`}
                   state={cat.id === 'sessions' ? { from: 'settings' } : undefined}
-                  className={`mpi-settings-nav-item${!cat.to && activeCategory === cat.id ? ' active' : ''}`}
+                  className={`mpi-settings-nav-item${!cat.to && activeCategory === cat.id ? ' active' : ''} ${!cat.to && activeCategory === cat.id ? settings_classes.nav_item_active : settings_classes.nav_item}`}
                   title={cat.desc}
                   onClick={() => setMobileShowDetail(true)}
                 >
-                  <span className="mpi-settings-nav-item-label">{cat.label}</span>
-                  <span className="mpi-settings-nav-item-chevron"><ChevronRight size={16} /></span>
+                  <span className={`mpi-settings-nav-item-label ${settings_classes.nav_item_label}`}>{cat.label}</span>
+                  <span className={`mpi-settings-nav-item-chevron ${settings_classes.nav_item_chevron}`}><ChevronRight size={16} /></span>
                 </Link>
               )
             )}
           </div>
 
           {!settings.scambait && (
-            <div className="mpi-settings-nav-footer">
-              <AppFooter version={RELEASES[0].version} />
+            <div className={`mpi-settings-nav-footer ${settings_classes.nav_footer}`}>
+              <AppFooter version={RELEASES[0].version} className={settings_classes.nav_footer_text} />
             </div>
           )}
         </div>
 
-        <div className={`mpi-settings-detail${mobileShowDetail ? ' mpi-settings-detail--visible' : ''}`}>
-          <div className="mpi-settings-detail-header">
+        <div className={`mpi-settings-detail${mobileShowDetail ? ' mpi-settings-detail--visible' : ''} ${mobileShowDetail ? settings_classes.detail_visible : settings_classes.detail}`}>
+          <div className={`mpi-settings-detail-header ${settings_classes.detail_header}`}>
             <button
-              className="mpi-settings-detail-back"
+              className={`mpi-settings-detail-back ${settings_classes.detail_back}`}
               onClick={() => setMobileShowDetail(false)}
               aria-label="Back to settings list"
             >
@@ -122,8 +123,8 @@ export default function SettingsPage() {
             <span>{isUnknownCategory ? 'What' : activeCat.label}</span>
           </div>
 
-          <div className="mpi-settings-detail-scroll">
-            <div className="mpi-settings-detail-content">
+          <div className={`mpi-settings-detail-scroll ${settings_classes.detail_scroll}`}>
+            <div className={`mpi-settings-detail-content ${settings_classes.detail_content}`}>
               {renderDetail()}
             </div>
           </div>
