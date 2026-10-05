@@ -77,6 +77,7 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
     title: 'Build tooling',
     packages: [
       { name: 'Vite', version: 6, license: 'MIT', url: 'https://vite.dev' },
+      { name: 'StyleX', version: '0.19.1', license: 'MIT', url: 'https://stylexjs.com' },
       { name: 'TypeScript', version: 6, url: 'https://typescriptlang.org' },
     ],
   },
@@ -84,6 +85,7 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
     title: 'Vite plugins',
     packages: [
       { name: '@vitejs/plugin-react', version: 4, license: 'MIT', url: 'https://github.com/vitejs/vite-plugin-react' },
+      { name: 'StyleX-Vite', version: '0.19.1', license: 'MIT', url: 'https://github.com/facebook/stylex' },
       { name: 'vite-plugin-pwa', version: 0.21, license: 'MIT', url: 'https://vite-pwa-org.netlify.app' },
     ],
   },
@@ -95,7 +97,7 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
   },
 ];
 
-interface Package { name: string; version?: number; license?: string; url?: string }
+interface Package { name: string; version?: number | string; license?: string; url?: string }
 function PackageList({ packages }: { packages: Package[] }) {
   return (
     <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} style={{ padding: 0 }}>

@@ -2,7 +2,6 @@ import { defineConfig, transformWithEsbuild } from 'vite';
 import react from '@vitejs/plugin-react';
 import stylex from '@stylexjs/unplugin';
 import { VitePWA } from 'vite-plugin-pwa';
-import { minify as minifyHtml } from 'html-minifier-terser';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -22,24 +21,6 @@ function umami() {
           injectTo: 'head'
         }
       ];
-    }
-  };
-}
-
-function minify_html() {
-  return {
-    name: 'minify-html',
-    apply: 'build',
-    transformIndexHtml: {
-      order: 'post',
-      handler(html) {
-        return minifyHtml(html, {
-          collapseWhitespace: true,
-          removeComments: true,
-          minifyCSS: true,
-          minifyJS: true
-        });
-      }
     }
   };
 }
@@ -74,12 +55,15 @@ function minify_css_assets() {
   };
 }
 
+function script_file_name(chunk) {
+  return `i/scripts/${chunk.name.split('/').at(-1)}_[hash].js`;
+}
+
 export default defineConfig({
   plugins: [
     stylex.vite({ classNamePrefix: 'r-' }),
     react(),
     umami(),
-    minify_html(),
     minify_css_assets(),
     VitePWA({
       registerType: 'prompt',
@@ -146,38 +130,15 @@ export default defineConfig({
     sourcemap: false,
     target: 'esnext',
     rollupOptions: {
+      preserveEntrySignatures: 'strict',
       output: {
-        entryFileNames: 'i/scripts/mypwaindia_index-[hash].js',
-        chunkFileNames: (chunk) => chunk.name.startsWith('node/') ? 'i/scripts/[name]-[hash].js' : 'i/scripts/mpi_[name]-[hash].js',
+        preserveModules: true,
+        preserveModulesRoot: 'src',
+        entryFileNames: script_file_name,
+        chunkFileNames: script_file_name,
         assetFileNames: (asset) => asset.name?.endsWith('.css')
           ? 'i/css/mypwaindia_[hash].css'
           : '[name]-[hash].[ext]',
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (/[\\/]node_modules[\\/]three[\\/]/.test(id)) return 'node/mpi_three';
-            if (/[\\/]node_modules[\\/](three-globe|three-render-objects|three-conic-polygon-geometry|three-geojson-geometry|three-slippy-map-globe|globe\.gl|react-globe\.gl|react-kapsule|kapsule|accessor-fn|index-array-by|tinycolor2|frame-ticker|data-bind-mapper|h3-js|earcut|float-tooltip|@tweenjs[\\/]tween\.js|d3-[^\\/]+)[\\/]/.test(id)) return 'globe';
-            const parts = id.slice(id.lastIndexOf('node_modules/') + 'node_modules/'.length).split('/');
-            return `node/mpi_${parts[0][0] === '@' ? `${parts[0].slice(1)}-${parts[1]}` : parts[0]}`;
-          }
-          if (id.match(/pages\/(login|logout|onboarding)/)) return 'flow';
-          if (id.match(/pages\/transfer\//)) return 'transfers';
-          if (id.match(/pages\/account\/(history|simple_history)|pages\/scambait\/statements/)) return 'history';
-          if (id.match(/pages\/(links|claim_link)/)) return 'links';
-          if (id.match(/pages\/information\/team_map/)) return 'teammap';
-          if (id.match(/pages\/information\/(leaderboard|team)/)) return 'social';
-          if (id.match(/pages\/(settings|old_settings)/)) return 'settings';
-          if (id.match(/pages\/iotm\/button/)) return 'iotm_button';
-          if (id.match(/pages\/iotm\//)) return 'iotm';
-          if (id.match(/pages\/pwa\/cli|components\/cli\//)) return 'cli';
-          if (id.match(/pages\/toys/)) return 'tools';
-          if (id.match(/pages\/information\/(release_notes|acknowledgements|how_pwa)|pages\/connection/)) return 'info';
-          if (id.match(/pages\/pwa\/(not_found|external_redirect)|pages\/theme_apply/)) return 'misc';
-          if (id.match(/pages\/account\/(account|dashboard)/)) return 'client';
-          if (id.match(/pages\/scambait\/cards/)) return 'scambait';
-          if (id.match(/pages\/subscriptions/)) return 'subs';
-          if (id.match(/components\/ui\/status/)) return 'stability';
-          if (id.match(/context\//)) return 'bastion';
-        }
       }
     }
   }

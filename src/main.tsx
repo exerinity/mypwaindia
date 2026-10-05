@@ -42,7 +42,7 @@ function Root() {
     const el = document.getElementById('splash');
     if (!el) return;
     el.classList.add('out');
-    document.getElementById('mpi-meow')?.classList.add('in');
+    document.getElementById('react-root')?.classList.add('in');
     const t = setTimeout(() => el.remove(), 550);
     return () => clearTimeout(t);
   }, []);
@@ -68,7 +68,7 @@ function Root() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('mpi-meow')!).render(
+ReactDOM.createRoot(document.getElementById('react-root')!).render(
   <React.StrictMode>
     <Root />
   </React.StrictMode>
