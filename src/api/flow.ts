@@ -268,6 +268,16 @@ export interface ImageSubtask {
   subtask_back_navigation: 'hide_explicit_cta';
 }
 
+export interface TextContentSubtask {
+  subtask_id: string;
+  type: 'text_content';
+  text_content: {
+    primary_text: FlowText;
+    paragraphs: FlowText[];
+  };
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
 export interface AccountRestrictionsSubtask {
   subtask_id: 'AccountRestrictions';
   type: 'account_restrictions';
@@ -361,7 +371,8 @@ export type FlowSubtask =
   | ShopItemEditorSubtask
   | ProfileReportSubtask
   | ProfileDonationSubtask
-  | ImageSubtask;
+  | ImageSubtask
+  | TextContentSubtask;
 
 export interface FlowTaskResponse {
   flow_token: string;

@@ -553,7 +553,7 @@ export function AgentChat({
   accountKeyRef.current = accountKey;
 
   const loadConversation = useCallback(async () => {
-    if (!active || settings.scambait) return;
+    if (!active) return;
     const requestAccount = accountKey;
     const sequence = ++loadSequence.current;
     setLoading(true);
@@ -567,7 +567,7 @@ export function AgentChat({
     } finally {
       if (sequence === loadSequence.current && requestAccount === accountKeyRef.current) setLoading(false);
     }
-  }, [accountKey, settings.scambait]);
+  }, [accountKey]);
 
   useEffect(() => {
     setInput('');
@@ -739,8 +739,6 @@ export function AgentChat({
   }
 
   const isDrawer = variant === 'drawer';
-
-  if (settings.scambait) return isDrawer ? null : <h1 className={`mt-0 ${utility_classes.mt_0}`}>Page unavailable</h1>;
 
   const transcript = conversation?.transcript ?? [];
   const maxLength = conversation?.max_length ?? FALLBACK_MAX_LENGTH;

@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, useMemo, useRef } from 
 import type { ReactNode } from 'react';
 import { storageGet, storageSet, storageRemove, KEYS } from '../utils/storage.ts';
 import { darken, isLight, normalizeHex } from '../utils/colors.js';
-import { formatINR, formatMoney } from '../utils/money.js';
+import { formatINR } from '../utils/money.js';
 
 /** CSS custom-property keys that a custom theme may override. */
 export const CUSTOM_VAR_KEYS = [
@@ -21,8 +21,6 @@ export const HOME_PAGE_OPTIONS: { value: string; label: string }[] = [
   { value: '/account/transfer', label: 'Transfer funds' },
   { value: '/account/history', label: 'Full transaction history' },
   { value: '/account/history/simple', label: 'Simple history' },
-  { value: '/dash/statements', label: 'Statements' },
-  { value: '/dash/cards', label: 'Cards' },
   { value: '/account/links', label: 'Payment links' },
   { value: '/settings/appearance', label: 'Settings' },
   { value: '/i/leaderboard', label: 'Leaderboard' },
@@ -102,7 +100,6 @@ export interface Settings {
   autoUpdate: boolean;
   suppressUpdateToast: boolean;
   displayName: 'username' | 'first_name' | 'full_name';
-  scambait: boolean;
   homePage: string;
   dashboardButtons: DashboardButton[];
   dashboardHistory: DashboardHistory;
@@ -134,7 +131,6 @@ export const DEFAULT_SETTINGS: Settings = {
   autoUpdate: false,
   suppressUpdateToast: false,
   displayName: 'username',
-  scambait: false,
   homePage: '/dash',
   dashboardButtons: DEFAULT_DASHBOARD_BUTTONS,
   dashboardHistory: 'full_table',
@@ -152,7 +148,11 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(() => {
-    const merged = { ...DEFAULT_SETTINGS, ...storageGet(KEYS.SETTINGS, {} as Partial<Settings>) };
+    const stored = storageGet<Record<string, unknown> | null>(KEYS.SETTINGS, {});
+    const merged = { ...DEFAULT_SETTINGS };
+    for (const key of Object.keys(DEFAULT_SETTINGS)) {
+      if (stored && typeof stored === 'object' && key in stored) Object.assign(merged, { [key]: stored[key] });
+    }
     return {
       ...merged,
       dashboardButtons: normalizeDashboardButtons(merged.dashboardButtons),
@@ -210,8 +210,5 @@ export function useSettings(): SettingsContextValue {
 }
 
 export function useCurrency(): (paisa: number) => string {
-  const { settings } = useSettings();
-  return settings.scambait
-    ? (paisa) => formatMoney(paisa, '$')
-    : (paisa) => formatINR(paisa);
+  return formatINR;
 }

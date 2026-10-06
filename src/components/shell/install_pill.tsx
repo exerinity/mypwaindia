@@ -1,12 +1,10 @@
 import { shell_classes } from '../../styles/shell.stylex.ts';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSettings } from '../../context/settings_ctx.tsx';
 import { isInstalled } from '../../hooks/install_prompt.ts';
 import { hideGet, HIDE_EVENT } from '../../utils/storage.ts';
 
 export function InstallPill() {
-  const { settings } = useSettings();
   const [hidden, setHidden] = useState(() => hideGet('install'));
   const [installed] = useState(isInstalled);
 
@@ -16,7 +14,7 @@ export function InstallPill() {
     return () => window.removeEventListener(HIDE_EVENT, update);
   }, []);
 
-  if (settings.scambait || hidden || installed) return null;
+  if (hidden || installed) return null;
 
   return (
     <Link to="/i/how_pwa" className={`pill clickable ${shell_classes.pill_clickable}`} style={{ textDecoration: 'none', color: 'inherit' }}>

@@ -20,6 +20,7 @@ import {
   type ShopItemEditorSubtask,
   type ProfileReportSubtask,
   type ProfileDonationSubtask,
+  type TextContentSubtask,
 } from '../api/flow.ts';
 
 const LoginModal = lazy(() => import('./flow_login.tsx'));
@@ -32,12 +33,8 @@ const RestrictionsModal = lazy(() => import('./account_restrictions.tsx'));
 const EditItemModal = lazy(() => import('./edit_item_m.tsx'));
 const ReportProfileModal = lazy(() => import('./reportprofile.tsx'));
 const DonateProfileModal = lazy(() => import('./donateprofile.tsx'));
+const TextContentModal = lazy(() => import('./text_content.tsx'));
 const Flowback = lazy(() => import('./shell_fallback.tsx'));
-
-function isMissingTaskError(error: unknown): boolean {
-  const code = (error as { code?: unknown } | null)?.code;
-  return code === 'unknown_flow' || code === 'unknown_task';
-}
 
 function FlowSpinner() {
   return (
@@ -140,7 +137,7 @@ function ServerFlow({ task }: { task: string }) {
   let title: string | undefined;
   let content: ReactNode = <FlowSpinner />;
 
-  if (!loading && (isMissingTaskError(error) || error || !data)) {
+  if (!loading && (error || !data)) {
     title = 'Error';
     content = <Flowback embedded onClose={handleClose} />;
   }
@@ -204,6 +201,14 @@ function ServerFlow({ task }: { task: string }) {
     content = <FlowImageModal subtask={flowImage} />;
   }
 
+  const text_content = data?.subtasks.find(
+    (candidate): candidate is TextContentSubtask => candidate.type === 'text_content'
+  );
+  if (text_content) {
+    title = text_content.text_content.primary_text.text;
+    content = <TextContentModal subtask={text_content} />;
+  }
+
   const restrictions = data?.subtasks.find(
     (candidate): candidate is AccountRestrictionsSubtask => candidate.type === 'account_restrictions'
   );
@@ -230,7 +235,7 @@ function ServerFlow({ task }: { task: string }) {
     content = <DonateProfileModal key={data?.flow_token} subtask={profile_donation} on_submit={handle_form_task} on_complete={close_flow} on_busy={set_form_busy} />;
   }
 
-  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage && !restrictions && !shop_item && !profile_report && !profile_donation) {
+  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage && !text_content && !restrictions && !shop_item && !profile_report && !profile_donation) {
     title = 'Error';
     content = <Flowback embedded onClose={handleClose} />;
   }

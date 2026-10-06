@@ -59,7 +59,7 @@ export default function HistoryPage() {
         <Link to="/account/history/simple">Simple history...</Link>
       </p>
 
-      {!settings.scambait && stats && (
+      {stats && (
         <div className={`card ${card_classes.card}`} style={{ marginBottom: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px 24px' }}>
           <div>
             <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.78rem', marginBottom: 4 }}>Total transactions to list</div>

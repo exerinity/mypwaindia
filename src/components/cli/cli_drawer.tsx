@@ -80,8 +80,6 @@ export function CliDrawer() {
     }, CLOSE_MS);
   }
 
-  if (settings.scambait) return null;
-
   const launcherOut = hidden || !entered || otherOpen || (open && !closing);
 
   return (

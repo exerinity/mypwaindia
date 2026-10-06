@@ -13,16 +13,6 @@ const DEVELOPERS = [
 
 const THX = [
   {
-    name: 'Razelz',
-    url: 'https://www.razelz.org',
-    idea: 'Idea: the "Personal details" OTP modal under scambait mode',
-  },
-  {
-    name: 'Mystically',
-    url: 'https://mystically.dev',
-    idea: 'Further scambait mode influence',
-  },
-  {
     name: 'tiago',
     url: 'https://tiago.zip',
     idea: 'Helping out with the original PWA (redesigning it), and the splash screen & account switcher (on the original)'

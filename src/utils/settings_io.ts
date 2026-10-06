@@ -36,7 +36,6 @@ export const SETTINGS_FIELD_LABELS: { key: keyof Settings; label: string }[] = [
   { key: 'cliDrawer', label: 'MyCLiIndia drawer' },
   { key: 'agentDrawer', label: 'MyAgentIndia drawer' },
   { key: 'copyLinkOnCreate', label: 'Copy payment links on creation' },
-  { key: 'scambait', label: 'Scambait mode' },
 ];
 
 export const HIDE_LABELS: Record<string, string> = {
@@ -121,7 +120,7 @@ export function parseSettingsExport(raw: string): SettingsExport | null {
 }
 
 const BOOL_KEYS: (keyof Settings)[] = [
-  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'scambait', 'swEnabled', 'bottomNav', 'bottomNavForce', 'bottomNavLabels', 'cliDrawer', 'agentDrawer', 'copyLinkOnCreate',
+  'autoRefresh', 'autoRefreshOnlyWhenFocused', 'autoUpdate', 'suppressUpdateToast', 'swEnabled', 'bottomNav', 'bottomNavForce', 'bottomNavLabels', 'cliDrawer', 'agentDrawer', 'copyLinkOnCreate',
 ];
 const STRING_KEYS: (keyof Settings)[] = ['theme', 'accent', 'displayName', 'homePage', 'dashboardHistory'];
 

@@ -15,12 +15,10 @@ const EditProfilePage = lazy(() => import('./pages/profile/edit.tsx'));
 const ManageShopPage = lazy(() => import('./pages/shop/manage.tsx'));
 const ShopOrderPage = lazy(() => import('./pages/shop/order.tsx'));
 const AgentPage = lazy(() => import('./pages/account/agent.tsx'));
-const CardsPage = lazy(() => import('./pages/scambait/cards.tsx'));
 const TransferPage = lazy(() => import('./pages/transfer/regular.tsx'));
 const BulkTransferPage = lazy(() => import('./pages/transfer/bulk.tsx'));
 const HistoryPage = lazy(() => import('./pages/account/history.tsx'));
 const SimpleHistoryPage = lazy(() => import('./pages/account/simple_history.tsx'));
-const StatementsPage = lazy(() => import('./pages/scambait/statements.tsx'));
 const LinksPage = lazy(() => import('./flow/pages/links.tsx'));
 const LeaderboardPage = lazy(() => import('./pages/information/leaderboard.tsx'));
 const TeamPage = lazy(() => import('./pages/information/team.tsx'));
@@ -122,6 +120,7 @@ export default function App() {
         <Route path="/news" element={<Navigate to="/i/news" replace />} />
         <Route path="/auth/logout" element={<Navigate to="/logout" replace />} />
         <Route path="/logout" element={<LogoutPage />} />
+        <Route path="/settings/scambait" element={<Navigate to="/i/flow/sc_tomb" replace />} />
         <Route path="/merchant/*" element={<MerchantRedirect />} />
         <Route path="/button" element={<Navigate to="/iotm/button" replace />} />
 
@@ -176,8 +175,6 @@ export default function App() {
             <Route path="/links" element={<Navigate to="/account/links" replace />} />
             <Route path="/links/claim" element={<Navigate to="/account/links" replace />} />
             <Route path="/links/claim/:token" element={<ClaimLinkRedirect />} />
-            <Route path="/dash/statements" element={<StatementsPage />} />
-            <Route path="/dash/cards" element={<CardsPage />} />
             <Route path="/iotm/button" element={<IotmButtonPage />} />
             <Route path="/iotm" element={<IOTMPage />} />
           </Route>

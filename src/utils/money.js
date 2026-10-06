@@ -11,10 +11,6 @@ export function formatINR(paisa) {
   return `${formatPaisa(paisa)} INR`;
 }
 
-export function formatMoney(paisa, symbol = '$') {
-  return `${symbol}${formatPaisa(paisa)}`;
-}
-
 export function rupeesToPaisa(rupeesString) {
   const s = String(rupeesString).trim();
   if (!s) return 0;

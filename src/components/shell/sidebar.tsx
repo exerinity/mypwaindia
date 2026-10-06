@@ -1,13 +1,11 @@
 import type { ComponentType } from 'react';
 import { lazy, Suspense, useState, useSyncExternalStore } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useSettings } from '../../context/settings_ctx.tsx';
 import { layout_classes } from '../../styles/layout.stylex.ts';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import {
   CloseIcon,
-  CreditCardIcon,
   DashboardIcon,
   UserIcon,
   TransferIcon,
@@ -31,8 +29,8 @@ import {
 
 const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
 
-interface NavItem { to?: string; href?: string; label: string; loggedOutLabel?: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; hideInScambait?: boolean; scambaitOnly?: boolean; requireAuth?: boolean; loggedOutOnly?: boolean }
-interface NavGroup { title: string; items: NavItem[]; hideInScambait?: boolean; scambaitTitle?: string; defaultTitle?: string; loggedOutTitle?: string }
+interface NavItem { to?: string; href?: string; label: string; loggedOutLabel?: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; requireAuth?: boolean; loggedOutOnly?: boolean }
+interface NavGroup { title: string; items: NavItem[]; defaultTitle?: string; loggedOutTitle?: string }
 
 const NAV_GROUPS: NavGroup[] = [
   {
@@ -41,22 +39,19 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/dash', label: 'Dashboard', loggedOutLabel: 'Welcome', end: true, icon: DashboardIcon },
       { to: '/account', label: 'Account info', icon: UserIcon, requireAuth: true },
-      { to: '/account/profile', label: 'My profile', icon: ProfilesIcon, hideInScambait: true, requireAuth: true },
-      { to: '/account/shop', label: 'Shop and purchases', icon: StoreIcon, hideInScambait: true, requireAuth: true },
-      { to: '/i/agent', label: 'Agent', icon: AgentIcon, hideInScambait: true, requireAuth: true },
+      { to: '/account/profile', label: 'My profile', icon: ProfilesIcon, requireAuth: true },
+      { to: '/account/shop', label: 'Shop and purchases', icon: StoreIcon, requireAuth: true },
+      { to: '/i/agent', label: 'Agent', icon: AgentIcon, requireAuth: true },
       { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon, requireAuth: true },
-      { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, hideInScambait: true, requireAuth: true },
-      { to: '/account/links', label: 'Payment links', icon: LinkIcon, hideInScambait: true, requireAuth: true },
-      { to: '/subscriptions', label: 'Subscriptions', icon: StoreIcon, hideInScambait: true, requireAuth: true },
-      { to: '/dash/statements', label: 'Bank statements', icon: HistoryIcon, scambaitOnly: true, requireAuth: true },
-      { to: '/dash/cards', label: 'Cards', icon: CreditCardIcon, scambaitOnly: true, requireAuth: true },
-      { to: '/iotm', label: 'Investment Opportunities™', icon: TrophyIcon, hideInScambait: true, requireAuth: true },
+      { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, requireAuth: true },
+      { to: '/account/links', label: 'Payment links', icon: LinkIcon, requireAuth: true },
+      { to: '/subscriptions', label: 'Subscriptions', icon: StoreIcon, requireAuth: true },
+      { to: '/iotm', label: 'Investment Opportunities™', icon: TrophyIcon, requireAuth: true },
     ],
   },
   {
     title: 'Meta',
     loggedOutTitle: 'MyPayIndia',
-    hideInScambait: true,
     items: [
       { to: '/i/leaderboard', label: 'Leaderboard', icon: LeaderboardIcon },
       { to: '/i/profiles', label: 'Profiles', icon: ProfilesIcon },
@@ -77,9 +72,8 @@ const NAV_GROUPS: NavGroup[] = [
     title: 'App management',
     items: [
       { to: '/settings', label: 'Settings', icon: SettingsIcon },
-      { to: '/i/command', label: 'MyCLiIndia', icon: TerminalIcon, hideInScambait: true },
+      { to: '/i/command', label: 'MyCLiIndia', icon: TerminalIcon },
     ],
-    scambaitTitle: 'Control',
     defaultTitle: 'MyPWAIndia',
     loggedOutTitle: 'More',
   },
@@ -88,9 +82,7 @@ const NAV_GROUPS: NavGroup[] = [
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
   const location = useLocation();
   const settings_layout = location.pathname.startsWith('/settings/');
-  const { settings } = useSettings();
   const { active } = useAuth();
-  const scambait = settings.scambait;
   const [collapsed, setCollapsed] = useState<Set<string>>(() => new Set(storageGet<string[]>(KEYS.SIDEBAR_COLLAPSED, [])));
 
   function toggleGroup(title: string) {
@@ -120,19 +112,15 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           </button>
         </div>
         {NAV_GROUPS.map((group) => {
-          if (scambait && group.hideInScambait) return null;
-
           const visibleItems = group.items.filter((item) => {
             if (item.requireAuth && !active) return false;
             if (item.loggedOutOnly && active) return false;
-            if (scambait && item.hideInScambait) return false;
-            if (!scambait && item.scambaitOnly) return false;
             return true;
           });
 
           if (!visibleItems.length) return null;
 
-          const displayTitle = !active && group.loggedOutTitle ? group.loggedOutTitle : scambait && group.scambaitTitle ? group.scambaitTitle : (group.defaultTitle ?? group.title);
+          const displayTitle = !active && group.loggedOutTitle ? group.loggedOutTitle : (group.defaultTitle ?? group.title);
           const isCollapsed = collapsed.has(group.title);
 
           return (

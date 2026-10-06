@@ -20,7 +20,7 @@ export function NavSettings() {
   const [bottomNavForceOpen, setBottomNavForceOpen] = useState(false);
 
   const items = settings.bottomNavItems;
-  const options = pickableDestinations(settings.scambait);
+  const options = pickableDestinations();
   const setItems = (next: string[]) => update({ bottomNavItems: normalizeBottomNavItems(next) });
   const move = (from: number, to: number) => {
     const next = [...items];
@@ -29,7 +29,7 @@ export function NavSettings() {
     setItems(next);
   };
   const firstUnused = options.find((d) => !items.includes(d.route));
-  const preview = resolveNavItems(items, { active: !!active, scambait: settings.scambait });
+  const preview = resolveNavItems(items, { active: !!active });
   const bottomNavLocked = !screenFitsBottomNav && !settings.bottomNavForce;
   const bottomNavOn = settings.bottomNav && !bottomNavLocked;
 

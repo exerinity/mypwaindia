@@ -10,7 +10,6 @@ import {
 } from '../api/flow.ts';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
-import { useSettings } from '../context/settings_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { storageGet, KEYS } from '../utils/storage.ts';
 import { usePageTitle } from '../hooks/page_title.js';
@@ -33,7 +32,6 @@ interface LoginModalProps {
 
 export default function LoginPage({ subtask, flowToken, loading, error: taskError, embedded = false, onClose, onAbort }: LoginModalProps) {
   const { completeLogin, accounts, maxAccounts } = useAuth();
-  const { update: updateSettings } = useSettings();
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -109,8 +107,6 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
 
     const env = envRef.current;
     setStagingLogin(env === 'staging');
-    const isScambait = searchParams.get('scambait') === 'true' || searchParams.get('s') === 'true';
-    if (isScambait) updateSettings({ scambait: true, displayName: 'full_name' });
     setBusy(true);
     setClientError(null);
 
@@ -144,7 +140,7 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
       completeLogin(
         { username, password, totp_code: totp || undefined, env },
         success.login_success,
-        onboarded || isScambait || claiming ? dest : '/i/onboarding'
+        onboarded || claiming ? dest : '/i/onboarding'
       );
     } catch (caught) {
       const { describeError } = await import('../utils/errors.js');
@@ -176,14 +172,6 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
             <form
               ref={formRef}
               onSubmit={handleSubmit}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' && event.ctrlKey) {
-                  event.preventDefault();
-                  if (busy || atCapacity) return;
-                  updateSettings({ scambait: true, displayName: 'full_name' });
-                  event.currentTarget.requestSubmit();
-                }
-              }}
             >
               <FloatingInput
                 label={form.fields.username.label}
@@ -253,7 +241,7 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
               {nextAction && (
                 <button
                   type="submit"
-                  title="TIP: right-click to log into the staging instance, Ctrl+Enter to immediately enable scambait mode when logging in"
+                  title="TIP: right-click to log into the staging instance"
                   disabled={busy || atCapacity}
                   style={{ width: '100%', marginTop: '12px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   onContextMenu={(event) => {

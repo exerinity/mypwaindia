@@ -20,7 +20,7 @@ src/
 ├─ app.tsx          every route in one file
 ├─ main.tsx         entry point
 ├─ sw.ts            service worker
-├─ pages/           account, information, iotm, pwa, scambait, settings, transfer
+├─ pages/           account, information, iotm, pwa, settings, transfer
 ├─ flow/            the modals (login, logout, wizard, link claim, transaction)
 │  └─ pages/        full pages that are still "flow": links, sessions, toys,
 │                   onboarding, subscriptions, connection, theme/settings apply
@@ -50,7 +50,7 @@ Everything the Worker answers for sits under `/i/`, and anything it doesn't reco
 ### Bundling
 The entry point is `/i/scripts/mypwaindia_index-[hash].js` and everything else is split into named chunks (`/i/scripts/mpi_[name]-[hash].js`). Chunking is done artisanally in [vite.config.js](vite.config.js) via `manualChunks`, matching on file paths:
 
-- Pages are grouped by feature: `flow` (onboarding), `transfers`, `history` (history/statements/old transactions), `links`, `social` (leaderboard/team), `teammap`, `settings`, `iotm` & `iotm_button`, `cli` (MyCLiIndia), `tools` (MyPWAToysIndia), `client` (dashboard/account), `scambait`, `subs`, `info` and `misc`
+- Pages are grouped by feature: `flow` (onboarding), `transfers`, `history` (history/old transactions), `links`, `social` (leaderboard/team), `teammap`, `settings`, `iotm` & `iotm_button`, `cli` (MyCLiIndia), `tools` (MyPWAToysIndia), `client` (dashboard/account), `subs`, `info` and `misc`
 - `node_modules` gets its own chunk. The globe.gl stack is quarantined into `globe`, while its shared three.js runtime lives in `node/mpi_three`; both stay lazy
 - Context providers live in `bastion`, the status components in `stability`
 - Anything that doesn't match a rule (news, sessions, the flow modals) gets an automatic chunk named after its module
@@ -67,13 +67,6 @@ The PWA side uses Workbox ([sw.ts](src/sw.ts) via vite-plugin-pwa's `injectManif
 - Runtime requests for pages, scripts and styles are network-first with a 4 second timeout, then fall back to cache
 - If a navigation fails entirely, the precached `index.html` is served, so the app still boots offline
 - Updates use a prompt & the new worker waits until you confirm rather than automatic
-
-## "Scambait" mode
-Scambait mode transforms this app into a more convincing-looking interface for use in... scambaiting. Phone scammers often instruct their targets to install remote access software and navigate a banking app - but to their dismay, that geriatric geezer on the other end is using a mysterious online bank: MyPayIndia.
-
-The mode hides things a scammer may find suspicious (the whole Meta group in the sidebar, so the leaderboard and team, plus transfers, payment links, subscriptions, IOTM and MyCLiIndia) and exposes fabricated pages containing credit card information and a bank statement history, and changes INR to Dollars ($).
-
-**Learn more & activate: https://mypayindia.sbs/settings/scambait**
 
 ## [The Button](https://mypayindia.sbs/iotm/button)
 The MyPWAIndia Button brings more features and information than the original, like:
@@ -183,17 +176,12 @@ In a nutshell, this idea is copied from Twitter, like https://twitter.com/i/flow
 
 (I couldn't port any other games, so they just link externally)
 
-### Scambait
-- **/dash/cards** - 3 fake randomly generated credit cards: everyday, savings & business, complete with CVV, numbers, routing and SWIFT
-- **/dash/statements** - 450 generated statements with various American businesses and random people (in place of /account/history). They're seeded off the account id, so the same account always gets the same history, walking backwards from this month until it has enough (about a year and a half)
-- **/settings/scambait** - configure scambait mode
-
 ### Control
 - **/settings** - app settings (takes you to /settings/appearance)
 - **/settings/:category** - settings by category
 - **/settings/sessions** - redirects to /i/sessions
 
-The categories list ([categories.ts](src/pages/settings/categories.ts)) also carries entries that just point elsewhere (sessions, logout, toys, account management on the main site), and some hide themselves in scambait mode
+The categories list ([categories.ts](src/pages/settings/categories.ts)) also carries entries that just point elsewhere (sessions, logout, toys, account management on the main site)
 
 There's also a pile of compatibility redirects mirroring MyPayIndia.com's own URLs (e.g., /account/transfers/new > /account/transfer), so you can take a mypayindia.com link, swap the `.com` for `.sbs`, and get the PWA experience. The few things the PWA doesn't do bounce you back to MyPayIndia.com
 

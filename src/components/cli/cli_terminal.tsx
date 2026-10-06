@@ -73,13 +73,10 @@ const PAGE_MAP = {
   account: '/account',
   transfer: '/account/transfer', send: '/account/transfer',
   history: '/account/history',
-  statements: '/dash/statements',
-  cards: '/dash/cards',
   restrictions: '/account/restrictions',
   links: '/account/links',
   claim: '/account/links',
   settings: '/settings',
-  scambait: '/settings/scambait',
   leaderboard: '/i/leaderboard', lb: '/i/leaderboard',
   team: '/i/team',
   notes: '/i/release_notes', releases: '/i/release_notes',
@@ -175,7 +172,6 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
   const histBuf = useRef<string>('');
   const busyRef = useRef<boolean>(false);
   const pendingPromptRef = useRef<((val: string) => void) | null>(null);
-  const scambaitPending = useRef<boolean>(false);
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loading = busy && promptMode === 'none';
@@ -248,19 +244,6 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
     if (window.getSelection()?.toString()) return;
     inputRef.current?.focus();
   }, [loading, visible]);
-
-  useEffect(() => {
-    function onCtrlAltB(e: KeyboardEvent) {
-      if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'b') {
-        if (settings.scambait) {
-          updateSettings({ scambait: false });
-          push(L.info('scambait mode disabled'));
-        }
-      }
-    }
-    window.addEventListener('keydown', onCtrlAltB);
-    return () => window.removeEventListener('keydown', onCtrlAltB);
-  }, [settings.scambait, updateSettings, push]);
 
   function requireLogin(): boolean {
     if (!active) {
@@ -423,33 +406,6 @@ export function CliTerminal({ variant = 'page', fullscreen = false, active: visi
         const granted = await grantSudo();
         if (!granted) return;
         await runCmd(args.join(' '));
-        return;
-      }
-
-      case 'scambait': {
-        if (settings.scambait) {
-          push(L.warn('scambait mode is already enabled. disable it with Ctrl+Alt+B.'));
-          return;
-        }
-        if (!scambaitPending.current) {
-          scambaitPending.current = true;
-          push(
-            L.warn('You are about to enable scambait mode. Please read this properly so you know what you\'re walking into.'),
-            L.out(''),
-            L.out('Enabling scambait mode will transform the app into a more legitimate-looking app for... scambaiting. It hides certain unrealistic things a scammer may raise an eyebrow to and changes other things completely.'),
-            L.out(''),
-            L.out('If you do not intend on convincing phone scammers that you are attempting to use MyPayIndia for payments and having them connect to your computer nor are doing any scambaiting, you should leave this setting alone. And obviously, do not use this to actually scam people. The scammers this is intended for are asshole vultures that prey on vulnerable elderly people, don\'t be one of them.'),
-            L.out(''),
-            L.out('Once enabled, you will immediately be navigated back to the adjusted dashboard. You can disable scambait mode by pressing Ctrl+Alt+B.'),
-            L.out(''),
-            L.info('Resend this command to confirm enabling.'),
-          );
-          return;
-        }
-        scambaitPending.current = false;
-        updateSettings({ scambait: true });
-        push(L.ok('Scambait mode enabled, navigating home...'));
-        navigate('/dash');
         return;
       }
 

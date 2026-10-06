@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import { useSettings } from '../../context/settings_ctx.tsx';
 
 const linkStyle: CSSProperties = {
   background: 'none',
@@ -13,9 +12,6 @@ const linkStyle: CSSProperties = {
 };
 
 export function RefreshStatus({ seconds, onRefresh, enabled = true }: { seconds: number; onRefresh: () => void; enabled?: boolean }) {
-  const { settings } = useSettings();
-  if (settings.scambait) return null;
-
   return (
     <p style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: 10, marginBottom: 0 }}>
       {enabled && `refreshing in ${seconds}s `}

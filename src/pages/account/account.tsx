@@ -3,21 +3,19 @@ import { card_classes } from '../../styles/cards.stylex.ts';
 import { button_classes } from '../../styles/buttons.stylex.ts';
 import { alert_classes } from '../../styles/alerts.stylex.ts';
 import { stat_classes } from '../../styles/stats.stylex.ts';
-import { useState, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useSettings, useCurrency } from '../../context/settings_ctx.tsx';
 import { useGlobalData } from '../../context/global_data_ctx.tsx';
 import { useRefreshTimer } from '../../hooks/refresh_timer.js';
 import { usePageTitle } from '../../hooks/page_title.js';
-import { useToast } from '../../context/toast_ctx.tsx';
 import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
 import { WarningIcon } from '../../components/ui/icons.tsx';
 import { AgeTag } from '../../components/ui/age_tag.tsx';
 
 const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
 import { useLazyModule } from '../../hooks/lazy_module.ts';
-import { Modal } from '../../components/ui/modal.tsx';
 import { profile_path } from '../../utils/profiles.ts';
 
 export default function AccountPage() {
@@ -30,9 +28,6 @@ export default function AccountPage() {
   const formatDate = (d: string) => datesMod ? datesMod.formatDate(d) : '...';
   const calcAge = (d: string) => datesMod ? datesMod.calcAge(d) : null;
   const formatBalance = useCurrency();
-  const toast = useToast();
-  const [personalDetailsOpen, setPersonalDetailsOpen] = useState(false);
-  const [securityCode, setSecurityCode] = useState(['', '', '', '', '']);
 
   const {
     userInfo, userInfoLoading, userInfoError,
@@ -86,7 +81,7 @@ export default function AccountPage() {
                 <div className={`row spread ${utility_classes.spread} ${utility_classes.row}`}>
                   <div>
                     <h3 style={{ margin: 0 }}>{u.first_name} {u.last_name}</h3>
-                    <p className={`muted ${utility_classes.muted}`}>{settings.scambait ? `@${u.username}` : <Link to={profile_path(u.username)}>@{u.username}</Link>} - {u.role}</p>
+                    <p className={`muted ${utility_classes.muted}`}><Link to={profile_path(u.username)}>@{u.username}</Link> - {u.role}</p>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div className={stat_classes.label}>Balance</div>
@@ -110,19 +105,17 @@ export default function AccountPage() {
                       })()}
                     </div>
                   </div>
-                  {!settings.scambait && (
-                    <div>
-                      <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem' }}>Member since</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        {formatDate(u.created)}
-                        {u.created && (() => {
-                          const a = calcAge(u.created);
-                          if (!a) return null;
-                          return <AgeTag age={a} />;
-                        })()}
-                      </div>
+                  <div>
+                    <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem' }}>Member since</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {formatDate(u.created)}
+                      {u.created && (() => {
+                        const a = calcAge(u.created);
+                        if (!a) return null;
+                        return <AgeTag age={a} />;
+                      })()}
                     </div>
-                  )}
+                  </div>
                   <div>
                     <div className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.8rem' }}>2FA</div>
                     <div>{u.mfa_enabled ? 'yes' : 'no'}</div>
@@ -173,76 +166,7 @@ export default function AccountPage() {
                 <Link to="/account/transfer" className="btn">Transfer funds</Link>
                 <Link to="/account/history" className="btn secondary">Transaction history</Link>
                 <Link to="/i/flow/restrictions" state={{ backgroundLocation: location }} className="btn secondary">See restrictions</Link>
-                {settings.scambait && (
-                  <button className="btn secondary" onClick={() => setPersonalDetailsOpen(true)}>
-                    View personal details
-                  </button>
-                )}
               </div>
-              <Modal open={personalDetailsOpen} onClose={() => { setPersonalDetailsOpen(false); setSecurityCode(['', '', '', '', '']); }} title="Personal details" fullscreen>
-                <p style={{ marginTop: 0 }}>
-                  For security purposes, your personal details cannot be displayed directly.
-                </p>
-                <p>
-                  Your bank will call you shortly on your registered number to verify your identity.
-                  Once connected, the agent will provide you with a <strong>5-digit security code</strong> - please have it ready to enter here.
-                </p>
-                <p className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>
-                  Do not share this code with anyone other than your bank representative.
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-                  <div style={{ display: 'flex', gap: 10 }}>
-                    {securityCode.map((digit, i) => (
-                      <input
-                        key={i}
-                        id={`scode-${i}`}
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={digit}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/\D/g, '').slice(-1);
-                          const next = [...securityCode];
-                          next[i] = val;
-                          setSecurityCode(next);
-                          if (val && i < 4) document.getElementById(`scode-${i + 1}`)?.focus();
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Backspace' && !digit && i > 0) document.getElementById(`scode-${i - 1}`)?.focus();
-                        }}
-                        onFocus={(e) => e.target.select()}
-                        style={{
-                          width: 52,
-                          height: 64,
-                          textAlign: 'center',
-                          fontSize: '1.8rem',
-                          fontFamily: 'monospace',
-                          border: '2px solid var(--border)',
-                          borderRadius: 8,
-                          background: 'var(--surface-2, var(--bg))',
-                          color: 'var(--text)',
-                          outline: 'none',
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    disabled={securityCode.some((d) => !d)}
-                    onClick={() => {
-                      const code = securityCode.join('');
-                      if (['06767', '67676', '12345'].includes(code)) {
-                        window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
-                      } else {
-                        toast.error('Invalid security code. Please try again.');
-                      }
-                      setSecurityCode(['', '', '', '', '']);
-                      document.getElementById('scode-0')?.focus();
-                    }}
-                  >
-                    Submit
-                  </button>
-                </div>
-              </Modal>
             </>
           )}
     </>

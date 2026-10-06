@@ -40,7 +40,7 @@ export function BottomNav() {
 
   const screenFits = useMediaQuery(BOTTOM_NAV_QUERY);
 
-  const items = resolveNavItems(settings.bottomNavItems, { active: !!active, scambait: settings.scambait });
+  const items = resolveNavItems(settings.bottomNavItems, { active: !!active });
   const visible = settings.bottomNav && (screenFits || settings.bottomNavForce) && items.length > 0;
 
   const [wasVisible, setWasVisible] = useState(visible);

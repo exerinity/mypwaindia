@@ -41,7 +41,7 @@ export function AgentDrawer() {
   } | null)?.backgroundLocation?.pathname;
   const onAgentPage = isAgentPath(location.pathname) || isAgentPath(backgroundPathname);
   const onCliPage = location.pathname === '/i/command' || location.pathname.startsWith('/i/command/');
-  const hidden = !settings.agentDrawer || !active || settings.scambait || onAgentPage;
+  const hidden = !settings.agentDrawer || !active || onAgentPage;
   const stackAboveCli = settings.cliDrawer && !onCliPage;
 
   const openDrawerId = useSyncExternalStore(subscribeDrawers, getOpenDrawer);

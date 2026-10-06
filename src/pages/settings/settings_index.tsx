@@ -3,7 +3,6 @@ import { settings_classes } from '../../styles/settings.stylex.ts';
 import { useState, useMemo, lazy, Suspense } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { RELEASES } from '../information/release_notes.tsx';
-import { useSettings } from '../../context/settings_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { ExternalIcon, ArrowLeftIcon, ChevronRight } from '../../components/ui/icons.tsx';
 import { usePageTitle } from '../../hooks/page_title.js';
@@ -17,7 +16,6 @@ import { DownloadSettings } from './download.tsx';
 import { LockSettings } from './lock.tsx';
 import { PortSettings } from './port.tsx';
 import { SwSettings } from './sw.tsx';
-import { ScambaitSettings } from './scambait.tsx';
 import Flowback from '../../flow/shell_fallback.tsx';
 
 const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
@@ -31,17 +29,15 @@ export default function SettingsPage() {
 
   usePageTitle(activeCat.label + ' / Settings');
 
-  const { settings } = useSettings();
   const { active } = useAuth();
   const [mobileShowDetail, setMobileShowDetail] = useState(false);
 
   const visibleCategories = useMemo(() => {
     return CATEGORIES.filter((c) => {
       if (c.authRequired && !active) return false;
-      if (c.hideWhenScambait && settings.scambait) return false;
       return true;
     });
-  }, [active, settings.scambait]);
+  }, [active]);
 
   function renderDetail() {
     if (isUnknownCategory) return <Flowback />;
@@ -55,7 +51,6 @@ export default function SettingsPage() {
       case 'download': return <DownloadSettings />;
       case 'lock': return <LockSettings />;
       case 'sw': return <SwSettings />;
-      case 'scambait': return <ScambaitSettings />;
       default: return null;
     }
   }
@@ -104,11 +99,9 @@ export default function SettingsPage() {
             )}
           </div>
 
-          {!settings.scambait && (
-            <div className={`mpi-settings-nav-footer ${settings_classes.nav_footer}`}>
-              <AppFooter version={RELEASES[0].version} className={settings_classes.nav_footer_text} />
-            </div>
-          )}
+          <div className={`mpi-settings-nav-footer ${settings_classes.nav_footer}`}>
+            <AppFooter version={RELEASES[0].version} className={settings_classes.nav_footer_text} />
+          </div>
         </div>
 
         <div className={`mpi-settings-detail${mobileShowDetail ? ' mpi-settings-detail--visible' : ''} ${mobileShowDetail ? settings_classes.detail_visible : settings_classes.detail}`}>

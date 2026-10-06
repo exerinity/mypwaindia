@@ -1,11 +1,10 @@
 import { utility_classes } from '../../styles/utils.stylex.ts';
 import { card_classes } from '../../styles/cards.stylex.ts';
-import { table_classes } from '../../styles/tables.stylex.ts';
 import { button_classes } from '../../styles/buttons.stylex.ts';
 import { alert_classes } from '../../styles/alerts.stylex.ts';
 import { stat_classes } from '../../styles/stats.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
-import { useMemo, useState, useEffect, lazy, Suspense } from 'react';
+import { useMemo, useState, lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useCachedQuery } from '../../hooks/cached_query.js';
@@ -21,8 +20,6 @@ import { RELEASES } from '../information/release_notes.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { hideGet, hideSet } from '../../utils/storage.ts';
 import type { Account } from '../../context/auth_ctx.tsx';
-
-const DATE_FMT = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
 const TransactionTable = lazy(() => import('../../components/data/tx_table.tsx').then((m) => ({ default: m.TransactionTable })));
 const SimpleHistoryList = lazy(() => import('../../components/data/simple_history_list.tsx').then((m) => ({ default: m.SimpleHistoryList })));
@@ -41,7 +38,6 @@ export default function DashboardPage() {
   const { active } = useAuth();
   const { settings } = useSettings();
   const format = useCurrency();
-  const scambait = settings.scambait;
   const refresh = settings.autoRefresh;
   const { userInfo, userInfoLoading, refetchUserInfo } = useGlobalData();
 
@@ -68,14 +64,6 @@ export default function DashboardPage() {
   );
 
   const [hdHidden, setHdHidden] = useState(() => hideGet('sbshint'));
-
-  const [fakeStatements, setFakeStatements] = useState<{ id: number; description: string; amount: number; date: Date }[]>([]);
-  useEffect(() => {
-    if (!scambait) { setFakeStatements([]); return; }
-    import('../../utils/fake_statements.js').then(({ generateStatements }) => {
-      setFakeStatements(generateStatements(450, active?.id ?? null).slice(0, 10));
-    });
-  }, [scambait, active?.id]);
 
   const uniqueUserCount = useMemo(() => {
     const ids = new Set<number>();
@@ -127,7 +115,7 @@ export default function DashboardPage() {
   const linksLoading = linksQ.loading && !linksQ.data;
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <h1 className={`mt-0 ${utility_classes.mt_0}`}>{scambait ? 'Hello' : 'Welcome back'}, <DisplayName account={active} mode={settings.displayName} />{scambait ? '' : '!'}</h1>
+      <h1 className={`mt-0 ${utility_classes.mt_0}`}>Welcome back, <DisplayName account={active} mode={settings.displayName} />!</h1>
 
       <div className={`grid cols-3 mb-2 ${card_classes.grid_three} ${utility_classes.mb_2}`}>
         <div className={`card ${stat_classes.card} ${card_classes.card}`}>
@@ -147,47 +135,36 @@ export default function DashboardPage() {
         <div className={`card ${stat_classes.card} ${card_classes.card}`}>
           <span className={stat_classes.label}>Transactions</span>
           <span className={stat_classes.value}>
-            {scambait
-              ? 150 + ((Number(active?.id) * 31 + 127) % 850)
-              : txLoading
-                ? <span className={`spinner ${utility_classes.spinner}`} style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
-                : transactions.length}
+            {txLoading
+              ? <span className={`spinner ${utility_classes.spinner}`} style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
+              : transactions.length}
           </span>
-          <span className={stat_classes.sub}>{scambait ? 'since 2017' : `with ${uniqueUserCount} different users`}</span>
+          <span className={stat_classes.sub}>with {uniqueUserCount} different users</span>
         </div>
 
         <div className={`card ${stat_classes.card} ${card_classes.card}`}>
-          <span className={stat_classes.label}>{scambait ? 'Pending' : 'Active links'}</span>
+          <span className={stat_classes.label}>Active links</span>
           <span className={stat_classes.value}>
-            {scambait
-              ? (Number(active?.id) * 13 + 3) % 6
-              : linksLoading
-                ? <span className={`spinner ${utility_classes.spinner}`} style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
-                : activeLinks.length}
+            {linksLoading
+              ? <span className={`spinner ${utility_classes.spinner}`} style={{ width: 22, height: 22, verticalAlign: 'middle' }} />
+              : activeLinks.length}
           </span>
-          <span className={stat_classes.sub}>{scambait ? 'awaiting clearance' : `${links.length} total created`}</span>
+          <span className={stat_classes.sub}>{links.length} total created</span>
         </div>
       </div>
 
       <div className={`btn-row mb-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mb_2}`}>
-        {scambait ? (
-          <>
-            <Link to="/account/transfer" className="btn secondary">Transfer funds</Link>
-            <Link to="/dash/statements" className="btn ghost">Full statements</Link>
-          </>
-        ) : (
-          settings.dashboardButtons.map(({ route, style }, i) => {
-            const opt = HOME_PAGE_OPTIONS.find((o) => o.value === route);
-            return (
-              <Link key={`${route}:${i}`} to={route} className={style === 'primary' ? 'btn' : `btn ${style}`}>
-                {opt ? opt.label : route}
-              </Link>
-            );
-          })
-        )}
+        {settings.dashboardButtons.map(({ route, style }, i) => {
+          const opt = HOME_PAGE_OPTIONS.find((o) => o.value === route);
+          return (
+            <Link key={`${route}:${i}`} to={route} className={style === 'primary' ? 'btn' : `btn ${style}`}>
+              {opt ? opt.label : route}
+            </Link>
+          );
+        })}
       </div>
 
-      {!hdHidden && !scambait && (
+      {!hdHidden && (
         <div className={`alert mb-2 ${alert_classes.alert} ${utility_classes.mb_2}`} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
           <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><BulbIcon /></span>
           <span style={{ flex: 1 }}>
@@ -205,60 +182,28 @@ export default function DashboardPage() {
 
       <div className={`card ${card_classes.card}`}>
         <h3 style={{ margin: '0 0 12px' }}>Recent activity</h3>
-        {scambait ? (
-          <div className={`table-wrap ${table_classes.wrap}`}>
-            <table className={`table ${table_classes.table}`}>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Description</th>
-                  <th style={{ textAlign: 'right' }}>Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {fakeStatements.map((s) => {
-                  const credit = s.amount > 0;
-                  return (
-                    <tr key={s.id}>
-                      <td style={{ whiteSpace: 'nowrap', color: 'var(--muted)', fontSize: '0.9rem' }}>
-                        {DATE_FMT.format(s.date)}
-                      </td>
-                      <td>{s.description}</td>
-                      <td style={{ textAlign: 'right', color: credit ? 'var(--success)' : 'var(--alert-error)', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
-                        {credit ? '+' : '-'}{format(Math.abs(s.amount))}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+        {txQ.loading && !txQ.data ? (
+          <div>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)', alignItems: 'center' }}>
+                <Skeleton width={80} height={12} />
+                <Skeleton style={{ flex: 1, height: 12, width: `${40 + (i % 3) * 15}%` }} />
+                <Skeleton width={90} height={12} />
+              </div>
+            ))}
           </div>
-        ) : (
-          txQ.loading && !txQ.data ? (
-            <div>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)', alignItems: 'center' }}>
-                  <Skeleton width={80} height={12} />
-                  <Skeleton style={{ flex: 1, height: 12, width: `${40 + (i % 3) * 15}%` }} />
-                  <Skeleton width={90} height={12} />
-                </div>
-              ))}
-            </div>
-          ) :
-            txQ.error ? <ErrorBox error={txQ.error} /> :
-              settings.dashboardHistory === 'simple_history'
-                ? <SimpleHistoryList transactions={transactions.slice(0, 10)} currentUserId={active.id} embedded />
-                : <TransactionTable
-                    transactions={transactions.slice(0, 10)}
-                    currentUserId={active.id}
-                    hideLimitControl
-                  />
-        )}
+        ) :
+          txQ.error ? <ErrorBox error={txQ.error} /> :
+            settings.dashboardHistory === 'simple_history'
+              ? <SimpleHistoryList transactions={transactions.slice(0, 10)} currentUserId={active.id} embedded />
+              : <TransactionTable
+                  transactions={transactions.slice(0, 10)}
+                  currentUserId={active.id}
+                  hideLimitControl
+                />
+        }
         <div style={{ marginTop: 16, textAlign: 'center' }}>
-          {scambait
-            ? <Link to="/dash/statements" className="btn secondary" style={{ width: '100%' }}>View all transactions</Link>
-            : <Link to={settings.dashboardHistory === 'simple_history' ? '/account/history/simple' : '/account/history'} className="btn secondary" style={{ width: '100%' }}>View all transactions</Link>
-          }
+          <Link to={settings.dashboardHistory === 'simple_history' ? '/account/history/simple' : '/account/history'} className="btn secondary" style={{ width: '100%' }}>View all transactions</Link>
         </div>
       </div>
       <RefreshStatus seconds={secondsLeft} onRefresh={refreshNow} enabled={refresh} />
