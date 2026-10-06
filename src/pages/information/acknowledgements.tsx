@@ -120,9 +120,9 @@ export default function AcknowledgementsPage() {
     <>
       <h1 className={`mt-0 ${utility_classes.mt_0}`}>Acknowledgements, about and credits</h1>
 
-      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>The second incarnation of the MyPayIndia PWA ("MyPWAIndia", "MyReactPWAIndia") is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (excl <Link to="/iotm/button">the button</Link>). The first incarnation was written in vanilla JavaScript and is relatively lightweight, but it is "frozen-in-time" and uses the deprecated v1 API. This app was born pretty shortly after API v2 debuted. <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>View the source for this app <ExternalIcon size={12} /></a></p>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>The second incarnation of the MyPayIndia PWA ("MyPWAIndia") is a heavy-duty, alternative, modernized web app with roughly 90% of the functionality of the main website. That remaining 10% is the account management and Investment Opportunities™ (excl <Link to="/iotm/button">the button</Link>). The first incarnation was written in vanilla JavaScript and is relatively lightweight, but it used the deprecated v1 API. This app was born pretty shortly after API v2 debuted, and the vanilla JS PWA is no longer available to use but might return in the future. <a href="#v">You can find a video of its very first version at the bottom of this page.</a><br></br> <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>View the source for this app <ExternalIcon size={12} /></a></p>
 
-      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>This is a list of everything and everybody who made it possible:</p>
+      <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>This is a list of everything and everybody who made MyPWAIndia possible:</p>
 
       <h2>This app is programmed entirely by...</h2>
       <div className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} style={{ padding: 0 }}>
@@ -191,9 +191,10 @@ export default function AcknowledgementsPage() {
         </div>
       ))}
       <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}><a href="https://github.com/exerinity/mypwaindia/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>MyPWAIndia is open-source under the MIT license <ExternalIcon size={12} /></a></p>
-      <a href="/i/exquisite_imagery/IMG_5620.JPEG" target="_blank" rel="noopener noreferrer">
-        <img src="/i/exquisite_imagery/IMG_5620.JPEG" style={{ maxWidth: '30%' }} />
-      </a>
+      <h2 id="v">And as promised, MyVanillaJSPWAIndia v0:</h2>
+      <video controls preload="metadata" style={{ maxWidth: '70%', width: '100%' }}>
+        <source src="https://espresso.exerinity.com/mypwaindia_first0.mp4" type="video/mp4" />
+      </video>
     </>
   );
 }
