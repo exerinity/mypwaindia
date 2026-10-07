@@ -17,7 +17,6 @@ export function ItemReviews({ id, auth }: { id: number; auth?: AuthOpts }) {
   return <section className={`mt-2 ${utility_classes.mt_2}`}>
     <h3>Reviews</h3>
     <ErrorBox error={resource.error} />
-    <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button type="button" className="secondary" disabled={resource.loading} onClick={resource.reload}>Refresh reviews</button></div>
     {resource.loading && <LoadingRow />}
     {resource.data && <>
       {resource.data.summary.count ? <p className={stat_classes.sub}>{resource.data.summary.average.toFixed(1)}/5 from {resource.data.summary.count} reviews</p> : <Empty>No reviews yet</Empty>}

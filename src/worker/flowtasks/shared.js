@@ -36,14 +36,15 @@ export function decodeTaskParameter(value) {
   }
 }
 
-export async function request_flow_api({ req, backendBase: backend_base, corsOrigin: cors_origin }, path, { method = "GET", query, body } = {}) {
+export async function request_flow_api({ req, backendBase: backend_base, corsOrigin: cors_origin }, path, { method = "GET", query, body, auth_required = true } = {}) {
   const authorization = req.headers.get("Authorization");
-  if (!authorization?.startsWith("Bearer ") || !authorization.slice(7).trim()) {
+  if (auth_required && (!authorization?.startsWith("Bearer ") || !authorization.slice(7).trim())) {
     return { error: flowError(1001, "Not authenticated", 401, cors_origin) };
   }
   const url = new URL(path, backend_base);
   for (const [key, value] of Object.entries(query ?? {})) url.searchParams.set(key, String(value));
-  const headers = new Headers({ Accept: "application/json", Authorization: authorization });
+  const headers = new Headers({ Accept: "application/json" });
+  if (authorization?.startsWith("Bearer ")) headers.set("Authorization", authorization);
   const cookie = req.headers.get("Cookie");
   if (cookie) headers.set("Cookie", cookie);
   if (body !== undefined) headers.set("Content-Type", "application/json");

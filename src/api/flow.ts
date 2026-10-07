@@ -1,5 +1,5 @@
 import type { AuthOpts, Env } from './client.js';
-import type { ShopItem, ShopOption } from './shop.js';
+import type { ShopItem, ShopOption, ShopOrder } from './shop.js';
 import type { ProfileDonation, ReportReason } from './profile.js';
 
 export interface FlowText {
@@ -322,6 +322,18 @@ export interface ShopItemEditorSubtask {
   subtask_back_navigation: 'hide_explicit_cta';
 }
 
+export interface ShopCheckoutSubtask {
+  subtask_id: 'ShopCheckout';
+  type: 'shop_checkout';
+  shop_checkout: {
+    primary_text: FlowText;
+    item: ShopItem;
+    order: ShopOrder | null;
+    actions: FlowAction<'buy' | 'cancel'>[];
+  };
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
 export interface ProfileReportSubtask {
   subtask_id: 'ReportProfile';
   type: 'profile_report';
@@ -369,6 +381,7 @@ export type FlowSubtask =
   | FlowTestSubtask
   | AccountRestrictionsSubtask
   | ShopItemEditorSubtask
+  | ShopCheckoutSubtask
   | ProfileReportSubtask
   | ProfileDonationSubtask
   | ImageSubtask

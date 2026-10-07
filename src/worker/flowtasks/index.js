@@ -9,6 +9,7 @@ import edit_item_m from "./edit_item_m.js";
 import reportprofile from "./reportprofile.js";
 import donateprofile from "./donateprofile.js";
 import sc_tomb from "./sc_tomb.js";
+import shop from "./shop.js";
 import { corsJson, flowError } from "./shared.js";
 
 const FLOW_TASKS = [
@@ -22,7 +23,8 @@ const FLOW_TASKS = [
   edit_item_m,
   reportprofile,
   donateprofile,
-  sc_tomb
+  sc_tomb,
+  shop
 ];
 
 export function runFlowTask(taskName, context) {
