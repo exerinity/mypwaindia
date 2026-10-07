@@ -10,7 +10,9 @@ const RequireAuth = lazy(() => import('./components/shell/require_auth.tsx').the
 const OnboardingPage = lazy(() => import('./flow/pages/onboarding.tsx'));
 const DashboardPage = lazy(() => import('./pages/account/dashboard.tsx'));
 const AccountPage = lazy(() => import('./pages/account/account.tsx'));
-const ProfilesPage = lazy(() => import('./pages/profile/public.tsx'));
+const DiscoverProfilesPage = lazy(() => import('./pages/profile/public.tsx').then((m) => ({ default: m.DiscoverProfilesPage })));
+const PublicProfilePage = lazy(() => import('./pages/profile/public.tsx').then((m) => ({ default: m.PublicProfilePage })));
+const ProfileShopPage = lazy(() => import('./pages/profile/shop.tsx'));
 const EditProfilePage = lazy(() => import('./pages/profile/edit.tsx'));
 const ManageShopPage = lazy(() => import('./pages/shop/manage.tsx'));
 const ShopOrderPage = lazy(() => import('./pages/shop/order.tsx'));
@@ -132,8 +134,9 @@ export default function App() {
           <Route path="/" element={<HomeRedirect />} />
 
           <Route path="/dash" element={<DashboardPage />} />
-          <Route path="/i/profiles" element={<ProfilesPage />} />
-          <Route path="/i/profile/:username" element={<ProfilesPage />} />
+          <Route path="/i/profiles" element={<DiscoverProfilesPage />} />
+          <Route path="/i/profile/:username/shop" element={<ProfileShopPage />} />
+          <Route path="/i/profile/:username" element={<PublicProfilePage />} />
           <Route path="/i/profiles/:username" element={<ProfileRedirect />} />
           <Route path="/:profile_handle" element={<ProfileRedirect />} />
           <Route path="/i/leaderboard" element={<LeaderboardPage />} />

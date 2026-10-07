@@ -4,8 +4,9 @@ import { card_classes } from '../../styles/cards.stylex.ts';
 import { button_classes } from '../../styles/buttons.stylex.ts';
 import { stat_classes } from '../../styles/stats.stylex.ts';
 import { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { block_profile, follow_profile, get_public_profile } from '../../api/profile.js';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { block_profile, discover_profiles, follow_profile, get_public_profile, pride_flags } from '../../api/profile.js';
+import type { DiscoverProfile } from '../../api/profile.js';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { usePageTitle } from '../../hooks/page_title.ts';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
@@ -17,35 +18,74 @@ import { ProfileIdentity, profile_accent_style } from '../../components/profile/
 import { ConfirmModal } from '../../components/ui/confirm_modal.tsx';
 import { Modal } from '../../components/ui/modal.tsx';
 import { ProfileShop } from '../../components/shop/storefront.tsx';
-import { profile_path, safe_http_url, section_title } from '../../utils/profiles.ts';
+import { HoverTip, PrideFlagTag } from '../../components/data/team_member_card.tsx';
+import { country_flag_emoji, profile_path, safe_http_url, section_title } from '../../utils/profiles.ts';
+import { SearchIcon, StoreIcon, UserIcon, VerifiedIcon } from '../../components/ui/icons.tsx';
 
-export default function ProfilesPage() {
+export function PublicProfilePage() {
   const { username } = useParams();
   const { active } = useAuth();
-  if (username) return <PublicProfile key={`${username}:${active?.env}:${active?.token}`} username={username} />;
-  return <ProfileSearch />;
+  return username ? <PublicProfile key={`${username}:${active?.env}:${active?.token}`} username={username} /> : null;
 }
 
-function ProfileSearch() {
-  usePageTitle('Profiles');
+export function DiscoverProfilesPage() {
+  usePageTitle('Discover profiles');
   const { active } = useAuth();
-  const navigate = useNavigate();
-  const [username, set_username] = useState('');
+  const auth = active ? { token: active.token, env: active.env } : undefined;
+  const [search, set_search] = useState('');
+  const [query, set_query] = useState('');
+  const [tab, set_tab] = useState<'everyone' | 'following' | 'verified'>('everyone');
+  const [page, set_page] = useState(1);
+  const resource = use_profile_resource(() => discover_profiles(auth, { q: query, verified: tab === 'verified', following: tab === 'following', page }), `${active?.env}:${active?.token}:${query}:${tab}:${page}`);
   return <>
-    <h1 className={`mt-0 ${utility_classes.mt_0}`}>Profiles</h1>
-    <form className={`card ${card_classes.card}`} style={{ maxWidth: 480 }} onSubmit={(event) => {
-      event.preventDefault();
-      const value = username.trim().replace(/^@/, '');
-      if (value) navigate(profile_path(value));
-    }}>
-      <h3 className={`mt-0 ${utility_classes.mt_0}`}>Find a profile</h3>
-      <FloatingInput id="profile_search" label="Username" type="text" required value={username} onChange={(event) => set_username(event.target.value)} />
-      <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>
-        <button disabled={!username.trim().replace(/^@/, '')}>View profile</button>
-        {active && <Link to={profile_path(active.username)} className="btn secondary">My profile</Link>}
-      </div>
+    <h1 className={`mt-0 ${utility_classes.mt_0}`}>Discover profiles</h1>
+    <nav className={profile_classes.discover_tabs} aria-label="Discover profiles">
+      {(['everyone', ...(active ? ['following'] : []), 'verified'] as Array<'everyone' | 'following' | 'verified'>).map((value) => <button key={value} className={tab === value ? profile_classes.discover_tab_active : profile_classes.discover_tab} aria-current={tab === value ? 'page' : undefined} onClick={() => { set_tab(value); set_page(1); }}>
+        {value === 'everyone' ? 'Everyone' : value === 'following' ? 'Following' : 'Verified'}
+      </button>)}
+    </nav>
+    <form className={profile_classes.discover_search} onSubmit={(event) => { event.preventDefault(); set_query(search.trim()); set_page(1); }}>
+      <div className={profile_classes.discover_search_field}><FloatingInput id="profile_search" label="Username" leading={<SearchIcon />} compact type="search" className={profile_classes.discover_search_input} value={search} onChange={(event) => set_search(event.target.value)} /></div>
+      <button className={profile_classes.discover_search_button}><SearchIcon />Search</button>
     </form>
+    <ErrorBox error={resource.error} />
+    {resource.loading && <LoadingRow />}
+    {resource.data?.profiles.length === 0 && <Empty>No profiles found</Empty>}
+    <div className={profile_classes.discover_grid}>
+      {resource.data?.profiles.map((profile) => <DiscoverProfileCard key={profile.username} profile={profile} />)}
+    </div>
+    {resource.data && <div className={`row mt-2 ${utility_classes.row} ${utility_classes.mt_2}`}><button className="secondary" disabled={resource.loading || page <= 1} onClick={() => set_page(page - 1)}>Previous</button><span className={stat_classes.sub}>Page {resource.data.page} of {Math.max(1, resource.data.last_page)}</span><button className="secondary" disabled={resource.loading || page >= resource.data.last_page} onClick={() => set_page(page + 1)}>Next</button></div>}
   </>;
+}
+
+function DiscoverProfileCard({ profile }: { profile: DiscoverProfile }) {
+  const avatar_url = safe_http_url(profile.avatar_url);
+  const avatar_flag = profile.avatar_flag;
+  const flag_values = [...(profile.pride_flags ?? [])];
+  if (avatar_flag && pride_flags.includes(avatar_flag)) flag_values.push(avatar_flag);
+  const flags = [...new Set(flag_values)];
+  const country = profile.country;
+  const country_flag = profile.country_flag || country_flag_emoji(country);
+  const country_label = profile.country_name || country || 'Country';
+  return <article className={`card ${card_classes.card} ${profile_classes.discover_card}`}>
+    <div className={profile_classes.discover_card_header}>
+      {avatar_url && <img className={profile_classes.discover_card_avatar} src={avatar_url} alt={`@${profile.username}'s avatar`} loading="lazy" />}
+      <div className={profile_classes.discover_card_content}>
+        <div className={profile_classes.discover_card_name}><Link to={profile_path(profile.username)}>@{profile.username}</Link>{profile.verified && <VerifiedIcon size={18} />}</div>
+        {(profile.pronouns || flags.length > 0 || country_flag) && <div className={profile_classes.discover_card_identity}>
+          {profile.pronouns && <span>{profile.pronouns}</span>}
+          {flags.map((flag) => <PrideFlagTag key={flag} flag={flag} />)}
+          {country_flag && <HoverTip tip={country_label}><span role="img" aria-label={country_label} style={{ cursor: 'help' }}>{country_flag}</span></HoverTip>}
+        </div>}
+        {profile.status && <div className={profile_classes.discover_card_status}>{profile.status.emoji}{profile.status.emoji && profile.status.text ? ' ' : ''}{profile.status.text}</div>}
+        {profile.bio && <div className={`profile_prose ${profile_classes.discover_card_bio} ${profile_classes.prose}`}>{profile.bio}</div>}
+        <div className={profile_classes.discover_card_meta}>
+          <span className={profile_classes.discover_card_meta_item}><UserIcon size={14} />{profile.followers} {profile.followers === 1 ? 'follower' : 'followers'}</span>
+          <span className={profile_classes.discover_card_meta_item}><StoreIcon size={14} />{profile.listed_items} {profile.listed_items === 1 ? 'item for sale' : 'items for sale'}</span>
+        </div>
+      </div>
+    </div>
+  </article>;
 }
 
 function PublicProfile({ username }: { username: string }) {
@@ -133,9 +173,15 @@ function PublicProfile({ username }: { username: string }) {
         </div>}
       </section>
       {(profile.sections ?? []).filter((section) => section.visible && (section.type === 'shop' || section.type === 'updates')).map((section, index) => <section className={`card mb-2 ${card_classes.card} ${utility_classes.mb_2}`} key={`${section.type}:${index}`}>
-        <h3 className={`mt-0 ${utility_classes.mt_0}`}>{section.title || (typeof section.config?.title === 'string' ? section.config.title : section_title(section.type))}</h3>
+        <div className={`row ${utility_classes.row} ${utility_classes.spread} ${utility_classes.mb_2}`}>
+          <h3 className={`mt-0 ${utility_classes.mt_0}`}>{section.title || (typeof section.config?.title === 'string' ? section.config.title : section_title(section.type))}</h3>
+          {section.type === 'shop' && <div className={`row ${utility_classes.row} ${utility_classes.gap_md}`}>
+            {owner && <Link className="btn secondary" to="/account/shop">Manage shop</Link>}
+            <Link className="btn secondary" to={`/i/profile/${encodeURIComponent(username)}/shop`}>View storefront</Link>
+          </div>}
+        </div>
         {section.type === 'updates' ? <ProfileUpdates username={username} auth={auth} owner={owner} />
-          : <ProfileShop username={username} auth={auth} owner={owner} />}
+          : <ProfileShop username={username} auth={auth} owner={owner} show_manage_link={false} />}
       </section>)}
       </div>
     </>}

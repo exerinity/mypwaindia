@@ -4,6 +4,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { layout_classes } from '../../styles/layout.stylex.ts';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
+import { profile_path } from '../../utils/profiles.ts';
 import {
   CloseIcon,
   DashboardIcon,
@@ -29,7 +30,7 @@ import {
 
 const Logo = lazy(() => import('../ui/logo.tsx').then((m) => ({ default: m.Logo })));
 
-interface NavItem { to?: string; href?: string; label: string; loggedOutLabel?: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; requireAuth?: boolean; loggedOutOnly?: boolean }
+interface NavItem { to?: string; href?: string; label: string; loggedOutLabel?: string; end?: boolean; icon: ComponentType<{ size?: number }>; external?: boolean; requireAuth?: boolean; loggedOutOnly?: boolean; own_profile?: boolean }
 interface NavGroup { title: string; items: NavItem[]; defaultTitle?: string; loggedOutTitle?: string }
 
 const NAV_GROUPS: NavGroup[] = [
@@ -39,8 +40,6 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/dash', label: 'Dashboard', loggedOutLabel: 'Welcome', end: true, icon: DashboardIcon },
       { to: '/account', label: 'Account info', icon: UserIcon, requireAuth: true },
-      { to: '/account/profile', label: 'My profile', icon: ProfilesIcon, requireAuth: true },
-      { to: '/account/shop', label: 'Shop and purchases', icon: StoreIcon, requireAuth: true },
       { to: '/i/agent', label: 'Agent', icon: AgentIcon, requireAuth: true },
       { to: '/account/transfer', label: 'Transfer funds', icon: TransferIcon, requireAuth: true },
       { to: '/account/history', label: 'Transaction history', icon: HistoryIcon, requireAuth: true },
@@ -50,14 +49,22 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    title: 'Community',
+    items: [
+      { label: 'My profile', icon: UserIcon, requireAuth: true, own_profile: true },
+      { to: '/account/profile', label: 'Edit profile', icon: ProfilesIcon, requireAuth: true },
+      { to: '/account/shop', label: 'Shop and purchases', icon: StoreIcon, requireAuth: true },
+      { to: '/i/profiles', label: 'Discover', icon: ProfilesIcon },
+    ],
+  },
+  {
     title: 'Meta',
     loggedOutTitle: 'MyPayIndia',
     items: [
       { to: '/i/leaderboard', label: 'Leaderboard', icon: LeaderboardIcon },
-      { to: '/i/profiles', label: 'Profiles', icon: ProfilesIcon },
       { to: '/i/team', label: 'Meet the team', icon: TeamIcon },
       { to: '/i/news', label: 'News', icon: NewspaperIcon },
-      { to: '/i/release_notes', label: 'App release notes', icon: NotesIcon },
+      { to: '/i/release_notes', label: 'Release notes', icon: NotesIcon },
       { href: 'https://mypayindia.com/', label: 'MyPayIndia.com', icon: LinkIcon, external: true },
     ],
   },
@@ -141,6 +148,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                   const Icon = item.icon;
                   const label = !active && item.loggedOutLabel ? item.loggedOutLabel : item.label;
                   const iconNode = Icon && <Icon />;
+                  const target = item.own_profile && active ? profile_path(active.username) : item.to!;
                   if (item.external) {
                     return (
                       <a
@@ -159,13 +167,13 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                   }
                   return (
                     <NavLink
-                      key={item.to}
-                      to={item.to!}
+                      key={target}
+                      to={target}
                       end={item.end}
                       onClick={onClose}
                       className={({ isActive }) => {
                         if (!isActive) return layout_classes.link;
-                        return location.pathname === item.to ? `active ${layout_classes.link_active}` : `active active-parent ${layout_classes.link_active_parent}`;
+                        return location.pathname === target ? `active ${layout_classes.link_active}` : `active active-parent ${layout_classes.link_active_parent}`;
                       }}
                     >
                       {iconNode}

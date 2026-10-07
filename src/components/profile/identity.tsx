@@ -9,7 +9,7 @@ import { avatar_accessories, pride_flags, profile_accents } from '../../api/prof
 import { HoverTip, PrideFlagTag } from '../data/team_member_card.tsx';
 import { AgeTag, type Age } from '../ui/age_tag.tsx';
 import { VerifiedIcon, WalletIcon } from '../ui/icons.tsx';
-import { safe_http_url } from '../../utils/profiles.ts';
+import { country_flag_emoji, safe_http_url } from '../../utils/profiles.ts';
 import { darken, isLight } from '../../utils/colors.js';
 import { formatINR } from '../../utils/money.js';
 
@@ -31,8 +31,7 @@ export function ProfileIdentity({ profile, username, followers, member_age, on_a
   const accessory = avatar_accessories.find((value) => value === profile.avatar_accessory);
   const country = profile.country?.toUpperCase();
   const follower_count = followers ?? profile.followers;
-  const country_flag = country === 'GB-SCT' ? '\u{1f3f4}\u{e0067}\u{e0062}\u{e0073}\u{e0063}\u{e0074}\u{e007f}'
-    : country && /^[A-Z]{2}$/.test(country) ? String.fromCodePoint(...Array.from(country, (letter) => letter.charCodeAt(0) + 127397)) : '';
+  const country_flag = country_flag_emoji(country);
   return <>
     {banner_url && <img className={`profile_banner ${profile_classes.banner}`} src={banner_url} alt="Profile banner" />}
     {avatar_url && <div className={`profile_avatar_frame ${banner_url ? profile_classes.avatar_frame_with_banner : profile_classes.avatar_frame}`} style={!banner_url && accessory ? { marginTop: 12 } : undefined}>

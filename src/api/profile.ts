@@ -88,8 +88,38 @@ export interface ProfileUpdate {
   created?: string;
 }
 
+export interface DiscoverProfile {
+  username: string;
+  url: string;
+  avatar_url?: string | null;
+  avatar_flag?: PrideFlag | null;
+  avatar_accessory?: AvatarAccessory | null;
+  pride_flags?: PrideFlag[] | null;
+  country?: string | null;
+  country_name?: string | null;
+  country_flag?: string | null;
+  pronouns?: string | null;
+  status?: ProfileStatus | null;
+  bio?: string | null;
+  followers: number;
+  listed_items: number;
+  verified: boolean;
+}
+
 export function get_public_profile(username: string, auth: Partial<AuthOpts> = {}) {
   return apiFetch<Profile>('/api/v2/profile/get', { ...auth, query: { username } });
+}
+
+export function discover_profiles(auth: Partial<AuthOpts> = {}, options: { q?: string; verified?: boolean; following?: boolean; page?: number } = {}) {
+  return apiFetch<{ profiles: DiscoverProfile[]; page: number; last_page: number }>('/api/v2/profile/discover', {
+    ...auth,
+    query: {
+      ...(options.q ? { q: options.q } : {}),
+      ...(options.verified ? { verified: '1' } : {}),
+      ...(options.following ? { tab: 'following' } : {}),
+      ...(options.page && options.page > 1 ? { page: String(options.page) } : {}),
+    },
+  });
 }
 
 export function get_my_profile(auth: AuthOpts) {

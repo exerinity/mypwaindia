@@ -14,6 +14,12 @@ export function profile_path(username: string) {
   return `/i/profile/${encodeURIComponent(username)}`;
 }
 
+export function country_flag_emoji(value?: string | null): string {
+  const country = value?.toUpperCase();
+  if (country === 'GB-SCT') return '\u{1f3f4}\u{e0067}\u{e0062}\u{e0073}\u{e0063}\u{e0074}\u{e007f}';
+  return country && /^[A-Z]{2}$/.test(country) ? String.fromCodePoint(...Array.from(country, (letter) => letter.charCodeAt(0) + 127397)) : '';
+}
+
 export function profile_web_url(username: string) {
   return `https://mypayindia.com/@${encodeURIComponent(username)}`;
 }

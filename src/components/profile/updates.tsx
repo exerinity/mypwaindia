@@ -69,7 +69,7 @@ export function ProfileUpdates({ username, auth, owner = false, locked = false }
 
   return <div>
     {owner && auth && !locked && <form onSubmit={create_update} className={`mb-2 ${utility_classes.mb_2}`}>
-      <FloatingTextarea id="update_body" label="Post an update" disabled={busy} maxLength={500} required value={body} onChange={(event) => set_body(event.target.value)} />
+      <FloatingTextarea id="update_body" label="What's happening?" disabled={busy} maxLength={500} required value={body} onChange={(event) => set_body(event.target.value)} />
       <div className={`${stat_classes.sub} mt-1 ${utility_classes.mt_1}`}>{body.length}/500</div>
       <FloatingInput id="update_link" label="Link (optional)" disabled={busy} type="url" value={link} onChange={(event) => set_link(event.target.value)} />
       <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}><button disabled={busy || !body.trim()}>Post update</button></div>

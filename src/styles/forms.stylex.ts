@@ -2,12 +2,19 @@ import * as stylex from '@stylexjs/stylex';
 
 const styles = stylex.create({
   floating: { position: 'relative', marginTop: '16px' },
+  floating_compact: { marginTop: 0 },
   floating_input: { paddingTop: '22px', paddingBottom: '8px' },
   floating_input_trailing: { paddingRight: '44px' },
+  floating_input_leading: { paddingLeft: '42px' },
+  floating_input_leading_trailing: { paddingLeft: '42px', paddingRight: '44px' },
   floating_textarea: { paddingTop: '26px', paddingBottom: '8px' },
   floating_trailing: {
     position: 'absolute', right: '6px', top: '50%',
     transform: 'translateY(-50%)', display: 'flex', alignItems: 'center',
+  },
+  floating_leading: {
+    position: 'absolute', left: '12px', top: '50%',
+    transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', color: 'var(--muted)',
   },
   floating_label: {
     position: 'absolute', left: '14px', top: '50%',
@@ -17,6 +24,7 @@ const styles = stylex.create({
     margin: 0, whiteSpace: 'nowrap', overflow: 'hidden',
     maxWidth: 'calc(100% - 28px)', textOverflow: 'ellipsis',
   },
+  floating_label_leading: { left: '42px', maxWidth: 'calc(100% - 56px)' },
   floating_textarea_label: { top: '20px', transform: 'none' },
   checkbox_row: {
     display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0',
@@ -38,11 +46,16 @@ const styles = stylex.create({
 
 export const form_classes = {
   floating: stylex.props(styles.floating).className,
+  floating_compact: stylex.props(styles.floating, styles.floating_compact).className,
   floating_input: stylex.props(styles.floating_input).className,
   floating_input_trailing: stylex.props(styles.floating_input, styles.floating_input_trailing).className,
+  floating_input_leading: stylex.props(styles.floating_input, styles.floating_input_leading).className,
+  floating_input_leading_trailing: stylex.props(styles.floating_input, styles.floating_input_leading_trailing).className,
   floating_textarea: stylex.props(styles.floating_textarea).className,
   floating_trailing: stylex.props(styles.floating_trailing).className,
+  floating_leading: stylex.props(styles.floating_leading).className,
   floating_label: stylex.props(styles.floating_label).className,
+  floating_label_leading: stylex.props(styles.floating_label, styles.floating_label_leading).className,
   floating_textarea_label: stylex.props(styles.floating_label, styles.floating_textarea_label).className,
   checkbox_row: stylex.props(styles.checkbox_row).className,
   toggle_switch: stylex.props(styles.toggle_switch).className,

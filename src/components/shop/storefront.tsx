@@ -13,15 +13,15 @@ import { Empty, ErrorBox, LoadingRow } from '../ui/status.tsx';
 import { safe_http_url } from '../../utils/profiles.ts';
 import { formatINR } from '../../utils/money.js';
 
-export function ProfileShop({ username, auth, owner }: { username: string; auth?: AuthOpts; owner: boolean }) {
-  return <ShopCatalog username={username} auth={auth} owner={owner} />;
+export function ProfileShop({ username, auth, owner, show_manage_link = true }: { username: string; auth?: AuthOpts; owner: boolean; show_manage_link?: boolean }) {
+  return <ShopCatalog username={username} auth={auth} owner={owner} show_manage_link={show_manage_link} />;
 }
 
 export function SavedShopItems({ auth }: { auth: AuthOpts }) {
   return <ShopCatalog auth={auth} saved />;
 }
 
-function ShopCatalog({ username, auth, owner = false, saved = false }: { username?: string; auth?: AuthOpts; owner?: boolean; saved?: boolean }) {
+function ShopCatalog({ username, auth, owner = false, saved = false, show_manage_link = true }: { username?: string; auth?: AuthOpts; owner?: boolean; saved?: boolean; show_manage_link?: boolean }) {
   const resource = use_profile_resource<{ items: ShopListing[] }>(() => saved && auth ? list_saved_items(auth) : list_shop_items(username ?? '', auth), `${saved}:${username}:${auth?.env}:${auth?.token}`);
   const saved_resource = use_profile_resource(() => auth && !saved ? list_saved_items(auth) : Promise.resolve({ items: [] }), `${saved}:${auth?.env}:${auth?.token}`);
   const location = useLocation();
@@ -41,7 +41,7 @@ function ShopCatalog({ username, auth, owner = false, saved = false }: { usernam
     finally { set_saving(null); }
   }
   return <div>
-    {owner && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><Link to="/account/shop" className="btn secondary">Manage shop</Link></div>}
+    {owner && show_manage_link && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><Link to="/account/shop" className="btn secondary">Manage shop</Link></div>}
     {saved && <><p className={`muted ${utility_classes.muted}`}>You will be notified when a saved item comes back in stock</p><div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" disabled={resource.loading} onClick={resource.reload}>Refresh</button></div></>}
     <ErrorBox error={resource.error || saved_resource.error || save_error} />
     {!!(resource.error || saved_resource.error) && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}><button className="secondary" onClick={() => { resource.reload(); saved_resource.reload(); }}>Retry</button></div>}
