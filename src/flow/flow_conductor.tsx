@@ -129,6 +129,10 @@ function ServerFlow({ task }: { task: string }) {
   )?.backgroundLocation;
 
   function close_flow() {
+    if (task === 'onboarding/wizard' || task === 'onboarding_wizard') {
+      navigate('/dash', { replace: true });
+      return;
+    }
     if (backgroundLocation) {
       navigate(-1);
       return;
