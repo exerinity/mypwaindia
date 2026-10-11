@@ -8,7 +8,7 @@ import {
   type LoginFormSubtask,
   type LoginSuccessSubtask,
 } from '../api/flow.ts';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { useToast } from '../context/toast_ctx.tsx';
 import { storageGet, KEYS } from '../utils/storage.ts';
@@ -56,6 +56,9 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
   const cancelAction = form?.actions.find((action) => action.link_id === 'cancel');
   const atCapacity = accounts.length >= maxAccounts;
   const bgLoc = (location.state as { backgroundLocation?: unknown } | null)?.backgroundLocation;
+  const from = (location.state as { from?: { pathname?: string; search?: string; hash?: string } } | null)?.from;
+  const destination = searchParams.get('goto') ?? (from ? (from.pathname ?? '/dash') + (from.search ?? '') + (from.hash ?? '') : '/dash');
+  const beam_path = `/i/flow/beam?goto=${encodeURIComponent(destination)}`;
 
   usePageTitle(bgLoc ? null : (form?.page_title ?? 'Log in to MyPayIndia'));
 
@@ -132,15 +135,12 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
       }
 
       const success = nextSubtask as LoginSuccessSubtask;
-      const goto = searchParams.get('goto');
-      const from = (location.state as { from?: { pathname?: string; search?: string; hash?: string } })?.from;
-      const dest = goto ?? (from ? (from.pathname ?? '/dash') + (from.search ?? '') + (from.hash ?? '') : '/dash');
       const onboarded = storageGet<number>(KEYS.ONBOARD, 0) === 1;
-      const claiming = dest.startsWith('/i/flow/links/interstitial/');
+      const claiming = destination.startsWith('/i/flow/links/interstitial/');
       completeLogin(
         { username, password, totp_code: totp || undefined, env },
         success.login_success,
-        onboarded || claiming ? dest : '/i/onboarding'
+        onboarded || claiming ? destination : '/i/onboarding'
       );
     } catch (caught) {
       const { describeError } = await import('../utils/errors.js');
@@ -257,18 +257,35 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
                     : nextAction.label}
                 </button>
               )}
-              {signupAction?.url && (
-                <a
-                  href={signupAction.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn secondary"
-                  style={{ width: '100%', marginTop: '12px', justifyContent: 'center' }}
-                >
-                  {signupAction.label} <ExternalIcon />
-                </a>
-              )}
             </form>
+
+            <div role="separator" aria-label="or" style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '18px 0', color: 'var(--muted)' }}>
+              <span aria-hidden="true" style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+              <span>OR</span>
+              <span aria-hidden="true" style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+            </div>
+
+            {atCapacity ? (
+              <button type="button" disabled style={{ width: '100%' }}>
+                Sign in with MyPayIndia
+              </button>
+            ) : (
+              <Link to={beam_path} className="btn" style={{ width: '100%' }}>
+                Sign in with MyPayIndia
+              </Link>
+            )}
+
+            {signupAction?.url && (
+              <a
+                href={signupAction.url}
+                target="_blank"
+                rel="noreferrer"
+                className="btn secondary"
+                style={{ width: '100%', marginTop: '12px', justifyContent: 'center' }}
+              >
+                {signupAction.label} <ExternalIcon />
+              </a>
+            )}
 
             {cancelAction && (
               <div className={`mt-2 center ${utility_classes.center} ${utility_classes.mt_2}`}>

@@ -331,7 +331,11 @@ export default function SessionsPage() {
               {reinitStage === null && (reinit2faOpen ? 'Waiting for 2FA code...' : 'Reinitialize session')}
             </button>
             {!active.password && (
-              <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>No saved password for this account, so this can't be done</span>
+              <span className={`muted ${utility_classes.muted}`} style={{ fontSize: '0.85rem' }}>
+                {active.sign_in_method === 'beam'
+                  ? <>This account uses MyPayIndia sign-in. <Link to="/i/flow/beam?goto=%2Fi%2Fsessions">Sign in again</Link> to create a new session</>
+                  : "No saved password for this account, so this can't be done"}
+              </span>
             )}
           </div>
           <hr style={{ margin: '0 0 20px', borderColor: 'var(--border)' }} />

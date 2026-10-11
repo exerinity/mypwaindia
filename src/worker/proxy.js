@@ -108,7 +108,7 @@ export const bastion = {
       });
     }
     if (strippedPath === FLOW_TASK_PATH) {
-      return handleFlowTask(req, backendBase, corsOrigin);
+      return handleFlowTask(req, backendBase, corsOrigin, env);
     }
     if (
       req.method === "POST" &&

@@ -1,6 +1,7 @@
 import test from "./test.js";
 import linksInterstitial from "./links_interstitial.js";
 import login from "./login.js";
+import beam from "./beam.js";
 import onboardingWizard from "./onboarding_wizard.js";
 import opsec from "./opsec.js";
 import restrictions from "./restrictions.js";
@@ -16,6 +17,7 @@ const FLOW_TASKS = [
   test,
   linksInterstitial,
   login,
+  beam,
   onboardingWizard,
   opsec,
   restrictions,

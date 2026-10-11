@@ -28,9 +28,9 @@ async function readFlowInput(req, corsOrigin) {
   }
 }
 
-export async function handleFlowTask(req, backendBase, corsOrigin) {
+export async function handleFlowTask(req, backendBase, corsOrigin, env) {
   const url = new URL(req.url);
-  const context = { req, url, backendBase, corsOrigin };
+  const context = { req, url, backendBase, corsOrigin, env };
 
   if (req.method === "POST") {
     const input = await readFlowInput(req, corsOrigin);

@@ -1,8 +1,11 @@
 import { utility_classes } from '../styles/utils.stylex.ts';
-import { lazy, Suspense, useState, type ReactNode } from 'react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Link, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Modal } from '../components/ui/modal.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
+import { completeBeam } from '../api/auth.ts';
+import { getUserInfo } from '../api/user.ts';
+import { storageGet, KEYS } from '../utils/storage.ts';
 import { useApiCall } from '../hooks/api_call.ts';
 import {
   abortFlowTask,
@@ -42,6 +45,54 @@ function FlowSpinner() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: 16 }}>
       <span className={`spinner lg ${utility_classes.spinner_large}`} />
+    </div>
+  );
+}
+
+function BeamRedirect({ url }: { url: string }) {
+  useEffect(() => { window.location.assign(url); }, [url]);
+  return <FlowSpinner />;
+}
+
+function BeamReady() {
+  const { completeLogin } = useAuth();
+  const started = useRef(false);
+  const [error, set_error] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    void (async () => {
+      try {
+        const { session_id, sub, return_to } = await completeBeam();
+        const id = Number(sub);
+        if (!Number.isSafeInteger(id) || id <= 0) throw new Error('MyPayIndia returned an invalid account ID!');
+        const info = await getUserInfo({ token: session_id, env: 'production' }) as {
+          id?: number | string;
+          username?: string;
+          role?: string;
+        };
+        if (info.id != null && String(info.id) !== sub) throw new Error('The account session does not match the sign-in');
+        if (!info.username || typeof info.role !== 'string') throw new Error('The account session is incomplete');
+        const destination = return_to.startsWith('/') && !return_to.startsWith('//') && !return_to.includes('\\') ? return_to : '/dash';
+        const onboarded = storageGet<number>(KEYS.ONBOARD, 0) === 1;
+        const claiming = destination.startsWith('/i/flow/links/interstitial/');
+        completeLogin(
+          { env: 'production', method: 'beam' },
+          { user: { id, username: info.username, role: info.role }, session_id },
+          onboarded || claiming ? destination : '/i/onboarding'
+        );
+      } catch (caught) {
+        set_error(caught instanceof Error ? caught.message : 'Oops, something went wrong. Please try again later.');
+      }
+    })();
+  }, [completeLogin]);
+
+  if (!error) return <FlowSpinner />;
+  return (
+    <div style={{ display: 'grid', gap: 12 }}>
+      <p style={{ margin: 0 }}>{error}</p>
+      <Link to="/i/flow/login">Return to login</Link>
     </div>
   );
 }
@@ -189,6 +240,11 @@ function ServerFlow({ task }: { task: string }) {
     );
   }
 
+  const beam_redirect = data?.subtasks.find((candidate) => candidate.type === 'beam_redirect');
+  const beam_ready = data?.subtasks.find((candidate) => candidate.type === 'beam_ready');
+  if (beam_redirect) content = <BeamRedirect url={beam_redirect.beam_redirect.authorization_url} />;
+  if (beam_ready) content = <BeamReady />;
+
   const flowTest = data?.subtasks.find(
     (candidate): candidate is FlowTestSubtask => candidate.type === 'flow_test'
   );
@@ -244,7 +300,7 @@ function ServerFlow({ task }: { task: string }) {
     content = <DonateProfileModal key={data?.flow_token} subtask={profile_donation} on_submit={handle_form_task} on_complete={close_flow} on_busy={set_form_busy} />;
   }
 
-  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !flowTest && !flowImage && !text_content && !restrictions && !shop_item && !shop_checkout && !profile_report && !profile_donation) {
+  if (!loading && data && !transaction && !paymentLink && !wizard && !login && !beam_redirect && !beam_ready && !flowTest && !flowImage && !text_content && !restrictions && !shop_item && !shop_checkout && !profile_report && !profile_donation) {
     title = 'Error';
     content = <Flowback embedded onClose={handleClose} />;
   }

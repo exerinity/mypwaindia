@@ -194,6 +194,19 @@ export interface LoginSuccessSubtask {
   subtask_back_navigation: 'hide_explicit_cta';
 }
 
+export interface BeamRedirectSubtask {
+  subtask_id: 'BeamRedirect';
+  type: 'beam_redirect';
+  beam_redirect: { authorization_url: string };
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
+export interface BeamReadySubtask {
+  subtask_id: 'BeamReady';
+  type: 'beam_ready';
+  subtask_back_navigation: 'hide_explicit_cta';
+}
+
 export interface FlowTestInput {
   input_id: string;
   type: 'text' | 'email' | 'password' | 'number' | 'url' | 'search' | 'color';
@@ -378,6 +391,8 @@ export type FlowSubtask =
   | OnboardingWizardSubtask
   | LoginFormSubtask
   | LoginSuccessSubtask
+  | BeamRedirectSubtask
+  | BeamReadySubtask
   | FlowTestSubtask
   | AccountRestrictionsSubtask
   | ShopItemEditorSubtask

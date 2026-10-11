@@ -17,7 +17,7 @@ precacheAndRoute(self.__WB_MANIFEST);
 
 const networkFirst = (cacheName: string) => new NetworkFirst({ cacheName, networkTimeoutSeconds: 4 });
 
-registerRoute(({ request }) => request.mode === 'navigate', networkFirst('pages-cache'));
+registerRoute(({ request, url }) => request.mode === 'navigate' && url.pathname !== '/i/flow/beam', networkFirst('pages-cache'));
 registerRoute(
   ({ request }) => request.destination === 'script' || request.destination === 'style',
   networkFirst('assets-cache')

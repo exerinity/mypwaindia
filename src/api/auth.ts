@@ -22,3 +22,14 @@ export async function logout() {
     method: 'POST',
   });
 }
+
+export interface BeamSessionResponse {
+  session_id: string;
+  sub: string;
+  return_to: string;
+}
+
+export async function completeBeam(): Promise<BeamSessionResponse> {
+  const { apiFetch } = await import('./client.js');
+  return apiFetch<BeamSessionResponse>('/api/pwa/beam/complete', { method: 'POST' });
+}

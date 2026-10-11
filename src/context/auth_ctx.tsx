@@ -20,6 +20,7 @@ export interface Account {
   lastBalance?: number;
   password?: string;
   credentialOnly?: boolean;
+  sign_in_method?: 'password' | 'beam';
 }
 
 export interface LoginParams {
@@ -34,13 +35,21 @@ export interface LoginSessionResponse {
   session_id: string;
 }
 
+export interface CompleteLoginParams {
+  username?: string;
+  password?: string;
+  totp_code?: string;
+  env?: Env;
+  method?: 'password' | 'beam';
+}
+
 interface AuthContextValue {
   accounts: Account[];
   active: Account | null;
   activeId: number | null;
   switchingTo: Account | null;
   login: (params: LoginParams, redirectTo?: string) => Promise<Account>;
-  completeLogin: (params: LoginParams, session: LoginSessionResponse, redirectTo?: string) => Account;
+  completeLogin: (params: CompleteLoginParams, session: LoginSessionResponse, redirectTo?: string) => Account;
   logout: () => Promise<void>;
   switchAccount: (id: number) => Promise<void>;
   removeAccount: (id: number) => void;
@@ -72,6 +81,7 @@ function persistAccounts(next: Account[], remember: boolean = rememberInfoEnable
     addedAt: a.addedAt,
     password: a.password,
     credentialOnly: a.credentialOnly,
+    sign_in_method: a.sign_in_method,
   })));
 }
 
@@ -136,11 +146,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const completeLogin = useCallback((
-    { password, env = 'production' }: LoginParams,
+    { password, env = 'production', method = 'password' }: CompleteLoginParams,
     data: LoginSessionResponse,
     redirectTo?: string
   ): Account => {
     const snapshot: Account[] = storageGet(KEYS.ACCOUNTS, []);
+    const existing = snapshot.find((account) => account.id === data.user.id);
+    if (!existing && snapshot.length >= MAX_ACCOUNTS) {
+      throw new Error(`You can have at most ${MAX_ACCOUNTS} accounts logged in`);
+    }
     const acc: Account = {
       id: data.user.id,
       username: data.user.username,
@@ -148,7 +162,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token: data.session_id,
       env,
       addedAt: new Date().toISOString(),
-      password,
+      password: password ?? existing?.password,
+      sign_in_method: method,
     };
     const idx = snapshot.findIndex((a) => a.id === acc.id);
     const next = idx >= 0
