@@ -14,9 +14,8 @@ import { useSettings, useCurrency, HOME_PAGE_OPTIONS } from '../../context/setti
 import { useGlobalData } from '../../context/global_data_ctx.tsx';
 import { listTransactions } from '../../api/transactions.js';
 import { listLinks } from '../../api/links.js';
-import { InfoIcon, CloseIcon, BulbIcon } from '../../components/ui/icons.tsx';
+import { CloseIcon, BulbIcon } from '../../components/ui/icons.tsx';
 import { Skeleton, ErrorBox } from '../../components/ui/status.tsx';
-import { RELEASES } from '../information/release_notes.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { hideGet, hideSet } from '../../utils/storage.ts';
 import type { Account } from '../../context/auth_ctx.tsx';
@@ -24,7 +23,6 @@ import type { Account } from '../../context/auth_ctx.tsx';
 const TransactionTable = lazy(() => import('../../components/data/tx_table.tsx').then((m) => ({ default: m.TransactionTable })));
 const SimpleHistoryList = lazy(() => import('../../components/data/simple_history_list.tsx').then((m) => ({ default: m.SimpleHistoryList })));
 const RefreshStatus = lazy(() => import('../../components/ui/refresh_status.tsx').then((m) => ({ default: m.RefreshStatus })));
-const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
 
 function DisplayName({ account, mode }: { account: Account | null; mode: string }) {
   const displayMod = useLazyModule(() => import('../../utils/display.js'));
@@ -92,16 +90,15 @@ export default function DashboardPage() {
     return (
       <Suspense fallback={<ContentSkeleton />}>
         <h1 className={`mt-0 ${utility_classes.mt_0}`}>Welcome to the MyPayIndia PWA</h1>
-        <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>You've reached the MyPayIndia PWA, "MyPWAIndia". This is the official, albeit alternative, responsive web app for MyPayIndia.<br /><br />
-          You can navigate the app logged out, but to actually do anything, please <Link to="/i/flow/login" state={{ backgroundLocation: location }}>log in</Link>.
-          If you don't have an account, you can <a href="https://mypayindia.com/auth/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here.<br /><br />Thanks, and have fun!</p>
+        <p className={`mt-0 mb-0 ${utility_classes.mt_0}`}>You've reached the MyPayIndia PWA, "MyPWAIndia". This is the <a href="https://mypayindia.com/app" target="_blank" rel="noopener noreferrer">official</a>, albeit alternative, responsive web app for MyPayIndia.<br /><br />
+          You can navigate some of the app logged out, but for the best experience, please <Link to="/i/flow/login" state={{ backgroundLocation: location }}>log in</Link>.
+          If you don't have an account, you can <a href="https://mypayindia.com/auth/register" target="_blank" rel="noopener noreferrer">register on the main site</a> and then log in here. Feel free to explore the app in the interim, like <Link to="/i/profiles">some profiles</Link>, <Link to="/i/leaderboard">the leaderboard</Link>, or try out <Link to="/i/command">MyCLiIndia</Link>!<br /><br />Thanks, and have fun!</p>
         <div className={`alert alert-info mb-2 ${alert_classes.info} ${utility_classes.mb_2}`} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
           <span style={{ flexShrink: 0, marginTop: 2, display: 'flex' }}><BulbIcon /></span>
           <span style={{ flex: 1 }}>
             <strong className={stat_classes.label}>Tip</strong><br></br>MyPWAIndia understands (most) MyPayIndia.com URL paths - so coming from <strong>mypayindia.com/account/transfers</strong> and replacing <strong>.com</strong> with <strong>.sbs</strong> will automatically take you to the right page!
           </span>
         </div>
-        <AppFooter version={RELEASES[0].version} />
       </Suspense>
     );
   }
