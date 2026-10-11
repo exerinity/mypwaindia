@@ -10,7 +10,7 @@ const NEWS_PATH = "/i/api/pwa/meta/news";
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
-    if (url.pathname === BEAM_PATH && (url.searchParams.has("code") || url.searchParams.has("error"))) {
+    if (url.pathname === BEAM_PATH && (url.searchParams.has("code") || (url.searchParams.has("error") && (url.searchParams.has("state") || url.searchParams.has("iss"))))) {
       return handle_beam_callback(req, env);
     }
     if (url.pathname === BEAM_COMPLETE_PATH) {

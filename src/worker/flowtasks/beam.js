@@ -9,8 +9,8 @@ export default defineFlowTask({
   },
 
   async get({ req, url, env, corsOrigin }) {
-    if (url.searchParams.has("error")) {
-      const error = url.searchParams.get("error");
+    if (url.searchParams.has("beam_error") || url.searchParams.has("error")) {
+      const error = url.searchParams.get("beam_error") ?? url.searchParams.get("error");
       const message = error === "access_denied"
         ? "You did not approve sign-in"
         : error === "expired"

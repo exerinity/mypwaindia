@@ -111,7 +111,7 @@ export async function start_beam(request, env) {
 
 function callback_redirect(request, status, cookies = []) {
   const location = new URL(BEAM_PATH, request.url);
-  location.searchParams.set(status === "complete" ? "complete" : "error", status === "complete" ? "1" : status);
+  location.searchParams.set(status === "complete" ? "complete" : "beam_error", status === "complete" ? "1" : status);
   const headers = new Headers({ Location: location.href, "Cache-Control": "no-store" });
   for (const cookie of cookies) headers.append("Set-Cookie", cookie);
   return new Response(null, { status: 303, headers });

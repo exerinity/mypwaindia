@@ -318,7 +318,7 @@ function BeamEntry() {
   const navigate = useNavigate();
   const [confirmed, set_confirmed] = useState(false);
   const params = new URLSearchParams(location.search);
-  const is_return = params.has('complete') || params.has('error');
+  const is_return = params.has('complete') || params.has('beam_error') || params.has('error');
   const from_login = (location.state as { beam_from_login?: boolean } | null)?.beam_from_login === true;
 
   if (from_login || is_return || confirmed) return <ServerFlow task="beam" />;
