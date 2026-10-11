@@ -270,7 +270,7 @@ export default function LoginPage({ subtask, flowToken, loading, error: taskErro
                 Sign in with MyPayIndia
               </button>
             ) : (
-              <Link to={beam_path} className="btn" style={{ width: '100%' }}>
+              <Link to={beam_path} state={{ beam_from_login: true }} className="btn" style={{ width: '100%' }}>
                 Sign in with MyPayIndia
               </Link>
             )}

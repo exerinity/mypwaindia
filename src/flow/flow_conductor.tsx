@@ -2,6 +2,7 @@ import { utility_classes } from '../styles/utils.stylex.ts';
 import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Modal } from '../components/ui/modal.tsx';
+import { ConfirmModal } from '../components/ui/confirm_modal.tsx';
 import { useAuth } from '../context/auth_ctx.tsx';
 import { completeBeam } from '../api/auth.ts';
 import { getUserInfo } from '../api/user.ts';
@@ -312,11 +313,35 @@ function ServerFlow({ task }: { task: string }) {
   return <Modal open onClose={handleClose} title={title}>{flowContent}</Modal>;
 }
 
+function BeamEntry() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [confirmed, set_confirmed] = useState(false);
+  const params = new URLSearchParams(location.search);
+  const is_return = params.has('complete') || params.has('error');
+  const from_login = (location.state as { beam_from_login?: boolean } | null)?.beam_from_login === true;
+
+  if (from_login || is_return || confirmed) return <ServerFlow task="beam" />;
+
+  return (
+    <ConfirmModal
+      open
+      message="Go to MyPayIndia.com to sign in?"
+      confirmLabel="Proceed"
+      cancelLabel="Cancel"
+      danger={false}
+      onClose={() => navigate('/i/flow/login', { replace: true })}
+      onConfirm={() => set_confirmed(true)}
+    />
+  );
+}
+
 function FlowRoute() {
   const location = useLocation();
   const { active } = useAuth();
   const prefix = '/i/flow/';
   const task = location.pathname.startsWith(prefix) ? location.pathname.slice(prefix.length) : '';
+  if (task === 'beam') return <BeamEntry key={location.key} />;
   const form_flow = task === 'edit_item_m' || task === 'reportprofile' || task === 'donateprofile';
   return <ServerFlow key={form_flow || task.startsWith('shop/') ? `${task}:${active?.env}:${active?.token}:${location.key}` : task} task={task} />;
 }
