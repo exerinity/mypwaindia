@@ -5,7 +5,7 @@ import { button_classes } from '../../styles/buttons.stylex.ts';
 import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
 import { form_classes } from '../../styles/forms.stylex.ts';
 import React, { useState, lazy } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { Account } from '../../context/auth_ctx.tsx';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useSettings } from '../../context/settings_ctx.tsx';
@@ -15,7 +15,6 @@ import { SettingsIcon } from '../../components/ui/icons.tsx';
 import { hideGet, hideSetValue, hideClear } from '../../utils/storage.ts';
 
 const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));
-const AddAccountModal = lazy(() => import('../../components/account/add_acc_modal.tsx').then((m) => ({ default: m.AddAccountModal })));
 
 const HIDE_ROWS = [
   { key: 'install', label: 'Install app pill' },
@@ -34,8 +33,8 @@ export function DataSettings() {
   const { accounts, removeAccount, switchAccount, active } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [addAccountOpen, setAddAccountOpen] = useState(false);
   const [removeOneTarget, setRemoveOneTarget] = useState<Account | null>(null);
   const [removeAllOpen, setRemoveAllOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
@@ -135,7 +134,7 @@ export function DataSettings() {
           {accounts.length} saved
         </span>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="compact" onClick={() => setAddAccountOpen(true)}>
+          <button className="compact" onClick={() => navigate('/i/flow/login', { state: { backgroundLocation: location } })}>
             Add account
           </button>
           {accounts.length > 0 && (
@@ -179,7 +178,7 @@ export function DataSettings() {
                       )}
                   </td>
                   <td>
-                    <button className="compact" disabled={switching} onClick={() => setRemoveOneTarget(acc)}>
+                    <button className="compact" disabled={switching} onClick={() => accounts.length === 1 ? navigate('/logout') : setRemoveOneTarget(acc)}>
                       Remove
                     </button>
                   </td>
@@ -207,14 +206,12 @@ export function DataSettings() {
         </button>
       </div>
 
-      <AddAccountModal open={addAccountOpen} onClose={() => setAddAccountOpen(false)} />
-
       <ConfirmModal
         open={!!removeOneTarget}
         onClose={() => setRemoveOneTarget(null)}
         onConfirm={() => { if (removeOneTarget) removeAccount(removeOneTarget.id); setRemoveOneTarget(null); }}
         title="Remove this account?"
-        message={<>Are you sure you want to remove <strong>{removeOneTarget?.username || ''}</strong>?{accounts.length === 1 ? ' This is your only saved account, so you will be completely logged out of the app' : ' You will then be logged into the next available account'}</>}
+        message={<>Are you sure you want to remove <strong>{removeOneTarget?.username || ''}</strong>? You will then be logged into the next available account</>}
         confirmLabel="Remove"
       />
 
