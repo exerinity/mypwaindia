@@ -6,7 +6,6 @@ import { useAuth } from '../../context/auth_ctx.tsx';
 import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { RELEASES } from '../../pages/information/release_notes.tsx';
-import { ExternalIcon } from '../../components/ui/icons.tsx';
 import { animation_classes } from '../../styles/animations.stylex.ts';
 
 const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
@@ -59,18 +58,17 @@ export default function OnboardingPage() {
       <div className={`card ${card_classes.card}`} style={{ maxWidth: 520, width: '100%' }}>
         <h1 style={{ marginTop: 0 }}>Welcome to MyPWAIndia!</h1>
         <p>
-          MyPWAIndia is the official responsive web app for using MyPayIndia. Please keep in mind when using MyPWAIndia:
+          MyPWAIndia is the official responsive web app for using MyPayIndia. Please keep in mind while using MyPWAIndia:
         </p>
         <ul>
           <li>
-            This is not (a substitute for){' '}
-            <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>{' '}
-            and does not take precedence over it
+            This is not the main <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a> interface and does not take precedence over it
           </li>
           <li>
-            This app is (or should be seen as) completely standalone from the main{' '}
-            <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>{' '}
-            website
+            Not everything that can be performed on <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a> can be performed here
+          </li>
+          <li>
+            For most of those unavailable tasks, you should be offered to go back to <a href="https://mypayindia.com" target="_blank" rel="noreferrer">MyPayIndia.com</a>
           </li>
           <li>
             By using this app, you agree to the{' '}
@@ -81,7 +79,10 @@ export default function OnboardingPage() {
             MyPWAIndia is open source here: <a href="https://github.com/exerinity/mypwaindia" target="_blank" rel="noreferrer">exerinity/mypwaindia</a>
           </li>
           <li>
-            <strong>This app is an early work in progress</strong>
+            <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noreferrer">Please submit any feedback, bugs, issues, or general inquiries in the Discord server</a>
+          </li>
+          <li>
+            <strong>This app is an early work in progress and may not work as intended everywhere</strong>
           </li>
         </ul>
         <button onClick={accept} style={{ width: '100%', marginTop: '8px' }}>

@@ -7,11 +7,13 @@ export function AppFooter({ version, style, className }: { version: string; styl
     <p className={`muted ${utility_classes.muted}${className ? ` ${className}` : ''}`} style={{ fontSize: '0.8rem', marginTop: 24, ...style }}>
       <Link to="/i/release_notes">v{version.toLocaleLowerCase()}</Link>
       {' | '}
-      by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a>
+      <a href="https://discord.com/invite/A4ZKY4JGCy" target="_blank" rel="noreferrer">Discord server</a>
       {' | '}
       <a href="https://mypayindia.com" target="_blank" rel="noopener noreferrer">MyPayIndia.com</a>
       {' | '}
       <Link to="/i/acknowledgements">acknowledgements</Link>
+      {' | '}
+      by <a href="https://exerinity.com" target="_blank" rel="noopener noreferrer">exerinity</a>
     </p>
   );
 }
