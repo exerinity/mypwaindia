@@ -15,13 +15,12 @@ import { getUserInfo } from '../../api/user.js';
 import type { Transaction } from '../../components/data/tx_table.tsx';
 import { useCurrency } from '../../context/settings_ctx.tsx';
 import { InfoIcon, WarningIcon, CloseIcon } from '../../components/ui/icons.tsx';
-import { Modal } from '../../components/ui/modal.tsx';
 
 const HoldButton = lazy(() => import('../../components/ui/hold_btn.tsx').then((m) => ({ default: m.HoldButton })));
 const FloatingInput = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingInput })));
 const FloatingTextarea = lazy(() => import('../../components/ui/floating_input.tsx').then((m) => ({ default: m.FloatingTextarea })));
 import { Skeleton } from '../../components/ui/status.tsx';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const PRESETS_PAISA = [
   100,    // 1
@@ -31,17 +30,6 @@ const PRESETS_PAISA = [
   10000,  // 100
   50000,  // 500
   100000, // 1,000
-];
-
-const NO_MODAL_IMAGES = [
-  '/i/exquisite_imagery/opsec/anon.jpg',
-  '/i/exquisite_imagery/opsec/bro.jpg',
-  '/i/exquisite_imagery/opsec/discord.jpg',
-  '/i/exquisite_imagery/opsec/godinf.jpg',
-  '/i/exquisite_imagery/opsec/gx.jpg',
-  '/i/exquisite_imagery/opsec/infinite.jpg',
-  '/i/exquisite_imagery/opsec/what.jpg',
-  '/i/exquisite_imagery/opsec/x.jpg',
 ];
 
 interface QueueItem {
@@ -60,6 +48,8 @@ export default function BulkTransferPage() {
   const toast = useToast();
   const format = useCurrency();
   const uid = useId();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const userQ = useApiCall<{ balance: number }>(
     async () => {
@@ -96,9 +86,6 @@ export default function BulkTransferPage() {
   const [stackPaisa, setStackPaisa] = useState(0);
   const [rawInput, setRawInput] = useState('');
   const [editingAmount, setEditingAmount] = useState(false);
-  const [showNoModal, setShowNoModal] = useState(false);
-  const [noModalImage, setNoModalImage] = useState(NO_MODAL_IMAGES[0]);
-
   const [keepAmount, setKeepAmount] = useState(false);
   const [keepNote, setKeepNote] = useState(false);
 
@@ -129,13 +116,11 @@ export default function BulkTransferPage() {
     setRawInput('');
   }
 
-  function openNoModal() {
-    setNoModalImage(NO_MODAL_IMAGES[Math.floor(Math.random() * NO_MODAL_IMAGES.length)]);
-    setShowNoModal(true);
-  }
-
   function addToQueue() {
-    if (stackPaisa <= 0 || !recipient.trim()) { openNoModal(); return; }
+    if (stackPaisa <= 0 || !recipient.trim()) {
+      navigate('/i/flow/opsec', { state: { backgroundLocation: location } });
+      return;
+    }
     const item: QueueItem = {
       id: `${uid}-${Date.now()}-${Math.random()}`,
       recipient: recipient.trim(),
@@ -194,10 +179,6 @@ export default function BulkTransferPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <Modal open={showNoModal} onClose={() => setShowNoModal(false)}>
-        <img src={noModalImage} alt="" style={{ display: 'block', maxWidth: '100%' }} />
-      </Modal>
-
       <h1 className={`mt-0 ${utility_classes.mt_0}`}>Bulk transfer</h1>
       <p className={`muted ${utility_classes.muted}`} style={{ marginTop: -8, marginBottom: 16, fontSize: '0.9rem' }}>
         Changed your mind? <Link to="/account/transfer">Single transfer...</Link>

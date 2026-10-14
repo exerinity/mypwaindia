@@ -6,7 +6,7 @@ import { alert_classes } from '../../styles/alerts.stylex.ts';
 import { button_classes } from '../../styles/buttons.stylex.ts';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import React, { useState, useMemo, lazy, Suspense } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
 import { useApiCall } from '../../hooks/api_call.js';
@@ -35,17 +35,6 @@ const PRESETS_PAISA = [
   100000, // 1,000
 ];
 
-const NO_MODAL_IMAGES = [
-  '/i/exquisite_imagery/opsec/anon.jpg',
-  '/i/exquisite_imagery/opsec/bro.jpg',
-  '/i/exquisite_imagery/opsec/discord.jpg',
-  '/i/exquisite_imagery/opsec/godinf.jpg',
-  '/i/exquisite_imagery/opsec/gx.jpg',
-  '/i/exquisite_imagery/opsec/infinite.jpg',
-  '/i/exquisite_imagery/opsec/what.jpg',
-  '/i/exquisite_imagery/opsec/x.jpg',
-];
-
 const TRUNCATE: React.CSSProperties = {
   display: 'block',
   width: '100%',
@@ -57,6 +46,7 @@ const TRUNCATE: React.CSSProperties = {
 export default function TransferPage() {
   usePageTitle('Transfer funds');
   const { active, updateBalance } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
   const format = useCurrency();
@@ -71,8 +61,6 @@ export default function TransferPage() {
   });
   const [rawInput, setRawInput] = useState('');
   const [editingAmount, setEditingAmount] = useState(false);
-  const [showNoModal, setShowNoModal] = useState(false);
-  const [noModalImage, setNoModalImage] = useState(NO_MODAL_IMAGES[0]);
   const [showRecents, setShowRecents] = useState(false);
   const [recentSort, setRecentSort] = useState<'recent' | 'amount'>('recent');
 
@@ -151,14 +139,11 @@ export default function TransferPage() {
     setRawInput('');
   }
 
-  function openNoModal() {
-    setNoModalImage(NO_MODAL_IMAGES[Math.floor(Math.random() * NO_MODAL_IMAGES.length)]);
-    setShowNoModal(true);
-  }
-
   async function doTransfer() {
-    if (stackPaisa <= 0) { openNoModal(); return; }
-    if (!recipient.trim()) { openNoModal(); return; }
+    if (stackPaisa <= 0 || !recipient.trim()) {
+      navigate('/i/flow/opsec', { state: { backgroundLocation: location } });
+      return;
+    }
     setBusy(true);
     try {
       const res = await transfer(active!, {
@@ -182,9 +167,6 @@ export default function TransferPage() {
 
   return (
     <Suspense fallback={<ContentSkeleton />}>
-      <Modal open={showNoModal} onClose={() => setShowNoModal(false)}>
-        <img src={noModalImage} alt="" style={{ display: 'block', maxWidth: '100%' }} />
-      </Modal>
       <Modal open={showRecents} onClose={() => setShowRecents(false)}>
         <div className={`table-controls ${table_classes.controls}`}>
           <label>
