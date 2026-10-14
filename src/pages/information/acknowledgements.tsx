@@ -7,7 +7,8 @@ import { usePageTitle } from '../../hooks/page_title.js';
 const DEVELOPERS = [
   {
     name: 'exerinity',
-    url: 'https://exerinity.com'
+    url: 'https://exerinity.com',
+    subtext: <><Link to="/i/team?highlight=exerinity">(view on team)</Link></>
   },
 ];
 
@@ -15,23 +16,34 @@ const THX = [
   {
     name: 'tiago',
     url: 'https://tiago.zip',
-    idea: 'Helping out with the original PWA (redesigning it), and the splash screen & account switcher (on the original)'
+    idea: <>Helping out with the original PWA (redesigning it), implementing the splash screen & account switcher (on the original) <Link to="/i/team?highlight=Tiago">(view on team)</Link></>
   },
   {
     name: 'IBM_PC',
     url: 'https://ibmpc.gr',
-    idea: <>Wrote the CSS for <Link to="/iotm/button">the button</Link> on <a href="https://mypayindia.com/iotm/button/" target="_blank">the main site</a> that I "borrowed"</>
+    idea: <>Wrote the CSS for <Link to="/iotm/button">the button</Link> on <a href="https://mypayindia.com/iotm/button/" target="_blank">the main site</a> that I "borrowed" <Link to="/i/team?highlight=IBM_PC">(view on team)</Link></>
   },
   {
-    name: 'you!',
-    idea: 'for giving MyPWAIndia a try'
-  }
+    name: 'timi2506',
+    url: 'https://github.com/timi2506',
+    idea: <>Provided instructions for <Link to="/i/how_pwa">installing as a PWA</Link> for Mac and iOS because I don't have a Mac <Link to="/i/team?highlight=timi2506">(view on team)</Link></>
+  },
+  {
+    name: 'Mystically',
+    url: 'https://mystically.dev',
+    idea: <>Scambait mode ideas and influence <Link to="/i/team?highlight=Mystically">(view on team)</Link></>
+  },
+  {
+    name: 'Razelz',
+    url: 'https://razelz.org',
+    idea: <>More scambait mode ideas <Link to="/i/team?highlight=Razelz">(view on team)</Link></>
+  },
 ];
 
 const INSPIRATIONS = [
   {
     name: 'Twitter',
-    url: 'https://twitter.dev',
+    url: 'https://twitter.com',
     idea: 'Settings (v2) layout idea, and routing scheme (/i/flow, etc), tab title ("This / MyPayIndia" "That / Twitter")',
   },
   {
@@ -45,6 +57,8 @@ const PACKAGE_GROUPS: { title: string; packages: Package[] }[] = [
     title: 'API',
     packages: [
       { name: 'MyPayIndia API', version: 2, url: 'https://mypayindia.com/docs/api' },
+      { name: 'MyPayIndia Identity', url: 'https://mypayindia.com/docs/identity'},
+      { name: 'Workers', url: 'https://workers.dev'}
     ],
   },
   {
@@ -139,6 +153,7 @@ export default function AcknowledgementsPage() {
                 ? <a href={dev.url} target="_blank" rel="noopener noreferrer">{dev.name}</a>
                 : dev.name}
             </strong>
+            <p className={`muted ${utility_classes.muted}`} style={{ margin: '4px 0 0', fontSize: '0.875rem' }}>{dev.subtext}</p>
           </div>
         ))}
       </div>
