@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { modal_classes } from '../../styles/modal.stylex.ts';
-import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { modal_classes } from '../../styles/modal.stylex.js';
+import { app_lock_classes } from '../../styles/app_lock.stylex.js';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '../../components/ui/modal.tsx';

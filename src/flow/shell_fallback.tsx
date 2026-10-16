@@ -1,5 +1,5 @@
-import { utility_classes } from '../styles/utils.stylex.ts';
-import { modal_classes } from '../styles/modal.stylex.ts';
+import { utility_classes } from '../styles/utils.stylex.js';
+import { modal_classes } from '../styles/modal.stylex.js';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Modal } from '../components/ui/modal.tsx';
 

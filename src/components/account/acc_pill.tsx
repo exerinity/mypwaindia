@@ -1,5 +1,5 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { shell_classes } from '../../styles/shell.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { shell_classes } from '../../styles/shell.stylex.js';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Account } from '../../context/auth_ctx.tsx';
 import { useLocation, useNavigate, Link } from 'react-router-dom';

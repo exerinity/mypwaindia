@@ -1,12 +1,12 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
 import { useState, lazy, Suspense } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { RELEASES } from '../../pages/information/release_notes.tsx';
-import { animation_classes } from '../../styles/animations.stylex.ts';
+import { animation_classes } from '../../styles/animations.stylex.js';
 
 const AppFooter = lazy(() => import('../../components/shell/app_footer.tsx').then((m) => ({ default: m.AppFooter })));
 const ConfirmModal = lazy(() => import('../../components/ui/confirm_modal.tsx').then((m) => ({ default: m.ConfirmModal })));

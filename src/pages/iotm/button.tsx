@@ -1,11 +1,11 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { table_classes } from '../../styles/tables.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { table_classes } from '../../styles/tables.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import * as stylex from '@stylexjs/stylex';
-import { button_styles } from '../../styles/iotm_button.stylex.ts';
+import { button_styles } from '../../styles/iotm_button.stylex.js';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';

@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { profile_classes } from '../../styles/profiles.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { profile_classes } from '../../styles/profiles.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
 import type { ShopOrder } from '../../api/shop.js';
 import { safe_http_url } from '../../utils/profiles.ts';
 

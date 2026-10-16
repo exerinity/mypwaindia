@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
+import { app_lock_classes } from '../../styles/app_lock.stylex.js';
 import type { AppLockMethod } from '../../utils/app_lock.ts';
 import { EyeIcon, EyeOffIcon } from '../ui/icons.tsx';
 

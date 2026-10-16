@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
 import { useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Flowback from '../shell_fallback.tsx';

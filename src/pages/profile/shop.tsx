@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { usePageTitle } from '../../hooks/page_title.ts';
 import { ProfileShop } from '../../components/shop/storefront.tsx';
-import { utility_classes } from '../../styles/utils.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
 import { profile_path } from '../../utils/profiles.ts';
 
 export default function ProfileShopPage() {

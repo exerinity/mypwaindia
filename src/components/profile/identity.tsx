@@ -1,8 +1,8 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { profile_classes } from '../../styles/profiles.stylex.ts';
-import { shell_classes } from '../../styles/shell.stylex.ts';
-import { stat_classes } from '../../styles/stats.stylex.ts';
-import { lbteam_classes, pride_flag_class } from '../../styles/lbteam.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { profile_classes } from '../../styles/profiles.stylex.js';
+import { shell_classes } from '../../styles/shell.stylex.js';
+import { stat_classes } from '../../styles/stats.stylex.js';
+import { lbteam_classes, pride_flag_class } from '../../styles/lbteam.stylex.js';
 import { useEffect, useState } from 'react';
 import type { Profile, ProfileAccent, ProfileStatus } from '../../api/profile.js';
 import { avatar_accessories, pride_flags, profile_accents } from '../../api/profile.js';

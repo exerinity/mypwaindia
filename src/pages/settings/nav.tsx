@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
-import { form_classes } from '../../styles/forms.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
+import { form_classes } from '../../styles/forms.stylex.js';
 import { useState, lazy } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSettings, BOTTOM_NAV_MAX, DEFAULT_BOTTOM_NAV_ITEMS, normalizeBottomNavItems } from '../../context/settings_ctx.tsx';

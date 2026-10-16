@@ -1,7 +1,7 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { animation_classes } from '../../styles/animations.stylex.ts';
-import { lbteam_classes } from '../../styles/lbteam.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { animation_classes } from '../../styles/animations.stylex.js';
+import { lbteam_classes } from '../../styles/lbteam.stylex.js';
 import { useState, useEffect, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useCachedQuery } from '../../hooks/cached_query.js';

@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { lbteam_classes } from '../../styles/lbteam.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { lbteam_classes } from '../../styles/lbteam.stylex.js';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { profile_path } from '../../utils/profiles.ts';

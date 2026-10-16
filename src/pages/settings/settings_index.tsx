@@ -1,5 +1,5 @@
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
-import { settings_classes } from '../../styles/settings.stylex.ts';
+import { settings_classes } from '../../styles/settings.stylex.js';
 import { useState, useMemo, lazy, Suspense } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { RELEASES } from '../information/release_notes.tsx';

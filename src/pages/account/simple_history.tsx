@@ -1,4 +1,4 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { Suspense, lazy } from 'react';
 import { Link } from 'react-router-dom';

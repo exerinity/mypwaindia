@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { agent_classes } from '../../styles/agent.stylex.ts';
-import { agent_drawer_classes } from '../../styles/agent_drawer.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { agent_classes } from '../../styles/agent.stylex.js';
+import { agent_drawer_classes } from '../../styles/agent_drawer.stylex.js';
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useSettings, useCurrency } from '../../context/settings_ctx.tsx';

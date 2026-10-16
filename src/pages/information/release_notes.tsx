@@ -1,7 +1,7 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
-import { animation_classes } from '../../styles/animations.stylex.ts';
+import { animation_classes } from '../../styles/animations.stylex.js';
 import React, { useState, lazy, Suspense } from 'react';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { RELEASES } from './release_notes_notes.tsx';

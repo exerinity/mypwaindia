@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { news_classes } from '../../styles/news.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { news_classes } from '../../styles/news.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
 import { Link, useParams } from 'react-router-dom';
 import { useCachedQuery } from '../../hooks/cached_query.js';
 import { usePageTitle } from '../../hooks/page_title.js';

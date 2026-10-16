@@ -10,7 +10,7 @@ import {
   subscribeDrawers,
 } from '../../utils/drawer_bus.ts';
 import { ChevronDown, CloseIcon, ExternalIcon, AgentIcon } from '../ui/icons.tsx';
-import { agent_drawer_classes } from '../../styles/agent_drawer.stylex.ts';
+import { agent_drawer_classes } from '../../styles/agent_drawer.stylex.js';
 
 const CLOSE_MS = 200;
 const PANEL_ID = 'agent-drawer-panel';

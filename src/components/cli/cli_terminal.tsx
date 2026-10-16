@@ -13,7 +13,7 @@ import {
   isSudoGranted, touchSudo, requestDrawerOpen, CLI_SUDO_SEEN_KEY,
 } from '../../utils/cli_store.ts';
 import type { CliLine } from '../../utils/cli_store.ts';
-import { cli_classes } from '../../styles/cli.stylex.ts';
+import { cli_classes } from '../../styles/cli.stylex.js';
 
 type ApiAny = any;
 

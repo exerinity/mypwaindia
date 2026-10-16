@@ -1,5 +1,5 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { shell_classes } from '../../styles/shell.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { shell_classes } from '../../styles/shell.stylex.js';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useCurrency } from '../../context/settings_ctx.tsx';
 import { useGlobalData } from '../../context/global_data_ctx.tsx';

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react';
-import { alert_classes } from '../styles/alerts.stylex.ts';
-import { toast_classes } from '../styles/toasts.stylex.ts';
+import { alert_classes } from '../styles/alerts.stylex.js';
+import { toast_classes } from '../styles/toasts.stylex.js';
 import type { ReactNode } from 'react';
 import { CloseIcon, InfoIcon, SuccessIcon, ErrorIcon, WarningIcon } from '../components/ui/icons.tsx';
 

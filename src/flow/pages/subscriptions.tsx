@@ -1,9 +1,9 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { link_status_class } from '../../styles/links.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { link_status_class } from '../../styles/links.stylex.js';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import * as stylex from '@stylexjs/stylex';
-import { subscription_styles } from '../../styles/subscriptions.stylex.ts';
+import { subscription_styles } from '../../styles/subscriptions.stylex.js';
 import { useState, useMemo, lazy, Suspense } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';

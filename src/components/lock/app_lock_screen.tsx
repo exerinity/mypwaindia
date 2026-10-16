@@ -1,8 +1,8 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
-import { modal_classes } from '../../styles/modal.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
+import { modal_classes } from '../../styles/modal.stylex.js';
 import { lazy, Suspense, useState } from 'react';
-import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
+import { app_lock_classes } from '../../styles/app_lock.stylex.js';
 import { verifyAppLock, setAppLock, disableAppLock, recordAppLockUnlock, minLength, type AppLockMethod } from '../../utils/app_lock.ts';
 import { AppLockInput } from './app_lock_input.tsx';
 import { LockIcon, EyeIcon, EyeOffIcon } from '../ui/icons.tsx';

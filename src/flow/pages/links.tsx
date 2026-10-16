@@ -1,9 +1,9 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { link_classes, link_status_class } from '../../styles/links.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
-import { form_classes } from '../../styles/forms.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { link_classes, link_status_class } from '../../styles/links.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
+import { form_classes } from '../../styles/forms.stylex.js';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';

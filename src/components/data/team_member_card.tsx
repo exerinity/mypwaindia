@@ -1,4 +1,4 @@
-import { lbteam_classes, pride_flag_class } from '../../styles/lbteam.stylex.ts';
+import { lbteam_classes, pride_flag_class } from '../../styles/lbteam.stylex.js';
 import { useState } from 'react';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { ExternalIcon } from '../ui/icons.tsx';

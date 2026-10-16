@@ -1,7 +1,7 @@
-import { utility_classes } from '../styles/utils.stylex.ts';
-import { table_classes } from '../styles/tables.stylex.ts';
-import { button_classes } from '../styles/buttons.stylex.ts';
-import { form_classes } from '../styles/forms.stylex.ts';
+import { utility_classes } from '../styles/utils.stylex.js';
+import { table_classes } from '../styles/tables.stylex.js';
+import { button_classes } from '../styles/buttons.stylex.js';
+import { form_classes } from '../styles/forms.stylex.js';
 import type { FlowTestSubtask } from '../api/flow.ts';
 import { useNavigate } from 'react-router-dom';
 

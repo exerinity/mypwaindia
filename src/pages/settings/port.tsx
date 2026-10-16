@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';

@@ -1,7 +1,7 @@
-import { utility_classes } from '../styles/utils.stylex.ts';
-import { card_classes } from '../styles/cards.stylex.ts';
-import { button_classes } from '../styles/buttons.stylex.ts';
-import { form_classes } from '../styles/forms.stylex.ts';
+import { utility_classes } from '../styles/utils.stylex.js';
+import { card_classes } from '../styles/cards.stylex.js';
+import { button_classes } from '../styles/buttons.stylex.js';
+import { form_classes } from '../styles/forms.stylex.js';
 import { useEffect, useRef, useState } from 'react';
 import type { FlowTaskInput, FlowTaskResponse, ShopItemEditorSubtask } from '../api/flow.ts';
 import type { ShopItemBody, ShopOption } from '../api/shop.js';

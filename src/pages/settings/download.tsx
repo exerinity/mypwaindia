@@ -1,5 +1,5 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal } from '../../components/ui/modal.tsx';

@@ -1,7 +1,7 @@
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { animation_classes } from '../../styles/animations.stylex.ts';
-import { shell_classes } from '../../styles/shell.stylex.ts';
-import { layout_classes } from '../../styles/layout.stylex.ts';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { animation_classes } from '../../styles/animations.stylex.js';
+import { shell_classes } from '../../styles/shell.stylex.js';
+import { layout_classes } from '../../styles/layout.stylex.js';
 export function ContentSkeleton() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, paddingTop: 4 }}>

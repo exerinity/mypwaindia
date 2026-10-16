@@ -1,10 +1,10 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { table_classes } from '../../styles/tables.stylex.ts';
-import { link_classes } from '../../styles/links.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
-import { modal_classes } from '../../styles/modal.stylex.ts';
-import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { table_classes } from '../../styles/tables.stylex.js';
+import { link_classes } from '../../styles/links.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
+import { modal_classes } from '../../styles/modal.stylex.js';
+import { app_lock_classes } from '../../styles/app_lock.stylex.js';
 import React, { useState, useMemo, useRef, lazy } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';

@@ -1,7 +1,7 @@
-import { utility_classes } from '../styles/utils.stylex.ts';
-import { button_classes } from '../styles/buttons.stylex.ts';
-import { modal_classes } from '../styles/modal.stylex.ts';
-import { form_classes } from '../styles/forms.stylex.ts';
+import { utility_classes } from '../styles/utils.stylex.js';
+import { button_classes } from '../styles/buttons.stylex.js';
+import { modal_classes } from '../styles/modal.stylex.js';
+import { form_classes } from '../styles/forms.stylex.js';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { OnboardingWizardSubtask } from '../api/flow.ts';

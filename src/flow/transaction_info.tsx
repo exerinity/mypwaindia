@@ -1,5 +1,5 @@
-import { utility_classes } from '../styles/utils.stylex.ts';
-import { stat_classes } from '../styles/stats.stylex.ts';
+import { utility_classes } from '../styles/utils.stylex.js';
+import { stat_classes } from '../styles/stats.stylex.js';
 import { useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/auth_ctx.tsx';

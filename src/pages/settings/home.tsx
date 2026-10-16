@@ -1,5 +1,5 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
 import { useState, lazy } from 'react';
 import { useSettings, HOME_PAGE_OPTIONS, DEFAULT_DASHBOARD_BUTTONS, DASHBOARD_BUTTON_STYLES } from '../../context/settings_ctx.tsx';
 import type { DashboardButtonStyle, DashboardHistory } from '../../context/settings_ctx.tsx';

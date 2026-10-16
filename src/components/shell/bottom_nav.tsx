@@ -5,7 +5,7 @@ import { useAuth } from '../../context/auth_ctx.tsx';
 import { resolveNavItems, activeNavRoute } from './nav_catalog.tsx';
 import type { NavDestination } from './nav_catalog.tsx';
 import { useMediaQuery } from '../../hooks/media_query.ts';
-import { bottom_nav_classes } from '../../styles/bottom_nav.stylex.ts';
+import { bottom_nav_classes } from '../../styles/bottom_nav.stylex.js';
 
 export const BOTTOM_NAV_QUERY = '(max-width: 900px)';
 

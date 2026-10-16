@@ -1,4 +1,4 @@
-import { lbteam_classes } from '../../styles/lbteam.stylex.ts';
+import { lbteam_classes } from '../../styles/lbteam.stylex.js';
 
 /*
  * Icons from Font Awesome

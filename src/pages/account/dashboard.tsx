@@ -1,8 +1,8 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
-import { stat_classes } from '../../styles/stats.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
+import { stat_classes } from '../../styles/stats.stylex.js';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useMemo, useState, lazy, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';

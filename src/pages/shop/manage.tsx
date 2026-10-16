@@ -1,9 +1,9 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { table_classes } from '../../styles/tables.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
-import { form_classes } from '../../styles/forms.stylex.ts';
-import { stat_classes } from '../../styles/stats.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { table_classes } from '../../styles/tables.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
+import { form_classes } from '../../styles/forms.stylex.js';
+import { stat_classes } from '../../styles/stats.stylex.js';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import type { AuthOpts } from '../../api/client.js';

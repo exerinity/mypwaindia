@@ -5,7 +5,7 @@ import { CliTerminal } from './cli_terminal.tsx';
 import { TerminalIcon, ChevronDown, CloseIcon, ExternalIcon } from '../ui/icons.tsx';
 import { clearLines, consumeDrawerOpenRequest, CLI_DRAWER_OPEN_EVENT } from '../../utils/cli_store.ts';
 import { announceDrawerOpen, announceDrawerClosed, subscribeDrawers, getOpenDrawer } from '../../utils/drawer_bus.ts';
-import { cli_drawer_classes } from '../../styles/cli_drawer.stylex.ts';
+import { cli_drawer_classes } from '../../styles/cli_drawer.stylex.js';
 
 const CLOSE_MS = 200;
 

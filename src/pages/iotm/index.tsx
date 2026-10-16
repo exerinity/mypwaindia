@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
 import { Link } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { ExternalIcon, ChevronRight } from '../../components/ui/icons.tsx';

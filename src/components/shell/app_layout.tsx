@@ -1,7 +1,7 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
-import { animation_classes } from '../../styles/animations.stylex.ts';
-import { shell_classes } from '../../styles/shell.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
+import { animation_classes } from '../../styles/animations.stylex.js';
+import { shell_classes } from '../../styles/shell.stylex.js';
 import { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
@@ -15,8 +15,8 @@ import { THEME_PANEL_OPEN_EVENT } from '../../utils/theme_panel_store.ts';
 import { RELEASES } from '../../pages/information/release_notes.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';
 import { HeaderSkeleton, SidebarSkeleton } from './app_skeleton.tsx';
-import { agent_classes } from '../../styles/agent.stylex.ts';
-import { layout_classes } from '../../styles/layout.stylex.ts';
+import { agent_classes } from '../../styles/agent.stylex.js';
+import { layout_classes } from '../../styles/layout.stylex.js';
 
 const Header = lazy(() => import('./header.tsx').then((m) => ({ default: m.Header })));
 const Sidebar = lazy(() => import('./sidebar.tsx').then((m) => ({ default: m.Sidebar })));

@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { animation_classes } from '../../styles/animations.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { animation_classes } from '../../styles/animations.stylex.js';
 import React, { useState, useEffect } from 'react';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { Link } from 'react-router-dom';

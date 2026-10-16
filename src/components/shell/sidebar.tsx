@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import { lazy, Suspense, useState, useSyncExternalStore } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { layout_classes } from '../../styles/layout.stylex.ts';
+import { layout_classes } from '../../styles/layout.stylex.js';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { storageGet, storageSet, KEYS } from '../../utils/storage.ts';
 import { profile_path } from '../../utils/profiles.ts';

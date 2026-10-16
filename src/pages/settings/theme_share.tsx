@@ -2,7 +2,7 @@ import { useSettings, CUSTOM_VAR_KEYS } from '../../context/settings_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
 import { normalizeHex } from '../../utils/colors.js';
 import { effectivePalette } from './theme_presets.ts';
-import { theme_panel_classes } from '../../styles/theme_panel.stylex.ts';
+import { theme_panel_classes } from '../../styles/theme_panel.stylex.js';
 
 export function ThemeShareRow() {
   const { settings, update } = useSettings();

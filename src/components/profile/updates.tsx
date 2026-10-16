@@ -1,8 +1,8 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { profile_classes } from '../../styles/profiles.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
-import { stat_classes } from '../../styles/stats.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { profile_classes } from '../../styles/profiles.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
+import { stat_classes } from '../../styles/stats.stylex.js';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { create_profile_update, delete_profile_update, vote_profile_update, list_profile_updates } from '../../api/profile.js';

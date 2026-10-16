@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { utility_classes } from '../../styles/utils.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
 import { Link } from 'react-router-dom';
 
 export function AppFooter({ version, style, className }: { version: string; style?: CSSProperties; className?: string }) {

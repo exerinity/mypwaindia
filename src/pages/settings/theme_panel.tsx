@@ -1,5 +1,5 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { theme_panel_classes } from '../../styles/theme_panel.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { theme_panel_classes } from '../../styles/theme_panel.stylex.js';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useSettings, DEFAULT_SETTINGS } from '../../context/settings_ctx.tsx';

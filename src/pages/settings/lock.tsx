@@ -1,8 +1,8 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
-import { modal_classes } from '../../styles/modal.stylex.ts';
-import { app_lock_classes } from '../../styles/app_lock.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
+import { modal_classes } from '../../styles/modal.stylex.js';
+import { app_lock_classes } from '../../styles/app_lock.stylex.js';
 import { useState } from 'react';
 import { useToast } from '../../context/toast_ctx.tsx';
 import { Modal } from '../../components/ui/modal.tsx';

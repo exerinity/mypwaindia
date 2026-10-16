@@ -497,7 +497,7 @@ export const lbteam_classes = {
   timeline_item_collapsed_last: stylex.props(styles.timeline_item, styles.timeline_item_collapsed_last).className,
 };
 
-export function pride_flag_class(flag: string): string {
-  const name = `pride_flag__${flag.toLowerCase().replace(/[^a-z0-9_]/g, '_')}` as keyof typeof lbteam_classes;
+export function pride_flag_class(flag) {
+  const name = `pride_flag__${flag.toLowerCase().replace(/[^a-z0-9_]/g, '_')}`;
   return lbteam_classes[name] ?? lbteam_classes.pride_flag ?? '';
 }

@@ -1,8 +1,8 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
 import { useState, lazy, Suspense } from 'react';
-import { animation_classes } from '../../styles/animations.stylex.ts';
+import { animation_classes } from '../../styles/animations.stylex.js';
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';

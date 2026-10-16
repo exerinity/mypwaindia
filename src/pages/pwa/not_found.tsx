@@ -1,5 +1,5 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { button_classes } from '../../styles/buttons.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { button_classes } from '../../styles/buttons.stylex.js';
 import { Link, useLocation } from 'react-router-dom';
 import { usePageTitle } from '../../hooks/page_title.js';
 import { ExternalIcon } from '../../components/ui/icons.tsx';

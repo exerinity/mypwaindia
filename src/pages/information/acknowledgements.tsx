@@ -1,5 +1,5 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
 import { Link } from 'react-router-dom';
 import { ExternalIcon } from '../../components/ui/icons.js';
 import { usePageTitle } from '../../hooks/page_title.js';

@@ -1,4 +1,4 @@
-import { utility_classes } from '../styles/utils.stylex.ts';
+import { utility_classes } from '../styles/utils.stylex.js';
 import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Modal } from '../components/ui/modal.tsx';

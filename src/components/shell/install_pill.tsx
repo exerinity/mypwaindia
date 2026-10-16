@@ -1,4 +1,4 @@
-import { shell_classes } from '../../styles/shell.stylex.ts';
+import { shell_classes } from '../../styles/shell.stylex.js';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { isInstalled } from '../../hooks/install_prompt.ts';

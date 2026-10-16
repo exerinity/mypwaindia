@@ -1,6 +1,6 @@
-import { card_classes } from '../styles/cards.stylex.ts';
-import { utility_classes } from '../styles/utils.stylex.ts';
-import { alert_classes } from '../styles/alerts.stylex.ts';
+import { card_classes } from '../styles/cards.stylex.js';
+import { utility_classes } from '../styles/utils.stylex.js';
+import { alert_classes } from '../styles/alerts.stylex.js';
 import type { AccountRestrictionsSubtask } from '../api/flow.ts';
 import { WarningIcon, SuccessIcon } from '../components/ui/icons.tsx';
 import { ErrorBox } from '../components/ui/status.tsx';

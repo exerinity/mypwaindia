@@ -1,4 +1,4 @@
-import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { alert_classes } from '../../styles/alerts.stylex.js';
 import { useState } from 'react';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useGlobalData } from '../../context/global_data_ctx.tsx';

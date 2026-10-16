@@ -1,5 +1,5 @@
 import React from 'react';
-import { form_classes } from '../../styles/forms.stylex.ts';
+import { form_classes } from '../../styles/forms.stylex.js';
 
 interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;

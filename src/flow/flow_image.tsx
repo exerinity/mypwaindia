@@ -1,4 +1,4 @@
-import { news_classes } from '../styles/news.stylex.ts';
+import { news_classes } from '../styles/news.stylex.js';
 import type { ImageSubtask } from '../api/flow.ts';
 
 export default function FlowImage({ subtask }: { subtask: ImageSubtask }) {

@@ -1,5 +1,5 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { card_classes } from '../../styles/cards.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { card_classes } from '../../styles/cards.stylex.js';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import { useMemo, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';

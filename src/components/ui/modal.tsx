@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { CloseIcon } from './icons.tsx';
 import { Logo } from './logo.tsx';
-import { modal_classes } from '../../styles/modal.stylex.ts';
+import { modal_classes } from '../../styles/modal.stylex.js';
 
 
 interface ModalProps { open: boolean; onClose?: () => void; title?: string; fullscreen?: boolean; className?: string; bgIcon?: ReactNode; children: ReactNode }

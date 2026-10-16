@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
 import { useMemo } from 'react';
-import { simple_history_classes } from '../../styles/simple_history.stylex.ts';
+import { simple_history_classes } from '../../styles/simple_history.stylex.js';
 import { Link, useLocation } from 'react-router-dom';
 import { useCurrency } from '../../context/settings_ctx.tsx';
 import { useLazyModule } from '../../hooks/lazy_module.ts';

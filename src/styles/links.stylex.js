@@ -40,7 +40,7 @@ export const link_classes = {
   status_expired: stylex.props(styles.status, styles.status_expired).className,
 };
 
-export function link_status_class(status: string): string {
-  const key = `status_${status}` as keyof typeof link_classes;
+export function link_status_class(status) {
+  const key = `status_${status}`;
   return link_classes[key] ?? link_classes.status ?? '';
 }

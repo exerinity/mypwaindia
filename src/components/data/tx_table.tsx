@@ -1,6 +1,6 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { table_classes } from '../../styles/tables.stylex.ts';
-import { link_status_class } from '../../styles/links.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { table_classes } from '../../styles/tables.stylex.js';
+import { link_status_class } from '../../styles/links.stylex.js';
 import { useMemo, useState } from 'react';
 
 export interface Transaction {

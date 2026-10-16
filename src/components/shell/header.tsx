@@ -1,4 +1,4 @@
-import { shell_classes } from '../../styles/shell.stylex.ts';
+import { shell_classes } from '../../styles/shell.stylex.js';
 import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { HamburgerIcon } from '../ui/icons.tsx';

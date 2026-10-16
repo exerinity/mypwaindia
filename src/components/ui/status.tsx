@@ -1,9 +1,9 @@
-import { utility_classes } from '../../styles/utils.stylex.ts';
-import { alert_classes } from '../../styles/alerts.stylex.ts';
+import { utility_classes } from '../../styles/utils.stylex.js';
+import { alert_classes } from '../../styles/alerts.stylex.js';
 import type { ReactNode, CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorIcon } from './icons.tsx';
-import { animation_classes } from '../../styles/animations.stylex.ts';
+import { animation_classes } from '../../styles/animations.stylex.js';
 
 export function LoadingRow({ children = 'Retrieving data...' }: { children?: ReactNode }) {
   return (
