@@ -21,6 +21,7 @@ import { ProfileShop } from '../../components/shop/storefront.tsx';
 import { HoverTip, PrideFlagTag } from '../../components/data/team_member_card.tsx';
 import { country_flag_emoji, profile_path, safe_http_url, section_title } from '../../utils/profiles.ts';
 import { SearchIcon, StoreIcon, UserIcon, VerifiedIcon } from '../../components/ui/icons.tsx';
+import { resolveSocialSite, SocialIcon } from '../../components/ui/social_icons.tsx';
 
 export function PublicProfilePage() {
   const { username } = useParams();
@@ -155,13 +156,17 @@ function PublicProfile({ username }: { username: string }) {
         <ProfileIdentity profile={profile} username={username} followers={followers} member_age={member_age} on_avatar_click={set_selected_avatar} />
         {profile.visibility === 'private' && <div className={`${stat_classes.sub} mt-2 ${utility_classes.mt_2}`}>Only you can see this private profile</div>}
         {profile.bio && <div className={`mt-2 ${utility_classes.mt_2}`}><p className={`profile_prose ${profile_classes.prose}`}>{profile.bio}</p></div>}
-        <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>
-          {edit_link}
+        {edit_link && <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>{edit_link}</div>}
+        {!!profile.links?.length && <div className={`${profile_classes.social_links} mt-2 ${utility_classes.mt_2}`}>
           {(profile.links ?? []).map((link, index) => {
             const url = safe_http_url(link.url);
-            return url && <a key={index} href={url} className="btn secondary" target="_blank" rel="noopener noreferrer">{link.label ?? link.platform}</a>;
+            const site = resolveSocialSite(link.platform, url ?? undefined) ?? 'website';
+            return url && <a key={index} href={url} className={profile_classes.social_link} target="_blank" rel="noopener noreferrer">
+              <span className={profile_classes.social_icon}><SocialIcon site={site} /></span>
+              {link.label ?? section_title(link.platform)}
+            </a>;
           })}
-        </div>
+        </div>}
         {report_link}
         <ErrorBox error={action_error} />
         {!owner && <div className={`btn-row ${button_classes.row} ${utility_classes.row}`}>

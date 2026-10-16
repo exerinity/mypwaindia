@@ -51,16 +51,20 @@ export function ProfileIdentity({ profile, username, followers, member_age, on_a
         <VerifiedIcon size={24} />
       </span></HoverTip>}
     </div>
-    <div className={`row ${stat_classes.sub} mt-1 gap-md ${utility_classes.gap_md} ${utility_classes.row} ${utility_classes.mt_1}`}>
+    <div className={`${stat_classes.sub} mt-1 ${profile_classes.meta} ${utility_classes.mt_1}`}>
       {profile.pronouns && <span>{profile.pronouns}</span>}
-      {country && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`}>{country_flag && <HoverTip tip={profile.country_name || country}><span role="img" aria-label={profile.country_name || country} style={{ cursor: 'help' }}>{country_flag}</span></HoverTip>}{profile.country_name || country}</span>}
+      {country && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`}>{country_flag && <HoverTip tip={profile.country_name || country}><span role="img" aria-label={profile.country_name || country}>{country_flag}</span></HoverTip>}{profile.country_name || country}</span>}
       {follower_count != null && follower_count > 0 && <span>{follower_count} {follower_count === 1 ? 'follower' : 'followers'}</span>}
+      {profile.seller_rating && profile.seller_rating.count > 0 && <span className={profile_classes.seller_rating} aria-label={`${profile.seller_rating.average.toFixed(1)} out of 5 from ${profile.seller_rating.count} reviews`}>
+        <svg className={profile_classes.seller_rating_star} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.1 8.3 22 9.3 17 14.2 18.2 21.1 12 17.8 5.8 21.1 7 14.2 2 9.3 8.9 8.3" /></svg>
+        <span className={profile_classes.seller_rating_score}>{profile.seller_rating.average.toFixed(1)}</span>
+        <span>({profile.seller_rating.count})</span>
+      </span>}
       {profile.balance_visible && profile.balance != null && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`} title="Balance"><WalletIcon />{formatINR(profile.balance)}</span>}
       {!!profile.pride_flags?.length && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`}>
         {profile.pride_flags.filter((flag) => pride_flags.includes(flag)).map((flag) => <PrideFlagTag key={flag} flag={flag} />)}
       </span>}
-      {profile.seller_rating && profile.seller_rating.count > 0 && <span>{profile.seller_rating.average.toFixed(1)}/5 from {profile.seller_rating.count} reviews</span>}
-      {profile.member_since && <span>Member since <time dateTime={profile.member_since}>{new Date(profile.member_since).toLocaleDateString()}</time>{member_age && <> <AgeTag age={member_age} /></>}</span>}
+      {profile.member_since && <span>Joined <time dateTime={profile.member_since}>{new Date(profile.member_since).toLocaleDateString()}</time>{member_age && <> <AgeTag age={member_age} /></>}</span>}
     </div>
     {profile.status && <ProfileStatusLine status={profile.status} />}
     {!!profile.badges?.length && <div className={`row mt-1 ${utility_classes.row} ${utility_classes.mt_1}`}>{profile.badges.map((badge) => <span className={`pill profile_badge ${shell_classes.pill_profile_badge}`} key={badge}>{badge}</span>)}</div>}
@@ -78,7 +82,7 @@ function ProfileStatusLine({ status }: { status: ProfileStatus }) {
   }, [expires_at]);
   if (expires_at !== null && (!Number.isFinite(expires_at) || expires_at <= now)) return null;
   return <div className={`row mt-1 ${utility_classes.row} ${utility_classes.mt_1}`}>
-    <span className={`pill ${shell_classes.pill}`}>
+    <span className={`pill ${shell_classes.pill_profile_status}`}>
       <span className={`profile_prose ${profile_classes.prose}`}>{status.emoji}{status.emoji && status.text ? ' ' : ''}{status.text}</span>
     </span>
   </div>;

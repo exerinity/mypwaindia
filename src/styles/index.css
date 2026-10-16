@@ -111,7 +111,7 @@ a:hover {
 .news-body a:has(> img) img { margin: 0; }
 .news-body a { color: var(--brand); }
 details[open] > .profile_section_summary .profile_section_chevron { transform: rotate(90deg); }
-img.emoji { height: 1em; width: 1em; margin: 0 0.05em 0 0.1em; display: inline-block; }
+img.emoji { height: 1em; width: 1em; margin: 0 0.05em 0 0.1em; display: inline-block; vertical-align: -0.15em; }
 
 :root {
   --mpi-bottom-nav-h: 0px;

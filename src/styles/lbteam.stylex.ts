@@ -238,8 +238,8 @@ const styles = stylex.create({
   },
   pride_flag: {
     display: "inline-block",
-    width: "26px",
-    height: "16px",
+    width: "1.5em",
+    height: "0.95em",
     borderRadius: "3px",
     borderWidth: "1px",
     borderStyle: "solid",
