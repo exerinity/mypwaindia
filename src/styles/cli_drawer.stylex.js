@@ -93,6 +93,7 @@ const styles = stylex.create({
     borderWidth: 0, borderStyle: 'none', borderRadius: '999px',
     backgroundColor: { default: 'transparent', ':hover': 'color-mix(in srgb, var(--fg) 10%, transparent)' },
     color: { default: 'var(--muted)', ':hover': 'var(--fg)' },
+    textDecoration: 'none',
     cursor: { default: 'pointer', ':disabled': 'not-allowed' },
     opacity: { default: 1, ':disabled': 0.45 },
     transition: 'color 0.12s, background 0.12s',

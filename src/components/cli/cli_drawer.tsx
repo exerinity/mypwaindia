@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useSyncExternalStore } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { CliTerminal } from './cli_terminal.tsx';
 import { TerminalIcon, ChevronDown, CloseIcon, ExternalIcon } from '../ui/icons.tsx';
@@ -11,7 +11,6 @@ const CLOSE_MS = 200;
 
 export function CliDrawer() {
   const { settings } = useSettings();
-  const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -107,14 +106,15 @@ export function CliDrawer() {
               <button className={`cli-drawer-btn cli-drawer-btn--text ${cli_drawer_classes.button_text}`} onClick={clearLines} title="Clear terminal history">
                 CLEAR
               </button>
-              <button
+              <Link
+                to="/i/command"
                 className={`cli-drawer-btn ${cli_drawer_classes.button}`}
-                onClick={() => { closeDrawer(); navigate('/i/command'); }}
+                onClick={closeDrawer}
                 title="Open the full page"
                 aria-label="Open the full page"
               >
                 <ExternalIcon size={16} />
-              </button>
+              </Link>
               <button
                 className={`cli-drawer-btn${minimized ? ' cli-drawer-btn--flip' : ''} ${minimized ? cli_drawer_classes.button_flip : cli_drawer_classes.button}`}
                 onClick={() => setMinimized((m) => !m)}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useSettings } from '../../context/settings_ctx.tsx';
 import { AgentChat } from '../../pages/account/agent.tsx';
@@ -23,7 +23,6 @@ function isAgentPath(pathname: string | undefined): boolean {
 export function AgentDrawer() {
   const { settings } = useSettings();
   const { active } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -128,11 +127,6 @@ export function AgentDrawer() {
     setOpen(true);
   }
 
-  function openFullPage() {
-    closeDrawer(false);
-    navigate('/i/agent');
-  }
-
   const launcherOut = hidden || !entered || otherOpen || (open && !closing);
   const expanded = open && !closing;
 
@@ -182,16 +176,23 @@ export function AgentDrawer() {
               >
                 RESET
               </button>
-              <button
-                type="button"
-                className={`agent-drawer-btn ${agent_drawer_classes.button}`}
-                onClick={openFullPage}
-                disabled={chatBusy}
+              <Link
+                to="/i/agent"
+                className={`agent-drawer-btn ${chatBusy ? agent_drawer_classes.button_disabled : agent_drawer_classes.button}`}
+                onClick={(event) => {
+                  if (chatBusy) {
+                    event.preventDefault();
+                    return;
+                  }
+                  closeDrawer(false);
+                }}
+                aria-disabled={chatBusy}
+                tabIndex={chatBusy ? -1 : 0}
                 title="Open the full page"
                 aria-label="Open the full page"
               >
                 <ExternalIcon size={16} />
-              </button>
+              </Link>
               <button
                 type="button"
                 className={`agent-drawer-btn${minimized ? ' agent-drawer-btn--flip' : ''} ${minimized ? agent_drawer_classes.button_flip : agent_drawer_classes.button}`}
