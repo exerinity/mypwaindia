@@ -302,6 +302,10 @@ button,
   text-decoration: none;
 }
 
+.btn.button_link {
+  line-height: normal;
+}
+
 button:hover,
 .btn:hover {
   background: color-mix(in srgb, var(--brand) 78%, var(--brand));
@@ -315,7 +319,8 @@ button:active,
 }
 
 button:disabled,
-.btn:disabled {
+.btn:disabled,
+.btn[aria-disabled='true'] {
   background: var(--muted) !important;
   color: var(--bg) !important;
   opacity: 0.5;

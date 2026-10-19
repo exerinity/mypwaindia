@@ -6,7 +6,7 @@ import { alert_classes } from '../../styles/alerts.stylex.js';
 import { form_classes } from '../../styles/forms.stylex.js';
 import { ContentSkeleton } from '../../components/shell/app_skeleton.tsx';
 import React, { useState, useMemo, lazy, Suspense } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/auth_ctx.tsx';
 import { useToast } from '../../context/toast_ctx.tsx';
 import { useCachedQuery } from '../../hooks/cached_query.js';
@@ -181,10 +181,6 @@ export default function LinksPage() {
       toast.error(describeError(e));
     }
   }
-  function inspectLink(token: string) {
-    navigate(`/i/flow/links/interstitial/${encodeURIComponent(token)}`, { state: { backgroundLocation: location } });
-  }
-
   async function copyUrl(url: string) {
     try {
       await navigator.clipboard.writeText(url);
@@ -324,7 +320,7 @@ export default function LinksPage() {
                   <div className={`row gap-sm ${utility_classes.gap_sm} ${utility_classes.row}`}>
                     <button className={`secondary copy-btn ${button_classes.copy_button}`} onClick={() => copyUrl(l.url)}>Copy URL</button>
                     <button className={`secondary copy-btn ${button_classes.copy_button}`} onClick={() => copyUrl(sbsUrl(l.url, l.token))}>Copy URL (PWA)</button>
-                    <button className="secondary compact" onClick={() => inspectLink(l.token)}>Open</button>
+                    <Link className="btn secondary compact button_link" to={`/i/flow/links/interstitial/${encodeURIComponent(l.token)}`} state={{ backgroundLocation: location }}>Open</Link>
                     <button className="compact danger" onClick={() => setCancelTarget(l)}>Cancel</button>
                   </div>
                 </div>

@@ -84,7 +84,16 @@ function MyItems({ auth, account_id }: { auth: AuthOpts; account_id: number }) {
       <div className={stat_classes.card}><span className={stat_classes.label}>{item.pwyw ? 'Pay what you want minimum' : 'Price'}</span><span className={stat_classes.value}>{formatINR(item.price)}</span></div>
       <div className={stat_classes.sub}>{item.status ?? 'active'} - {item.stock == null ? 'Unlimited stock' : `${item.stock} in stock`} - {item.sold ?? 0} sold</div>
       {item.status !== 'archived' && <div className={`btn-row mt-2 ${button_classes.row} ${utility_classes.row} ${utility_classes.mt_2}`}>
-        <button className="secondary" disabled={busy} onClick={() => edit_item(item.id)}>Edit</button>
+        <Link
+          className="btn secondary button_link"
+          to="/i/flow/edit_item_m"
+          state={{ item_id: item.id, account_id, account_env: auth.env, backgroundLocation: location }}
+          aria-disabled={busy}
+          tabIndex={busy ? -1 : 0}
+          onClick={busy ? (event) => event.preventDefault() : undefined}
+        >
+          Edit
+        </Link>
         <button className="secondary" disabled={busy} onClick={() => set_restocking(item)}>Stock and visibility</button>
         <button className="secondary" disabled={busy} onClick={() => set_archiving(item)}>Archive</button>
       </div>}
