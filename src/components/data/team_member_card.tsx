@@ -57,6 +57,17 @@ export function HoverTip({ tip, children }: { tip: string; children: React.React
           boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
         }}>
           {tip}
+          <span aria-hidden="true" style={{
+            position: 'absolute',
+            bottom: -6,
+            left: '50%',
+            width: 0,
+            height: 0,
+            transform: 'translateX(-50%)',
+            borderLeft: '6px solid transparent',
+            borderRight: '6px solid transparent',
+            borderTop: '6px solid var(--surface-2, #222)',
+          }} />
         </span>
       )}
     </span>

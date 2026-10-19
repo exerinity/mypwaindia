@@ -32,6 +32,7 @@ export function ProfileIdentity({ profile, username, followers, member_age, on_a
   const country = profile.country?.toUpperCase();
   const follower_count = followers ?? profile.followers;
   const country_flag = country_flag_emoji(country);
+  const rating_tip = profile.seller_rating ? `${profile.seller_rating.average.toFixed(1)} stars out of 5 from ${profile.seller_rating.count} purchases` : '';
   return <>
     {banner_url && <img className={`profile_banner ${profile_classes.banner}`} src={banner_url} alt="Profile banner" />}
     {avatar_url && <div className={`profile_avatar_frame ${banner_url ? profile_classes.avatar_frame_with_banner : profile_classes.avatar_frame}`} style={!banner_url && accessory ? { marginTop: 12 } : undefined}>
@@ -52,15 +53,15 @@ export function ProfileIdentity({ profile, username, followers, member_age, on_a
       </span></HoverTip>}
     </div>
     <div className={`${stat_classes.sub} mt-1 ${profile_classes.meta} ${utility_classes.mt_1}`}>
-      {profile.pronouns && <span>{profile.pronouns}</span>}
-      {country && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`}>{country_flag && <HoverTip tip={profile.country_name || country}><span role="img" aria-label={profile.country_name || country}>{country_flag}</span></HoverTip>}{profile.country_name || country}</span>}
+      {profile.pronouns && <HoverTip tip="Pronouns"><span>{profile.pronouns}</span></HoverTip>}
+      {country && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`}>{country_flag && <HoverTip tip={profile.country_name || country}><span role="img" aria-label={profile.country_name || country}>{country_flag}</span></HoverTip>}<HoverTip tip="Country"><span>{profile.country_name || country}</span></HoverTip></span>}
       {follower_count != null && follower_count > 0 && <span>{follower_count} {follower_count === 1 ? 'follower' : 'followers'}</span>}
-      {profile.seller_rating && profile.seller_rating.count > 0 && <span className={profile_classes.seller_rating} aria-label={`${profile.seller_rating.average.toFixed(1)} out of 5 from ${profile.seller_rating.count} reviews`}>
+      {profile.seller_rating && profile.seller_rating.count > 0 && <HoverTip tip={rating_tip}><span className={profile_classes.seller_rating} aria-label={rating_tip}>
         <svg className={profile_classes.seller_rating_star} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.1 8.3 22 9.3 17 14.2 18.2 21.1 12 17.8 5.8 21.1 7 14.2 2 9.3 8.9 8.3" /></svg>
         <span className={profile_classes.seller_rating_score}>{profile.seller_rating.average.toFixed(1)}</span>
         <span>({profile.seller_rating.count})</span>
-      </span>}
-      {profile.balance_visible && profile.balance != null && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`} title="Balance"><WalletIcon />{formatINR(profile.balance)}</span>}
+      </span></HoverTip>}
+      {profile.balance_visible && profile.balance != null && <HoverTip tip="Account balance"><span className={`row tight ${utility_classes.tight} ${utility_classes.row}`} aria-label="Account balance"><WalletIcon />{formatINR(profile.balance)}</span></HoverTip>}
       {!!profile.pride_flags?.length && <span className={`row tight ${utility_classes.tight} ${utility_classes.row}`}>
         {profile.pride_flags.filter((flag) => pride_flags.includes(flag)).map((flag) => <PrideFlagTag key={flag} flag={flag} />)}
       </span>}
@@ -82,8 +83,8 @@ function ProfileStatusLine({ status }: { status: ProfileStatus }) {
   }, [expires_at]);
   if (expires_at !== null && (!Number.isFinite(expires_at) || expires_at <= now)) return null;
   return <div className={`row mt-1 ${utility_classes.row} ${utility_classes.mt_1}`}>
-    <span className={`pill ${shell_classes.pill_profile_status}`}>
+    <HoverTip tip="Current status"><span className={`pill ${shell_classes.pill_profile_status}`}>
       <span className={`profile_prose ${profile_classes.prose}`}>{status.emoji}{status.emoji && status.text ? ' ' : ''}{status.text}</span>
-    </span>
+    </span></HoverTip>
   </div>;
 }
